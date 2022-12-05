@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<!DOCTYPE cambalache-project SYSTEM "cambalache-project.dtd">
+<cambalache-project version="0.10.3" target_tk="gtk-4.0">
+  <ui>
+	(1,None,"dueca.ui","dueca.ui",None,None,None,None,None,None),
+	(2,None,None,"activity-view-gtk4.ui",None,None,None,None,None,None)
+  </ui>
+  <object>
+	(2,1,"GtkWindow",None,None,None,None,None,None),
+	(2,2,"GtkBox",None,1,None,None,None,-1),
+	(2,3,"GtkBox",None,2,None,None,None,None),
+	(2,4,"GtkButton","view_close",3,None,None,None,None),
+	(2,5,"GtkButton","view_update",3,None,None,None,1),
+	(2,6,"GtkGrid",None,3,None,None,None,2),
+	(2,7,"GtkLabel",None,6,None,None,None,None),
+	(2,8,"GtkLabel",None,6,None,None,None,None),
+	(2,9,"GtkScale","recordspan",6,None,None,None,None),
+	(2,10,"GtkScale","viewspan",6,None,None,None,1)
+  </object>
+  <object_property>
+	(2,2,"GtkOrientable","orientation","vertical",None,None,None,None,None),
+	(2,4,"GtkButton","icon-name","stock_close",None,None,None,None,None),
+	(2,4,"GtkButton","label","close",None,None,None,None,None),
+	(2,5,"GtkButton","icon-name","gtk-refresh",None,None,None,None,None),
+	(2,5,"GtkButton","label","update",None,None,None,None,None),
+	(2,6,"GtkGrid","row-homogeneous","True",None,None,None,None,None),
+	(2,7,"GtkLabel","justify","right",None,None,None,None,None),
+	(2,7,"GtkLabel","label","record span",None,None,None,None,None),
+	(2,7,"GtkLabel","yalign","0.8",None,None,None,None,None),
+	(2,8,"GtkLabel","label","view span",None,None,None,None,None),
+	(2,9,"GtkScale","digits","2",None,None,None,None,None),
+	(2,9,"GtkScale","draw-value","True",None,None,None,None,None),
+	(2,9,"GtkWidget","width-request","150",None,None,None,None,None),
+	(2,10,"GtkRange","round-digits","2",None,None,None,None,None),
+	(2,10,"GtkScale","digits","2",None,None,None,None,None),
+	(2,10,"GtkScale","draw-value","True",None,None,None,None,None),
+	(2,10,"GtkWidget","width-request","150",None,None,None,None,None)
+  </object_property>
+  <object_layout_property>
+	(2,6,7,"GtkGridLayoutChild","column","0",None,None,None,None),
+	(2,6,7,"GtkGridLayoutChild","column-span","1",None,None,None,None),
+	(2,6,7,"GtkGridLayoutChild","row","0",None,None,None,None),
+	(2,6,7,"GtkGridLayoutChild","row-span","1",None,None,None,None),
+	(2,6,8,"GtkGridLayoutChild","column","0",None,None,None,None),
+	(2,6,8,"GtkGridLayoutChild","column-span","1",None,None,None,None),
+	(2,6,8,"GtkGridLayoutChild","row","1",None,None,None,None),
+	(2,6,8,"GtkGridLayoutChild","row-span","1",None,None,None,None),
+	(2,6,9,"GtkGridLayoutChild","column","1",None,None,None,None),
+	(2,6,9,"GtkGridLayoutChild","column-span","1",None,None,None,None),
+	(2,6,9,"GtkGridLayoutChild","row","0",None,None,None,None),
+	(2,6,9,"GtkGridLayoutChild","row-span","1",None,None,None,None),
+	(2,6,10,"GtkGridLayoutChild","column","1",None,None,None,None),
+	(2,6,10,"GtkGridLayoutChild","column-span","1",None,None,None,None),
+	(2,6,10,"GtkGridLayoutChild","row","1",None,None,None,None),
+	(2,6,10,"GtkGridLayoutChild","row-span","1",None,None,None,None)
+  </object_layout_property>
+</cambalache-project>
