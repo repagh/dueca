@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.38.2 -->
 <interface>
-  <requires lib="gtk+" version="3.24"/>
+  <requires lib="gtk" version="4.0"/>
   <object class="GtkAdjustment" id="adjustment1">
     <property name="upper">100</property>
     <property name="step-increment">1</property>
@@ -14,61 +13,37 @@
   </object>
   <object class="GtkListStore" id="liststore1"/>
   <object class="GtkWindow" id="channel_datamonitor">
-    <property name="can-focus">False</property>
-    <property name="title" translatable="yes">Channel Entry Data Monitor</property>
-    <child>
+    <property name="title" translatable="1">Channel Entry Data Monitor</property>
+    <property name="child">
       <object class="GtkBox">
-        <property name="visible">True</property>
-        <property name="can-focus">False</property>
         <property name="orientation">vertical</property>
         <child>
           <object class="GtkBox" id="main_toolbar">
-            <property name="visible">True</property>
-            <property name="can-focus">False</property>
             <child>
               <object class="GtkButton" id="close">
-                <property name="label" translatable="yes">close	</property>
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="receives-default">False</property>
-                <property name="tooltip-text" translatable="yes">Close this view</property>
-                <property name="use-underline">True</property>
+                <property name="label" translatable="1">close</property>
+                <property name="tooltip-text" translatable="1">Close this view</property>
+                <property name="use-underline">1</property>
                 <property name="icon-name">window-close</property>
               </object>
             </child>
             <child>
               <object class="GtkButton" id="refresh_data">
-                <property name="label" translatable="yes">Data</property>
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="focus-on-click">False</property>
-                <property name="receives-default">False</property>
-                <property name="tooltip-text" translatable="yes">Refresh the displayed data</property>
-                <property name="use-underline">True</property>
+                <property name="label" translatable="1">refresh</property>
+                <property name="focus-on-click">0</property>
+                <property name="tooltip-text" translatable="1">Refresh the displayed data</property>
+                <property name="use-underline">1</property>
                 <property name="icon-name">view-refresh</property>
               </object>
             </child>
             <child>
-              <object class="GtkSeparator" id="separator">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-              </object>
+              <object class="GtkSeparator"/>
             </child>
             <child>
-              <object class="GtkBox" id="timespan">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
+              <object class="GtkBox">
                 <child>
-                  <object class="GtkBox" id="vbox2">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="orientation">vertical</property>
-                    <child>
-                      <object class="GtkLabel" id="timespan_label">
-                        <property name="can-focus">False</property>
-                        <property name="label">time span</property>
-                      </object>
-                    </child>
+                  <object class="GtkLabel" id="timespan_label">
+                    <property name="label">time span</property>
                   </object>
                 </child>
               </object>
@@ -80,18 +55,16 @@
         </child>
         <child>
           <object class="GtkScrolledWindow" id="scrollwindow">
-            <property name="visible">True</property>
-            <property name="can-focus">True</property>
+            <property name="focusable">1</property>
             <property name="hadjustment">adjustment1</property>
             <property name="vadjustment">adjustment2</property>
-            <property name="propagate-natural-width">True</property>
-            <property name="propagate-natural-height">True</property>
-            <child>
+            <property name="propagate-natural-width">1</property>
+            <property name="propagate-natural-height">1</property>
+            <property name="child">
               <object class="GtkTreeView" id="channel_data_view">
                 <property name="width-request">600</property>
                 <property name="height-request">300</property>
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
+                <property name="focusable">1</property>
                 <property name="hadjustment">adjustment1</property>
                 <property name="vadjustment">adjustment2</property>
                 <property name="model">liststore1</property>
@@ -99,10 +72,10 @@
                   <object class="GtkTreeSelection"/>
                 </child>
               </object>
-            </child>
+            </property>
           </object>
         </child>
       </object>
-    </child>
+    </property>
   </object>
 </interface>
