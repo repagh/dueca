@@ -1,11 +1,11 @@
 # -------------------------------------------------------------------   */
-#       item            : dueca/gui/gtk3/CMakeLists.txt
+#       item            : dueca/gui/gtk4/CMakeLists.txt
 #       made by         : Rene' van Paassen
 #       date            : 1610xx
 #       category        : cmake definition
 #       copyright       : (c) 2016 TUDelft-AE-C&S
 
-pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
+pkg_check_modules(GTK4 REQUIRED gtk+-4.0)
 find_package(GLUT REQUIRED)
 
 set(INSTALLHEADERS GtkGladeWindow.hxx GtkCaller.hxx GladeException.hxx)
@@ -14,46 +14,46 @@ set(SOURCES GtkDuecaView.cxx GtkCaller.cxx ActivityView.cxx
             TimingViewGtk.cxx TimingViewGtk.hxx GtkDuecaButtons.cxx
             GtkGladeWindow.cxx GtkHandler.cxx LogViewGui.cxx
             GladeException.cxx LogView.cxx
-            ChannelOverviewGtk3.cxx ChannelOverviewGtk3.hxx
-            ChannelDataMonitorGtk3.cxx ChannelDataMonitorGtk3.hxx
+            ChannelOverviewGtk4.cxx ChannelOverviewGtk4.hxx
+            ChannelDataMonitorGtk4.cxx ChannelDataMonitorGtk4.hxx
             )
 
-set(GLADEFILES tinydueca_if.glade3 activity_view.glade3
-  timingview.glade3 common_if.glade3 logview.glade3
-  channel_datamonitor.glade3 channel_overview.glade3 )
+set(GLADEFILES tinydueca_if-gtk4.ui activity_view-gtk4.ui
+  timingview-gtk4.ui common_if-gtk4.ui logview-gtk4.ui
+  channel_datamonitor-gtk4.ui channel_overview-gtk4.ui )
 
-configure_file(dueca-gtk3.pc.in dueca-gtk3.pc @ONLY)
+configure_file(dueca-gtk4.pc.in dueca-gtk4.pc @ONLY)
 
 set(INCDIRS ${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR}
   ${CMAKE_BINARY_DIR}/dueca ${CMAKE_SOURCE_DIR}/dueca)
 
-add_compile_options(${GTK3_CFLAGS})
+add_compile_options(${GTK4_CFLAGS})
 
 # script-independent lib
-dueca_add_library(dueca-gtk3
+dueca_add_library(dueca-gtk4
   SOURCES ${SOURCES}
-  LINKLIBS dueca ${GTK3_LIBRARIES} ${X11_LIBRARIES} ${GLUT_LIBS} ${GL_LIBRARIES}
-  LINKDIRS ${GTK3_LIBRARY_DIRS} ${GLUT_LIBRARY_DIRS}
+  LINKLIBS dueca ${GTK4_LIBRARIES} ${X11_LIBRARIES} ${GLUT_LIBS} ${GL_LIBRARIES}
+  LINKDIRS ${GTK4_LIBRARY_DIRS} ${GLUT_LIBRARY_DIRS}
   INCLUDEDIRS ${INCDIRS})
 
 foreach(S ${SCRIPTLANG})
-  dueca_add_library(dueca-gtk3-${SCRIPT_${S}_SUFFIX}
-    SOURCES InitGtk3.cxx ${STARTLIB_STATIC}
-    LINKLIBS dueca-gtk3 dueca-start-${SCRIPT_${S}_SUFFIX}
+  dueca_add_library(dueca-gtk4-${SCRIPT_${S}_SUFFIX}
+    SOURCES InitGtk4.cxx ${STARTLIB_STATIC}
+    LINKLIBS dueca-gtk4 dueca-start-${SCRIPT_${S}_SUFFIX}
     INCLUDEDIRS ${INCDIRS} ${SCRIPT_${S}_INCLUDES}
     COMPILEOPTIONS -DSCRIPT_${S})
   set(scriptsuffix "-${SCRIPT_${S}_SUFFIX}")
-  configure_file(dueca-gtk3-ln.pc.in
-    dueca-gtk3-${SCRIPT_${S}_SUFFIX}.pc @ONLY)
+  configure_file(dueca-gtk4-ln.pc.in
+    dueca-gtk4-${SCRIPT_${S}_SUFFIX}.pc @ONLY)
   install(FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/dueca-gtk3-${SCRIPT_${S}_SUFFIX}.pc
+    ${CMAKE_CURRENT_BINARY_DIR}/dueca-gtk4-${SCRIPT_${S}_SUFFIX}.pc
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 endforeach()
 
 install(FILES ${INSTALLHEADERS}
-  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/dueca/dueca/gui/gtk3)
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/dueca/dueca/gui/gtk4)
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/dueca-gtk3.pc
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/dueca-gtk4.pc
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
 install(FILES ${GLADEFILES}
