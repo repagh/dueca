@@ -6,9 +6,9 @@ libdir=@libdir@
 version=@VERSION@
 staticsuffix=
 
-Name: dueca-gtk4
+Name: dueca-gtkmm3
 Description: Real-time distributed control or simulation environment
 Version: ${version}
-Libs: -L${libdir} -ldueca-gtk4${staticsuffix} @dueca_glut_util_libs@ @X11_libs@
-Cflags: -DDUECA_CONFIG_GTK4 -I${dueca_includedir}/dueca/gui/gtk4
-Requires: dueca = ${version}, gtk4 @dueca_glut_util_pkgs@
+Libs: -L${libdir} -ldueca-gtkmm3${staticsuffix}
+Cflags: -DDUECA_CONFIG_GTKMM3
+Requires: dueca-gtk4 = ${version}, gtkmm-4.0

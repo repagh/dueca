@@ -5,7 +5,7 @@
 #       category        : cmake definition
 #       copyright       : (c) 2016 TUDelft-AE-C&S
 
-pkg_check_modules(GTK4 REQUIRED gtk+-4.0)
+pkg_check_modules(GTK4 REQUIRED gtk4)
 find_package(GLUT REQUIRED)
 
 set(INSTALLHEADERS GtkGladeWindow.hxx GtkCaller.hxx GladeException.hxx)
