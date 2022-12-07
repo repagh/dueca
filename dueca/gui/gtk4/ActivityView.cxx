@@ -272,11 +272,6 @@ void ActivityView::cbViewSpan(GtkWidget* spin, gpointer gp)
     gtk_range_get_adjustment(GTK_RANGE(gui.window.getObject("viewscroll")));
   gtk_adjustment_set_page_size(adj2, vspan);//->page_size = vspan;
   gtk_adjustment_set_upper(adj2, dspan);//->upper = dspan;
-#if GTK_CHECK_VERSION(3,18,0)
-  // deprecated here
-#else
-  gtk_adjustment_changed(adj2);
-#endif
 
   // request update lines
   for (int node = current_logs.size(); node--; ) {
@@ -297,11 +292,6 @@ void ActivityView::cbRecordSpan(GtkWidget* spin, gpointer gp)
   GtkAdjustment *adj2 =
     gtk_range_get_adjustment(GTK_RANGE(gui.window.getObject("viewscroll")));
   gtk_adjustment_set_upper(adj2, dspan);
-#if GTK_CHECK_VERSION(3,18,0)
-  // deprecated here
-#else
-  gtk_adjustment_changed(adj2);
-#endif
 }
 
 int ActivityView::cbViewScroll(GtkWidget* scroll, GdkEventButton *e,
