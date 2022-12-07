@@ -1,5 +1,5 @@
 /* ------------------------------------------------------------------   */
-/*      item            : InitGtk3.cxx
+/*      item            : InitGtk4.cxx
         made by         : Rene' van Paassen
         date            : ???
         category        : Body, init file
@@ -16,7 +16,7 @@
 #include <dueca/visibility.h>
 #include "ActivityView.hxx"
 #include "GtkDuecaView.hxx"
-#include "ChannelOverviewGtk3.hxx"
+#include "ChannelOverviewGtk4.hxx"
 #include "TimingViewGtk.hxx"
 #include "GtkHandler.hxx"
 #include "LogView.hxx"
@@ -32,19 +32,19 @@
 DUECA_NS_START
 
 extern "C"
-LNK_PUBLICC void InitGtk3()
+LNK_PUBLICC void InitGtk4()
 {
   startIOStream();
   if (!DuecaEnv::scriptSpecific()) {
-    std::cout << "Init from     [dueca-gtk3]" << std::endl;
+    std::cout << "Init from     [dueca-gtk4]" << std::endl;
   }
   static TypeCreator<TimingViewGtk> t05(TimingView::getParameterTable());
   static TypeCreator<ActivityView>  t01(ActivityView::getParameterTable());
   static TypeCreator<GtkDuecaView>  t02(GtkDuecaView::getParameterTable());
   static TypeCreator<LogView>       t03(LogView::getParameterTable());
-  static TypeCreator<ChannelOverviewGtk3>
-    t04(ChannelOverviewGtk3::getMyParameterTable());
-  static GtkHandler h1(std::string("gtk3"));
+  static TypeCreator<ChannelOverviewGtk4>
+    t04(ChannelOverviewGtk4::getMyParameterTable());
+  static GtkHandler h1(std::string("gtk4"));
 }
 
 

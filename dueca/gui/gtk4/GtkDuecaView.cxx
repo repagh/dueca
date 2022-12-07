@@ -16,6 +16,7 @@
 #include <dueca-conf.h>
 
 // this module is only feasible if libglade is available.
+#include <gdk/gdkbuttonevent.h>
 
 #include "GtkDuecaButtons.hxx"
 #include "GtkDuecaView.hxx"
@@ -809,10 +810,10 @@ void GtkDuecaView::refreshNodesView()
   gtk_widget_queue_draw(nodes_list);
 }
 
-gboolean GtkDuecaView::cbOn2(GtkWidget *widget, GdkEventButton* event,
+gboolean GtkDuecaView::cbOn2(GtkWidget *widget, GdkButtonEvent* event,
                              gpointer user_data)
 {
-  if (event->type != GDK_BUTTON_RELEASE || event->button != 1) {
+  if (gdk_event_get_event_type(event) != GDK_BUTTON_RELEASE || gdk_button_event_get_button(event) != 1) {
     // wrong button, and only act on presses
     return TRUE;
   }
@@ -831,10 +832,10 @@ gboolean GtkDuecaView::cbOn2(GtkWidget *widget, GdkEventButton* event,
   return TRUE;
 }
 
-gboolean GtkDuecaView::cbEmerg2(GtkWidget *widget, GdkEventButton* event,
+gboolean GtkDuecaView::cbEmerg2(GtkWidget *widget, GdkButtonEvent* event,
                                 gpointer user_data)
 {
-  if (event->type != GDK_BUTTON_RELEASE || event->button != 1) {
+  if (gdk_event_get_event_type(event) != GDK_BUTTON_RELEASE || gdk_button_event_get_button(event) != 1) {
     // wrong button, and only act on presses
     return TRUE;
   }
@@ -873,10 +874,10 @@ gboolean GtkDuecaView::cbEmerg2(GtkWidget *widget, GdkEventButton* event,
   return TRUE;
 }
 
-gboolean GtkDuecaView::cbOff2(GtkWidget *widget, GdkEventButton* event,
+gboolean GtkDuecaView::cbOff2(GtkWidget *widget, GdkButtonEvent* event,
                               gpointer user_data)
 {
-  if (event->type != GDK_BUTTON_RELEASE || event->button != 1) {
+  if (gdk_event_get_event_type(event) != GDK_BUTTON_RELEASE || gdk_button_event_get_button(event) != 1) {
     // wrong button, and only act on presses
     return TRUE;
   }
@@ -894,10 +895,11 @@ gboolean GtkDuecaView::cbOff2(GtkWidget *widget, GdkEventButton* event,
   return TRUE;
 }
 
-gboolean GtkDuecaView::cbSafe2(GtkWidget *widget, GdkEventButton* event,
+gboolean GtkDuecaView::cbSafe2(GtkWidget *widget, GdkButtonEvent* event,
                                gpointer user_data)
 {
-  if (event->type != GDK_BUTTON_RELEASE || event->button != 1) {
+  if (gdk_event_get_event_type(GDK_EVENT(event)) != GDK_BUTTON_RELEASE ||
+      gdk_button_event_get_button(event) != 1) {
     // wrong button, and only act on presses
     return TRUE;
   }

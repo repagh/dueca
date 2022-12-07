@@ -12,7 +12,7 @@
 */
 
 #define ChannelDataMonitor_cxx
-#include "ChannelDataMonitorGtk3.hxx"
+#include "ChannelDataMonitorGtk4.hxx"
 #include <debug.h>
 #include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
@@ -23,7 +23,7 @@
 
 DUECA_NS_START
 
-ChannelDataMonitorGtk3::ChannelDataMonitorGtk3(ChannelOverviewGtk3  *master,
+ChannelDataMonitorGtk4::ChannelDataMonitorGtk4(ChannelOverviewGtk4  *master,
                                                const std::string& channelname,
                                                unsigned channelno,
                                                unsigned entryno,
@@ -91,25 +91,25 @@ ChannelDataMonitorGtk3::ChannelDataMonitorGtk3(ChannelOverviewGtk3  *master,
 }
 
 
-ChannelDataMonitorGtk3::~ChannelDataMonitorGtk3()
+ChannelDataMonitorGtk4::~ChannelDataMonitorGtk4()
 {
   gtk_tree_store_clear(store);
   window.hide();
   g_object_unref(G_OBJECT(store));
 }
 
-void ChannelDataMonitorGtk3::cbClose(GtkButton* button, gpointer gp)
+void ChannelDataMonitorGtk4::cbClose(GtkButton* button, gpointer gp)
 {
 
   master->closeMonitor(channelno, entryno);
 }
 
-void ChannelDataMonitorGtk3::cbRefreshData(GtkButton* button, gpointer gp)
+void ChannelDataMonitorGtk4::cbRefreshData(GtkButton* button, gpointer gp)
 {
   master->refreshMonitor(channelno, entryno);
 }
 
-gboolean ChannelDataMonitorGtk3::cbDelete(GtkWidget *window, GdkEvent *event,
+gboolean ChannelDataMonitorGtk4::cbDelete(GtkWidget *window, GdkEvent *event,
                                           gpointer user_data)
 {
   master->closeMonitor(channelno, entryno);
@@ -132,7 +132,7 @@ inline const char* print_string(const JValue &value)
   return value.GetString();
 }
 
-void ChannelDataMonitorGtk3::
+void ChannelDataMonitorGtk4::
 insertJsonValue(GtkTreeIter* itname, const JValue &value)
 {
   static const char* json_fix[] = { "null", "false", "true" };
@@ -199,7 +199,7 @@ insertJsonValue(GtkTreeIter* itname, const JValue &value)
 }
 
 
-void ChannelDataMonitorGtk3::
+void ChannelDataMonitorGtk4::
 insertJsonArray(GtkTreeIter* itparent, const JValue &doc)
 {
   gboolean itvalid;
@@ -235,7 +235,7 @@ insertJsonArray(GtkTreeIter* itparent, const JValue &doc)
   removeIterSiblings(itvalid, itname);
 }
 
-void ChannelDataMonitorGtk3::
+void ChannelDataMonitorGtk4::
 descendIter(gboolean& itvalid, GtkTreeIter& itname,
             GtkTreeIter* itparent)
 {
@@ -245,7 +245,7 @@ descendIter(gboolean& itvalid, GtkTreeIter& itname,
   DEB("descending iter")
 }
 
-void ChannelDataMonitorGtk3::
+void ChannelDataMonitorGtk4::
 checkOrCreateIter(gboolean& itvalid, GtkTreeIter& itname,
                   GtkTreeIter* itparent, const char* name)
 {
@@ -262,7 +262,7 @@ checkOrCreateIter(gboolean& itvalid, GtkTreeIter& itname,
   gtk_tree_store_set(store, &itname, 0, name, -1);
 }
 
-void ChannelDataMonitorGtk3::
+void ChannelDataMonitorGtk4::
 removeIterChildren(GtkTreeIter* parent)
 {
   GtkTreeIter itchld;
@@ -274,7 +274,7 @@ removeIterChildren(GtkTreeIter* parent)
   }
 }
 
-void ChannelDataMonitorGtk3::
+void ChannelDataMonitorGtk4::
 removeIterSiblings(gboolean& have, GtkTreeIter& itname)
 {
   while(have == TRUE) {
@@ -283,7 +283,7 @@ removeIterSiblings(gboolean& have, GtkTreeIter& itname)
   }
 }
 
-void ChannelDataMonitorGtk3::
+void ChannelDataMonitorGtk4::
 toNextIter(gboolean& have, GtkTreeIter& itname)
 {
   if (have) {
@@ -292,7 +292,7 @@ toNextIter(gboolean& have, GtkTreeIter& itname)
   }
 }
 
-void ChannelDataMonitorGtk3::
+void ChannelDataMonitorGtk4::
 insertJson(GtkTreeIter *itparent, const JValue &doc)
 {
   gboolean itvalid;
@@ -328,7 +328,7 @@ insertJson(GtkTreeIter *itparent, const JValue &doc)
 }
 
 
-void ChannelDataMonitorGtk3::refreshData(const ChannelMonitorResult& rdata)
+void ChannelDataMonitorGtk4::refreshData(const ChannelMonitorResult& rdata)
 {
   std::stringstream timespan;
   timespan << rdata.ts_actual.getValidityStart();
@@ -349,10 +349,10 @@ void ChannelDataMonitorGtk3::refreshData(const ChannelMonitorResult& rdata)
   DEB1(rdata.json);
 }
 
-void ChannelDataMonitorGtk3::close()
+void ChannelDataMonitorGtk4::close()
 { window.hide(); }
 
-void ChannelDataMonitorGtk3::open()
+void ChannelDataMonitorGtk4::open()
 { window.show(); }
 
 DUECA_NS_END

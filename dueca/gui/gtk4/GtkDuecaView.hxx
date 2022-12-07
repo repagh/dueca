@@ -28,7 +28,6 @@
 #include <dueca_ns.h>
 #include <gtk/gtk.h>
 
-
 DUECA_NS_START
 struct ParameterTable;
 
@@ -204,19 +203,19 @@ public:
   void cbQuit2(GtkWidget *widget, gpointer user_data);
 
   /** Switch entities off. */
-  gboolean cbOff2(GtkWidget *widget, GdkEventButton *event,
+  gboolean cbOff2(GtkWidget *widget, GdkButtonEvent *event,
                   gpointer user_data);
 
   /** Switch entities to safe running. */
-  gboolean cbSafe2(GtkWidget *widget, GdkEventButton *event,
+  gboolean cbSafe2(GtkWidget *widget, GdkButtonEvent *event,
                    gpointer user_data);
 
   /** Switch entities on. */
-  gboolean cbOn2(GtkWidget *widget, GdkEventButton *event,
+  gboolean cbOn2(GtkWidget *widget, GdkButtonEvent *event,
                  gpointer user_data);
 
   /** Emergency stop. */
-  gboolean cbEmerg2(GtkWidget *widget, GdkEventButton *event,
+  gboolean cbEmerg2(GtkWidget *widget, GdkButtonEvent *event,
                     gpointer user_data);
 
   /** Auxiliary, clean styles from buttons */

@@ -238,8 +238,10 @@ bool GtkGladeWindow::_setValue(const char* wname, double value, bool warn)
 
   // try 3, entry, after spinbutton, bc that inherits from entry
   if (GTK_IS_ENTRY(o)) {
-    gtk_entry_set_text(GTK_ENTRY(o),
-                       boost::lexical_cast<std::string>(value).c_str());
+    gtk_entry_buffer_set_tex
+      t
+      (gtk_entry_get_buffer(GTK_ENTRY(o)),
+       boost::lexical_cast<std::string>(value).c_str());
     return true;
   }
   if (warn) {
@@ -306,7 +308,7 @@ bool GtkGladeWindow::_setValue(const char* wname, const char* value, bool warn)
   if (GTK_IS_ENTRY(o)) {
     GtkEntry *e = GTK_ENTRY(o);
     if (e != NULL) {
-      gtk_entry_set_text(e, value);
+      gtk_entry_buffer_set_text(gtk_entry_get_buffer(e), value);
       return true;
     }
   }

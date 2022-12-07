@@ -1,5 +1,5 @@
 /* ------------------------------------------------------------------   */
-/*      item            : ChannelOverviewGtk3.hxx
+/*      item            : ChannelOverviewGtk4.hxx
         made by         : repa
         from template   : DuecaModuleTemplate.hxx
         template made by: Rene van Paassen
@@ -14,8 +14,8 @@
         license         : EUPL-1.2
 */
 
-#ifndef ChannelOverviewGtk3_hxx
-#define ChannelOverviewGtk3_hxx
+#ifndef ChannelOverviewGtk4_hxx
+#define ChannelOverviewGtk4_hxx
 
 // include the dusime header
 #include <dueca.h>
@@ -34,11 +34,11 @@ DUECA_NS_START
 
     \verbinclude channel-view.scm
  */
-class ChannelOverviewGtk3:
+class ChannelOverviewGtk4:
   public ChannelOverview
 {
   /** self-define the module type, to ease writing the parameter table */
-  typedef ChannelOverviewGtk3 _ThisModule_;
+  typedef ChannelOverviewGtk4 _ThisModule_;
 
 private: // simulation data
 
@@ -111,7 +111,7 @@ public: // class name and trim/parameter tables
 
 public: // construction and further specification
   /** Constructor. Is normally called from scheme/the creation script. */
-  ChannelOverviewGtk3(Entity* e, const char* part, const PrioritySpec& ts);
+  ChannelOverviewGtk4(Entity* e, const char* part, const PrioritySpec& ts);
 
   /** Continued construction. This is called after all script
       parameters have been read and filled in, according to the
@@ -123,7 +123,7 @@ public: // construction and further specification
   bool complete();
 
   /** Destructor. */
-  ~ChannelOverviewGtk3();
+  ~ChannelOverviewGtk4();
 
   // add here the member functions you want to be called with further
   // parameters. These are then also added in the parameter table

@@ -1,5 +1,5 @@
 /* ------------------------------------------------------------------   */
-/*      item            : ChannelOverviewGtk3.cxx
+/*      item            : ChannelOverviewGtk4.cxx
         made by         : repa
         from template   : DuecaModuleTemplate.cxx
         template made by: Rene van Paassen
@@ -17,17 +17,17 @@
 */
 
 
-#define ChannelOverviewGtk3_cxx
+#define ChannelOverviewGtk4_cxx
 
 // include the definition of the module class
-#include "ChannelOverviewGtk3.hxx"
+#include "ChannelOverviewGtk4.hxx"
 
 // include the debug writing header, by default, write warning and
 // error messages
 #include <debug.h>
 
 // include additional files needed for your calculation here
-#include "ChannelDataMonitorGtk3.hxx"
+#include "ChannelDataMonitorGtk4.hxx"
 #include "GtkDuecaView.hxx"
 
 #include <boost/lexical_cast.hpp>
@@ -44,10 +44,10 @@
 DUECA_NS_START
 
 // class/module name
-const char* const ChannelOverviewGtk3::classname = "channel-view";
+const char* const ChannelOverviewGtk4::classname = "channel-view";
 
 // Parameters to be inserted
-const ParameterTable* ChannelOverviewGtk3::getMyParameterTable()
+const ParameterTable* ChannelOverviewGtk4::getMyParameterTable()
 {
   static const ParameterTable parameter_table[] = {
 
@@ -86,7 +86,7 @@ const ParameterTable* ChannelOverviewGtk3::getMyParameterTable()
 }
 
 // constructor
-ChannelOverviewGtk3::ChannelOverviewGtk3(Entity* e, const char* part, const
+ChannelOverviewGtk4::ChannelOverviewGtk4(Entity* e, const char* part, const
                    PrioritySpec& ps) :
   /* The following line initialises the SimulationModule base class.
      You always pass the pointer to the entity, give the classname and the
@@ -94,7 +94,7 @@ ChannelOverviewGtk3::ChannelOverviewGtk3(Entity* e, const char* part, const
   ChannelOverview(e, part, ps),
 
   // initialize the data you need in your simulation or process
-  gladefile(DuecaPath::prepend("channel_overview.glade3")),
+  gladefile(DuecaPath::prepend("channel_overview-gtk4.ui")),
   monitor_gladefile(DuecaPath::prepend("channel_datamonitor.glade3")),
   window(),
   store(NULL),

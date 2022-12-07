@@ -11,10 +11,10 @@
         license         : EUPL-1.2
 */
 
-#ifndef ChannelDataMonitorGtk3_hxx
-#define ChannelDataMonitorGtk3_hxx
+#ifndef ChannelDataMonitorGtk4_hxx
+#define ChannelDataMonitorGtk4_hxx
 
-#include "ChannelOverviewGtk3.hxx"
+#include "ChannelOverviewGtk4.hxx"
 #include <ChannelDataMonitor.hxx>
 #include "GtkGladeWindow.hxx"
 #include <rapidjson/document.h>
@@ -28,11 +28,11 @@ typedef json::GenericDocument<json::UTF8<> > JDocument;
 typedef json::GenericValue<json::UTF8<> > JValue;
 
 /** Class handling a channel entry view window */
-class ChannelDataMonitorGtk3:
+class ChannelDataMonitorGtk4:
   public ChannelDataMonitor
 {
   /** Define for easy use in tables */
-  typedef ChannelDataMonitorGtk3 _ThisModule_;
+  typedef ChannelDataMonitorGtk4 _ThisModule_;
 
   /** gtk window */
   GtkGladeWindow        window;
@@ -50,14 +50,14 @@ class ChannelDataMonitorGtk3:
 
 public:
   /** Constructor */
-  ChannelDataMonitorGtk3(ChannelOverviewGtk3  *master,
+  ChannelDataMonitorGtk4(ChannelOverviewGtk4  *master,
                          const std::string& channelname,
                          unsigned channelno,
                          unsigned entryno,
                          const std::string& gladefile);
 
   /** Destructor */
-  ~ChannelDataMonitorGtk3();
+  ~ChannelDataMonitorGtk4();
 
   /** New data from the handler */
   void refreshData(const ChannelMonitorResult& rdata);
