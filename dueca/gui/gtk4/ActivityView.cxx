@@ -94,18 +94,6 @@ ActivityView::ActivityView(Entity* e, const char* part,
   }
 }
 
-// c-linkage callback functions
-static int cbDraw(GtkWidget *w, cairo_t *cr, gpointer av)
-{ return reinterpret_cast<ActivityView*>(av)->cbDraw(w, cr, NULL); }
-static int cbConfigure(GtkWidget *w, GdkEventConfigure *event, gpointer av)
-{ return reinterpret_cast<ActivityView*>(av)->cbConfigure(w, event); }
-static gboolean cbDrawAreaButtonPress(GtkWidget *w,
-                                      GdkEventButton *ev, gpointer av)
-{ return reinterpret_cast<ActivityView*>(av)->cbDrawAreaButtonPress(w, ev); }
-static gboolean cbDrawAreaButtonRelease(GtkWidget *w,
-                                        GdkEventButton *ev, gpointer av)
-{ return reinterpret_cast<ActivityView*>(av)->cbDrawAreaButtonRelease(w, ev); }
-
 // table with callback functions for glade xml window.
 static GladeCallbackTable cb_links[] = {
   { "close", "clicked", gtk_callback(&ActivityView::cbClose) },
@@ -145,36 +133,48 @@ bool ActivityView::complete()
   gui.canvas = new GtkWidget*
     [DUECA_NS::NodeManager::single()->getNoOfNodes()];
 
-  for (int ii = 0; ii <
-         DUECA_NS ::NodeManager::single()->getNoOfNodes(); ii++) {
+  // GestureClick ?
+  
+  for (unsigned ii = 0; ii <
+         unsigned(DUECA_NS ::NodeManager::single()->getNoOfNodes()); ii++) {
 
     // create the canvas
+    GtkGesture *controller = gtk_gesture_click_new();
     gui.canvas[ii] = gtk_drawing_area_new();
-    gtk_widget_add_events(gui.canvas[ii],
-                          GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK);
+    gtk_widget_add_controller(gui.canvas[ii], GTK_EVENT_CONTROLLER(controller));
     gtk_widget_set_size_request(gui.canvas[ii], 400, 28);
     g_object_ref(gui.canvas[ii]);
 
     g_object_set_data(G_OBJECT(gui.canvas[ii]), "node",
-                        reinterpret_cast<gpointer>(ii));
-
+		      reinterpret_cast<gpointer>(ii));
+    g_object_set_data(G_OBJECT(controller), "node",
+		      reinterpret_cast<gpointer>(ii));
+    
     // configure size and place it in the box
-    gtk_box_pack_start(GTK_BOX(gui.window["linebox"]), gui.canvas[ii],
-                       FALSE, TRUE, 2);
+    gtk_box_append(GTK_BOX(gui.window["linebox"]), gui.canvas[ii]);
 
     // add a callback for expose and one for realize
     g_signal_connect(G_OBJECT(gui.canvas[ii]), "configure_event",
                      G_CALLBACK(DUECA_NS::cbConfigure),
                      reinterpret_cast<gpointer>(this));
     g_signal_connect(G_OBJECT(gui.canvas[ii]), "draw",
-                     G_CALLBACK(DUECA_NS::cbDraw),
+                     G_CALLBACK(+[](GtkWidget *w, cairo_t *cr, gpointer av) {
+		       reinterpret_cast<ActivityView*>(av)->cbDraw(w, cr); }),
                      reinterpret_cast<gpointer>(this));
-    g_signal_connect(G_OBJECT(gui.canvas[ii]), "button-press-event",
-                     G_CALLBACK(DUECA_NS::cbDrawAreaButtonPress),
-                     reinterpret_cast<gpointer>(this));
-    g_signal_connect(G_OBJECT(gui.canvas[ii]), "button-release-event",
-                     G_CALLBACK(DUECA_NS::cbDrawAreaButtonRelease),
-                     reinterpret_cast<gpointer>(this));
+    g_signal_connect(G_OBJECT(controller), "pressed",
+                     G_CALLBACK(+[](GtkGestureClick* gesture, gint n_press,
+				    gdouble x, gdouble y, gpointer av) {
+		       reinterpret_cast<ActivityView*>(av)->cbDrawAreaButtonPress
+			 (n_press, x, y, reinterpret_cast<unsigned long>
+			  (g_object_get_data(G_OBJECT(gesture), "node"))); }),
+		     reinterpret_cast<gpointer>(this));
+    g_signal_connect(G_OBJECT(controller), "released",
+                     G_CALLBACK(+[](GtkGestureClick* gesture, gint n_press,
+				    gdouble x, gdouble y, gpointer av) {
+		       reinterpret_cast<ActivityView*>(av)->cbDrawAreaButtonRelease
+			 (n_press, x, y, reinterpret_cast<unsigned long>
+			  (g_object_get_data(G_OBJECT(gesture), "node"))); }),
+		     reinterpret_cast<gpointer>(this));
     gtk_widget_show(gui.canvas[ii]);
   }
 
@@ -294,7 +294,7 @@ void ActivityView::cbRecordSpan(GtkWidget* spin, gpointer gp)
   gtk_adjustment_set_upper(adj2, dspan);
 }
 
-int ActivityView::cbViewScroll(GtkWidget* scroll, GdkEventButton *e,
+int ActivityView::cbViewScroll(GtkWidget* scroll, GdkButtonEvent *e,
                                gpointer gp)
 {
   for (int node = current_logs.size(); node--; ) {
@@ -407,7 +407,7 @@ int ActivityView::cbDraw(GtkWidget* w, cairo_t *cr, gpointer data)
   return FALSE;
 }
 
-int ActivityView::cbConfigure(GtkWidget* w, GdkEventConfigure *ev)
+int ActivityView::cbConfigure(GtkWidget* w, GdkEvent *ev)
 {
   int node = long(g_object_get_data(G_OBJECT(w), "node"));
   //int dirty = int(g_object_get_data(G_OBJECT(w), "dirty"));
@@ -432,7 +432,7 @@ int ActivityView::cbConfigure(GtkWidget* w, GdkEventConfigure *ev)
   return TRUE;
 }
 
-int ActivityView::cbDrawAreaButtonPress(GtkWidget *w, GdkEventButton *ev)
+int ActivityView::cbDrawAreaButtonPress(GtkWidget *w, GdkButtonEvent *ev)
 {
   DEB(getId() << classname << " button " << ev->button <<
       " press, at " << ev->x << ',' << ev->y);
@@ -457,7 +457,7 @@ int ActivityView::cbDrawAreaButtonPress(GtkWidget *w, GdkEventButton *ev)
   return TRUE;
 }
 
-int ActivityView::cbDrawAreaButtonRelease(GtkWidget *w, GdkEventButton *ev)
+int ActivityView::cbDrawAreaButtonRelease(GtkWidget *w, GdkButtonEvent *ev)
 {
   DEB(getId() << classname << " button " << ev->button <<
       " release, at " << ev->x << ',' << ev->y);

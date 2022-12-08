@@ -69,21 +69,21 @@ public:
   void cbRecordSpan(GtkWidget* spin, gpointer gp);
 
   /** Update view window after scrolling. */
-  int cbViewScroll(GtkWidget *w, GdkEventButton *e, gpointer gp);
+  int cbViewScroll(GtkWidget *w, GdkButtonEvent *e, gpointer gp);
 
   /** Redraw stuff. */
-  int cbDraw(GtkWidget *w, cairo_t *cr, gpointer user_data);
+  int cbDraw(GtkWidget *w, cairo_t *cr);
 
   /** realize widget stuff. */
-  int cbConfigure(GtkWidget *w, GdkEventConfigure *event);
+  int cbConfigure(GtkWidget *w, GdkEvent *event);
 
   /** React to a button press on a drawing area, by starting a
       highlight. */
-  int cbDrawAreaButtonPress(GtkWidget *w, GdkEventButton *ev);
+  void cbDrawAreaButtonPress(gint n_press, gdouble x, gdouble y, unsigned area);
 
   /** React to a button release on a drawing area, by completing a
       highlight. */
-  int cbDrawAreaButtonRelease(GtkWidget *w, GdkEventButton *ev);
+  int cbDrawAreaButtonRelease(gint n_press, gdouble x, gdouble y, unsigned area);
 };
 
 DUECA_NS_END

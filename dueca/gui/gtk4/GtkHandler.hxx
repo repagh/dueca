@@ -18,6 +18,7 @@
 #endif
 
 #include "GuiHandler.hxx"
+#include <gtk/gtk.h>
 
 #include <dueca_ns.h>
 DUECA_NS_START
@@ -25,6 +26,7 @@ DUECA_NS_START
     Gtk interface library */
 class GtkHandler: public GuiHandler
 {
+  GtkApplication *app;
 public:
   /** Constructor. */
   GtkHandler(const std::string& name);

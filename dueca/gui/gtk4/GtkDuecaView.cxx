@@ -11,12 +11,16 @@
         license         : EUPL-1.2
 */
 
+// for linking gtkapplication and main window
+// https://github.com/ToshioCP/Gtk4-tutorial/blob/main/gfm/sec9.md
+//
+// menu stuff
+// https://github.com/ToshioCP/Gtk4-tutorial/blob/main/gfm/sec17.md
 
 #define GtkDuecaView_cc
 #include <dueca-conf.h>
 
 // this module is only feasible if libglade is available.
-#include <gdk/gdkbuttonevent.h>
 
 #include "GtkDuecaButtons.hxx"
 #include "GtkDuecaView.hxx"

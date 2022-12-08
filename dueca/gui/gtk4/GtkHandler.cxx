@@ -11,6 +11,7 @@
         license         : EUPL-1.2
 */
 
+// modify, to create the app, and use app iteration
 
 #define GtkHandler_cxx
 #include <dueca-conf.h>
@@ -39,14 +40,20 @@
 #define I_SYS
 #include <debug.h>
 
+#define DEBPRINTLEVEL 1
+#include <debprint.h>
+
 DUECA_NS_START
 
-#if GTK_MAJOR_VERSION != 3
+#if GTK_MAJOR_VERSION != 4
 #error "Wrong GTK version headers!"
 #endif
 
+#define APPLICATION_ID "nl.tudelft.dueca.mainmenu"
+
 GtkHandler::GtkHandler(const std::string& name) :
-  GuiHandler(name)
+  GuiHandler(name),
+  app(NULL)
 {
   //
 }
@@ -62,6 +69,8 @@ extern "C" {
 
 extern int* p_argc;
 extern char*** p_argv;
+
+
 
 static gint call_environment_loop(gpointer )
 {
@@ -80,6 +89,11 @@ static gint call_environment_loop(gpointer )
 extern int* p_argc;
 extern char*** p_argv;
 
+void app_activate(GApplication *application, gpointer user_data)
+{
+  DEB("APP activate");
+}
+
 void GtkHandler::init(bool xlib_lock)
 {
 #ifdef HAVE_X11_XLIB_H
@@ -93,11 +107,18 @@ void GtkHandler::init(bool xlib_lock)
     cerr << "Cannot initialise Xlib lock" << endl;
   }
 #endif
+
   /* DUECA graphics.
 
      Information on initialising graphics. */
-  I_SYS("Initializing gtk3 graphics");
-  gtk_init(p_argc, p_argv);
+  I_SYS("Initializing gtk4 application");
+
+  // create an application
+  app = gtk_application_new(APPLICATION_ID, G_APPLICATION_FLAGS_NONE);
+  g_signal_connect(app, "activate", G_CALLBACK(app_activate),
+  		   reinterpret_cast<gpointer>(this));
+  g_application_hold(G_APPLICATION(app));
+  
   runHooks();
 }
 
@@ -109,8 +130,19 @@ void GtkHandler::passControl()
      Information on passing control to graphics code. */
   I_SYS("Passing control to gtk 3.x");
 
+  // set the idle callback
   g_idle_add(call_environment_loop, NULL);
-  gtk_main();
+
+  // transfer to gtk application
+  int result = g_application_run(G_APPLICATION(app), *p_argc, *p_argv);
+  g_object_unref(app);
+  
+  if (result != 0) {
+    /* DUECA graphics.
+
+       Result after application run is non-zero */
+    W_MOD("Non-zero result from gtk application " << result);
+  }
 }
 
 void GtkHandler::returnControl()
@@ -120,7 +152,8 @@ void GtkHandler::returnControl()
 
      Information on commanding end of graphics code run. */
   I_SYS("Calling gtk_main_quit()");
-  gtk_main_quit();
+  g_application_release(G_APPLICATION(app));
+  //gtk_main_quit();
 }
 DUECA_NS_END
 

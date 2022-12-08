@@ -156,7 +156,7 @@ private:
   /** window delete selected */
   gboolean cbDelete(GtkWidget *window, GdkEvent *event, gpointer user_data);
   /** hover in the tree area */
-  gboolean cbHover(GtkWidget *window, GdkEventMotion *event,
+  gboolean cbHover(GtkWidget *window, GdkMotionEvent *event,
                    gpointer user_data);
   /** leave the tree area */
   gboolean cbLeave(GtkWidget *window, GdkEvent *event, gpointer user_data);

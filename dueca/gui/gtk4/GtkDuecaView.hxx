@@ -179,16 +179,19 @@ public:
       interface. */
 
   /** Bring up "about" dialog" */
-  void cbShowAbout(GtkMenuItem *menuitem, gpointer user_data);
+  void cbShowAbout(GSimpleAction *menuaction, GVariant *parameter,
+		   gpointer user_data);
 
   /** close the about dialog */
   void cbCloseAbout(GtkDialog *dialog, gpointer user_data);
 
   /** Bring up quit dialog. */
-  void cbShowQuit(GtkMenuItem *menuitem, gpointer user_data);
+  void cbShowQuit(GSimpleAction *menuitem, GVariant *parameter,
+		  gpointer user_data);
 
   /** File chooser for extra files. */
-  void cbExtraModDialog(GtkMenuItem *menuitem, gpointer user_data);
+  void cbExtraModDialog(GSimpleAction *menuitem, GVariant *parameter,
+			gpointer user_data);
 
   /** Read extra model file. */
   void cbReadMod(GtkWidget *widget, gpointer user_data);
