@@ -42,7 +42,8 @@ Gtk::Widget* GtkGladeWindow::getWidget(const std::string& name)
 
 void GtkGladeWindow::initGtkMM()
 {
-  Gtk::Main::init_gtkmm_internals();
+  // Not needed??
+  // Gtk::Main::init_gtkmm_internals();
   initialised_gtkmm = true;
 }
 

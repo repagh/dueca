@@ -134,7 +134,7 @@ bool ActivityView::complete()
     [DUECA_NS::NodeManager::single()->getNoOfNodes()];
 
   // GestureClick ?
-  
+
   for (unsigned ii = 0; ii <
          unsigned(DUECA_NS ::NodeManager::single()->getNoOfNodes()); ii++) {
 
@@ -146,35 +146,37 @@ bool ActivityView::complete()
     g_object_ref(gui.canvas[ii]);
 
     g_object_set_data(G_OBJECT(gui.canvas[ii]), "node",
-		      reinterpret_cast<gpointer>(ii));
+                      reinterpret_cast<gpointer>(ii));
     g_object_set_data(G_OBJECT(controller), "node",
-		      reinterpret_cast<gpointer>(ii));
-    
+                      reinterpret_cast<gpointer>(ii));
+
     // configure size and place it in the box
     gtk_box_append(GTK_BOX(gui.window["linebox"]), gui.canvas[ii]);
 
     // add a callback for expose and one for realize
     g_signal_connect(G_OBJECT(gui.canvas[ii]), "configure_event",
-                     G_CALLBACK(DUECA_NS::cbConfigure),
+                     G_CALLBACK(+[](GtkWidget *w, GdkEvent *e, gpointer av) {
+                       reinterpret_cast<ActivityView*>(av)->cbConfigure(w, e);
+                     }),
                      reinterpret_cast<gpointer>(this));
     g_signal_connect(G_OBJECT(gui.canvas[ii]), "draw",
                      G_CALLBACK(+[](GtkWidget *w, cairo_t *cr, gpointer av) {
-		       reinterpret_cast<ActivityView*>(av)->cbDraw(w, cr); }),
+                       reinterpret_cast<ActivityView*>(av)->cbDraw(w, cr); }),
                      reinterpret_cast<gpointer>(this));
     g_signal_connect(G_OBJECT(controller), "pressed",
                      G_CALLBACK(+[](GtkGestureClick* gesture, gint n_press,
-				    gdouble x, gdouble y, gpointer av) {
-		       reinterpret_cast<ActivityView*>(av)->cbDrawAreaButtonPress
-			 (n_press, x, y, reinterpret_cast<unsigned long>
-			  (g_object_get_data(G_OBJECT(gesture), "node"))); }),
-		     reinterpret_cast<gpointer>(this));
+                                    gdouble x, gdouble y, gpointer av) {
+                       reinterpret_cast<ActivityView*>(av)->cbDrawAreaButtonPress
+                         (n_press, x, y, reinterpret_cast<unsigned long>
+                          (g_object_get_data(G_OBJECT(gesture), "node"))); }),
+                     reinterpret_cast<gpointer>(this));
     g_signal_connect(G_OBJECT(controller), "released",
                      G_CALLBACK(+[](GtkGestureClick* gesture, gint n_press,
-				    gdouble x, gdouble y, gpointer av) {
-		       reinterpret_cast<ActivityView*>(av)->cbDrawAreaButtonRelease
-			 (n_press, x, y, reinterpret_cast<unsigned long>
-			  (g_object_get_data(G_OBJECT(gesture), "node"))); }),
-		     reinterpret_cast<gpointer>(this));
+                                    gdouble x, gdouble y, gpointer av) {
+                       reinterpret_cast<ActivityView*>(av)->cbDrawAreaButtonRelease
+                         (n_press, x, y, reinterpret_cast<unsigned long>
+                          (g_object_get_data(G_OBJECT(gesture), "node"))); }),
+                     reinterpret_cast<gpointer>(this));
     gtk_widget_show(gui.canvas[ii]);
   }
 
@@ -242,7 +244,9 @@ void ActivityView::cbUpdate(GtkButton* button, gpointer gp)
   // add start tick to window
   char s_tick[12];
   snprintf(s_tick, 12, "%11d", request_start);
-  gtk_entry_set_text(GTK_ENTRY(gui.window["starttick"]), s_tick);
+  gtk_entry_buffer_set_text
+    (gtk_entry_get_buffer(GTK_ENTRY(gui.window["starttick"])),
+     s_tick, strlen(s_tick));
 
   // remove the selection
   hl.end = 0;
@@ -311,7 +315,7 @@ int ActivityView::cbViewScroll(GtkWidget* scroll, GdkButtonEvent *e,
   return FALSE;
 }
 
-int ActivityView::cbDraw(GtkWidget* w, cairo_t *cr, gpointer data)
+int ActivityView::cbDraw(GtkWidget* w, cairo_t *cr)
 {
   DEB("draw event area "
       << long(g_object_get_data(G_OBJECT(w), "node")));
@@ -432,56 +436,48 @@ int ActivityView::cbConfigure(GtkWidget* w, GdkEvent *ev)
   return TRUE;
 }
 
-int ActivityView::cbDrawAreaButtonPress(GtkWidget *w, GdkButtonEvent *ev)
+void ActivityView::cbDrawAreaButtonPress(gint n_press, gdouble x, gdouble y,
+                                         unsigned area)
 {
-  DEB(getId() << classname << " button " << ev->button <<
-      " press, at " << ev->x << ',' << ev->y);
-
-  // only react to 1st button
-  if (ev->button != 1) return FALSE;
+  DEB(getId() << classname << " button press, at " << x << ',' << y);
 
   // figure out which of the drawing areas
-  hlnew.node = long(g_object_get_data(G_OBJECT(w), "node"));
+  hlnew.node = area;
 
   // check manager number from y coordinate
   hlnew.level = int(current_logs[hlnew.node].getNumLevels() -
-                    (ev->y - LINESPACE/2) / LINESPACE);
+                    (y - LINESPACE/2) / LINESPACE);
 
   // remember where button was pressed,
-  hlnew.start = int(ev->x);
+  hlnew.start = int(x);
   hlnew.end = 1;
 
   DEB(getId() << classname << " new hl set up, node=" << hlnew.node <<
       " level=" << hlnew.level << " start=" << hlnew.start);
-
-  return TRUE;
 }
 
-int ActivityView::cbDrawAreaButtonRelease(GtkWidget *w, GdkButtonEvent *ev)
+void ActivityView::cbDrawAreaButtonRelease(gint n_press, gdouble x, gdouble y,
+                                          unsigned area)
 {
-  DEB(getId() << classname << " button " << ev->button <<
-      " release, at " << ev->x << ',' << ev->y);
-
-  // only react to 1st button
-  if (ev->button != 1) return FALSE;
+  DEB(getId() << classname << " button release, at " << x << ',' << y);
 
   // check that release corresponds to press
-  int node = long(g_object_get_data(G_OBJECT(w), "node"));
+  int node = area;
   int level = int(current_logs[node].getNumLevels() -
-                  (ev->y - LINESPACE/2) / LINESPACE);
+                  (y - LINESPACE/2) / LINESPACE);
 
   if (!hlnew.end || node != hlnew.node || level != hlnew.level ||
-      hlnew.start == int(ev->x)) {
+      hlnew.start == int(x)) {
     DEB(getId() << classname << " different node/level; " << node <<
         ' ' << level);
     hlnew.end = 0;
-    return TRUE;
   }
 
   // define highlight area, regardless of moving backwards with mouse
-  if (hlnew.start < int(ev->x)) { hlnew.end = int(ev->x); }
-  else { hlnew.end = hlnew.start; hlnew.start = int(ev->x); }
+  if (hlnew.start < int(x)) { hlnew.end = int(x); }
+  else { hlnew.end = hlnew.start; hlnew.start = int(x); }
 
+  GtkWidget *w = gui.canvas[node];
   GtkAllocation alc; gtk_widget_get_allocation(w, &alc);
 
   // figure out start and end times.
@@ -532,8 +528,6 @@ int ActivityView::cbDrawAreaButtonRelease(GtkWidget *w, GdkButtonEvent *ev)
   hl = hlnew; hlnew.end = 0;
   g_object_set_data(G_OBJECT(w), "dirty", reinterpret_cast<gpointer>(1));
   gtk_widget_queue_draw(w);
-
-  return TRUE;
 }
 
 template<class T>

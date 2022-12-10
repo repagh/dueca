@@ -83,7 +83,7 @@ public:
 
   /** React to a button release on a drawing area, by completing a
       highlight. */
-  int cbDrawAreaButtonRelease(gint n_press, gdouble x, gdouble y, unsigned area);
+  void cbDrawAreaButtonRelease(gint n_press, gdouble x, gdouble y, unsigned area);
 };
 
 DUECA_NS_END

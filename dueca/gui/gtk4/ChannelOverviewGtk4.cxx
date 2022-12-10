@@ -16,7 +16,6 @@
         license         : EUPL-1.2
 */
 
-
 #define ChannelOverviewGtk4_cxx
 
 // include the definition of the module class
@@ -132,14 +131,14 @@ namespace {
   static GdkPixbuf *select_icon[3] = { NULL, NULL, NULL };
 };
 
-static void ChannelOverviewGtk3_monitortoggle(GtkCellRendererToggle *cell,
+static void ChannelOverviewGtk4_monitortoggle(GtkCellRendererToggle *cell,
                                               gchar *path_str,
                                               gpointer data)
 {
-  reinterpret_cast<ChannelOverviewGtk3*>(data)->monitorToggle(cell, path_str);
+  reinterpret_cast<ChannelOverviewGtk4*>(data)->monitorToggle(cell, path_str);
 }
 
-bool ChannelOverviewGtk3::complete()
+bool ChannelOverviewGtk4::complete()
 {
   static GladeCallbackTable cb_table[] = {
     { "close", "clicked",
@@ -153,10 +152,6 @@ bool ChannelOverviewGtk3::complete()
 #endif
     { "channel_use_view", "delete_event",
       gtk_callback(&_ThisModule_::cbDelete)},
-    { "channel_overview", "motion_notify_event",
-      gtk_callback(&_ThisModule_::cbHover)},
-    { "channel_overview", "leave_notify_event",
-      gtk_callback(&_ThisModule_::cbLeave)},
     { NULL }
   };
 
@@ -216,7 +211,7 @@ bool ChannelOverviewGtk3::complete()
   GtkCellRenderer *pxbrenderer = gtk_cell_renderer_pixbuf_new();
   GtkCellRenderer *tglrenderer = gtk_cell_renderer_toggle_new();
   g_signal_connect(G_OBJECT(tglrenderer), "toggled",
-                   G_CALLBACK(ChannelOverviewGtk3_monitortoggle),
+                   G_CALLBACK(ChannelOverviewGtk4_monitortoggle),
                    reinterpret_cast<gpointer>(this));
 
 
@@ -360,12 +355,12 @@ bool ChannelOverviewGtk3::complete()
 }
 
 // destructor
-ChannelOverviewGtk3::~ChannelOverviewGtk3()
+ChannelOverviewGtk4::~ChannelOverviewGtk4()
 {
   //
 }
 
-void ChannelOverviewGtk3::reflectChanges(unsigned ichan)
+void ChannelOverviewGtk4::reflectChanges(unsigned ichan)
 {
   GtkTreeIter itchan;
 
@@ -412,7 +407,7 @@ void ChannelOverviewGtk3::reflectChanges(unsigned ichan)
   }
 }
 
-void ChannelOverviewGtk3::reflectChanges(unsigned ichan, unsigned ientry)
+void ChannelOverviewGtk4::reflectChanges(unsigned ichan, unsigned ientry)
 {
   // was the entry already in the tree?
   GtkTreeIter itchan, itentry;
@@ -501,7 +496,7 @@ struct match_readid
   { return readerid == s->rdata.creationid; }
 };
 
-void ChannelOverviewGtk3::reflectChanges(unsigned ichan, unsigned ientry,
+void ChannelOverviewGtk4::reflectChanges(unsigned ichan, unsigned ientry,
                                          uint32_t ireader)
 {
   // was the entry already in the tree?
@@ -603,7 +598,7 @@ void ChannelOverviewGtk3::reflectChanges(unsigned ichan, unsigned ientry,
   }
 }
 
-void ChannelOverviewGtk3::reflectCounts()
+void ChannelOverviewGtk4::reflectCounts()
 {
   // was the entry already in the tree?
   GtkTreeIter itchan, itentry, itreader;
@@ -669,30 +664,30 @@ void ChannelOverviewGtk3::reflectCounts()
   }
 }
 
-void ChannelOverviewGtk3::showChanges()
+void ChannelOverviewGtk4::showChanges()
 {
   gtk_widget_queue_draw(GTK_WIDGET(window["channel_overview"]));
 }
 
-void ChannelOverviewGtk3::cbClose(GtkButton* button, gpointer gp)
+void ChannelOverviewGtk4::cbClose(GtkButton* button, gpointer gp)
 {
   g_signal_emit_by_name(G_OBJECT(menuitem), "activate", NULL);
 }
 
-void ChannelOverviewGtk3::cbRefreshCounts(GtkButton* button, gpointer gp)
+void ChannelOverviewGtk4::cbRefreshCounts(GtkButton* button, gpointer gp)
 {
   refreshCounts();
 }
 
-gboolean ChannelOverviewGtk3::
+gboolean ChannelOverviewGtk4::
 cbDelete(GtkWidget *window, GdkEvent *event, gpointer user_data)
 {
   g_signal_emit_by_name(G_OBJECT(menuitem), "activate", NULL);
   return TRUE;
 }
 
-gboolean ChannelOverviewGtk3::
-cbHover(GtkWidget *widget, GdkEventMotion *event, gpointer user_data)
+void ChannelOverviewGtk4::
+cbHover(GtkGesture* gesture, gdouble x, gdouble y)
 {
   GtkTreePath *path;
   GtkTreeViewColumn *column;
@@ -745,7 +740,7 @@ cbHover(GtkWidget *widget, GdkEventMotion *event, gpointer user_data)
 }
 
 
-gboolean ChannelOverviewGtk3::
+gboolean ChannelOverviewGtk4::
 cbLeave(GtkWidget *window, GdkEvent *event, gpointer user_data)
 {
   iwindow.hide();
@@ -753,9 +748,9 @@ cbLeave(GtkWidget *window, GdkEvent *event, gpointer user_data)
   return TRUE;
 }
 
-void ChannelOverviewGtk3::InfoWindow::init()
+void ChannelOverviewGtk4::InfoWindow::init()
 {
-  infowindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+  infowindow = gtk_window_new();
   label = gtk_label_new(NULL);
   gtk_container_add(GTK_CONTAINER(infowindow), label);
   gtk_window_set_decorated(GTK_WINDOW(infowindow), FALSE);
@@ -763,7 +758,7 @@ void ChannelOverviewGtk3::InfoWindow::init()
   visible = false;
 }
 
-void ChannelOverviewGtk3::InfoWindow::
+void ChannelOverviewGtk4::InfoWindow::
 update(const gchararray& txt, gint x, gint y)
 {
   text = txt;
@@ -775,14 +770,14 @@ update(const gchararray& txt, gint x, gint y)
   }
 }
 
-void ChannelOverviewGtk3::InfoWindow::hide()
+void ChannelOverviewGtk4::InfoWindow::hide()
 {
   text = "";
   gtk_widget_hide(infowindow);
   visible = false;
 }
 
-void ChannelOverviewGtk3::closeMonitor(unsigned ichan, unsigned ientry)
+void ChannelOverviewGtk4::closeMonitor(unsigned ichan, unsigned ientry)
 {
   GtkTreeIter itchan, itentry;
   gboolean not_at_end = gtk_tree_model_get_iter_first
@@ -825,7 +820,7 @@ void ChannelOverviewGtk3::closeMonitor(unsigned ichan, unsigned ientry)
   showChanges();
 }
 
-void ChannelOverviewGtk3::monitorToggle(GtkCellRendererToggle *cell,
+void ChannelOverviewGtk4::monitorToggle(GtkCellRendererToggle *cell,
                                         gchar *path_str)
 {
   GtkTreeIter  iter;
@@ -859,7 +854,7 @@ void ChannelOverviewGtk3::monitorToggle(GtkCellRendererToggle *cell,
   if (enabled == TRUE) {
     if (infolist[chanid]->entries[entryid]->monitor == NULL) {
       infolist[chanid]->entries[entryid]->monitor = new
-        ChannelDataMonitorGtk3(this, infolist[chanid]->name,
+        ChannelDataMonitorGtk4(this, infolist[chanid]->name,
                                chanid, entryid, monitor_gladefile);
     }
     infolist[chanid]->entries[entryid]->monitor->open();

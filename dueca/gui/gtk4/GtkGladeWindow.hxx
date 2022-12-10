@@ -374,11 +374,13 @@ public:
   void connectCallbacksAfter(gpointer client, const GladeCallbackTable *table,
 			     bool warn = true);
 
+#if 0
   /** Connect GObject in-code callbacks, note that this is effective
       only once, and called when connect_signals=true in the readGladeFile
       function. */
   void connectCallbackSymbols(gpointer user_data=NULL);
-
+#endif
+  
   /** Access the widgets in this interface.
 
       Most objects in the interface will be widgets; note that for
@@ -415,13 +417,18 @@ public:
 
   /** Struct for mapping enum name to representation string */
   struct OptionMapping {
+    /** C++ name of an enumerated value */
     const char* ename;
+    /** String by which this should be shown in the interface */
     const char* representation;
   };
 
   /** Struct for describing mappings */
   struct OptionMappings {
+    /** C++ name of the dco member variable */
     const char* dcomember;
+    /** Ponter to a NULL-value terminated list of mappings for the
+        enumerated value to representation */
     const OptionMapping *mapping;
   };
 
@@ -445,6 +452,8 @@ public:
       @param mapping   Optional mapping table, defining sets of
                        member name + enum string, to representation,
                        NULL-terminated.
+      @param warn      If true, provide warnings when gui elements
+                       cannot be found, or have the wrong type.
   */
   bool fillOptions(const char* dcoclass,
                    const char* format, const char* arrformat = NULL,

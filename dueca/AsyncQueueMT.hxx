@@ -82,11 +82,11 @@ class AsyncQueueMT
 
   /** write back a previously obtained spare */
   friend void write_list_back<T,Alloc>(AsyncQueueMT<T,Alloc>& list,
-                                       typename Alloc::element_ptr ptr);
+                                       typename Alloc::element_ptr elt);
 
   /** return a previously obtained spare to the spares */
   friend void return_list_elt<T,Alloc>(AsyncQueueMT<T,Alloc>& list,
-                                       typename Alloc::element_ptr ptr);
+                                       typename Alloc::element_ptr elt);
 
   /** Shorthand for a single element in the linked list */
   typedef typename Alloc::element_type element_type;
@@ -378,7 +378,7 @@ get_list_spare(AsyncQueueMT<T,Alloc>& list)
 */
 template <class T, class Alloc>
 inline void write_list_back(AsyncQueueMT<T,Alloc>& list,
-                     typename Alloc::element_ptr elt)
+                            typename Alloc::element_ptr elt)
 {
   list.writeTail(elt);
 }
