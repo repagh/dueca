@@ -140,6 +140,7 @@ bool ActivityView::complete()
 
     // create the canvas
     GtkGesture *controller = gtk_gesture_click_new();
+    gtk_event_controller_set_propagation_phase(GTK_PHASE_TARGET);
     gui.canvas[ii] = gtk_drawing_area_new();
     gtk_widget_add_controller(gui.canvas[ii], GTK_EVENT_CONTROLLER(controller));
     gtk_widget_set_size_request(gui.canvas[ii], 400, 28);

@@ -260,7 +260,7 @@ bool ChannelOverviewGtk4::complete()
   // allow sorting
   gtk_tree_view_set_headers_clickable(GTK_TREE_VIEW(channeltree), TRUE);
 
-
+  // create icons for different channel types
   if (stream_icon == NULL) {
     GError *error = NULL;
     event_icon = gdk_pixbuf_new_from_file
@@ -341,6 +341,14 @@ bool ChannelOverviewGtk4::complete()
       return false;
     }
   }
+
+  // create an eventcontroller for tracking motion
+  // GtkEventController *mcontrol = gtk_event_controller_motion_new();
+  // gtk_event_controller_set_propagation_phase(GTK_PHASE_TARGET);
+  // have to change this to a list item factories, and set tooltip for the
+  // hover effect?
+  
+  
   // window.show();
   iwindow.init();
 
@@ -689,13 +697,9 @@ cbDelete(GtkWidget *window, GdkEvent *event, gpointer user_data)
 void ChannelOverviewGtk4::
 cbHover(GtkGesture* gesture, gdouble x, gdouble y)
 {
-  GtkTreePath *path;
-  GtkTreeViewColumn *column;
-  gint cellx, celly;
-  GtkTreeView *treeview = GTK_TREE_VIEW(widget);
+  GtkTreeView *treeview = GTK_TREE_VIEW(window["channel_overview"]);
   gtk_tree_view_get_path_at_pos
-    (treeview, event->x, event->y,
-     &path, &column, &cellx, &celly);
+    (treeview, x, y, &path, &column, &cellx, &celly);
 
   gint nidx = gtk_tree_path_get_depth(path);
   GtkTreeIter iter;
