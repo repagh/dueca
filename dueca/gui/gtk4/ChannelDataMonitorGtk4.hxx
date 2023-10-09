@@ -11,8 +11,11 @@
         license         : EUPL-1.2
 */
 
-#ifndef ChannelDataMonitorGtk4_hxx
-#define ChannelDataMonitorGtk4_hxx
+// Finally some useful hints:
+// https://stackoverflow.com/questions/76711050/how-to-create-a-treeview-like-ui-using-columnview-in-gtk4
+
+
+#pragma once
 
 #include "ChannelOverviewGtk4.hxx"
 #include <ChannelDataMonitor.hxx>
