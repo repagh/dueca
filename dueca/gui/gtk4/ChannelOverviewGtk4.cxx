@@ -94,7 +94,7 @@ ChannelOverviewGtk4::ChannelOverviewGtk4(Entity* e, const char* part, const
 
   // initialize the data you need in your simulation or process
   gladefile(DuecaPath::prepend("channel_overview-gtk4.ui")),
-  monitor_gladefile(DuecaPath::prepend("channel_datamonitor.glade3")),
+  monitor_gladefile(DuecaPath::prepend("channel_datamonitor-gtk4.ui")),
   window(),
   store(NULL),
   menuitem(NULL),
@@ -138,6 +138,13 @@ static void ChannelOverviewGtk4_monitortoggle(GtkCellRendererToggle *cell,
   reinterpret_cast<ChannelOverviewGtk4*>(data)->monitorToggle(cell, path_str);
 }
 
+struct 
+
+static GListModel* channelinfo_creator(GObject *item, gpointer userdata)
+{
+  
+  
+
 bool ChannelOverviewGtk4::complete()
 {
   static GladeCallbackTable cb_table[] = {
@@ -145,11 +152,6 @@ bool ChannelOverviewGtk4::complete()
       gtk_callback(&_ThisModule_::cbClose) },
     { "refresh_times", "clicked",
       gtk_callback(&_ThisModule_::cbRefreshCounts) },
-#if 0
-    { "pause_times", "clicked", gtk_callback(&_ThisModule_::cbPauseTimes) },
-    { "run_times", "clicked", gtk_callback(&_ThisModule_::cbRunTimes) },
-    { "interval", "value-changed", gtk_callback(&_ThisModule_::cbInterval) },
-#endif
     { "channel_use_view", "delete_event",
       gtk_callback(&_ThisModule_::cbDelete)},
     { NULL }
@@ -178,7 +180,14 @@ bool ChannelOverviewGtk4::complete()
     return res;
   }
 
-  GtkWidget *channeltree = GTK_WIDGET(window["channel_overview"]);
+  
+  
+  GtkWidget *channelview = GTK_WIDGET(window["channel_overview"]);
+
+  GListModel *gtk_tree_list_model_new(store, FALSE, FALSE, creator);
+
+  GtkSelection *select = gtk_single_selection_new(listmodel);
+  
 
   // channel view shows:
   store = gtk_tree_store_new
