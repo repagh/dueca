@@ -10,7 +10,7 @@ from .policycondition import PolicyCondition, checkAndSet
 from ..matchreference import MatchReferenceDco
 
 class UsesDco(PolicyCondition):
-    
+
     # Determine how param arguments need to be stripped
     default_strip = dict(project='both', dco='both', resultvar='both')
 
@@ -26,7 +26,7 @@ class UsesDco(PolicyCondition):
         dco : str
             Dco objects (without .dco suffix).
         resultvar : str, optional
-            Result variable name. Details of the check Will be passed on 
+            Result variable name. Details of the check Will be passed on
             to remaining checks and actions.
         **kwargs : dict
             Remaining, unused variables.
@@ -36,32 +36,32 @@ class UsesDco(PolicyCondition):
         None.
 
         """
-        self.pproject, self.dco = project, dco
+        self.pproject, self.dco, self.regex = project, dco, regex
         self.resultvar = resultvar
 
     def holds(self, p_commobjects, **kwargs):
-        
+
         res = list()
         newvars = dict()
-        
+
         for m, commobj in p_commobjects.items():
             res.append(MatchReferenceDco(
-                dco=self.dco, dco_project=self.pproject, 
+                dco=self.dco, dco_project=self.pproject,
                 module=m, module_project=kwargs.get('p_project'),
                 fname=f'{kwargs.get("p_project")}/{m}/comm-objects.lst'))
             if commobj.contains(
                 project=self.pproject, dco=self.dco):
                 res[-1].value = True
                 res[-1].commobjects = commobj
-            
-                                              
+
+
         checkAndSet(self.resultvar, newvars, res)
-            
+
         return (
-            len([ r for r in res if r.value ]) > 0, 
-            (res and 
+            len([ r for r in res if r.value ]) > 0,
+            (res and
              [ f'Found {self.pproject}/comm-objects/{self.dco}.dco in {r.filename}'
-                  for r in res ]) 
+                  for r in res ])
             or [ f'FALSE: no {self.pproject}/comm-objects/{self.dco}.dco found'],
             newvars)
 

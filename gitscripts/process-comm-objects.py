@@ -16,6 +16,7 @@ _dco = re.compile(
 
 includelines = []
 cmake_binary_dir = sys.argv[2]
+thisproject = sys.argv[1].split('/').get(-3, 'cannot find project from relative path')
 
 with open(sys.argv[1], 'r') as f:
     for l in f:
@@ -29,13 +30,16 @@ with open(sys.argv[1], 'r') as f:
             continue
 
         # should match
-        res = _dco.match(l.strip())
         if not res:
             print("Malformed line at comm-objects.lst file:"
                   f"{l}")
             continue
 
         project, dco = res.group(1), res.group(2)
+
+        if project.lower == '@thisproject@':
+            project = thisproject
+
         # includelines.append(
         #     f'#include "../../{project}/comm-objects/{dco}.hxx"\n')
         #includelines.append(
