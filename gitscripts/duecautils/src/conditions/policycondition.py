@@ -8,10 +8,12 @@ Created on Sun May  2 18:35:52 2021
 
 from ..xmlutil import XML_tag, XML_comment
 from ..verboseprint import dprint
-import sys    
+from ..param import Param
+import sys
 
 class PolicyCondition:
 
+    # dictionary of available conditions
     _conditions = {}
 
     def __init__(self):
@@ -36,23 +38,9 @@ class PolicyCondition:
             if XML_comment(par):
                 continue
             elif XML_tag(par, 'param'):
-                pname = par.get('name')
-                pstrip = par.get('strip', None)
-                
-                if pstrip is None:
-                    pstrip = \
-                        cls._conditions[name].default_strip.get(pname, '')
-
-                dprint(f"Param {pname}, strip {pstrip}, value {par.text}")
-                if pstrip.lower() == 'left':
-                    pval = par.text.lstrip()
-                elif pstrip.lower() == 'right':
-                    pval = par.text.rstrip()
-                elif pstrip.lower() == 'true' or pstrip.lower() == 'both':
-                    pval = par.text.strip()
-                else:
-                    pval = par.text
-                params[pname] = pval
+                p = Param(par,
+                    cls._conditions[name].default_strip.get(pname, ''))
+                params[p.name] = p
 
         return cls._conditions[name](_node=node, **params)
 
@@ -89,11 +77,11 @@ class ConditionConstant(PolicyCondition):
 
     # Determine how param arguments need to be stripped
     default_strip = dict(value='both')
-    
+
     def __init__(self, **kwargs):
         super(ConditionConstant, self).__init__()
         self.value = bool(kwargs.get('value', False))
-        
+
     def holds(self, **kwargs):
         return (self.value, [f'Constant condition {self.value}'], dict())
 

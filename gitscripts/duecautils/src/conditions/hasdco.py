@@ -40,6 +40,14 @@ class UsesDco(PolicyCondition):
         self.resultvar = resultvar
 
     def holds(self, p_commobjects, **kwargs):
+        """Check whether a specific module uses a DCO file
+
+        Arguments:
+            p_commobjects -- Required argument
+
+        Returns:
+            _description_
+        """
 
         res = list()
         newvars = dict()
