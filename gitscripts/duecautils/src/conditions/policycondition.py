@@ -32,16 +32,20 @@ class PolicyCondition:
     @classmethod
     def create(cls, node):
 
+        # condition type
         name = node.get('type')
+
+        # collect the parameters
         params = { }
         for par in node:
             if XML_comment(par):
                 continue
             elif XML_tag(par, 'param'):
                 p = Param(par,
-                    cls._conditions[name].default_strip.get(pname, ''))
+                    cls._conditions[name].default_strip.get(name, ''))
                 params[p.name] = p
 
+        # create the appropriate condition
         return cls._conditions[name](_node=node, **params)
 
 
@@ -52,8 +56,8 @@ class ComplexCondition(PolicyCondition):
         self.subconditions = []
         self.resultvar = None
         try:
-            self.resultvar = resultvar
-            self.inputvars = list(map(str.strip, inputvar.split(',')))
+            self.resultvar = str(resultvar)
+            self.inputvars = list(map(str.strip, str(inputvar).split(',')))
             dprint(f"Compound condition, input {self.inputvars} ({len(self.inputvars)})"
                    f" output {self.resultvar}")
         except AttributeError as e:

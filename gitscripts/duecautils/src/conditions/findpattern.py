@@ -14,12 +14,12 @@ import re
 import os
 
 class FindPattern(PolicyCondition):
-    
+
     # Determine how param arguments need to be stripped
     default_strip = dict(fileglob='both', pattern='both', resultvar='both',
                          label='both', limit='both')
 
-    def __init__(self, fileglob: str, pattern: str, label: str='default', 
+    def __init__(self, fileglob: str, pattern: str, label: str='default',
                  resultvar=None, limit=0, **kwargs):
         """
         Check for a pattern in the indicated files.
@@ -41,11 +41,11 @@ class FindPattern(PolicyCondition):
         None.
 
         """
-        self.fileglob, self.pattern = fileglob, pattern
-        self.resultvar = resultvar
-        self.label = label
+        self.fileglob, self.pattern = str(fileglob), str(pattern)
+        self.resultvar = str(resultvar)
+        self.label = str(label)
         try:
-            self.limit = int(limit)
+            self.limit = int(str(limit))
         except ValueError:
             raise ValueError(
                 f"{self.__class__.__name__}, cannont interpret 'limit' "
@@ -81,7 +81,7 @@ class FindPattern(PolicyCondition):
                         result[fn].addSpan(
                             MatchSpan(
                                 span=(offset+mres.span()[0],
-                                      offset+mres.span()[1]), 
+                                      offset+mres.span()[1]),
                                 count=count), self.label)
                         offset += mres.span()[-1]
                         count += 1

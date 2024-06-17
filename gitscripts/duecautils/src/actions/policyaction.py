@@ -7,6 +7,7 @@ Created on Sun May  2 15:58:35 2021
 """
 
 from ..xmlutil import XML_tag, XML_comment
+from ..param import Param
 
 class PolicyAction:
     """ Interface class for actions/edits for implementing a policy.
@@ -116,7 +117,9 @@ class PolicyAction:
                 continue
             elif XML_tag(par, 'param'):
                 p = Param(par)
-                params[p.name] = p
+                # for conditions, params may be regexes, for actions params
+                # should be plain strings
+                params[p.name] = p.value()
 
         try:
             return cls._actions[name](_node=node, **params)

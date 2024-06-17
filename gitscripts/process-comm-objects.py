@@ -12,11 +12,15 @@ import sys
 _empty = re.compile('^[ \t]*$')
 _comment = re.compile("^#(.*)$")
 _dco = re.compile(
-    '^([^ \t/]+)/comm-objects/([^ \t.]+)\\.dco[ \t]*([^ \t#]*).*$')
+    '^(([^ \t/]+)(/comm-objects)?/)?([^ \t.]+)\\.dco[ \t]*(#.*)?$')
 
 includelines = []
 cmake_binary_dir = sys.argv[2]
-thisproject = sys.argv[1].split('/').get(-3, 'cannot find project from relative path')
+try:
+    thisproject = sys.argv[1].split('/')[-3]
+except IndexError:
+    print(f"Could not find project name from {sys.argv[1]}")
+    thisproject = ""
 
 with open(sys.argv[1], 'r') as f:
     for l in f:
@@ -30,14 +34,15 @@ with open(sys.argv[1], 'r') as f:
             continue
 
         # should match
+        res = _dco.match(l.strip())
         if not res:
             print("Malformed line at comm-objects.lst file:"
                   f"{l}")
             continue
 
-        project, dco = res.group(1), res.group(2)
+        project, dco, comment = res.group(2), res.group(4), res.group(5)
 
-        if project.lower == '@thisproject@':
+        if project is None:
             project = thisproject
 
         # includelines.append(

@@ -10,6 +10,7 @@ import os
 import re
 from .verboseprint import dprint
 import sys
+from .param import Param
 
 _dcoline = re.compile(
     r'^[ \t]*([^/]+)/comm-objects/(.*).dco[ \t]*#*.*[ \t\n]*')
@@ -102,6 +103,9 @@ class CommObjectsList:
         # dprint(list(map(str, self.dco)), CommObjectDef(None, project, dco))
         return CommObjectDef(None, project, dco) in self.dco
 
+    def matches(self, project: Param, dco: Param):
+        return [ d for d in self.dco
+            if project.match(d.base_project) and dco.match(d.dco)]
 
     def doubles(self):
         found = set()

@@ -36,17 +36,22 @@ class UsesDco(PolicyCondition):
         None.
 
         """
-        self.pproject, self.dco, self.regex = project, dco, regex
+        self.pproject, self.dco = project, dco
         self.resultvar = resultvar
 
-    def holds(self, p_commobjects, **kwargs):
+    def holds(self, p_commobjects, p_project, **kwargs):
         """Check whether a specific module uses a DCO file
 
         Arguments:
-            p_commobjects -- Required argument
+            p_commobjects -- dictionary, keyed with module names, per-module
+                             all dco files?
+            p_project     -- project hosting the module
 
         Returns:
-            _description_
+            Tuple (bool: true if match found,
+            list explaining all maching dcos,
+            dict with new variables for further processing
+            )
         """
 
         res = list()
@@ -56,11 +61,12 @@ class UsesDco(PolicyCondition):
             res.append(MatchReferenceDco(
                 dco=self.dco, dco_project=self.pproject,
                 module=m, module_project=kwargs.get('p_project'),
-                fname=f'{kwargs.get("p_project")}/{m}/comm-objects.lst'))
-            if commobj.contains(
-                project=self.pproject, dco=self.dco):
-                res[-1].value = True
-                res[-1].commobjects = commobj
+                fname=f'{p_project}/{m}/comm-objects.lst',
+                commobjects = commobj))
+            #if commobj.contains(
+            #    project=self.pproject, dco=self.dco):
+            #    res[-1].value = True
+            #    res[-1].commobjects = commobj
 
 
         checkAndSet(self.resultvar, newvars, res)

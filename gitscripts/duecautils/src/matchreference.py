@@ -60,13 +60,16 @@ class MatchReference:
 
 class MatchReferenceDco(MatchReference):
 
-    def __init__(self, dco: str, dco_project: str,
+    def __init__(self, dco, dco_project,
                  module: str, module_project: str,
-                 fname: str, value: bool=False):
+                 fname: str, commobjects):
         self.dco = dco
         self.dco_project = dco_project
         self.module = module
         self.module_project = module_project
+        self.commobjects = commobjects.matches(dco_project, dco)
+        value = bool(self.commobjects)
+
         super(MatchReferenceDco, self).__init__(fname, value)
 
 """
