@@ -144,11 +144,11 @@ class ConditionOr(ComplexCondition):
 
     def __init__(self, _match='', **kwargs):
         _match = str(_match)
-        self.matchelts = list(map(str.strip, match.split(',')))
+        self.matchelts = list(map(str.strip, _match.split(',')))
         self.resultelts = {}
         for key, arg in kwargs.items():
             if key.startswith('result-'):
-                self.resultelts[key[len('result-'):]] = arg.strip()
+                self.resultelts[key[len('result-'):]] = arg.value().strip()
         self.trim = XML_interpret_bool(str(kwargs.get('trim', "false")))
         super(ConditionOr, self).__init__(**kwargs)
 

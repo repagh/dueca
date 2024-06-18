@@ -16,8 +16,8 @@ class HasModule(PolicyCondition):
     default_strip = dict(project='both', module='both', all_machines='both',
                          resultvar='both')
 
-    def __init__(self, project='', module=None, all_machines=False,
-                 resultvar=None, **kwargs):
+    def __init__(self, project='', module=None, all_machines="false",
+                 resultvar='', **kwargs):
         """
         Test whether a module is used for the current or any machine class.
 
@@ -41,9 +41,10 @@ class HasModule(PolicyCondition):
         None.
 
         """
+        # project and module may be Param objects
         self.pproject, self.module = project, module
-        self.resultvar = resultvar
-        self.all_machines = XML_interpret_bool(all_machines)
+        self.resultvar = str(resultvar)
+        self.all_machines = XML_interpret_bool(str(all_machines))
 
     def holds(self, p_modules, p_project, p_machine, **kwargs):
 
