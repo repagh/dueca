@@ -146,7 +146,7 @@ def _readPolicyFile(fname, openedFiles=None):
                 return policies
 
     except ValueError as e:
-        print(f"Cannot read policies from url {fname}: {e}",
+        print(f"Cannot parse policies from url {fname}: {e}",
              file=sys.stderr)
 
     return policies

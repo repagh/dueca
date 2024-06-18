@@ -13,7 +13,8 @@ import sys
 from .param import Param
 
 _dcoline = re.compile(
-    r'^[ \t]*([^/]+)/comm-objects/(.*).dco[ \t]*#*.*[ \t\n]*')
+    r'^(([^ \t/]+)(/comm-objects)?/)?([^ \t.]+)\.dco[ \t]*(#.*)?[ \t\n]*$')
+
 _commentline = re.compile(
     r'^[ \t]*#.*[ \t\n]*$')
 '''
@@ -22,14 +23,18 @@ print(res.group(0), res.group(1), res.group(2))
 res = _commentline.fullmatch("blabla #comment")
 '''
 
-
+def noMatch(project, dco):
+    return False
 
 class CommObjectDef:
 
     def __init__(self, line=None, project=None, dco=None, comment=''):
 
-        if line is None and project is not None and dco is not None:
-            line = f'\n{project}/comm-objects/{dco}.dco{comment and "  # " + comment}\n'
+        if line is None and dco is not None:
+            if project is None:
+                line = f'\n{dco}.dco{comment and "  # " + comment}\n'
+            else:
+                line = f'\n{project}/{dco}.dco{comment and "  # " + comment}\n'
         self._line = line
         self.base_project = None
         self.dco = None
@@ -40,8 +45,8 @@ class CommObjectDef:
             return
         try:
             res = _dcoline.fullmatch(line)
-            self.base_project = res.group(1).strip()
-            self.dco = res.group(2).strip()
+            self.base_project = res.group(2)
+            self.dco = res.group(4)
             # dprint(f"DCO line {line} decoded as {self}")
         except:
             raise Exception(
@@ -103,9 +108,9 @@ class CommObjectsList:
         # dprint(list(map(str, self.dco)), CommObjectDef(None, project, dco))
         return CommObjectDef(None, project, dco) in self.dco
 
-    def matches(self, project: Param, dco: Param):
+    def matches(self, matchFunction):
         return [ d for d in self.dco
-            if project.match(d.base_project) and dco.match(d.dco)]
+            if matchFunction(d.base_project, d.dco)]
 
     def doubles(self):
         found = set()
@@ -118,7 +123,7 @@ class CommObjectsList:
     def add(self, project, dco, comment):
         if self.contains(project, dco):
             print(f'Not adding, {self.fname} already contains '
-                  f'{project}/comm-objects/{dco}.dco', file=sys.stderr)
+                  f'{project}/{dco}.dco', file=sys.stderr)
             return
         self.dco.append(CommObjectDef(None, project, dco, comment))
         self.clean = False

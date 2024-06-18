@@ -27,5 +27,7 @@ for a, p in (("testarea", "TestProject1"),):
 
     MoveAbout.push(f"{tpath}/{a}/{p}/{p}")
     policies = Policies(f"{tpath}/{a}/{p}/{p}",
-        True, [], True)
+        False, [f'file://{dpath}/gitscripts/default/homedco.xml'], True)
+    report = policies.inventory()
+    print(report)
     MoveAbout.pop()

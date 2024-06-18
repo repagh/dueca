@@ -42,7 +42,8 @@ class PolicyCondition:
                 continue
             elif XML_tag(par, 'param'):
                 p = Param(par,
-                    cls._conditions[name].default_strip.get(name, ''))
+                    cls._conditions[name].default_strip.get(
+                        par.get('name'), ''))
                 params[p.name] = p
 
         # create the appropriate condition
@@ -55,9 +56,12 @@ class ComplexCondition(PolicyCondition):
 
         self.subconditions = []
         self.resultvar = None
+        self.inputvars = []
         try:
-            self.resultvar = str(resultvar)
-            self.inputvars = list(map(str.strip, str(inputvar).split(',')))
+            if self.resultvar is not None:
+                self.resultvar = str(resultvar).strip()
+            if inputvar is not None:
+                self.inputvars = list(map(str.strip, str(inputvar).split(',')))
             dprint(f"Compound condition, input {self.inputvars} ({len(self.inputvars)})"
                    f" output {self.resultvar}")
         except AttributeError as e:
@@ -96,4 +100,4 @@ def checkAndSet(pname, params, value):
     if pname is not None:
         if pname in params:
             print(f"Warning, overwriting parameter {pname}")
-        params[pname] = value
+        params[str(pname).strip()] = value

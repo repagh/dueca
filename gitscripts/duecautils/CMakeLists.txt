@@ -38,7 +38,8 @@ set(DEPS
   ${CMAKE_CURRENT_SOURCE_DIR}/duecautils/commobjects.py
   ${CMAKE_CURRENT_SOURCE_DIR}/duecautils/conditions/borrowsmodule.py
   ${CMAKE_CURRENT_SOURCE_DIR}/duecautils/conditions/findpattern.py
-  ${CMAKE_CURRENT_SOURCE_DIR}/duecautils/conditions/hasdco.py
+  ${CMAKE_CURRENT_SOURCE_DIR}/duecautils/conditions/usesdco.py
+  ${CMAKE_CURRENT_SOURCE_DIR}/duecautils/conditions/homedco.py
   ${CMAKE_CURRENT_SOURCE_DIR}/duecautils/conditions/__init__.py
   ${CMAKE_CURRENT_SOURCE_DIR}/duecautils/conditions/policycondition.py
   ${CMAKE_CURRENT_SOURCE_DIR}/duecautils/conditions/conditionand.py

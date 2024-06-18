@@ -48,7 +48,7 @@ class HasModule(PolicyCondition):
 
     def holds(self, p_modules, p_project, p_machine, **kwargs):
 
-        if len(self.pproject) == 0:
+        if not self.pproject == 0:
             self.pproject = p_project
 
         if self.all_machines:

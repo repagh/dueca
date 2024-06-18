@@ -51,3 +51,7 @@ class Param:
     def __str__(self):
         if isinstance(self.val, str): return self.val
         raise ValueError("Cannot get string value from regex")
+
+    def __bool__(self):
+        if isinstance(self.val, str): return len(self.val) > 0
+        return True

@@ -11,17 +11,21 @@ Match results, to be returned
 
 - pattern found in a file:
     filename -> matched file
+    value -> true if any match was found
     module -> module where file was found (if applicable)
-    spans where the pattern was found
+    matches -> spans where the pattern was found
 
 - dco used in a dco list:
-    filename -> the dco list
-    module -> module that uses the dco
-    dco -> dco name
-    dco_project -> dco parent project
+    filename -> the dco comm-objects.lst
+    value -> true if any match was found
+    module -> module that uses the list (where located)
+    module_project -> project where module located (always home project)
+    dco -> list of lines in dco list, either empty, comment or dco definition
+           if value true, is a match to a criterion (uses-dco or home-dco)
 
 - module borrowed or owned in a platform:
     filename -> modules.xml file
+    value -> true if any match was found
     machine_class -> machine class
     module -> module name
     module_project -> module parent project
@@ -60,14 +64,12 @@ class MatchReference:
 
 class MatchReferenceDco(MatchReference):
 
-    def __init__(self, dco, dco_project,
+    def __init__(self, matchFunction,
                  module: str, module_project: str,
                  fname: str, commobjects):
-        self.dco = dco
-        self.dco_project = dco_project
         self.module = module
-        self.module_project = module_project
-        self.commobjects = commobjects.matches(dco_project, dco)
+        self.module_project = module_project.strip()
+        self.commobjects = commobjects.matches(matchFunction)
         value = bool(self.commobjects)
 
         super(MatchReferenceDco, self).__init__(fname, value)

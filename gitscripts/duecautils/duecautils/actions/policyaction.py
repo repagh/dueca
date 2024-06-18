@@ -117,9 +117,7 @@ class PolicyAction:
                 continue
             elif XML_tag(par, 'param'):
                 p = Param(par)
-                # for conditions, params may be regexes, for actions params
-                # should be plain strings
-                params[p.name] = p.value()
+                params[p.name] = p
 
         try:
             return cls._actions[name](_node=node, **params)
