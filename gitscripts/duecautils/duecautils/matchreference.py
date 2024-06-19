@@ -32,6 +32,8 @@ Match results, to be returned
 
 """
 from collections import defaultdict
+from .commobjects import CommObjectsList
+from .modules import Modules
 
 
 class MatchSpan:
@@ -44,9 +46,8 @@ class MatchSpan:
 
 class MatchReference:
 
-    def __init__(self, fname: str='', value=True):
+    def __init__(self, value=True):
 
-        self.filename = fname
         self.value = value
 
     def __repr__(self):
@@ -65,14 +66,10 @@ class MatchReference:
 class MatchReferenceDco(MatchReference):
 
     def __init__(self, matchFunction,
-                 module: str, module_project: str,
-                 fname: str, commobjects):
-        self.module = module
-        self.module_project = module_project.strip()
-        self.commobjects = commobjects.matches(matchFunction)
-        value = bool(self.commobjects)
+                 commobjects: CommObjectsList):
+        value = bool([c for c in commobjects if matchFunction(c)])
 
-        super(MatchReferenceDco, self).__init__(fname, value)
+        super(MatchReferenceDco, self).__init__(value)
 
 """
     def __repr__(self):
@@ -81,12 +78,11 @@ class MatchReferenceDco(MatchReference):
 
 class MatchReferenceModule(MatchReference):
 
-    def __init__(self, module: str, module_project: str,
-                 machine_class: str, fname: str, value: bool=False):
+    def __init__(self, matchFunction, modules: Modules):
         self.module = module
         self.module_project = module_project
         self.machine_class = machine_class
-        super(MatchReferenceModule, self).__init__(fname, value)
+        super(MatchReferenceModule, self).__init__(value)
 
 """
     def __repr__(self):

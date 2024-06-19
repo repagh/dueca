@@ -59,15 +59,13 @@ class HasModule(PolicyCondition):
         res = []
         newvars = dict()
 
+        def matchFunction(project, module):
+            return self.pproject == project and self.module == module
+
         for m in machines:
-            res.append(MatchReferenceModule(
-                module_project=self.pproject, module=self.module,
-                machine_class=m,
-                fname=f'{p_project}/.config/class/{m}/modules.xml'))
-            res[-1].modules = p_modules[m]
-            if p_modules[m].hasModule(
-                project=self.pproject, module=self.module):
-                res[-1].value = True
+
+            res.append(MatchReferenceModule(matchFunction=matchFunction,
+                modules=p_modules[m]))
 
         checkAndSet(self.resultvar, newvars, res)
         haves = [ r.filename for r in res if r.value ]

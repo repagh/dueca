@@ -27,14 +27,39 @@ def noMatch(project, dco):
     return False
 
 class CommObjectDef:
+    """ Data from a single dco reference in a comm-objects.lst
 
+        Can be either an empty or comment line, or a DCO reference
+    """
     def __init__(self, line=None, project=None, dco=None, comment=''):
+        """Parse a line, or compose a new line
 
-        if line is None and dco is not None:
-            if project is None:
-                line = f'\n{dco}.dco{comment and "  # " + comment}\n'
+        Parameters
+        ----------
+        line : str, optional
+            single line in comm-objects.lst, to be parsed. If none, a new
+            line is composed from the project, dco and comment values
+        project : str, optional
+            project name, can be None, indicating home project
+        dco : str, optional
+            base name for dco object (without extension), by default None
+        comment : str, optional
+            comment string for the line, by default ''
+
+        Raises
+        ------
+        ValueError
+            If a dco line cannot be parsed
+        """
+
+        if line is None:
+            if dco is not None:
+                if project is None:
+                    line = f'{dco}.dco{comment and "  # " + comment}\n'
+                else:
+                    line = f'{project}/{dco}.dco{comment and "  # " + comment}\n'
             else:
-                line = f'\n{project}/{dco}.dco{comment and "  # " + comment}\n'
+                line = f'{comment and "# " + comment}\n'
         self._line = line
         self.base_project = None
         self.dco = None
@@ -49,7 +74,7 @@ class CommObjectDef:
             self.dco = res.group(4)
             # dprint(f"DCO line {line} decoded as {self}")
         except:
-            raise Exception(
+            raise ValueError(
                 f'cannot decode {line} as dco specification or comment')
 
     def __eq__(self, other):

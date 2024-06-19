@@ -422,7 +422,6 @@ class Project:
     def hasModule(self, module: str):
         return module in map(str, self.modules)
 
-
 class Modules:
 
     def __init__(self, calldir='.', mclass=None):
@@ -909,3 +908,9 @@ sparse-checkout file. Re-run 'git pull'""", file=sys.stderr)
             return fname
         nelts = len(self.projectdir.split(os.sep)) - 1
         return os.sep.join(fname.split(os.sep)[nelts:])
+
+    def __iter__(self):
+        mlist = [ (p, m) for p,ml in self.projects.items() for m in ml ]
+        return iter(mlist)
+
+
