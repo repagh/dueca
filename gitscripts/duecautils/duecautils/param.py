@@ -15,6 +15,11 @@ class Param:
             default_strip -- set the strip value default
         """
 
+        if isinstance(par, str):
+            self.val = par
+            self.name = 'anon'
+            return
+
         self.name = par.get('name')
         _regex = par.get('regex', False)
         pstrip = par.get('strip', (_regex and 'both') or default_strip)
@@ -51,6 +56,10 @@ class Param:
     def __str__(self):
         if isinstance(self.val, str): return self.val
         raise ValueError("Cannot get string value from regex")
+
+    def __repr__(self):
+        if isinstance(self.val, str): return self.val
+        return str(self.val)
 
     def __bool__(self):
         if isinstance(self.val, str): return len(self.val) > 0

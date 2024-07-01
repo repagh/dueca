@@ -2,7 +2,56 @@ from .policycondition import PolicyCondition, checkAndSet
 from ..matchreference import MatchReferenceDco
 from ..param import Param
 
+class MatchFunctionHomeDCO:
+    """ Function object indicating a match
+
+        The project supplying the module matches the project supplying the
+        DCO object
+    """
+
+    def __init__(self, project, dco):
+        """Create a match check
+
+        Parameters
+        ----------
+        project : Param
+            name/regex of the project to match/filter
+        dco : Param
+            name/regex of the the dco
+        """
+        self.projectref = project
+        self.dcoref = dco
+
+    def __call__(self, project, dco):
+        if self.projectref is None or self.dcoref is None:
+            return False
+
+        if project is not None and dco is not None:
+            return self.projectref.match(project) and \
+                self.dcoref.match(dco)
+        return False
+
+    def explain(self, project=None, dco=None):
+        if project is None and dco is None:
+            return f'FALSE, no match on {self.projectref.val} / {self.dcoref.val}'
+        return f"Match: project '{project}' ~ '{self.projectref.val}'" + \
+            f" dco '{dco}' ~ '{self.dcoref.val}'"
+
+
 class HomeDco(PolicyCondition):
+    """Check origin of all DCO in a comm-objects.lst
+
+       Test to see whether a dco object's parent project is the same as
+       the project from which the module with the comm-objects.lst
+       is borrowed.
+
+       The test produces true if that is so for any of the dco in a list
+
+    Parent
+    ------
+    PolicyCondition : Generic test parent class
+    """
+
 
     # Determine how param arguments need to be stripped
     default_strip = dict(project='both', dco='both', resultvar='both')
@@ -29,10 +78,10 @@ class HomeDco(PolicyCondition):
         None.
 
         """
-        self.pproject, self.dco = project, dco
+        self.dco = dco
         self.resultvar = resultvar
 
-    def holds(self, p_commobjects, p_project, **kwargs):
+    def holds(self, p_project, p_commobjects, **kwargs):
         """Check whether a specific module uses a DCO file
 
         Arguments:
@@ -50,32 +99,24 @@ class HomeDco(PolicyCondition):
         res = list()
         newvars = dict()
 
-        # Truth filter, on project name and dco name
-        def isMatch(project, dco):
-            if project is not None and dco is not None:
-                return self.pproject.match(project) and \
-                    project == p_project and self.dco.match(dco)
-            if project is None:
-                return False
-            if dco is not None:
-                return project == p_project and self.dco.match(dco)
-            return project == p_project
-
-        # each object here is a
+        # each item in p_commobjects is the dco filename and list of
+        # project/dco or comment lines in that dco files
         for m, commobj in p_commobjects.items():
-            res.append(MatchReferenceDco(isMatch,
-                module=m, module_project=p_project,
-                fname=f'{p_project}/{m}/comm-objects.lst',
-                commobjects=commobj))
+            res.append(MatchReferenceDco(
+                MatchFunctionHomeDCO(Param(p_project), self.dco),
+                                     commobjects=commobj))
 
+        # the MatchReferenceDco objects have a truthy value, if any of the
+        # dco match the isMatch function
+
+        # if applicable assemble any result in newvars under the resultvar name
         checkAndSet(self.resultvar, newvars, res)
 
+        # return true or false for the whole, a list of information on the
+        # matches, and the new variables
         return (
             len([ r for r in res if r.value ]) > 0,
-            (res and
-             [ f'Found {self.pproject}/comm-objects/{self.dco}.dco in {r.filename}'
-                  for r in res ])
-            or [ f'FALSE: no {self.pproject}/comm-objects/{self.dco}.dco found'],
+            [ r.explain() for r in res],
             newvars)
 
 PolicyCondition.register("home-dco", HomeDco)

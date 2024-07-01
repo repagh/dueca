@@ -67,14 +67,23 @@ class MatchReferenceDco(MatchReference):
 
     def __init__(self, matchFunction,
                  commobjects: CommObjectsList):
-        value = bool([c for c in commobjects if matchFunction(c)])
+        self.matchFunction = matchFunction
+        self.commobjects = commobjects
+        value = bool([c for c in commobjects if matchFunction(c.base_project, c.dco)])
 
         super(MatchReferenceDco, self).__init__(value)
 
-"""
-    def __repr__(self):
-        return f"MatchReferenceDCO(m:{self.module}, f:{self.filename}, " \
-            f"p:{self.module_project}, d:{self.dco}, dp:{self.dco_project})"""
+    def explain(self):
+        res = [ f'For {self.commobjects.fname}:' ]
+        if self.value:
+            res.extend([ self.matchFunction.explain(c.base_project, c.dco)
+                         for c in self.commobjects
+                         if self.matchFunction(c.base_project, c.dco) ])
+        else:
+            res.append(self.matchFunction.explain())
+
+        return '\n'.join(res)
+
 
 class MatchReferenceModule(MatchReference):
 

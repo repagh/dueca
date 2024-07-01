@@ -64,10 +64,10 @@ class ActionChangeDco(PolicyAction):
                         self.old_dco[0], self.old_dco[1],
                         f"Removed for Policy: '{p_policy}':'{p_polid}'")
                     res.append(
-                        f'Deleted {self.old_dco[0]}/comm-objects/{self.old_dco[1]}.dco')
+                        f'Deleted {self.old_dco[0]}/{self.old_dco[1]}.dco')
                 except ValueError as e:
                     res.append(
-                        f'Failed deletion {self.old_dco[0]}/comm-objects/{self.old_dco[1]}.dco: {e}')
+                        f'Failed deletion {self.old_dco[0]}/{self.old_dco[1]}.dco: {e}')
             if self.mode != 'noop':
                 dcl.commobjects._sync()
             else:
