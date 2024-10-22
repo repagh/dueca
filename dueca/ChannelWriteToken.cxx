@@ -11,6 +11,9 @@
         license         : EUPL-1.2
 */
 
+#include "GenericCallback.hxx"
+#include "UCallbackOrActivity.hxx"
+#include <cstddef>
 #define ChannelWriteToken_cxx
 #include "ChannelWriteToken.hxx"
 #include <ChannelManager.hxx>
@@ -23,6 +26,7 @@
 
 DUECA_NS_START;
 
+
 ChannelWriteToken::ChannelWriteToken(const GlobalId& owner,
                                      const NameSet& channelname,
                                      const std::string& dataclassname,
@@ -31,14 +35,14 @@ ChannelWriteToken::ChannelWriteToken(const GlobalId& owner,
                                      Channel::EntryArity arity,
                                      Channel::PackingMode packmode,
                                      TransportClass tclass,
-                                     GenericCallback *when_valid,
+                                     const UCallbackOrActivity& when_valid,
                                      unsigned nreservations) :
   GenericToken(owner, channelname, dataclassname),
   handle(NULL)
 {
   channel = ChannelManager::single()->findOrCreateChannel(this->getName());
 
-  /* DUECA Channels
+  /* DUECA channels
 
      Informational message on the issuing of a new write token.
    */
@@ -51,8 +55,6 @@ ChannelWriteToken::ChannelWriteToken(const GlobalId& owner,
                                   tclass,
                                   entrylabel, when_valid);
 }
-
-
 
 ChannelWriteToken::~ChannelWriteToken()
 {
@@ -143,5 +145,9 @@ ChannelEntryInfo ChannelWriteToken::getChannelEntryInfo() const
   }
 }
 
+bool ChannelWriteToken::isEventType() const
+{
+  return handle->entry->isEventType();
+}
 
 DUECA_NS_END;

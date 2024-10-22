@@ -56,11 +56,6 @@ protected:
   /** @defgroup configurationpeer Configuration value for peer
       @{ */
 
-  /** Master address, obsolete, just the network address, use
-      master_url instead. */
-  std::string                         master_address;
-
-
   /** Master url, websocket URL for contacting the master. */
   std::string                         master_url;
 
@@ -108,6 +103,9 @@ private:
   /** Time to send */
   bool                                myturntosend;
 
+  /** Last tick for checkup */
+  TimeTickType                        last_run_tick;
+  
 protected:
   /** Constructor */
   NetCommunicatorPeer();

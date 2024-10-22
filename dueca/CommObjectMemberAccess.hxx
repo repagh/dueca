@@ -104,7 +104,7 @@ public:
   inline const char* getName() const { return name; }
 
   /** Return information on the type; native, object, or enum */
-  virtual inline bool isEnum() const = 0;
+  virtual bool isEnum() const = 0;
 };
 
 /** Access object to a unitary member of class C, with type of the
@@ -140,14 +140,22 @@ public:
 
   /** Return a string representation of the data member's class */
   const char* getClassname() const
+#if 1
+  { return dco_traits<typename dco_traits<T>::value_type>::_getclassname(); }
+#else
   { return getclassname<typename elementdata
                         <typename dco_traits<T>::rtype,T>::elt_value_type>(); }
+#endif
 
   /** Return a string representation of the data member's key class */
   const char* getKeyClassname() const
+#if 1
+  { return dco_traits<typename dco_traits<T>::key_type>::_getclassname(); }
+#else
   { return getclassname<typename elementdata
                         <typename dco_traits<T>::rtype,T>::elt_key_type>(); }
-
+#endif
+  
   /** Return the arity enum of the member */
   MemberArity getArity() const
   { return dco_traits<T>::arity; }
@@ -197,6 +205,7 @@ public:
     return a;
   }
 
+  /** Return information on the type; native, object, or enum */
   bool isEnum() const final { return isEnum(dco_nested<T>()); }
 
 private:

@@ -8,6 +8,7 @@
 cmake_minimum_required(VERSION 3.0)
 
 if (POLICY CMP0075)
+  message(STATUS "New policy CMP0075")
   cmake_policy(SET CMP0075 NEW)
 endif()
 
@@ -19,12 +20,12 @@ enable_language(CXX)
 include(GNUInstallDirs)
 
 # version information, please update accordingly
-set(VERMAJOR 3)
-set(VERMINOR 2)
-set(REVISION 4)
-set(GENCODEGEN 110)
+set(VERMAJOR 4)
+set(VERMINOR 1)
+set(REVISION 1)
+set(GENCODEGEN 111)
 set(SOVERSION "${VERMAJOR}.${VERMINOR}")
-set(VERSION_DATE "12 Jun 2022")
+set(VERSION_DATE "19 Sep 2024")
 string(REPLACE " " "" "${VERSION_DATE}" CLIENT_DATE)
 set(versioned "${VERMAJOR}-${VERMINOR}-${REVISION}")
 
@@ -99,6 +100,9 @@ option(FILLPACKER_SEND_ID  "Let fill packing/unpacking add message number and ID
 option(FORCE_PYTHON_MALLOC "Force malloc as allocator for python" OFF)
 option(BUILD_DDFF          "Build Delft Direct File Format logging" ON)
 option(TRY_INSTALL_PYTHON_BUILD "If needed, use pip to install python build" OFF)
+set(UNREAD_DATAPOINTS_THRESHOLD 1000 CACHE STRING
+  "Threshold for warning about unread data in channels")
+
 if (APPLE)
   set(CMAKE_FIND_FRAMEWORK LAST)
 endif()
@@ -168,8 +172,8 @@ message(STATUS "CMAKE_SOURCE_DIR defined as \"${CMAKE_SOURCE_DIR}/\"")
 message(STATUS "Length of source path: ${SOURCE_PATH_SIZE}")
 
 # guile version
-find_program(GUILECONFIG NAMES guile-config guile1.8-config
-  guile18-config guile-config2.2 guile1-config)
+find_program(GUILECONFIG NAMES guile-config3.0 guile-config2.2
+  guile-config guile1.8-config guile18-config guile1-config)
 
 if (NOT GUILECONFIG)
    message(FATAL_ERROR "No suitable guile-config found")
@@ -369,7 +373,16 @@ pkg_check_modules(GTKMM40 gtkmm-4.0)
 
 # rapidjson for channel data coding
 pkg_check_modules(RAPIDJSON RapidJSON)
-find_package(msgpack REQUIRED)
+
+# msgpack should be there for storage and packing
+find_package(msgpack)
+
+# opensuse variants have that in msgpack-cxx!
+if (NOT msgpack_FOUND)
+  find_package(msgpack-cxx REQUIRED)
+endif()
+
+message(STATUS "msgpack ${MSGPACK_VERSION}")
 
 # gl and glui family
 set(OpenGL_GL_PREFERENCE "GLVND")
@@ -540,16 +553,18 @@ set(SCRIPTLANG)
 if (SCRIPT_PYTHON)
 
   if (APPLE)
-    set(BPCOMP python39)
+    set(BPCOMP python311)
 
   else()
     find_library(BPLIB
 
-      NAMES boost_python311 boost_python310 boost_python39 boost_python38
-      boost_python37 boost_python-py311 boost_python-py310 boost_python-py39
-      boost_python-py38 boost_python-py37 boost_python-py36
-      boost_python3 boost_python-py3 boost_python27 boost_python2
-      boost_python)
+      NAMES
+      boost_python312 boost_python311 boost_python310
+      boost_python39 boost_python38 boost_python37
+      boost_python-py312 boost_python-py311  boost_python-py310
+      boost_python-py39 boost_python-py38  boost_python-py37 boost_python-py36
+      boost_python3  boost_python-py3
+      boost_python27 boost_python2 boost_python)
 
     if (BPLIB STREQUAL "BPLIB-NOTFOUND")
       message(FATAL_ERROR "Cannot find a boost-python library")
@@ -560,7 +575,7 @@ if (SCRIPT_PYTHON)
     if (${BPCOMP} MATCHES "^python.*3.*$")
       set(PYREQ 3)
     else()
-      message(FATAL "Python 2 is obsolete")
+      message(FATAL_ERROR "Python 2 is obsolete")
       # set(PYREQ 2)
     endif()
   endif()
@@ -647,33 +662,63 @@ if (SCRIPT_SCHEME)
 
 endif()
 
+# look for SVG converter
+set(SVG_PNGFILE_ARG )
+find_program(RSVGCONVERT rsvg-convert)
+message(STATUS "SVG conversion: ${RSVGCONVERT}")
+if (NOT RSVGCONVERT STREQUAL "RSVGCONVERT-NOTFOUND")
+  EXECUTE_PROCESS(COMMAND ${RSVGCONVERT}
+    --output=_dummy.png
+    ${CMAKE_SOURCE_DIR}/doc/images/threads.svg
+    RESULT_VARIABLE RSVG_RESULT OUTPUT_QUIET ERROR_QUIET)
+  if (RSVG_RESULT EQUAL 0)
+    message(STATUS "Using ${RSVG_CONVERT} for conversion to png")
+    set(SVG_CONVERSION_COMMAND ${RSVGCONVERT})
+    set(SVG_PNGFILE_ARG "--output")
+    set(SVG_ICON_SIZE_ARG --width=18 --height=18 --keep-aspect-ratio)
+  else()
+    message(WARNING "Test failed: ${RSVGCONVERT} --output=/dev/null ${CMAKE_SOURCE_DIR}/doc/images/threads.svg")
+  endif()
+else()
+  message(STATUS "Could not find rsvg-convert, trying inkscape")
+endif()
 
-# look for inkscape, for pixmaps and doc
-find_program(INKSCAPE inkscape
+if (NOT SVG_PNGFILE_ARG)
+  # look for inkscape, for pixmaps and doc
+  find_program(INKSCAPE inkscape
+    PATHS "/Applications/Inkscape.app/Contents/Resources/bin/inkscape"
+    "/opt/local/bin")
 
-  PATHS "/Applications/Inkscape.app/Contents/Resources/bin/inkscape"
-        "/opt/local/bin")
+  if (NOT INSCAPE STREQUAL "INKSCAPE-NOTFOUND")
 
-if (NOT INSCAPE STREQUAL "INKSCAPE-NOTFOUND")
+    set(SVG_CONVERSION_COMMAND ${INKSCAPE})
+    set(SVG_ICON_SIZE_ARG
+      --export-area-page --export-width=18 --export-height=18)
 
-  # new or old
-  EXECUTE_PROCESS(COMMAND ${INKSCAPE} --export-png=/dev/null
-    RESULT_VARIABLE INKSCAPE_RESULT OUTPUT_QUIET ERROR_QUIET)
-
-  if (INKSCAPE_RESULT EQUAL 0)
-    set(INKSCAPE_EXPORT_PNG "--export-png")
-  else ()
+    # figure out the required argument for png export
     EXECUTE_PROCESS(COMMAND ${INKSCAPE} --export-filename="test.png"
       RESULT_VARIABLE INKSCAPE_RESULT OUTPUT_QUIET ERROR_QUIET)
     if (INKSCAPE_RESULT EQUAL 0)
-      set(INKSCAPE_EXPORT_PNG "--export-filename")
+      set(SVG_PNGFILE_ARG "--export-filename")
     else()
-      # assume early Fedora 32 inkscape....
-      set(INKSCAPE_EXPORT_PNG "--export-file")
+      EXECUTE_PROCESS(COMMAND ${INKSCAPE} --export-png="test.png"
+	RESULT_VARIABLE INKSCAPE_RESULT OUTPUT_QUIET ERROR_QUIET)
+    endif()
+    if (NOT SVG_PNGFILE_ARG AND INKSCAPE_RESULT EQUAL 0)
+      set(SVG_PNGFILE_ARG "--export-png")
+    else()
+      EXECUTE_PROCESS(COMMAND ${INKSCAPE} --export-file="test.png"
+	RESULT_VARIABLE INKSCAPE_RESULT OUTPUT_QUIET ERROR_QUIET)
+    endif()
+    if (NOT SVG_PNGFILE_ARG AND INKSCAPE_RESULT EQUAL 0)
+      set(SVG_PNGFILE_ARG "--export-file")
+    endif()
+    if (NOT SVG_PNGFILE_ARG)
+      message(FATAL "Cannot determine png export option for inkscape")
     endif()
   endif()
+  message(STATUS "inkscape export PNG command ${SVG_PNGFILE_ARG}")
 endif()
-message(STATUS "inkscape export PNG command ${INKSCAPE_EXPORT_PNG}")
 
 # subdirs choice
 add_subdirectory(dueca)
@@ -704,14 +749,17 @@ if (BUILD_INTER)
   endif()
   add_subdirectory(inter)
 endif()
+if (BUILD_DDFF)
+  add_subdirectory(ddff)
+endif()
 if (BUILD_DUSIME)
   add_subdirectory(dusime)
 endif()
 if (BUILD_HDF5)
   add_subdirectory(hdf5utils)
 endif()
-if (BUILD_DDFF)
-  add_subdirectory(ddff)
+if (BUILD_DDFF AND BUILD_DUSIME)
+  add_subdirectory(ddfflog)
 endif()
 if (BUILD_DOC)
   add_subdirectory(doc)

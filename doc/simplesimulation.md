@@ -68,6 +68,10 @@ After the simulation has been made, we look at a few more things:
 - A simple program, dueca-channeldot, which can create a visual
   representation of your simulation from the logs.
 
+If you want to explore a bit further, and look at how you could create
+multiplayer simulations with DUECA, you can check out the sequel
+[More Simple Simulation](#exampel2b).
+
 ## Setting up
 
 I assume you have the dueca packages installed on a (real or virtual)
@@ -132,11 +136,13 @@ Created new DUECA project SimpleSimulation
 Now enter the project folder. This is where your project-specific
 code, the configuration for the project, and datafiles live.
 
-    [enter]$ cd SimpleSimulation/SimpleSimulation
-    [enter]$ ls
-    build  CMakeLists.txt  comm-objects  README.md  run
-    [enter]$ ls .config
-    class  machine  machinemapping.xml  policylist.xml
+~~~~{.bash}
+[enter]$ cd SimpleSimulation/SimpleSimulation
+[enter]$ ls
+build  CMakeLists.txt  comm-objects  README.md  run
+[enter]$ ls .config
+class  machine  machinemapping.xml  policylist.xml
+~~~~
 
 We see here the following:
 
@@ -254,12 +260,14 @@ a look:
      The project must contain the full path to a git repository
 
      If you encounter a message that a certain comm-objects folder cannot
-     be found, use dueca-project borrow-project to add that project url
+     be found, use dueca-gproject borrow-project to add that project url
 
      If you need to check out from a specific branch, version or
      revision, add that in the optional version field.
 -->
-<machine xmlns="https://dueca.tudelft.nl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://dueca.tudelft.nl modules.xsd">
+<machine xmlns="https://dueca.tudelft.nl"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="https://dueca.tudelft.nl https://dueca.tudelft.nl/schemas/modules.xsd">
   <project>
     <url>file:///home/you/gitrepos/SimpleSimulation.git</url>
   </project>
@@ -465,6 +473,32 @@ following contents:
 )
 ~~~~
 
+Alternatively, you can use the script `new-dco` to create that dco
+file for you. As a minimum, `new-dco` requires the name of the DCO
+file, and the corresponding object that you are trying to create, and
+it produces a skeleton file to adapt to your liking:
+
+~~~~{.bash}
+[enter]$ new-dco object --name ControlInput
+~~~~
+
+You can also populate the object with more arguments:
+
+~~~~{.bash}
+[enter]$ new-dco object --name ControlInput \
+                 --type float \
+                 --option msgpack \
+                 --member float roll "Roll input" \
+                 --default 0.0f \
+                 --member float pitch "Pitch input" \
+                 --default 0.0f \
+                 --member float yaw "Yawing" \
+                 --default 0.0f \
+                 --member float throttle "Commanded Speed" \
+                 --default 0.0f
+~~~~
+
+
 Note the following:
 
 - Comments are started with a semicolon (;)
@@ -481,7 +515,7 @@ Note the following:
   first, that is the reason for the `(Type float)` line.
 
 Before we continue, add the communication object to the repository, and
-commit our work.
+commit your work.
 
 ~~~~{.bash}
 [enter]$ git add comm-objects/ControlInput.dco
@@ -1394,7 +1428,7 @@ And the detail for a single channel
 
 After a run, dueca will have left a number of log files in your run
 folder. You can inspect these at your leasure. One useful thing to do
-with these logs is to create an overview of your simulation. There is a 
+with these logs is to create an overview of your simulation. There is a
 small script for that:
 
 ~~~{.bash}
@@ -1707,8 +1741,9 @@ run-data  simlab  solo
 This only added a folder to the run folder. We will define two nodes
 in this platform, giving them the names of `host` and `igtest`. We
 will assign node number zero to the host node, so the DUECA interface
-appear there, and also make it communication master, so it will drive
-the communication cycle.
+appear there. We will tell it to connect on a host on interface
+`127.0.0.1`, where it will find the "communication master", the
+computer that will drive the communication cycle.
 
 ~~~{.bash}
 [enter]$ dueca-gproject new-node --name host --platform simlab \
@@ -1746,12 +1781,14 @@ ig  solo
      The project must contain the full path to a git repository
 
      If you encounter a message that a certain comm-objects folder cannot
-     be found, use dueca-project borrow-project to add that project url
+     be found, use dueca-gproject borrow-project to add that project url
 
      If you need to check out from a specific branch, version or
      revision, add that in the optional version field.
 -->
-<machine xmlns="https://dueca.tudelft.nl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://dueca.tudelft.nl modules.xsd">
+<machine xmlns="https://dueca.tudelft.nl"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="https://dueca.tudelft.nl https://dueca.tudelft.nl/schemas/modules.xsd">
   <project>
     <url>file://home/you/gitrepos/SimpleSimulation.git</url>
   </project>
@@ -1777,12 +1814,14 @@ modules, so that it looks like:
      The project must contain the full path to a git repository
 
      If you encounter a message that a certain comm-objects folder cannot
-     be found, use dueca-project borrow-project to add that project url
+     be found, use dueca-gproject borrow-project to add that project url
 
      If you need to check out from a specific branch, version or
      revision, add that in the optional version field.
 -->
-<machine xmlns="https://dueca.tudelft.nl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://dueca.tudelft.nl modules.xsd">
+<machine xmlns="https://dueca.tudelft.nl"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="https://dueca.tudelft.nl https://dueca.tudelft.nl/schemas/modules.xsd">
   <project>
     <url>file://home/you/gitrepos/SimpleSimulation.git</url>
   </project>
@@ -1807,8 +1846,11 @@ Added node igtest in simlab, script python
 graphics none, no 1/2 connecting None
 ~~~
 
-Note that here we don't supply the communication master (cmaster), so this
-node will become the master node for communication.
+Note that here we don't supply the communication master (cmaster), so
+this node will become the master node for communication. In the
+configuration file `dueca_cnf.py`, which you will find in the
+`run/simlab/igtest` folder, you can see this in the `send_order`
+parameter, which will be set to 0.
 
 Adding these nodes modified the file `.config/machinemapping.xml`,
 that file will be used when we ask `dueca-gproject` to check-out/clone
@@ -1819,7 +1861,9 @@ a trimmed copy for deployment on a simulator or other device:
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- This file defines the mapping between DUECA nodes and their
      machine class (type of checkout, libraries, modules) -->
-<nodes xmlns="https://dueca.tudelft.nl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://dueca.tudelft.nl machinemapping.xsd">
+<nodes xmlns="https://dueca.tudelft.nl"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="https://dueca.tudelft.nl/ https://dueca.tudelft.nl/schemas/machinemapping.xsd">
   <!-- default development set-up -->
   <node name="solo" machineclass="solo" sparse-checkout="false"/>
   <node name="host" machineclass="solo" sparse-checkout="true"/>

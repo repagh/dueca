@@ -11,24 +11,22 @@
         license         : EUPL-1.2
 */
 
-#ifndef UCClientHandle_hxx
-#define UCClientHandle_hxx
+#pragma once
 
 #include <inttypes.h>
 #include <string>
+#include "UCallbackOrActivity.hxx"
 #include "dueca_ns.h"
 #include "TimeSpec.hxx"
 #include <cmath>
-#include "vectorMT.hxx"
 #include "ChannelDef.hxx"
-#include <exception>
 #include "DAtomics.hxx"
 #include "GlobalId.hxx"
 
 
 DUECA_NS_START;
 
-
+// advance definitions
 class UChannelEntryData;
 typedef UChannelEntryData* UChannelEntryDataPtr;
 class UChannelEntry;
@@ -39,6 +37,8 @@ class ChannelReadToken;
 struct GlobalId;
 class TriggerPuller;
 typedef uint32_t uchan_seq_id_t;
+struct EntryConfigurationChange;
+typedef EntryConfigurationChange* EntryConfigurationChangePtr;
 
 template<class T>
 struct single_link
@@ -66,6 +66,7 @@ typedef UCDataclassLink* UCDataclassLinkPtr;
 struct UCEntryClientLink;
 typedef UCEntryClientLink* UCEntryClientLinkPtr;
 
+
 /** Link for matching a client with a channel entry. */
 struct UCEntryClientLink
 {
@@ -81,14 +82,14 @@ struct UCEntryClientLink
   /** And the unique ID of the client */
   uint32_t client_id;
 
-  /** Sequential reading? */
+  /** Flag indicating sequential reading. */
   bool sequential_read;
 
   /** placeholder for the reading index, only used in sequential
       reading */
   UChannelEntryDataPtr read_index;
 
-  /** Remeber the index of the last read data point */
+  /** Remeber the index counter of the last read data point */
   uchan_seq_id_t       seq_id;
 
   /** Constructor */
@@ -121,8 +122,8 @@ struct UCClientHandle
       specified child classes */
   UCDataclassLinkPtr dataclasslink;
 
-  /** Match with the channel configuration generation */
-  uint32_t config_version;
+  /** Pointer to the latest processed configuration change */
+  EntryConfigurationChangePtr config_change;
 
   /** Counter to guard for validity */
   atom_type<uint32_t>::type access_count;
@@ -139,7 +140,7 @@ struct UCClientHandle
 
   /** Pointer to a callback object, to provide a means for communicating
       validity of the entry */
-  GenericCallback* callback;
+  UCallbackOrActivity callback;
 
   /** Requested entry, traversing if entry_any, match entry label if
       entry_bylabel, and match entry handle otherwise. */
@@ -177,7 +178,7 @@ public:
   /** Constructor */
   UCClientHandle(ChannelReadToken* token, const std::string& dataclassname,
                  const std::string& entrylabel,
-                 GenericCallback* callback, entryid_type requested_entry,
+                 const UCallbackOrActivity& callback, entryid_type requested_entry,
                  Channel::ReadingMode readmode,
                  double requested_span, unsigned requested_depth,
                  unsigned creation_id);
@@ -240,7 +241,7 @@ struct UCWriterHandle
 
   /** Pointer to a callback object, to provide a means for communicating
       validity of the entry */
-  GenericCallback* callback;
+  UCallbackOrActivity callback;
 
   /** Constructor
 
@@ -250,7 +251,7 @@ struct UCWriterHandle
       @param valid   Callback function, called when entry becomes valid
    */
   UCWriterHandle(ChannelWriteToken* token, UChannelEntryPtr entry,
-                 const std::string& dataclassname, GenericCallback* valid);
+                 const std::string& dataclassname, const UCallbackOrActivity& valid);
 
   /** get the writer's id */
   inline const GlobalId& getWriterId() {return writer_id;}
@@ -262,5 +263,3 @@ typedef UCWriterHandle* UCWriterHandlePtr;
 
 
 DUECA_NS_END;
-
-#endif

@@ -11,8 +11,7 @@
         license         : EUPL-1.2
 */
 
-#ifndef msgpack_unstream_iter_hxx
-#define msgpack_unstream_iter_hxx
+#pragma once
 
 #include <dueca_ns.h>
 #include <msgpack.hpp>
@@ -27,19 +26,6 @@
 #define DEBPRINTLEVEL 1
 #include <debprint.h>
 
-
-#ifdef MSGPACK_USE_DEFINE_MAP
-#define MSGPACK_CHECK_DCO_SIZE( N ) \
-  unstream<S>::unpack_mapsize(i0, iend);
-#define MSGPACK_UNPACK_MEMBER( A ) \
-  for (size_t ii = unstream<S>::unpack_strsize(i0, iend); ii--; ) { ++i0; } \
-  msg_unpack(i0, iend, A )
-#else
-#define MSGPACK_CHECK_DCO_SIZE( N ) \
-  unstream<S>::unpack_arraysize(i0, iend);
-#define MSGPACK_UNPACK_MEMBER( A ) \
-  msg_unpack(i0, iend, A )
-#endif
 
 #define MSGPACK_ADD_ENUM_UNSTREAM( A ) \
 namespace msgunpack { \
@@ -589,8 +575,32 @@ struct unstream {
     }
     throw  msgpack_unpack_mismatch("wrong type, cannot convert to double");
   }
+
+  static bool test_isnil(S& i0, const S& iend)
+  {
+    check_iterator_notend(i0, iend);
+    uint8_t flag = uint8_t(*i0);
+    return (flag == 0xc0);
+  }
+
+  static void unpack_nil(S& i0, const S& iend)
+  {
+    check_iterator_notend(i0, iend);
+    uint8_t flag = uint8_t(*i0); ++i0;
+    if (flag != 0xc0) {
+      throw  msgpack_unpack_mismatch("wrong type, expected nil");
+    }
+  }
 };
 
+template<typename S>
+inline bool msg_isnil(S& i0, const S& iend)
+{ return unstream<S>::test_isnil(i0, iend); }
+
+template<typename S>
+inline void msg_unpack(S& i0, const S& iend)
+{ return unstream<S>::unpack_nil(i0, iend); }
+  
 template<typename S>
 inline void msg_unpack(S& i0, const S& iend, uint8_t& i)
 { unstream<S>::unpack_int(i0, iend, i); }
@@ -646,30 +656,6 @@ void msg_unpack(S& i0, const S& iend, std::string& i)
   }
 }
 
-#ifdef smartstring_hxx
-template<typename S>
-void msg_unpack(S& i0, const S& iend, dueca::smartstring& i);
-#endif
-
-#ifdef Dstring_hxx
-template <typename S, unsigned mxsize>
-void msg_unpack(S& i0, const S& iend, dueca::Dstring<mxsize>& i);
-#endif
-
-#ifdef fixvector_hxx
-template <typename S, size_t N, typename T>
-void msg_unpack(S& i0, const S& iend, dueca::fixvector<N,T> & i);
-#endif
-
-#ifdef limvector_hxx
-template <typename S, size_t N, typename T>
-void msg_unpack(S& i0, const S& iend, dueca::limvector<N,T> & i);
-#endif
-
-#ifdef varvector_hxx
-template <typename S, typename T>
-void msg_unpack(S& i0, const S& iend, dueca::varvector<T> & i);
-#endif
 
 template <typename S, typename T>
 void msg_unpack(S& i0, const S& iend, std::vector<T> & i);
@@ -680,8 +666,34 @@ void msg_unpack(S& i0, const S& iend, std::list<T> & i);
 template <typename S, typename K, typename T>
 void msg_unpack(S& i0, const S& iend, std::map<K,T> & i);
 
+// helper, unpacking id from map
+template<typename S>
+inline void unpack_member_id_inmap(S& i0, const S& iend, const char* mid)
+{ 
+  for (size_t ii = unstream<S>::unpack_strsize(i0, iend); ii--; ) { ++i0; }
+}
+
+// same from array
+template<typename S>
+inline void unpack_member_id_inarray(S& i0, const S& iend, const char* mid)
+{ }
+
+
 MSGPACKUS_NS_END;
 
-#include <undebprint.h>
 
+#ifdef MSGPACK_USE_DEFINE_MAP
+#define MSGPACK_CHECK_DCO_SIZE( N ) \
+  unstream<S>::unpack_mapsize(i0, iend);
+#define MSGPACK_UNPACK_MEMBERID unpack_member_id_inmap
+#else
+#define MSGPACK_CHECK_DCO_SIZE( N ) \
+  unstream<S>::unpack_arraysize(i0, iend);
+#define MSGPACK_UNPACK_MEMBERID unpack_member_id_inarray
 #endif
+
+#define MSGPACK_UNPACK_MEMBER( A ) \
+  MSGPACK_UNPACK_MEMBERID(i0, iend, #A); \
+  msg_unpack(i0, iend, A )
+
+#include <undebprint.h>

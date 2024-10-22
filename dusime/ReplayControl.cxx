@@ -28,7 +28,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/lexical_cast.hpp>
 
-#define DEBPRINTLEVEL 2
+#define DEBPRINTLEVEL -1
 #include <debprint.h>
 
 #define DO_INSTANTIATE
@@ -126,7 +126,7 @@ void ReplayControl::followDusime(const TimeSpec& ts)
     }
   }
   catch (std::exception& e) {
-    /* DUSIME replay.
+    /* DUSIME replay&initial.
 
        Error in following DUSIME states
     */

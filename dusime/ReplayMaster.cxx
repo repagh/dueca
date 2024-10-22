@@ -28,7 +28,7 @@
 #include <iostream>
 #include "ChronoTimePoint.hxx"
 
-#define DEBPRINTLEVEL 1
+#define DEBPRINTLEVEL -1
 #include <debprint.h>
 
 #define DO_INSTANTIATE
@@ -41,7 +41,8 @@
 DUECA_NS_START;
 
 // class/module name
-const char* const ReplayMaster::classname = "replay-master";
+template<> const char* getclassname<ReplayMaster>()
+{ return "replay-master"; }
 
 std::map<std::string,ReplayMaster::pointer> ReplayMaster::replaymasters;
 
@@ -171,7 +172,7 @@ void ReplayMaster::followDusimeStates(const TimeSpec& ts)
           break;
 
         default:
-          /* DUSIME record&initial.
+          /* DUSIME replay&initial.
 
            Replay is invoked, but not prepared. This glitch should not
            be possible */
@@ -496,7 +497,7 @@ updateInfo(unsigned node_id,
     return n_answering == 0;
   }
   else {
-    /* DUSIME Replay.
+    /* DUSIME replay&initial
 
        Reports on available replay data from different nodes do not
        match; generally, data should be tagged with the same label, and

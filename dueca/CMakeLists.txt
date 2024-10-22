@@ -23,7 +23,7 @@ set(DCOSOURCES
   UChannelCommRequest.dco ChannelReadInfo.dco ChannelWriteInfo.dco
   TokenCountResult.dco EntryCountResult.dco ChannelCountResult.dco
   ChannelCountRequest.dco ChannelMonitorResult.dco
-  ChannelMonitorRequest.dco )
+  ChannelMonitorRequest.dco DUECALogConfig.dco DUECALogStatus.dco)
 
 set(DUECASOURCES
 
@@ -82,7 +82,10 @@ set(DUECASOURCES
   PythonCorrectedName.hxx PythonCorrectedName.cxx
   ListElementAllocator.hxx DCOtypeJSON.hxx DCOtypeJSON.cxx
   ChronoTimePoint.hxx ChronoTimePoint.cxx AssociateObject.hxx
-  EasyId.cxx EasyId.hxx)
+  EasyId.cxx EasyId.hxx InformationStash.cxx
+  UCEntryConfigurationChange.hxx UCEntryConfigurationChange.cxx
+  UCallbackOrActivity.hxx UCallbackOrActivity.cxx
+  )
 
 
 set(SCRAMNETSOURCES
@@ -144,6 +147,7 @@ set(INSTALLHEADERS
   MultiStreamReader.hxx Logger.hxx LogCategory.hxx newlog.hxx
   newlog-macros.hxx LogString.hxx ActivityContext.hxx debug-direct.h
   ScriptCreatableDataHolder.hxx PackUnpackTemplates.hxx fixvector.hxx
+  fixvector_withdefault.hxx UCallbackOrActivity.hxx
   varvector.hxx limvector.hxx vectorexceptions.hxx
   DataClassRegistryPredef.hxx DataClassRegistry.hxx
   DataClassRegistrar.hxx CommObjectMemberAccess.hxx NameSetExtra.hxx
@@ -166,7 +170,9 @@ set(INSTALLHEADERS
   msgpack-unstream.hxx PythonCorrectedName.hxx ChronoTimePoint.hxx
   msgpack-unstream-iter.hxx msgpack-unstream-iter.ixx
   ListElementAllocator.hxx DCOtypeJSON.hxx undebug.h
-  AssociateObject.hxx EasyId.hxx)
+  AssociateObject.hxx EasyId.hxx dcoprint.hxx fix_optional.hxx
+)
+# fix_optional.hxx
 
 DUECACODEGEN_TARGET(OUTPUT DCO INDUECA DCOSOURCE ${DCOSOURCES})
 

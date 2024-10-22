@@ -25,7 +25,7 @@ DUECA_NS_START;
 UCClientHandle::UCClientHandle(ChannelReadToken* token,
                                const std::string& dataclassname,
                                const std::string& entrylabel,
-                               GenericCallback* callback,
+                               const UCallbackOrActivity& callback,
                                entryid_type requested_entry,
                                Channel::ReadingMode readmode,
                                double requested_span,
@@ -33,7 +33,7 @@ UCClientHandle::UCClientHandle(ChannelReadToken* token,
                                unsigned creation_id) :
   token(token),
   dataclasslink(NULL),
-  config_version(0),
+  config_change(NULL),
   access_count(1),
   dataclassname(dataclassname),
   class_lead(NULL),
@@ -60,9 +60,21 @@ UCClientHandle::~UCClientHandle()
 
 void UCClientHandle::addPuller(TriggerPuller* target)
 {
-  trigger_target = target;
-}
+  if (trigger_target != NULL) {
+    auto el = class_lead;
+    while (el) {
+      el->entry->requestRemoveTrigger(this);
+      el = el->next;
+    }
+  }
 
+  trigger_target = target;
+  auto el = class_lead;
+  while (el) {
+    el->entry->requestIncludeTrigger(this);
+    el = el->next;
+  }
+}
 
 const GlobalId& UCClientHandle::getId() const
 { return token->getTokenHolder(); }
@@ -70,7 +82,7 @@ const GlobalId& UCClientHandle::getId() const
 UCWriterHandle::UCWriterHandle(ChannelWriteToken* token,
                                UChannelEntryPtr entry,
                                const std::string& dataclassname,
-                               GenericCallback* valid) :
+                               const UCallbackOrActivity& valid) :
   token(token),
   writer_id(token == NULL? GlobalId(): token->getTokenHolder()),
   dataclassname(dataclassname),
@@ -110,5 +122,6 @@ bool UCEntryClientLink::entryMatch() const
 {
   return entry_creation_id == entry->getCreationId();
 }
+
 
 DUECA_NS_END;

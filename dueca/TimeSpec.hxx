@@ -207,10 +207,30 @@ public:
      validity_end != other.validity_end;}
 
   /// Move an interval up with a time delta
-  TimeSpec operator+ (const int& delta) const;
+  TimeSpec operator+ (const int delta) const;
+
+  /// Move an interval up with a time delta
+  TimeSpec operator+ (const unsigned int delta) const;
+
+  /// Move an interval up with a time in seconds
+  TimeSpec operator+ (const double delta) const;
+
+  /// Move an interval up with a time in seconds
+  inline TimeSpec operator+ (const float delta) const
+  { return *this + double(delta); }
+
+  /// Move an interval up with a time in seconds
+  TimeSpec operator- (const double delta) const;
+
+  /// Move an interval up with a time in seconds
+  inline TimeSpec operator- (const float delta) const
+  { return *this - double(delta); }
 
   /// Move an interval back with a time delta
-  TimeSpec operator- (const int& delta) const;
+  TimeSpec operator- (const int delta) const;
+
+  /// Move an interval back with a time delta
+  TimeSpec operator- (const unsigned int delta) const;
 
   /// Get the difference between two timespec's
   int operator- (const TimeSpec& to) const;
@@ -350,7 +370,3 @@ PRINT_NS_END
 #include <DataTimeSpec.hxx>
 
 #endif
-
-
-
-

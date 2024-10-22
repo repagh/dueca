@@ -77,7 +77,7 @@ const ParameterTable* HDF5Logger::getMyParameterTable()
 
     { "log-always",
       new VarProbe<_ThisModule_,bool>(&_ThisModule_::always_logging),
-      "For watched channels or channel entries created with always_logging,\n"
+      "For watched channels or channel entries created with log_always,\n"
       "logging also is done in HoldCurrent mode. Default off, toggles\n"
       "this capability for logging defined hereafter."},
 
@@ -103,7 +103,7 @@ const ParameterTable* HDF5Logger::getMyParameterTable()
     { "config-channel",
       new MemberCall<_ThisModule_,vstring>(&_ThisModule_::setConfigChannel),
       "Specify a channel with configuration events, to control logging\n"
-      "check HDFLogConfig doc for options" },
+      "check DUECALogConfig doc for options" },
 
     /* You can extend this table with labels and MemberCall or
        VarProbe pointers to perform calls or insert values into your
@@ -118,7 +118,7 @@ const ParameterTable* HDF5Logger::getMyParameterTable()
        give an overall description of the module. */
     { NULL, NULL,
       "Generic logging facilities for channel data to HDF5 data files.\n"
-      "The logger may be controlled with HDFLogConfig events, but may\n"
+      "The logger may be controlled with DUECALogConfig events, but may\n"
       "also be run without control.\n"
       "Note that hdf5 may sometimes take unpredictable time (when it\n"
       "needs to flush data to disk). DUECA has no problem with that, but\n"
@@ -153,8 +153,8 @@ HDF5Logger::HDF5Logger(Entity* e, const char* part, const
   optime(0U, 0U),
   alltime(0U, 0U),
   reduction(NULL),
-  w_status(getId(), NameSet(getEntity(), HDFLogStatus::classname, part),
-           HDFLogStatus::classname, getEntity() + std::string("/") + part,
+  w_status(getId(), NameSet(getEntity(), DUECALogStatus::classname, part),
+           DUECALogStatus::classname, getEntity() + std::string("/") + part,
            Channel::Events, Channel::OneOrMoreEntries,
            Channel::OnlyFullPacking, Channel::Bulk),
   myclock(),
@@ -458,7 +458,7 @@ bool HDF5Logger::setConfigChannel(const std::string& cname)
     return false;
   }
   r_config.reset(new ChannelReadToken
-                 (getId(), NameSet(cname), HDFLogConfig::classname, 0,
+                 (getId(), NameSet(cname), DUECALogConfig::classname, 0,
                   Channel::Events, Channel::OnlyOneEntry,
                   Channel::ReadAllData));
   return true;
@@ -497,23 +497,7 @@ bool HDF5Logger::internalIsPrepared()
 
     // for valid tokens, and file opened, create the functor
     if (hfile && (*ii)->r_token.isValid() && (*ii)->functor.get() == NULL) {
-#if 0
-      // find the meta information
-      ChannelEntryInfo ei = (*ii)->r_token.getChannelEntryInfo();
-
-      // metafunctor can create the logging functor
-      std::weak_ptr<HDF5DCOMetaFunctor> metafunctor
-        ((*ii)->r_token.getMetaFunctor<HDF5DCOMetaFunctor>("hdf5"));
-
-      // logging functor, supply file information. Label will be saved
-      // as attribute
-      (*ii)->functor.reset(metafunctor.lock()->getWriteFunctor
-                           (hfile, (*ii)->logpath, (*ii)->chunksize,
-                            ei.entry_label, getOpTime((*ii)->always_logging),
-                            (*ii)->compress));
-#else
       (*ii)->createFunctor(hfile, this, std::string(""));
-#endif
 
       /* DUECA hdf5.
 
@@ -587,7 +571,7 @@ void HDF5Logger::doCalculation(const TimeSpec& ts)
   // events with new instructions
   if (r_config && r_config->getNumVisibleSets(ts.getValidityStart())) {
 
-    DataReader<HDFLogConfig> cnf(*r_config, ts);
+    DataReader<DUECALogConfig> cnf(*r_config, ts);
     std::shared_ptr<H5::H5File> nfile;
     std::string filename = FormatTime
       (boost::posix_time::second_clock::universal_time(),
@@ -738,16 +722,16 @@ void HDF5Logger::sendStatus(const std::string& msg, bool error,
 {
   if (w_status.isValid()) {
     while (statusstack.size()) {
-      DataWriter<HDFLogStatus> sts(w_status, statusstack.front().first);
+      DataWriter<DUECALogStatus> sts(w_status, statusstack.front().first);
       sts.data() = statusstack.front().second;
       statusstack.pop_front();
     }
-    DataWriter<HDFLogStatus> sts(w_status, moment);
+    DataWriter<DUECALogStatus> sts(w_status, moment);
     sts.data().status = msg;
     sts.data().error = error;
   }
   else {
-    statusstack.push_back(std::make_pair(moment, HDFLogStatus(msg, error)));
+    statusstack.push_back(std::make_pair(moment, DUECALogStatus(msg, error)));
   }
 }
 

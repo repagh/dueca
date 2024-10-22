@@ -1,12 +1,6 @@
 
 add_subdirectory(images)
 add_subdirectory(example)
-#add_subdirectory(simpsim)
-
-#set(DCOSOURCES example/PrimaryControls.dco)
-#duecacodegen_target(OUTPUT DCO DCOSOURCE ${DCOSOURCES})
-#add_custom_target(dco_doc ALL
-#  DEPENDS ${DCO_SOURCE} ${DCO_HEADERS})
 
 # error message documentation
 execute_process(COMMAND ${Python_EXECUTABLE} -c "import pyparsing"
@@ -114,9 +108,15 @@ string(REPLACE "\n" " \\\n        " apifiles1 "${apifiles1}")
 string(REPLACE "\n" " \\\n        " apifiles2 "${apifiles2}")
 string(CONCAT apifiles "${apifiles1}" "${apifiles2}")
 
+# local sources
+file(GLOB DOCSOURCES
+  "*.doc" "*.md" "*.html"
+  "${CMAKE_CURRENT_BINARY_DIR}/*.doc"
+  "${CMAKE_CURRENT_BINARY_DIR}/*.html")
+
 # these files generally carry the version information & need updating
 configure_file(mainpage-inspec.doc.in mainpage-inspec.doc @ONLY)
-configure_file(mainpage-api.doc.in mainpage-api.doc @ONLY)
+configure_file(mainpage-api.md.in mainpage-api.md @ONLY)
 configure_file(htfoot-inspec.html.in htfoot-inspec.html @ONLY)
 configure_file(htfoot-api.html.in htfoot-api.html @ONLY)
 configure_file(header-inspec.tex.in header-inspec.tex @ONLY)
@@ -258,18 +258,6 @@ endforeach()
   set_target_properties(dueca_run.x PROPERTIES LINK_FLAGS "${dlinkflags}")
 #elseif(DUECA_BUILD_STATIC)
 
-#  pkg_check_modules(GTK2 REQUIRED gtk+-2.0)
-#  pkg_check_modules(GLADE2 REQUIRED libglade-2.0)
-#  pkg_check_modules(GTKGLEXT REQUIRED gtkglext-1.0)
-
-#  target_link_libraries(dueca_run.x ${DLIBSTAT}
-#  ${GLADE2_LIBRARIES} ${GTK2_LIBRARIES} ${X11_LIBRARIES}
-#  ${GTKGLEXT_LIBRARIES} ${GLUT_LIBS})
-#  set_target_properties(dueca_run.x PROPERTIES LINK_FLAGS "${dlinkflags}")
-#else()
-#  message(WARNING "Cannot create executable for script instructions")
-#endif()
-
 # List of targets
 set(SCMFILED)
 
@@ -288,7 +276,9 @@ foreach(_SCM ${SCMFILEN})
   list(APPEND SCMFILED ${SCM})
 
   # add the target
-  add_custom_target(${SCM}
+  #  add_custom_target(${SCM}
+  add_custom_command(
+    OUTPUT ${SCM}
     COMMAND DUECA_SCRIPTINSTRUCTIONS=${MOD}
     LD_LIBRARY_PATH=${CMAKE_BINARY_DIR}/dueca:${CMAKE_BINARY_DIR}/extra:${CMAKE_BINARY_DIR}/inter:${CMAKE_BINARY_DIR}/dusime:${CMAKE_BINARY_DIR}/dueca/gui/gtk3:${CMAKE_BINARY_DIR}/dueca/gui/glut:${CMAKE_BINARY_DIR}/extra/gui/glut:${CMAKE_BINARY_DIR}/extra/gui/X11:${CMAKE_BINARY_DIR}/extra/gui/gtk3:${CMAKE_BINARY_DIR}/dusime/gui/gtk3:${CMAKE_BINARY_DIR}/hdf5utils:${CMAKE_BINARY_DIR}/udpcom:${CMAKE_BINARY_DIR}/websock:${CMAKE_BINARY_DIR}/ddff
     DYLD_LIBRARY_PATH=${CMAKE_BINARY_DIR}/dueca:${CMAKE_BINARY_DIR}/extra:${CMAKE_BINARY_DIR}/inter:${CMAKE_BINARY_DIR}/dusime:${CMAKE_BINARY_DIR}/dueca/gui/gtk3:${CMAKE_BINARY_DIR}/dueca/gui/glut:${CMAKE_BINARY_DIR}/extra/gui/glut:${CMAKE_BINARY_DIR}/extra/gui/X11:${CMAKE_BINARY_DIR}/extra/gui/gtk3:${CMAKE_BINARY_DIR}/dusime/gui/gtk3:${CMAKE_BINARY_DIR}/hdf5utils:${CMAKE_BINARY_DIR}/udpcom:${CMAKE_BINARY_DIR}/websock:${CMAKE_BINARY_DIR}/ddff
@@ -297,25 +287,31 @@ foreach(_SCM ${SCMFILEN})
     )
 endforeach()
 
+add_custom_target(schemefiles
+  DEPENDS ${SCMFILED}
+)
+
+add_custom_command(
+  OUTPUT api/html/index.html
+  COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_INPUT}
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+  DEPENDS ${DOXYGEN_INPUT} ${PNGDATA} schemefiles messagedoc dco_doc
+  ${DOCSOURCES}
+)
+
 if(NOT ${CMAKE_BUILD_TYPE} STREQUAL "Debug")
   message(STATUS "Build type ${CMAKE_BUILD_TYPE}, adding doc to default target")
   add_custom_target(
     doc ALL
-    COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_INPUT}
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    DEPENDS ${DOXYGEN_INPUT} ${SCMFILED} ${PNGDATA} dco_doc
-    SOURCES ${DOXYGEN_INPUT}
-    )
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/api/html/index.html
+  )
 else()
   message(STATUS
     "Build type ${CMAKE_BUILD_TYPE}, adding doc as explicit target")
   add_custom_target(
     doc
-    COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_INPUT}
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    DEPENDS ${DOXYGEN_INPUT} ${SCMFILED} ${PNGDATA} messagedoc dco_doc
-    SOURCES ${DOXYGEN_INPUT}
-    )
+    DEPENDS api/html/index.html
+  )
 endif()
 
 # each png file becomes a custom target, add as dep to the doc target
@@ -323,21 +319,17 @@ endif()
 set(DEPCHAIN "")
 set(PREVIOUS)
 foreach(D ${PNGDATA})
-  message(STATUS "Adding target ${D}, using ${INKSCAPE}")
+  message(STATUS "Adding target ${D}, using ${SVG_CONVERSION_COMMAND}")
   string(REPLACE .png .svg SVG ${D})
   add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/images/${D}"
     COMMAND
-    ${INKSCAPE} "${CMAKE_CURRENT_SOURCE_DIR}/images/${SVG}"
-    ${INKSCAPE_EXPORT_PNG}="${CMAKE_CURRENT_BINARY_DIR}/images/${D}"
+    ${SVG_CONVERSION_COMMAND} ${SVG_PNGFILE_ARG}=${D}
+    "${CMAKE_CURRENT_SOURCE_DIR}/images/${SVG}"
     MAIN_DEPENDENCY "${CMAKE_CURRENT_SOURCE_DIR}/images/${SVG}"
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/images)
   add_custom_target(${D} ALL
     DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/images/${D}")
   add_dependencies(doc ${D})
-  #if (DEPCHAIN)
-  #  add_dependencies(${DEPCHAIN} ${D})
-  #endif()
-  #set(DEPCHAIN ${D})
 endforeach()
 
 # the doc command, with dependency on the doxy input files, generated
@@ -347,4 +339,3 @@ install(
   DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/api
   DESTINATION ${DUECA_DOC_PATH}/dueca-doc-${dueca_VERSION}
   OPTIONAL)
-

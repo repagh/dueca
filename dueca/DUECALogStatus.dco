@@ -1,0 +1,21 @@
+;; -*-scheme-*-
+(Header "
+        original item   : DUECALogStatus.dco
+        made by         : Rene' van Paassen
+        date            : 170521
+        api             : DUECA_API
+        description     : Status feedback hdf logging
+        copyright       : (c) 2017-2022 TUDelft-AE-C&S
+                        : (c) 2023 René van Paassen
+        license         : EUPL-1.2")
+
+(Type vstring "#include <stringoptions.h>")
+(Type bool)
+
+;; Status feedback for hdf logging
+(Event DUECALogStatus
+       ;; Status report on a logging action
+       (vstring status)
+       ;; Error flag, indicating an error or problem
+       (bool error (Default false))
+       )

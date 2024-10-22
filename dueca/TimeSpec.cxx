@@ -177,13 +177,32 @@ bool TimeSpec::forceAdvance(const DataTimeSpec& t)
   return true;
 }
 
-TimeSpec TimeSpec::operator+ (const int& delta) const
+TimeSpec TimeSpec::operator+ (const int delta) const
 {
   return TimeSpec(getValidityStart() + delta,
                   getValidityEnd() + delta);
 }
 
-TimeSpec TimeSpec::operator- (const int& delta) const
+TimeSpec TimeSpec::operator+ (const unsigned int delta) const
+{
+  return TimeSpec(getValidityStart() + delta,
+                  getValidityEnd() + delta);
+}
+
+TimeSpec TimeSpec::operator+ (const double delta) const
+{
+  int idelta = int(round(delta / Ticker::single()->getTimeGranule()));
+  return TimeSpec(getValidityStart() + idelta,
+                  getValidityEnd() + idelta);
+}
+    
+TimeSpec TimeSpec::operator- (const int delta) const
+{
+  return TimeSpec(getValidityStart() - delta,
+                  getValidityEnd() - delta);
+}
+
+TimeSpec TimeSpec::operator- (const unsigned int delta) const
 {
   return TimeSpec(getValidityStart() - delta,
                   getValidityEnd() - delta);
@@ -197,6 +216,13 @@ int TimeSpec::operator- (const TimeSpec& to) const
   return int(this->getValidityStart()) - int(to.getValidityStart());
 }
 
+TimeSpec TimeSpec::operator- (const double delta) const
+{
+  int idelta = int(round(delta / Ticker::single()->getTimeGranule()));
+  return TimeSpec(getValidityStart() - idelta,
+                  getValidityEnd() - idelta);
+}
+    
 TimeSpec& TimeSpec::operator = (const DataTimeSpec& other)
 {
   validity_start = other.validity_start;

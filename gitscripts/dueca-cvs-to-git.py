@@ -109,7 +109,7 @@ def readModules(project, machineclass):
 
     res = []
 
-    try: 
+    try:
         # decode the old modules list and add to the modules file
         with open(f'{project}/modules.{machineclass}', 'r') as f:
             for l in f:
@@ -135,7 +135,7 @@ startdir = os.getcwd()
 
 # already git-converted projects
 gitgroups = [ ('ae-cs-dueca-base', 'git@gitlab.tudelft.nl'),
-              ('ae-cs-dueca-active', 'git@gitlab.tudelft.nl'), 
+              ('ae-cs-dueca-active', 'git@gitlab.tudelft.nl'),
               ('ae-cs-dueca-archive', 'git@gitlab.tudelft.nl'),
               ('ae-cs-dueca-ftis', 'git@gitlab.tudelft.nl'),
               ('ae-cs-dueca-yard', 'git@gitlab.tudelft.nl'),
@@ -147,11 +147,15 @@ def constructUrl(prj):
         if os.path.isdir(f'{rundir}/{gg}/{prj}'):
             print(f"Borrow from already converted {gg}/{prj}")
             return f'{grepo}:{gg}/{prj}.git'
-        
-    # assuming we are borrowing from a recent convert
-    print(f"Borrow from now-converted project {prj}")
+
+    # is there a recently converted project?
+    if os.path.isdir(f'{rundir}/repo/{prj}.git'):
+        # assuming we are borrowing from a recent convert
+        print(f"Borrow from now-converted project {prj}")
+    else:
+        print(f"Cannot find conversion repository at '{rundir}/repo/{prj}.git'"
+              ", Assuming it will be created later")
     return f'file://{rundir}/repo/{prj}.git'
-            
 
 parser = argparse.ArgumentParser(
         description=
@@ -226,7 +230,9 @@ parser.add_argument(
     default=patchdir,
     help='Folder with temporary project patches. These are replayed after\n'
     'a conversion, and new patches are placed there.')
-
+parser.add_argument(
+    '--cvs-date', type=str,
+    help='Date for the cvs, to possibly get an older version')
 
 # get the arguments
 runargs = parser.parse_args(sys.argv[1:])
@@ -283,6 +289,11 @@ if runargs.base:
 else:
     rundir = tempfile.mkdtemp()
 
+if runargs.cvs_date:
+    cvsdateselection=('-D', runargs.cvs_date)
+else:
+    cvsdateselection=()
+
 for suffix in ('old', 'new', 'repo'):
     if not os.path.isdir(f'{rundir}/{suffix}'):
         os.mkdir(f'{rundir}/{suffix}')
@@ -317,6 +328,8 @@ mc_mapping = dict(solo='solo',
                   dutmms9='hmi-ig',
                   dutmms14='hmi-ig',
                   dutmms14b='hmi-ig',
+                  dutmms15='hmi-ig',
+                  dutmms16='hmi-ig',
                   dutmms1='hmi-ecs',
                   dutmms4='hmi-io',
                   dutmms2='hmi-efis',
@@ -348,7 +361,11 @@ for project in projects:
 
     # check out the CVS-based code
     os.chdir(f'{rundir}/old')
-    subprocess.run(('cvs', '-d', cvsroot, 'export', '-r', 'HEAD', project))
+    if runargs.cvs_date:
+        subprocess.run(('cvs', '-d', cvsroot, 'export',
+                        '-D', runargs.cvs_date, project))
+    else:
+        subprocess.run(('cvs', '-d', cvsroot, 'export', '-r', 'HEAD', project))
 
     # initialize the git repository
     rrepo = git.Repo.init(f'{rundir}/repo/{project}.git', bare=True)
@@ -515,7 +532,7 @@ for project in projects:
 
     # now add a tag
     repo.create_tag('from_cvs', message='As converted from ')
-    repo.remote().push('--tags')
+    repo.remote().push('from_cvs')
 
     #%% patch file available?
     allok = True

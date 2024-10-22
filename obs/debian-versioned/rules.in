@@ -6,11 +6,13 @@ include /usr/share/cdbs/1/class/cmake.mk
 
 DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
 
+FORCE_PYTHON_MALLOC ?= $(shell lsb_release -si | grep -q Ubuntu && lsb_release -sr | grep -qE "18.04|20\.04" && echo "-DFORCE_PYTHON_MALLOC=ON" || echo "-DFORCE_PYTHON_MALLOC=OFF")
+
 PYTHON_MAMI= $(shell python3 -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')")
 
 DEB_CMAKE_EXTRA_FLAGS += -DALSO_INIT_GLUT=ON \
 			-DCMAKE_BUILD_TYPE=Release \
-			-DSYSCONF_INSTALL_DIR=/etc \
+			-DSYSCONF_INSTALL_DIR=/opt/dueca-@versioned@/etc \
 			-DDUECA_BUILD_STATIC=ON \
 			-DDUECA_BUILD_SHARED=OFF \
 			-DDUECA_INIT_STATIC=ON \
@@ -25,7 +27,7 @@ DEB_CMAKE_EXTRA_FLAGS += -DALSO_INIT_GLUT=ON \
 			-DBUILD_UDP=ON \
 			-DBUILD_WEBSOCK=ON \
 			-DSCRIPT_PYTHON=ON \
-			-DFORCE_PYTHON_MALLOC=ON \
+                        $(FORCE_PYTHON_MALLOC) \
 			-DSCRIPT_SCHEME=ON \
 			-DBUILD_DDFF=ON \
 			-DDUECA_INSTALL_ENVIRONMENT=ON \

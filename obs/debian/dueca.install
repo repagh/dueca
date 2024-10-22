@@ -1,7 +1,12 @@
-usr/bin
+usr/bin/moveandnumber
+usr/bin/clean-dueca-rundir
+usr/bin/makemycvsdir
+usr/bin/new-module
+usr/bin/new-dco
+usr/bin/rrundueca*
+usr/bin/dueca-*
+
 usr/sbin
-etc/dueca
-etc/udev/rules.d/90-rtdueca-cpulatency.rules
 
 usr/lib/*/libdueca.*
 usr/lib/*/libdueca-start*.*
@@ -37,4 +42,5 @@ usr/lib/python*/*/duecautils*
 usr/include/dueca
 
 usr/share/dueca
-
+etc/dueca/profile
+etc/udev/rules.d/90-rtdueca-cpulatency.rules

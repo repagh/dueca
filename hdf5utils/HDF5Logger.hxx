@@ -24,8 +24,8 @@
 #include <dusime.h>
 
 // This includes headers for the objects that are sent over the channels
-#include <HDFLogConfig.hxx>
-#include <HDFLogStatus.hxx>
+#include <DUECALogConfig.hxx>
+#include <DUECALogStatus.hxx>
 
 // additional helpers and includes
 #include "ChannelWatcher.hxx"
@@ -65,7 +65,7 @@ private: // simulation data
   std::shared_ptr<H5::H5File> hfile;
 
   // file access properties
-  H5::FileAccPropList           access_proplist;
+  H5::FileAccPropList         access_proplist;
 
   // chunk size
   unsigned chunksize;
@@ -182,7 +182,7 @@ private: // channel reading
   void sendStatus(const std::string& msg, bool error, TimeTickType moment);
 
   /// list of stacked status messages
-  typedef std::list<std::pair<TimeTickType,HDFLogStatus> > statusstack_t;
+  typedef std::list<std::pair<TimeTickType,DUECALogStatus> > statusstack_t;
 
   /// list of stacked status messages
   statusstack_t statusstack;

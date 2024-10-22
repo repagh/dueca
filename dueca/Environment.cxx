@@ -38,6 +38,8 @@
 #include "CPULowLatency.hxx"
 #include <locale>
 #include <sstream>
+#include <dueca/ChannelReadToken.hxx>
+#include <sys/resource.h>
 #define W_CNF
 #define I_SYS
 #define W_SYS
@@ -59,10 +61,8 @@
 
 
 #define DO_INSTANTIATE
-#include "Event.hxx"
 #include "VarProbe.hxx"
 #include "MemberCall.hxx"
-#include "EventAccessToken.hxx"
 #include <Callback.hxx>
 #include <InformationStash.ixx>
 #include <debprint.h>
@@ -132,6 +132,7 @@ Environment::Environment() :
   init_complete(false),
   need_to_start_others(true),
   statuscheck(true),
+  exitcode(0),
   create_cmd(Wait),
   cbw(this, &Environment::waitAdditional),
   wait_additional(NULL),
@@ -914,8 +915,10 @@ void Environment::proceed(int stage)
     */
     // open an event channel that carries confirmations that additional
     // configuration data can be processed
-    t_moreconf = new EventChannelReadToken<ScriptConfirm>
-      (getId(), NameSet("dueca", "ScriptConfirm", "processadditional"));
+    t_moreconf = new ChannelReadToken
+      (getId(), NameSet("dueca", "ScriptConfirm", "processadditional"),
+       getclassname<ScriptConfirm>(), 0, Channel::Events,
+       Channel::OnlyOneEntry, Channel::JumpToMatchTime);
     // connect as trigger
     wait_additional->setTrigger(*t_moreconf);
     wait_additional->switchOn(TimeSpec(0,0));
@@ -1031,33 +1034,53 @@ void Environment::proceed(int stage)
 #endif
         }
       else {
-        /* DUECA system.
 
-           The process has no suid or root capability, but if the
-           configuration is appropriate, memlock should be
-           possible. This is now attempted. Failure indicates a
-           possibly lower real-time performance. If that is not
-           acceptable (for a production environment), see DUECA
-           documentation on tuning linux workstations to properly
-           configure.
-        */
-        I_SYS(getId() << " trying memlock without root capability");
-        if (mlockall(MCL_CURRENT | MCL_FUTURE) == -1) {
-          /* DUECA system.
+	// first check the limit; it has no use (Ubuntu 22.04)
+	// requesting mlock when the limit is low, as this will lead
+	// to alloc failures
+	rlimit mlcklim;
+	int res = getrlimit(RLIMIT_MEMLOCK, &mlcklim);
+	if (res != 0) {
+	  /* DUECA system.
 
-             Attempt to load and lock the memory for the DUECA
-             executable failed. This is normal during development,
-             when real-time and memory locking priorities are not
-             used, but should be avoided during deployment. Check the
-             page on 'tuning linux workstations' for guidance. This
-             may also happen when not enough memory is available.
-          */
-          W_SYS("Cannot memlock the DUECA executable: " << strerror(errno));
-          // perror("Cannot memlock program");
-        }
-        else {
-          cpu_lowlatency.reset(new CPULowLatency(0));
-        }
+	     Attempt to find out the memlock limit failed. */
+	  W_SYS("Cannot detect memlock limit: " << strerror(errno));
+	  mlcklim.rlim_cur = 0;
+	}
+
+	if (mlcklim.rlim_cur != RLIM_INFINITY) {
+
+	  /* DUECA system.
+
+	     The system indicates that there is a limited amount of
+	     memory available for locking; avoiding the use of
+	     mlockall, because this may lead to memory allocation
+	     failure and crashes. Use ulimit and adapt with a
+	     configuration file in /etc/security/limits.d if you want
+	     memory locking and better real-time performance */
+	  W_SYS("Not attempting to lock memory, raise limits if needed");
+	}
+	else {
+
+	  if (mlockall(MCL_CURRENT | MCL_FUTURE) == -1) {
+	    /* DUECA system.
+
+	       Attempt to load and lock the memory for the DUECA
+	       executable failed. This is normal during development,
+	       when real-time and memory locking priorities are not
+	       used, but should be avoided during deployment. Check
+	       the page on 'tuning linux workstations' for
+	       guidance. This may also happen when not enough memory
+	       is available.
+	    */
+	    W_SYS("Cannot memlock the DUECA executable: " << strerror(errno));
+	  }
+	  else {
+	    // succeeded in memory locking. Also attempt to set CPU
+	    // to low latency mode
+	    cpu_lowlatency.reset(new CPULowLatency(0));
+	  }
+	}
       }
 #endif // HAVE_MLOCKALL
 
@@ -1168,8 +1191,7 @@ void Environment::proceed(int stage)
       /* DUECA system.
 
         Internal error, a run stage that has not been configured is
-        requested.
-      */
+        requested. */
     E_SYS("No stage " << stage << " to proceed to");
   }
 
@@ -1188,7 +1210,7 @@ void Environment::proceed(int stage)
 
   /* DUECA system.
 
-    Control returns to the scripting language interpretation.
+     Control returns to the scripting language interpretation.
   */
   I_SYS(getId() << "Returning to script");
 }
@@ -1263,5 +1285,19 @@ void Environment::quit()
   gui_handler->returnControl();
 }
 
+/** Set the exit code, mainly used in testing */
+void Environment::setExitCode(int ecode)
+{
+  if (exitcode != 0 && ecode == 0) {
+    /* DUECA System
+
+       A previous call to Environment::setExitCode set the exit code to
+       nonzero, indicating an issue. Now the exitcode is reset to zero.
+       Check that this is your desired behaviour.
+    */
+    W_SYS("The application is resetting the exit code to zero");
+  }
+  exitcode = ecode;
+}
 
 DUECA_NS_END

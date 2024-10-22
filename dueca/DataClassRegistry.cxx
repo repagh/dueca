@@ -293,6 +293,18 @@ DataClassRegistry::getConverter(const std::string& classname) const
   return ix->second->converter.get();
 }
 
+bool DataClassRegistry::isCompatible(const std::string& tryclass,
+                                     const std::string& classname)
+{
+  auto ix = getEntry(classname);
+  if (tryclass == classname) return true;
+  while (ix) {
+    if (ix->parent == tryclass) return true;
+    ix = ix->iparent.get();
+  }
+  return false;
+}
+
 std::weak_ptr<DCOMetaFunctor>
 DataClassRegistry::getMetaFunctor(const std::string& classname,
                                   const std::string& fname) const

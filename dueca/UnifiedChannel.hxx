@@ -21,6 +21,7 @@
 #include <list>
 #include "AsyncQueueMT.hxx"
 #include "NamedChannel.hxx"
+#include "UCallbackOrActivity.hxx"
 #include "dueca_ns.h"
 #include "UChannelEntry.hxx"
 #include "UCClientHandle.hxx"
@@ -41,6 +42,9 @@ class ChannelWriteToken;
 class ChannelReadToken;
 class UCEntryDataCache;
 class ChannelWatcher;
+struct EntryConfigurationChange;
+typedef EntryConfigurationChange* EntryConfigurationChangePtr;
+class UCallbackOrActivity;
 
 /* Design considerations:
 
@@ -246,6 +250,12 @@ private:
   /** Flag to remember calling in with the master. */
   CStatus channel_status;
 
+  /** Set of changes */
+  EntryConfigurationChangePtr entry_config_changes;
+
+  /** Latest change */
+  volatile EntryConfigurationChangePtr latest_entry_config_change;
+
   /** Generation of the channel configuration */
   volatile unsigned config_version;
 
@@ -275,6 +285,9 @@ private:
 
   /** ChannelManager service specials for the 2nd channel */
   void serviceLocal2(const LocationId location_id, unsigned n_locations);
+
+  /** Recycle processed configuration changes */
+  void recycleConfigChanges();
 
   /** Copy constructor, private and not implemented. */
   UnifiedChannel(const UnifiedChannel&);
@@ -325,6 +338,10 @@ private:
 
   /** Read access needs to be released again, after a getReadAccess. */
   void releaseReadAccess(UCClientHandlePtr client);
+
+  /** Read access needs to be released again, after a failed read. Gets
+      access to same data with sequential read. */
+  void resetReadAccess(UCClientHandlePtr client);
 
 public:
   /** Read access needs to be released again. This version keeps the data,
@@ -441,6 +458,14 @@ private:
   /** release the monitor again */
   void releaseMonitor(entryid_type entry);
 
+  /** Helper, perform linking of an entry to a read client */
+  void linkReadClientToEntry(UCClientHandlePtr client, 
+                             UChannelEntryPtr entry);
+
+  /** Helper, perform linking of an entry to a read client */
+  bool detachReadClientFromEntry(UCClientHandlePtr client, 
+                                 UChannelEntryPtr entry);
+
   /** Let the channelmanager access private methods. */
   friend class ChannelManager;
   friend class FillPacker;
@@ -467,7 +492,7 @@ public:
                                  entryid_type attach_entry,
                                  Channel::EntryTimeAspect time_aspect,
                                  Channel::ReadingMode readmode,
-                                 GenericCallback* valid,
+                                 const UCallbackOrActivity& valid,
                                  double requested_span,
                                  unsigned requested_depth=0);
 
@@ -503,7 +528,7 @@ public:
                                   bool fullpackonly,
                                   Channel::TransportClass tclass,
                                   const std::string& entrylabel,
-                                  GenericCallback* valid);
+                                  const UCallbackOrActivity& valid);
 
   /** Remove a write token. This also removes the corresponding entry */
   void removeWriteToken(UCWriterHandlePtr& client);
@@ -522,9 +547,7 @@ public:
   { return transport_class; }
 
   /** remove links from a client */
-  void detachClientlinks(UCClientHandlePtr client,
-                         UCEntryClientLinkPtr oe,
-                         ChannelReadInfo::InfoType);
+  void detachClientlinks(UCClientHandlePtr client);
 };
 
 DUECA_NS_END

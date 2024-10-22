@@ -17,6 +17,8 @@
 #include <dueca_ns.h>
 #include "SimTime.hxx"
 #include "DataWriterArraySize.hxx"
+#include "ChannelWriteToken.hxx"
+
 DUECA_NS_START
 
 /** Common base class for DataWriter instantiations. */
@@ -36,7 +38,12 @@ protected:
       @param ts     Time for writing
   */
   DataWriterBase(ChannelWriteToken& token, const DataTimeSpec& ts) :
-    token(token), ts(ts) { }
+    token(token), ts(ts) {
+      if (token.isEventType()) {
+        // make sure event writing always triggers as event
+        this->ts.setSpanToZero();
+      }
+    }
 
 protected:
   /** Releasing the read access means that the data will be made

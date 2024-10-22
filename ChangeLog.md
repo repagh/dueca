@@ -2,6 +2,193 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [4.1.1] - 2024-09-19
+
+- Add a convenience function to load a gtk3 combo box with values
+- Fixes to DCO path interpretation for home dco
+- Major work on the websocket server; offering a json and a msgpack
+  variant for that now, unified the set-up messages; the server alway
+  responds with communication set-up information now, and added a test
+  case for websocket communication.
+- Related to the previous, offer an option for a token validity
+  callback to be immediate or prio 0, as previously (GenericCallback)
+  or defined as a separate activity with control over the priority
+  (ActivityCallback).
+
+## [4.1.0] - 2024-08-07
+
+- Change to the git/cmake build system and scripts. DCO file listings without
+  project component, and USEMODULES definitions without project component
+  are interpreted as being from the "same/own" project. This facilitates
+  forking and re-naming, since these won't point to the project with
+  the "old" name.
+- Associated changes in documentation
+- Fixes to guile build versions for ubuntu 20.04, 22.04
+- small fix new-dco script
+- configure for building on ubuntu 24.04
+
+## [4.0.8] - 2024-04-17
+
+- Fixes to the xml schemas, install xsd defs these on dueca server
+- Improvements to policy handling, also worked on documentation
+- General documentation fixes
+- Channel view for gtk3 interface now sorts
+- Improvement in the clang formatting support vscode/codium
+
+## [4.0.7] - 2024-02-15
+
+- extensions for dueca-gproject; prepareplatform with scriptlets,
+  speudo module creation, vscode tweaks
+
+## [4.0.6] - 2024-01-31
+
+- more support for vscode/codium
+- add possibility to remove a trigger
+- for traceability, add git hash to dueca startup output
+- fixes websockets server
+
+## [4.0.5] - 2023-12-07
+
+- Fix simplesimulation test
+- add rtwv23_2 to the dueca-config options
+- documentation enhancements
+- fix uninitialized memory crash in TriggerRegulator / TriggerRegulatorGreedy
+- warn for incompatible dueca versions when using net communicator
+
+## [4.0.4] - 2023-11-13
+
+- add documentation on running multi-team
+- autodetect X display in the dueca profile script
+- add a test on triggering
+- more precise triggering, remove 0-length trigger at start
+- fixes for Fedora 39
+
+## [4.0.3] - 2023-11-08
+
+- Fix for a crash in the websocket server with repeated access/delete
+- Add mime type information tot the build-in web server
+- Various documentation fixes
+- Removed the calculation of config/master url for the udp server, url's
+  to be directly entered now to the config
+- Robustness fixes for dueca inter
+- Considerable rework of channel handling for sequential read access;
+  now correctly cleans read datapoints, more efficient transmission of
+  changes to channel configuration
+- Add a warning on sequential reading when too many datapoints are left
+  in an entry after removing entry or read token.
+- Add a new test scenario with actual replay of a recorded data
+- Add a new test scenario with SimpleSimulation, involving/testing the
+  DUECA inter communication, with two teams and a central hub
+- Enhancements to the python testrunner
+
+## [4.0.2] - 2023-10-17
+
+- A new script, dueca-startlink, to create automatic links to start script,
+  on links.script running
+- Many fixes to the dueca-scheme-to-python script, works quite OK now
+- Corrections to the code generator with default size / argument
+- Add handling of real-time-workshop 9.8 in the config script
+
+## [4.0.1] - 2023-07-11
+
+- Add "dueca-gproject build" command, to configure and build projects
+- Some corrections to automatic classname calculation
+- Added a test case with snapshot, recording and replay using
+  DuecaTestCommunication
+- Extend the ddff python code, and add a script for ddff conversion
+- Create and add a ddff logger python program
+- Improve workflow run, upload LastTest.log as build artifact
+
+## [4.0.0] - 2023-06-15
+
+- add a fix_optional object, to accomodate optional / nil values from
+  msgpack unpacks
+- re-write of code generator to:
+  * use jinja2 templates
+  * change the packing, so that members are always packed in the order
+    in which they appear in the object
+  * use template magic to pack/unpack different types, no more need for
+    IterableType/FixIterableType distinctions
+- test for "incomplete + nil" msgpack unpack
+- elaborated templating with dco_traits
+- improved/updated printing of dco objects
+- New codegen version, to account for changes in packing order. If you have
+  dco objects that have an "Extra.?xx" include, check the following:
+  * You have either NOT redefined the "packData" "unPackData",
+    "amorphrestore constructor", and/or the pair of "packDataDiff",
+    and "unPackDataDiff", or you redefined them ALL and they still compile:
+    - Add "#define __CUSTOM_COMPATLEVEL_111" to your .cxx include file
+    In other cases, adjust or update the packing/unpacking code.
+
+## [3.2.12] - 2023-06-12
+
+- Add a fixvector_withdefault variant with default value option
+- Test hdf5 logging for various datatypes
+- Handle msgpack nil value for list or for resizing arrays
+- More flexibly handle msgpack reading:
+  * accept int, float and double for c++ float and double
+  * accept nil to clear variable size arrays, lists and maps
+  * accept nil to fixvector_withdefault to set default value
+
+## [3.2.11] - 2023-05-23
+
+- Fix in the appdevelopmentg.md documentation
+- Fix the hdf5 logging of std::map members as vararray of
+  hdf5 composite objects
+- Add tests hdf5 logging
+- Speed up doc targets, avoid rebuild
+
+## [3.2.10] - 2023-05-12
+
+- Ignore messagepack data for DCO members that are not present
+- Use rsvg-convert instead of inkscape for svg -> png
+- Improve the line counting for the message list documentation
+- Fixed a bug in websocket server; connected endpoints from
+  an info endpoint would also be listed as direct read endpoints
+
+## [3.2.9] - 2023-04-19
+
+- Enable use of abbreviated url when creating projects
+- Fixes in various python code, to correctly read files on ubuntu 18.04
+- Add a note on the ulimit problems in ubuntu 22.04
+- Remove the FORCE_PYTHON_MALLOC from all but ubuntu 20.04 builds
+- Test allowed memory limit before attempting an mlockall
+
+## [3.2.8] - 2023-03-25
+
+- Add a script for scheme to python configuration conversion
+- Some minor fixes in dueca-gproject
+- Improved comments in the config.cmake templates
+
+## [3.2.7] - 2023-PI
+
+- Add check to codegen, to ensure the right objects are generated
+- Expand the information on websockets
+- For completeness, add Base64File object to Snapshot
+- Fixes to msgpack generation
+- Check out README files when borrowing modules from other projects
+- Pull directly from github release when generating files for obs build
+- Add scripts to facilitate creation of runtest scenarios
+
+## [3.2.6] - 2023-02-07
+
+- Fix script language detection in dueca-gproject
+- Correct cmake test for websocket headers
+- Finally fixed running the runtests under Wayland
+- Use unified channel tokens for internal DUECA communication
+- Add a new-dco script, to get nicer .dco files
+- Documentation and style tweaks
+
+## [3.2.5] - 2023-01-09
+
+- Some documentation updates (git setup, simplesimulation, GtkGladeWindow,
+  Condition)
+- dueca-gproject improvements (handling sparse setup, url translation)
+- Use std::shared_ptr instead of boost::shared_ptr
+- Accomodate Python 3.11 where available
+- Improved detection PYSITEDIR in CMake conf
+- Check script language in dueca-gproject
+
 ## [3.2.4] - 2022-11-17
 
 - Remove gtk2-related classes from the documentation; having the same

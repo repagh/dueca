@@ -27,7 +27,7 @@
 #include "DDFFDataRecorder.hxx"
 #include <dueca/debug.h>
 
-#define DEBPRINTLEVEL 1
+#define DEBPRINTLEVEL -1
 #include <debprint.h>
 
 namespace msgpack {
@@ -99,6 +99,15 @@ FileWithSegments::FileWithSegments(const std::string& entity) :
   w_tags()
 {
   DEB("New FileWithSegments");
+}
+
+FileWithSegments::FileWithSegments(const std::string& filename,
+                                   Mode mode,
+                                   unsigned blocksize) :
+  FileWithInventory(filename, mode, blocksize)
+{
+  // now create the tag writer, and read any existing tags
+  w_tags = attachWrite(1, blocksize);
 }
 
 FileWithSegments::~FileWithSegments()
@@ -196,10 +205,8 @@ FileWithSegments::findOffset(unsigned cycle,
     assert(stream_id >= 2U);
     return tags[cycle].offset[stream_id-2U];
   }
-  else if (cycle == tags.size()) {
-    return std::numeric_limits<pos_type>::max();
-  }
-  assert(0);
+  assert(cycle == tags.size());
+  return std::numeric_limits<pos_type>::max();
 }
 
 void FileWithSegments::startStretch

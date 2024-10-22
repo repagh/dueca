@@ -45,13 +45,17 @@ struct GlobalId;
     For the channel, the accessToken acts as an identifier. It
     contains the sequence number of the component, as used in the
     channel object, and a GlobalId of the component. These are used
-    for accounting purposes. */
+    for accounting purposes.
+
+    Note that StreamChannelReadToken is obsolete; please use
+    ChannelReadToken in new code.
+*/
 template<class T>
 class StreamChannelReadToken : public ChannelReadToken
 {
 public:
 
-  DUECA_DEPRECATED("use a StreamReader instead")
+  DUECA_DEPRECATED("use new tokens and DataReader instead")
   /** Makes the reference to the data valid, does not return the
       data's age. As a side effect the access to the data is
       registered.
@@ -63,7 +67,7 @@ public:
   */
   void getAccess(const T *& data, const TimeSpec& ts);
 
-  DUECA_DEPRECATED("use StreamReaderLatest instead")
+  DUECA_DEPRECATED("use new tokens and DataReader instead")
   /** Get always the latest version of the data. Use this only in
       special applications, e.g. for projection on interfaces
       etc.
@@ -77,7 +81,7 @@ public:
   /** Returns the number of data points available. */
   int getNumWaitingSets() const;
 
-  DUECA_DEPRECATED("use an StreamReader instead")
+  DUECA_DEPRECATED("use new tokens and DataReader instead")
   /** Returns the read channel access pointer. The data access
       registration is undone.
 
@@ -149,7 +153,11 @@ public:
     channel.
 
     Construct the access token and keep it, to gain access to the
-    channel. Please check with GenericToken::isValid() before writing. */
+    channel. Please check with GenericToken::isValid() before writing.
+
+    Note that StreamChannelWriteToken is obsolete; please use 
+    ChannelWriteToken in new code.
+*/
 template<class T>
 class StreamChannelWriteToken : public ChannelWriteToken
 {

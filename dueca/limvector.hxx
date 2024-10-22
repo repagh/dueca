@@ -13,9 +13,8 @@
         license         : EUPL-1.2
 */
 
-#ifndef limvector_hxx
+#pragma once
 #define limvector_hxx
-
 #include <dueca_ns.h>
 #include <CommObjectTraits.hxx>
 #include <PackTraits.hxx>
@@ -23,6 +22,7 @@
 #include <vectorexceptions.hxx>
 #include <iterator>
 #include <inttypes.h>
+#include <sstream>
 
 DUECA_NS_START;
 
@@ -244,15 +244,35 @@ public:
 
 /** Helper, for DCO object handling */
 template <size_t N, typename D>
-struct dco_traits<limvector<N,D> > : dco_traits_iterable { };
-
-/** Helper, for DCO object handling */
-template <size_t N, typename D>
-struct pack_traits<limvector<N,D> >: public pack_var_size, unpack_resize { };
-/** Helper, for DCO object handling */
-template <size_t N, typename D>
-struct diffpack_traits<limvector<N,D> >: public diffpack_vector { };
+struct dco_traits<limvector<N,D> > : dco_traits_iterable,
+  pack_var_size, unpack_resize, diffpack_vector
+{
+  /** Helper function, creates a representative classname. */
+  static const char* _getclassname()
+  {
+    static std::stringstream cname;
+    if (cname.str().size() == 0) {
+      cname << "limvector<" << N << "," 
+            << dco_traits<D>::_getclassname() << ">";
+    }
+    return cname.str().c_str();
+  }
+  /** Value type for the elements of a trait's target. */
+  typedef D value_type; 
+  /** Value type for the keys of a trait's target, not used. */
+  typedef void key_type;
+};
 
 DUECA_NS_END;
 
-#endif
+#include "msgpack-unstream-iter.hxx"
+MSGPACKUS_NS_START;
+template <typename S, size_t N, typename T>
+inline void msg_unpack(S& i0, const S& iend, dueca::limvector<N,T> & i)
+{
+  uint32_t len = unstream<S>::unpack_arraysize(i0, iend);
+  i.resize(len);
+  for (unsigned ii = 0; ii < len; ii++)
+    msg_unpack(i0, iend, i[ii]);
+}
+MSGPACKUS_NS_END;

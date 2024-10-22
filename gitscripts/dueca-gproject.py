@@ -23,6 +23,7 @@ import subprocess
 import argparse
 import tempfile
 from argparse import Namespace
+from collections import ChainMap
 import socket
 from datetime import date
 from lxml import etree
@@ -33,6 +34,7 @@ from duecautils.machinemapping import NodeMachineMapping
 from duecautils.githandler import GitHandler
 from duecautils.verboseprint import dprint
 from duecautils.policy import Policies
+from duecautils.xmlutil import XML_interpret_bool, XML_tag, XML_comment
 
 
 """
@@ -129,13 +131,53 @@ parser.add_argument(
     help="Verbose run with information output")
 subparsers = parser.add_subparsers(help='commands', title='commands')
 
+def get_dueca_version():
+    dc = subprocess.run(("dueca-config", "--version"), stdout=subprocess.PIPE)
+    return dc.stdout.strip().decode("UTF-8")
+
+_dueca_cnf_defaults = {
+    'this-node-id': 0,
+    'no-of-nodes': 1,
+    'send-order': 0,
+    'highest-manager': 4,
+    'run-in-multiple-threads?': True,
+    'rt-sync-mode': 2,
+    'graphic-interface': 'gtk3',
+    'tick-base-increment': 100,
+    'tick-compatible-increment': 100,
+    'tick-time-step': 0.01,
+    'communication-interval': 50,
+    'if-address': "127.0.0.1",
+    'mc-address': "224.0.0.1",
+    'mc-port': 7500,
+    'master-host': 'correct this value',
+    'packet-size': 4096,
+    'bulk-max-size': 128*1024,
+    'comm-prio-level': 3,
+    'unpack-prio-level': 2,
+    'bulk-unpack-prio-level': 1,
+    'dueca-version': get_dueca_version(),
+    'date': date.today().strftime("%d-%b-%Y"),
+    }
+
 def _gui_choices():
     return ('none', 'gtk3', 'gtk2', 'glut', 'glut-gui')
 
 
-def read_transform_and_write(f0, f1, subst):
+def read_transform_and_write(f0, f1, subst, insert=None):
+
     with open(f0, 'r') as fr:
-        fdata = ''.join(fr.readlines())
+        if insert:
+            lines = []
+            for l in fr.readlines():
+                lines.append(l)
+                for k, txt in insert.items():
+                    if k in l:
+                        lines.append(txt)
+                        lines.append('\n')
+            fdata = ''.join(lines)
+        else:
+            fdata = ''.join(fr.readlines())
 
     for k, v in subst.items():
         if f'@{k}@' in fdata:
@@ -145,7 +187,7 @@ def read_transform_and_write(f0, f1, subst):
     return f1
 
 
-def create_and_copy(dirs, files, subst):
+def create_and_copy(dirs, files, subst, keepcurrent=False, inform=False, insert=None):
     for _d in dirs:
         try:
             d = _d.format(**subst)
@@ -153,9 +195,12 @@ def create_and_copy(dirs, files, subst):
                 dprint("creating dir", d)
                 os.mkdir(d)
             else:
-                raise Exception(f"Failed to create directory {d}")
+                if keepcurrent:
+                    pass
+                else:
+                    raise Exception(f"Failed to create directory {d}")
         except ValueError as ve:
-            print(f"Problem formatting '{_d}'")
+            print(f"Problem formatting '{_d}'", file=sys.stderr)
             raise ve
 
     dc = subprocess.run(("dueca-config", "--path-datafiles"),
@@ -166,15 +211,17 @@ def create_and_copy(dirs, files, subst):
     fnew = []
     for f in files:
         f1 = f[1].format(**subst)
+        if keepcurrent and os.path.isfile(f1):
+            if inform:
+                print(f"Keeping existing '{f1}'")
+            continue
+        if inform:
+            print(f"Created '{f1}'")
         dprint("writing", f1)
         fnew.append(
             read_transform_and_write(
-                duecabase + f[0], f1, subst))
+                duecabase + f[0], f1, subst, insert))
     return fnew
-
-def get_dueca_version():
-    dc = subprocess.run(("dueca-config", "--version"), stdout=subprocess.PIPE)
-    return dc.stdout.strip().decode("UTF-8")
 
 def get_dueca_prefix():
     dc = subprocess.run(("dueca-config", "--prefix"), stdout=subprocess.PIPE)
@@ -245,17 +292,20 @@ def guess_ifaddress(nodename=None):
         try:
             ipaddress = socket.gethostbyname(hname)
         except:
-            print('Cannot determine IP address')
+            print('Cannot determine IP address', file=sys.stderr)
     except:
-        print('Cannot determine host name')
+        print('Cannot determine host name', file=sys.stderr)
     print("Assuming machine IP address", ipaddress)
     return ipaddress
 
+'''
 def XML_tag(elt, tag):
     return isinstance(elt.tag, str) and elt.tag.split('}')[-1] == tag
 
 def XML_comment(elt):
     return isinstance(elt, etree._Comment)
+'''
+
 
 # checked
 class NewProject:
@@ -364,17 +414,10 @@ class NewProject:
             '{project}/{project}'.format(project=ns.name))
 
         # add the default config files
-        cnfdef = {'this-node-id': 0,
-                  'no-of-nodes': 1,
-                  'send-order': 0,
-                  'rt-sync-mode': 2,
-                  'graphic-interface': ns.gui,
-                  'if-address': "127.0.0.1",
-                  'project': ns.name,
-                  'dueca-version': get_dueca_version(),
-                  'date': date.today().strftime("%d-%b-%Y"),
-                  'highest-manager': 4,
-                  'master-host': "127.0.0.1"}
+        cnfdef = ChainMap(
+            { 'graphic-interface': ns.gui,
+              'project': ns.name},
+            _dueca_cnf_defaults)
         if ns.script == 'python':
             create_and_copy([], NewProject.pfile, cnfdef)
         else:
@@ -388,7 +431,7 @@ class NewProject:
 
         # add the remote and push results
         if ns.remote:
-            repo.create_remote('origin', RootMap().urlToAbsolute(remoteurl))
+            repo.create_remote('origin', RootMap().urlToAbsolute(ns.remote))
             repo.git.push('--set-upstream', 'origin', 'master')
 
         print(f"Created new DUECA project {ns.name}")
@@ -424,7 +467,7 @@ class CloneProject:
 
     def __call__(self, ns):
 
-        urlbase, name = projectSplit(ns.remote)
+        _, name = projectSplit(ns.remote)
 
         # check that the local disk is free
         if os.path.exists(name):
@@ -451,7 +494,12 @@ class CloneProject:
                          'CMakeLists.txt\nREADME.md\n.gitignore\nbuild/*\n')
 
         # pull the existing code, and create master/selected branches
-        orig.fetch()
+        try:
+            orig.fetch()
+        except git.GitCommandError as e:
+            print(f"Cannot fetch from {RootMap().urlToAbsolute(ns.remote)}\n"
+                  "Clone failed, check url and access rights")
+            sys.exit(-1)
         dprint("check out on branch", ns.version)
         branch = repo.create_head('master', orig.refs.master)
         branch.set_tracking_branch(orig.refs.master)
@@ -523,7 +571,8 @@ class OnExistingProject():
             self.inprojectdir = False
 
         if len(curpath) < 2 or curpath[-1] != curpath[-2]:
-            print(f"Could not find project folder in {os.getcwd()}")
+            print(f"Could not find project folder in {os.getcwd()}",
+                  file=sys.stderr)
             raise Exception(f"dueca-gproject {command} needs to be run from"
                             " the main project directory")
 
@@ -545,16 +594,17 @@ class OnExistingProject():
         except AttributeError:
             pass
 
+        self.scriptlang = None
         self.pushDir()
         try:
             cm = subprocess.run(
                 ['cmake', '--build', 'build', '--', 'scriptlang'],
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            #print(cm.stdout, cm.stderr)
-            #print(['cmake', '--build', 'build', '--', 'scriptlang'])
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
             self.scriptlang = cm.stdout.strip().decode('UTF-8').split()[0]
         except Exception as e:
-            print(f"Could not determine script language, {e}")
+            print(f"Could not determine script language, {e}\n"
+                  "failed command: cmake --build build -- scriptlang",
+                  file=sys.stderr)
         self.popDir()
         return self.scriptlang
 
@@ -588,7 +638,7 @@ class NewModule(OnExistingProject):
 
     files = (("CMakeLists.txt.mod",
               "{module}/CMakeLists.txt"),
-             ("comm-objects.txt",
+             ("comm-objects.lst",
               "{module}/comm-objects.lst"),)
     filesalt = (("README-pseudomodule.md",
                  "{module}/README.md"),)
@@ -946,7 +996,7 @@ class NewNode(OnExistingProject):
         parser.set_defaults(handler=NewNode)
 
 
-    def __call__(self, ns):
+    def __call__(self, ns, scriptlets=None):
 
         try:
             self.pushDir()
@@ -958,9 +1008,12 @@ class NewNode(OnExistingProject):
                     'Node number must be smaller than number of nodes')
 
             scriptlang = self.checkScriptlang()
+
             if ns.script and ns.script != scriptlang:
                 print("Warning, you seem to have selected a script language"
-                      " that does not match the one in the code")
+                      " that does not match the one in the code",
+                      file=sys.stderr)
+                scriptlang = ns.script
             elif scriptlang:
                 pass
             elif not scriptlang and ns.script:
@@ -971,24 +1024,23 @@ class NewNode(OnExistingProject):
                     " configuration or specify the script language")
 
 
-            tofill = {'projectdir': self.projectdir,
-                      'platform': ns.platform,
-                      'node': ns.name,
-                      'no-of-nodes': ns.num_nodes,
-                      'this-node-id': ns.node_number,
-                      'send-order': (ns.cmaster and 1) or 0,
-                      'rt-sync-mode': 2,
-                      'highest-manager': ns.highest_priority,
-                      'graphic-interface': ns.gui,
-                      'if-address': ns.if_address,
-                      'dueca-version': get_dueca_version(),
-                      'date': date.today().strftime("%d-%b-%Y"),
-                      'master-host': ns.cmaster or ns.if_address }
+            tofill = ChainMap(
+                {'projectdir': self.projectdir,
+                 'platform': ns.platform,
+                 'node': ns.name,
+                 'no-of-nodes': ns.num_nodes,
+                 'this-node-id': ns.node_number,
+                 'send-order': (ns.cmaster and 1) or 0,
+                 'highest-manager': ns.highest_priority,
+                 'graphic-interface': ns.gui,
+                 'if-address': ns.if_address,
+                 'master-host': ns.cmaster or ns.if_address },
+                _dueca_cnf_defaults)
 
             create_and_copy(NewNode.dirs, NewNode.files, tofill)
             nfiles = (ns.node_number and 1) or 2
             if scriptlang == 'python':
-                create_and_copy([], NewNode.pfile[:nfiles], tofill)
+                create_and_copy([], NewNode.pfile[:nfiles], tofill, insert=scriptlets)
             else:
                 create_and_copy([], NewNode.sfile[:nfiles], tofill)
 
@@ -1065,11 +1117,11 @@ class NewMachineClass(OnExistingProject):
             # when created from a config, more information is available
             try:
                 if ns.modules:
-                    m = Modules(self.projectdir, ns.name)
+                    mods = Modules(self.projectdir, ns.name)
 
-                    for url, m, v in ns.modules:
+                    for url, m, v, pseudo, inactive in ns.modules:
                         project = project_name_from_url(url)
-                        m.addModule(project, m, v, url)
+                        mods.addModule(project, m, v, url, pseudo, inactive)
 
             except AttributeError:
                 pass
@@ -1168,6 +1220,8 @@ class PreparePlatform(OnExistingProject):
                             elif XML_tag(c, 'modules'):
                                 for m in c:
                                     url, modname, version = None, None, None
+                                    pseudo = XML_interpret_bool(m.get("pseudo", False))
+                                    inactive = XML_interpret_bool(m.get("inactive", False))
                                     for t in m:
                                         if XML_comment(t):
                                             pass
@@ -1177,38 +1231,46 @@ class PreparePlatform(OnExistingProject):
                                             modname = t.text
                                         elif XML_tag(t, 'version'):
                                             version = t.text
+
                                     # gather result
                                     if mname and url:
                                         modules.append(
-                                            (url, modname, version))
+                                            (url, modname, version, pseudo, inactive))
                             else:
-                                print(f"Unexpected xml tag {c.tag}")
+                                print(f"Unexpected xml tag {c.tag}",
+                                      file=sys.stderr)
 
                         # add the machine class if applicable
                         try:
                             n = Namespace(name=mname, gui=gui, switch=False,
                                           config=config, modules=modules)
-                            print("nmc with", n)
+                            #print("nmc with", n)
                             nmc(n)
                         except Exception as e:
-                            print(e)
+                            print(e, file=sys.stderr)
 
-                elif elt.tag.endswith('platform'):
+                elif XML_tag(elt, 'platform'):
                     pname = ns.name or elt.get('name')
                     pcomm_master = elt.get('comm-master')
 
 
                     # get list of nodes
                     nodes = []
-                    for node in elt:
-                        nodes.append(Namespace(
-                            highest_priority=node.get('highest-priority', 4),
-                            name=node.get('name'),
-                            script=None,
-                            machine_class=node.get('machineclass'),
-                            node_number=node.get('node-number', None),
-                            if_address=node.get('if-address', '0.0.0.0'),
-                            ismaster=node.get('comm-master', False)))
+                    scriptlets = {}
+                    for e in elt:
+                        if XML_tag(e, 'scriptlet'):
+                            place = e.get('place')
+                            scriptlets[place] = trim_lines(e.text)
+
+                        elif XML_tag(e, 'node'):
+                            nodes.append(Namespace(
+                                highest_priority=e.get('highest-priority', 4),
+                                name=e.get('name'),
+                                script=self.checkScriptlang(),
+                                machine_class=e.get('machineclass'),
+                                node_number=e.get('node-number', None),
+                                if_address=e.get('if-address', '0.0.0.0'),
+                                ismaster=e.get('comm-master', False)))
 
                     # assert node numbers
                     nums = set(range(len(nodes)))
@@ -1220,7 +1282,14 @@ class PreparePlatform(OnExistingProject):
                             nums.remove(nno)
                             n.node_number = nno
                         except KeyError as e:
-                            print("Wrong node number specified")
+                            if nno >= len(nodes):
+                                print("Node number too high"
+                                      f" {nno} >= {len(nodes)}",
+                                      file=sys.stderr)
+                            else:
+                                print(f"Number {nno} not available,"
+                                      " specified multiple times?",
+                                      file=sys.stderr)
                             raise e
                         except:
                             pass
@@ -1249,7 +1318,7 @@ class PreparePlatform(OnExistingProject):
 
                     for n in nodes:
                         # create the node
-                        nnc(n)
+                        nnc(n, scriptlets)
 
         print("Created platform, machine classes and nodes, based on"
               f" {template}")
@@ -1361,6 +1430,102 @@ class SearchProject:
 
 SearchProject.args(subparsers)
 
+
+class BuildProject(OnExistingProject):
+    command = 'build'
+
+    vsdirs = (".vscode",)
+    vsfiles = (('project.vscode.launch.json', ".vscode/launch.json"),
+               ('project.vscode.tasks.json', ".vscode/tasks.json"),
+               ('project.vscode.settings.json', ".vscode/settings.json"),
+               ('project.clang-format', ".clang-format"))
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(BuildProject.command, *args, **kwargs)
+
+    @classmethod
+    def args(cls, subparsers):
+        parser = subparsers.add_parser(
+            BuildProject.command,
+            help='Configures a project (if not configured yet) and builds'
+            ' the code')
+        parser.add_argument(
+            '--clean', dest='clean', action='store_true', default=False,
+            help="Clean all code from the build folder, don't configure")
+        parser.add_argument(
+            '-D', '--option', type=str, nargs='*', default=[],
+            help='Provide additional options for the configure stage')
+        parser.add_argument(
+            '--debug', dest='debug', action='store_true', default=False,
+            help='Configure with debug mode')
+        parser.add_argument(
+            '--vscode', action='store_true',
+            default=False,
+            help="Prepare or augment a vscode folder with build and debug instructions")
+        parser.add_argument(
+            '--verbose', dest='buildverbose', action='store_true',
+            default=False, help='Do a verbose build')
+        parser.set_defaults(handler=BuildProject)
+
+    def __call__(self, ns):
+
+        self.pushDir(f'{self.projectdir}/build')
+        dprint(f"Build, arguments {ns}")
+        if ns.clean:
+            try:
+                files = [ str(f) for f in os.listdir('.') if f != '.gitignore' ]
+                # dprint([ 'rm', '-rf'] + files)
+                cm = subprocess.run(
+                    [ 'rm', '-rf'] + files,
+                    stdout=subprocess.PIPE, check=True)
+                for line in cm.stdout:
+                    print(line.decode())
+                dprint(f"Clean result {cm}")
+                if os.path.islink('../compile_commands.json'):
+                    os.remove('../compile_commands.json')
+            except Exception as e:
+                print(f"Could not clean out the build folder, {e}",
+                      file=sys.stderr)
+        elif not ns.vscode:
+            try:
+                if len(os.listdir('.')) == 1:
+                    options = [ (o[0] == '-' and o) or f'-D{o}' for
+                                 o in ns.option ]
+                    if ns.debug:
+                        options.append('-DCMAKE_BUILD_TYPE=Debug')
+                    options.append('-DCMAKE_EXPORT_COMPILE_COMMANDS=ON')
+                    print("Configuring the build dir with options\n  ",
+                          ' '.join(options))
+                    cm = subprocess.run([ 'cmake', '..' ] + options, check=True)
+                    dprint(f"CMake result {cm}")
+
+                    # symlink the compile_commands.json file if present
+                    if os.path.isfile("compile_commands.json") and \
+                       not os.path.exists("../compile_commands.json"):
+                        self.pushDir(f'{self.projectdir}')
+                        os.symlink("build/compile_commands.json",
+                                   "compile_commands.json")
+                        self.popDir()
+
+                print("Running the build")
+                import multiprocessing
+                command = ['make', f'-j{multiprocessing.cpu_count()}']
+                if ns.buildverbose:
+                    command.append("VERBOSE=1")
+                cm = subprocess.run(command, check=True)
+                dprint(f"Build result {cm}")
+            except Exception as e:
+                print(f"Failed to run configure or build, {e}",
+                      file=sys.stderr)
+        self.popDir()
+
+        if ns.vscode:
+            self.pushDir(self.projectdir)
+            create_and_copy(BuildProject.vsdirs, BuildProject.vsfiles, {},
+                            True, True)
+            self.popDir()
+
+BuildProject.args(subparsers)
 
 # parse arguments
 #testargs = [

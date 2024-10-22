@@ -40,7 +40,13 @@ default, policies can be installed in several locations:
   argument is given, the following default locations are searched:
 
   * In the user's home folder; ${HOME}/.config/dueca/policies.xml
-  * From the environment variable DUECA_POLICIES
+  * Folders or URL's indicated in the the environment variable DUECA_POLICIES
+
+    For users at Control and Simulation, the common policies are available
+    through setting:
+
+        DUECA_POLICIES=https://gitlab.tudelft.nl/dueca-ae-cs-policies/common/-/raw/master/index.xml
+
 
 ## Background
 
@@ -54,10 +60,14 @@ change in the future, but the following is roughly possible:
 
 - Check for a certain pattern in files.
 
+- Specifically check that the .dco references in comm-objects.lst do
+  not include the name of the "own" project, and similarly for USEMODULES
+  references in CMakeLists.txt files.
+
 These checks can be logically combined. For example, for streamlining
 the use of projects with common modules for outside visual (WorldView)
 and 3D audio (WorldListener), that use a set of common DCO files, all
-non-audio related DCO files should be defined in WorldListener. A
+non-audio related DCO files should be defined in WorldView. A
 historic situation had evolved in which 3D motion would use a mix of
 DCO files -- linked with inheritance -- from both projects.
 
@@ -78,7 +88,9 @@ A set of actions is defined which correct this situation:
 
 Particularly for cases where many projects use an old, mistaken
 approach, it is advantageous to implement the checks and policies in
-policy files.
+policy files. Also when certain commonly-used modules or DCO files are
+given a new place, an accompanying policy may support updating the projects
+that used these modules or files.
 
 ## Writing policies
 
@@ -119,7 +131,7 @@ file is given as:
 
     <policies xmlns="https://dueca.tudelft.nl"
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-              xsi:schemaLocation="https://dueca.tudelft.nl policies.xsd">
+              xsi:schemaLocation="https://dueca.tudelft.nl https://dueca.tudelft.nl/schemas/policies.xsd">
       <policy name="a name" id="a unique id">
         ...
       </policy>
@@ -144,7 +156,7 @@ Here is an example of a condition:
       <param name="result-filename">
         cmake_locations
       </param>
-	  <!-- likwise for the indexes into the text indicating a match -->
+	  <!-- likewise for the indexes into the text indicating a match -->
       <param name="result-matches">
         cmake_locations
       </param>
@@ -195,13 +207,13 @@ Here is an example of a condition:
           files_that_include
         </param>
       </condition>
-	  <!-- find where the INCLUDEDIRS word is -->
+	  <!-- find where the USEMODULES word is -->
       <condition type="find-pattern">
         <param name="fileglob">
           */CMakeLists.txt
         </param>
         <param name="pattern">
-          \n[ \t]*INCLUDEDIRS[^\n]*\n
+          \n[ \t]*USEMODULES[^\n]*\n
         </param>
         <param name="resultvar">
           cmake_locations
@@ -229,7 +241,7 @@ In this particular example, the "and" condition matches these two
 variables on the module level, so that a single "positive and" is
 generated per module, where at least one file includes
 "GenericMotionFilter.hxx", and there is a `CMakeLists.txt` file with
-the INCLUDEDIRS keyword. This produces per matching module an
+the USEMODULES keyword. This produces per matching module an
 `include_spots` result, that points to the filename from the
 `cmake_locations` variable and the line numbers (matches), also of the
 `cmake_locations` variable.
@@ -245,10 +257,11 @@ The action here is to add an include line to the `CMakeLists.txt` file:
       </param>
       <param name="text">
     # policy 21-005
-    $\{CMAKE_SOURCE_DIR\}/../SRSMotion/motion-common
+    SRSMotion/motion-common
       </param>
     </action>
     <action type="change-module">
+      <param name="mode">add</param>
       <param name="new_project">
         SRSMotion
       </param>
@@ -259,5 +272,140 @@ The action here is to add an include line to the `CMakeLists.txt` file:
 
 This uses the `include_spots` variable, that indicates all
 `CMakeLists.txt` files that need the include, together with the
-appropriate locations. The second action globally adds a module to the
-project.
+appropriate locations. The second action globally adds the motion-common
+module to the project.
+
+## Test conditions
+
+The following conditions are currently implemented:
+
+### 'and'
+
+And condition, parameters:
+
+- resultvar, variable name for result outcome
+- inputvars, comma-separated variable list
+- match (optional) level on which to make the "and" match;
+  - module: module name
+  - module_project: name of the project donating a specific module
+  - dco: match on same dco object
+  - dco_project: dco on same parent project
+  - filename: refers to same file
+- trim (optional), only pass matches with true result
+- result-* (optional), result variables, the suffix (module, module_project, etc.)
+  indicates the level of returned result, its value determines which input
+  is used.
+
+### 'or'
+
+Parameters:
+
+- resultvar, variable name for result outcome
+- inputvars, comma-separated variable list
+- matchelts, list of elements on which to make the match:
+  - module: module name
+  - module_project: donating project name
+  - dco: dco object
+  - dco_project: donating project for dco
+- result-*, result variables (as given in match), value determines which input
+  is used for the result.
+
+### 'not'
+
+Parameters:
+
+- resultvar
+- inputvar
+- trim, if true, only return "true" end values
+
+### 'has-module'
+
+Returns true if module is used for current or any machine class
+
+Parameters:
+
+- project, project name
+- module, module name
+- all_machines, if true, check for all machine classes
+- resultvar
+
+### 'uses-dco'
+
+Parameters:
+
+- project, project name
+- dco, dco name
+- resultvar
+
+### 'find-pattern'
+
+Find a pattern
+
+Parameters:
+
+- fileglob, glob pattern for which files to search
+- pattern, regular expression pattern
+- resultvar, result variable name
+
+### 'constant'
+
+Constant true or false
+
+- value
+
+### 'home-dco'
+
+Figure out if a dco reference is for the current project
+
+Parameters:
+
+- resultvar
+- dco, typically a regex expression
+
+### `home-depend'
+
+Figure out if a USEMODULES variable references the current project
+
+Parameters:
+
+- resultvar
+
+## Actions
+
+### 'change-dco'
+
+Adapt relevant the comm-objects.lst files to swith over to a new dco
+
+Parameters:
+
+- inputvar, from the match, indicates in which modules to adapt comm-objects.lst
+- new_project, project now donating dco
+- new_dco, new dco object
+- mode, "add", "replace" or "delete"
+
+For delete you don't need to provide the new variables. If you matched the
+input with a regular expression (attribute `regex="true"` on the search
+parameters), replacement can use the old match, if you set attribute
+`format="true"` on the parameter.
+
+### 'change-module'
+
+Add, remove or replace module.
+
+Parameters:
+
+- inputvar, from the match, list of modules.xml files that match a module
+  (or not)
+- mode, "add", "replace" or "delete"
+- new_project, project donating new module
+- new_module, module to add
+- url, url of new project
+- version, version of new project, optional
+
+### 'insert-text'
+
+Insert text at given positions in a file
+
+- text, text to insert
+- inputvar, from the match, by findpattern
+- mode, 'before', 'after', or 'replace'

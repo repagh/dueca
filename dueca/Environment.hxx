@@ -24,7 +24,6 @@
 #include "Callback.hxx"
 #include "Activity.hxx"
 #include "ScriptConfirm.hxx"
-#include "EventAccessToken.hxx"
 #include <boost/scoped_ptr.hpp>
 
 using namespace std;
@@ -33,8 +32,6 @@ using namespace std;
 DUECA_NS_START;
 
 // class names
-template<class T> class EventChannelReadToken;
-template<class T> class EventChannelWriteToken;
 class ChannelManager;
 class EntityManager;
 class ActivityManager;
@@ -45,13 +42,15 @@ struct DataTimeSpec;
 class GuiHandler;
 struct ParameterTable;
 class CPULowLatency;
+class ChannelReadToken;
 
 void environment_main_thread(int phase);
 
 
-/** This class handles the main thread of controls. It will dip in and
-    out of Scheme code, start up the graphics thread and also start up
-    the high-priority real-time threads. */
+/** This class handles the main thread of control. It will dip in and
+    out of scripting code, start up the graphics thread and also start
+    up the high-priority real-time threads. At closing DUECA, all
+    threads will join here again. */
 class Environment:
   public ScriptCreatable,
   public NamedObject
@@ -139,6 +138,9 @@ private:
       attempted. */
   int64_t rt_start_time;
 
+  /** Exit code, may be modified by "clients" */
+  int exitcode;
+
   /** scoped pointer for object that sets CPU to low latency mode */
   boost::scoped_ptr<CPULowLatency> cpu_lowlatency;
 
@@ -155,7 +157,7 @@ private:
 
   /** Event channel over which confirmation for additional read action
       comes. */
-  EventChannelReadToken<ScriptConfirm> *t_moreconf;
+  ChannelReadToken     *t_moreconf;
 
   /** If additional data has been read, we have to wait for
       copying. This is the callback function. */
@@ -384,6 +386,12 @@ public:
 
   /** Command interval, for if other interfaces want to use this */
   inline unsigned getCommandLead() { return command_lead_ticks; }
+
+  /** Set the exit code, mainly used in testing */
+  void setExitCode(int ecode);
+
+  /** Get the current exit code, mainly used in testing */
+  inline int getExitCode() { return exitcode; }
 };
 
 DUECA_NS_END;

@@ -2,7 +2,7 @@ add_subdirectory(data)
 
 set(PYSCRIPTS new-module dueca-filtmods dueca-listdco
   dueca-gencommh dueca-project dueca-scriptcommands dueca-tagfiles
-  dueca-channeldot)
+  dueca-channeldot new-dco)
 
 set(BINSCRIPTS clean-dueca-rundir makemycvsdir moveandnumber
 rrunduecaXxf rrundueca rrunduecaX rrunduecaXmwm
@@ -25,7 +25,7 @@ install(PROGRAMS ${BINSCRIPTS} ${PYSCRIPTS}
   DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 # holdpackages script if apt and dpkg are present
-if (CMAKE_SYSTEM_NAME STREQUAL "Linux") 
+if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
   find_program(LSB_RELEASE_EXEC lsb_release)
   if(NOT LSB_RELEASE_EXEC)
     message(FATAL_ERROR
@@ -48,6 +48,11 @@ endif()
 install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/dueca-config
   DESTINATION ${CMAKE_INSTALL_BINDIR})
 install(FILES ${PYAUX} DESTINATION ${CMAKE_INSTALL_DATADIR}/dueca)
+
+configure_file(dueca-startlink.py dueca-startlink @ONLY)
+install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/dueca-startlink
+  DESTINATION ${CMAKE_INSTALL_BINDIR})
+
 
 if (NOT CMAKE_BUILD_TYPE STREQUAL "Debug" AND
      CMAKE_INSTALL_PREFIX STREQUAL "/usr"  )
@@ -100,4 +105,3 @@ endif()
 #     DESTINATION ${CMAKE_INSTALL_DATADIR}/dueca)
 
 # endif()
-

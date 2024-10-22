@@ -45,6 +45,8 @@ template <>
 const char* getclassname<std::string>() { return "std::string"; }
 template <>
 const char* getclassname<void*>() { return "void*"; }
+template <>
+const char* getclassname<void>() { return "void"; }
 
 template<> const char* getclassname<string8>() { return "string8"; }
 template<> const char* getclassname<string16>() { return "string16"; }
@@ -53,5 +55,13 @@ template<> const char* getclassname<string64>() { return "string64"; }
 template<> const char* getclassname<string128>() { return "string128"; }
 template<> const char* getclassname<LogString>() { return "LogString"; }
 template<> const char* getclassname<smartstring>() { return "smartstring"; }
+
+const char* PrintToChars::getNewCString() const 
+{
+  size_t len = this->str().size();
+  char* result = new char[len+1];
+  std::strncpy(result, this->str().c_str(), len+1);
+  return result;
+}
 
 DUECA_NS_END;

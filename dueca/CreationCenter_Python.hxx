@@ -21,7 +21,7 @@
 #include <boost/python/raw_function.hpp>
 
 #include <dueca/debug.h>
-#define DEBPRINTLEVEL 1
+#define DEBPRINTLEVEL -1
 #include <debprint.h>
 
 DUECA_NS_START
@@ -38,11 +38,12 @@ static bpy::object addParam(bpy::tuple args, bpy::dict kwargs)
     return args[0];
   }
   else {
-    /* DUECA Scripting.
+    /* DUECA scripting.
 
        Creation of an object that was specified in the start script
        was unsuccessful. Parameters for this object will not be
-       passed. */
+       passed.
+    */
     W_CNF("Ignoring parameters for object that was not successfully created")
   }
   return args[0];

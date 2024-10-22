@@ -133,23 +133,11 @@ bool NetCommunicatorMaster::startServer()
 {
   if (not conf_comm) {
     if (!config_url.size()) {
-      try {
-        config_url = std::string("ws://") + interface_address +
-          std::string(":") + boost::lexical_cast<std::string>(master_port) +
-          std::string("/config");
-      }
-      catch (const std::exception& e) {
-        /* DUECA network.
+      /* DUECA network.
 
-           A URL for configuration of the communication is normally
-           given directly. For compatibility with older code, it can
-           also be composed from the interface address and port
-           given. In this case that failed. Update your code, and
-           directly specify the URL.
-         */
-        E_CNF("Cannot autocreate a config url");
-        throw(e);
-      }
+	 Config url needs to be supplied */
+      W_NET("Config URL needs to be supplied");
+      throw(connectionfails());
     }
     conf_comm.reset(new WebsockCommunicatorConfig
                     (config_url, timeout, common_callback
@@ -524,7 +512,7 @@ void NetCommunicatorMaster::checkAndUpdatePeerStates(const TimeSpec& ts)
 	/* DUECA network.
 
 	   A sudden disconnect by a peer is detected. The communication
-	   chain will be reconfigured to skip the peer. 
+	   chain will be reconfigured to skip the peer.
 	*/
         W_NET("Sudden disconnect from peer " << (*pp)->send_id);
         correctFollowId((*pp)->send_id, (*pp)->follow_id);
@@ -996,6 +984,39 @@ void NetCommunicatorMaster::decodeConfigData(CommPeer& peer)
           throw(e);
         }
         break;
+
+      case UDPPeerConfig::DuecaVersion:
+
+	try {
+	  uint16_t vmajor(s);
+	  uint16_t vminor(s);
+	  uint16_t revision(s);
+	  storelevel = s.getIndex();
+
+	  if (vmajor != DUECA_VERMAJOR || vminor != DUECA_VERMINOR ||
+	      revision != DUECA_REVISION) {
+	    /* DUECA network.
+
+	       A peer dueca process reports a different DUECA version
+	       than what is running here. Please update all DUECA
+	       nodes to the same version.
+	    */
+	    W_NET("Peer " << cmd.peer_id <<
+		  " reports a different DUECA version " << vmajor <<
+		  "." << vminor << "." << revision);
+	  }
+	}
+	catch (const dueca::AmorphReStoreEmpty &e) {
+	  /* DUECA network.
+
+	     A peer dueca process has no information on the DUECA
+	     version in the welcome message. Update all DUECA nodes to
+	     the same version.
+	  */
+          DEB("Cannot unpack version information");
+	  storelevel = storelevel0;
+	  throw(e);
+	}
 
       default:
         /* DUECA network.

@@ -21,6 +21,7 @@ from __future__ import print_function
 from pyparsing import Literal, Regex, QuotedString, ZeroOrMore, Word, \
     Optional, nestedExpr, Combine, OneOrMore, CharsNotIn, ParserElement, Or, \
     White
+from jinja2 import Environment, FileSystemLoader
 import sys
 import copy
 import traceback
@@ -45,6 +46,7 @@ compilerarg = []
 nextinclude = False
 objectnamespace = []
 pack_alignment = None
+currentobject = None
 
 # pre strip compiler arguments - oldstyle
 if '--' in sys.argv[1:]:
@@ -63,6 +65,9 @@ aparser.add_argument(
 aparser.add_argument(
     '-n', '--namespace', action='append',
     default=[], help="namespace for the object")
+aparser.add_argument(
+    'dcofile', type=str, nargs='*',
+    help="Input file")
 
 pvals = aparser.parse_args(sys.argv[1:])
 
@@ -103,18 +108,25 @@ class CodegenImproperConfig(CodegenException):
 
 
 codegen_version = None
+head_template = None
+body_template = None
+enum_head_template = None
+enum_body_template = None
 
 # extend the search path if not in dueca
 def setup_vars():
     global codegen_version, plugins, enum_plugins
     global summarise_member
+    global head_template, body_template
+    global enum_head_template, enum_body_template
 
     # check that we are not called from dueca build
     filepath = os.path.dirname(os.path.abspath(__file__))
     if not os.path.isfile(filepath + os.sep + 'generation.py.in'):
         try:
             fsdp = os.popen('dueca-config --path-datafiles 2>/dev/null')
-            sys.path.append(fsdp.readline().strip())
+            datafilepath = fsdp.readline().strip()
+            sys.path.append(datafilepath)
             fsdp.close()
             # add support files
             from pycodegen import codegen_version
@@ -139,35 +151,46 @@ def setup_vars():
                         plist[mname] = importlib.util.module_from_spec(spec)
 
             from duecautils.codegen import summarise_member
+
+            # load the jinja templates
+            environment = Environment(
+                loader=FileSystemLoader(f'{datafilepath}/pycodegen')
+            )
             # print(plugins)
-            return
         except Exception as e:
             print("cannot find helper files")
             raise e
+    else:
+        # called from dueca build
+        sys.path.append(filepath)   # for fixedhash.py
+        sys.path.insert(0, filepath+'/../gitscripts/duecautils')
+        pathelts = os.getcwd().split(os.sep)[:-1]
+        while pathelts and not \
+            os.path.isfile(os.sep.join(pathelts)+os.sep + 'pycodegen' +
+                           os.sep+'generation.py'):
+            pathelts = pathelts[:-1]
+        genpath = os.sep.join(pathelts + ['pycodegen'])
+        sys.path.append(genpath)
+        from generation import codegen_version
+        from DCOplugins import plugins
+        from EnumPlugins import plugins as enum_plugins
+        from duecautils.codegen import summarise_member
 
-    # called from dueca build
-    sys.path.append(filepath)   # for fixedhash.py
-    sys.path.insert(0, filepath+'/../gitscripts/duecautils')
-    # print(sys.path)
-    # path for fresh generated generation.py
-    pathelts = os.getcwd().split(os.sep)[:-1]
-    while pathelts and not \
-        os.path.isfile(os.sep.join(pathelts)+os.sep + 'pycodegen' +
-                       os.sep+'generation.py'):
-        pathelts = pathelts[:-1]
-    genpath = os.sep.join(pathelts + ['pycodegen'])
-    sys.path.append(genpath)
-    from generation import codegen_version
-    from DCOplugins import plugins
-    from EnumPlugins import plugins as enum_plugins
-    from src.codegen import summarise_member
+        # for loading the jinja templates
+        environment = Environment(
+            loader=FileSystemLoader(filepath)
+        )
 
+    # load the templates
+    body_template = environment.get_template("dco_template.c.jinja")
+    head_template = environment.get_template("dco_template.h.jinja")
+    enum_head_template = environment.get_template("enum_template.h.jinja")
+    enum_body_template = environment.get_template("enum_template.c.jinja")
 
 # holder of the current item
 current = None
 # current list of comments
 comments = []
-# comments for the general header
 headercommentstring = ''
 # array dimension
 arraydims = {}
@@ -495,7 +518,7 @@ def cnize(pref):
 def appendNameSpace(upto, line, c):
     global objectnamespace
     debugprint("addnamespace", c)
-    objectnamespace.append(c[-1])
+    objectnamespace.append(c[-2])
 
 @catchguard
 def setPackAlignment(upto, line, c):
@@ -558,7 +581,12 @@ class BuildObject(object):
     def complete(self):
 
         # global variables
-        global headercommentstring, in_dueca, types
+        global headercommentstring, in_dueca, types, currentobject
+
+        if currentobject and self.name != currentobject:
+            raise ValueError(
+                f"Produced objects {self.name}.hxx and {self.name}.cxx"
+                f" do not match input file name {currentobject}")
 
         # specific addition to header
         self.headercomments = headercommentstring
@@ -689,7 +717,7 @@ Explanation: long type variables have 4 byte versus 8 byte
     def publicFunctionsImp(self, master):
         return None
 
-    def enumTraits(self, master):
+    def enumTraits(self, master, objprefix):
         return None
 
     def staticAccessObject(self, mastername, dname):
@@ -949,32 +977,34 @@ enum {name} {{
             # this might have to move to publicFunctionsImp???
             return None
         res = [ """
-%(namespacecmd0)sconst char* const getString(const %(objprefix)s%(masterprefix)s%(name)s &o);
-void readFromString(%(objprefix)s%(masterprefix)s%(name)s &o, const std::string& s);
-void getFirst(%(objprefix)s%(masterprefix)s%(name)s &o);
-bool getNext(%(objprefix)s%(masterprefix)s%(name)s &o);%(namespacecmd1)s
+namespace dueca {
+  const char* const getString(const %(objprefix)s%(masterprefix)s%(name)s &o);
+  void readFromString(%(objprefix)s%(masterprefix)s%(name)s &o, const std::string& s);
+  void getFirst(%(objprefix)s%(masterprefix)s%(name)s &o);
+  bool getNext(%(objprefix)s%(masterprefix)s%(name)s &o);
+
+  /** This function retrieves the classname of an %(masterprefix)s%(name)s */
+  template <>
+  const char* getclassname<%(objprefix)s%(masterprefix)s%(name)s>();
+}; // end namespace dueca
+
 #if !defined(__DCO_NOPACK)
 void packData(::dueca::AmorphStore& s,
               const %(objprefix)s%(masterprefix)s%(name)s &o);
 void unPackData(::dueca::AmorphReStore& s,
                 %(objprefix)s%(masterprefix)s%(name)s &o);
 #endif
-namespace dueca {
-  /** This function retrieves the classname of an %(masterprefix)s%(name)s */
-  template <>
-  const char* getclassname<%(masterprefix)s%(name)s>();
-};
 
 PRINT_NS_START;
 /** Print an object of type %(masterprefix)s%(name)s */
 inline std::ostream&
 operator << (std::ostream& s, const %(objprefix)s%(masterprefix)s%(name)s& o)
-{ return s << getString(o); }
+{ return s << dueca::getString(o); }
 /** Read an object of type %(masterprefix)s%(name)s */
 inline std::istream&
 /** Read an enum of type %(masterprefix)s%(name)s */
 operator >> (std::istream& s, %(objprefix)s%(masterprefix)s%(name)s& o)
-{ std::string tmp; s >> tmp; readFromString(o, tmp); return s; }
+{ std::string tmp; s >> tmp; dueca::readFromString(o, tmp); return s; }
 PRINT_NS_END;
 """ % joindict(self.__dict__, { 'mastername' : master.name,
                                 'masterprefix' :
@@ -990,13 +1020,14 @@ PRINT_NS_END;
         anyval = [ 1 for i in self.members if i.value is not None]
         if anyval:
             res = [ """
-{namespacecmd0}#if !defined(__CUSTOM_ENUMNAMES_{name})
-struct NameMatch_{name} {{
-  const char* mname;
-  {objprefix}{masterprefix}{name}      enumval;
-}};
+#if !defined(__CUSTOM_ENUMNAMES_{name})
+namespace {{
+  struct NameMatch_{name} {{
+    const char* mname;
+    {objprefix}{masterprefix}{name}      enumval;
+  }};
 
-static const NameMatch_{name} __{name}_names [] = {{\n""".format(
+  static const NameMatch_{name} __{name}_names [] = {{\n""".format(
     name=self.name, namespacecmd0=master.namespacecmd0,
     objprefix=master.objprefix,
     masterprefix=(master.name and f'{master.name}::') or ''
@@ -1004,17 +1035,19 @@ static const NameMatch_{name} __{name}_names [] = {{\n""".format(
 
             # append all values
             for m in self.members:
-                res.append('  {{ "{m.name}", {objprefix}{masterprefix}{prefix}{m.name} }},\n'.format(
+                res.append('    {{ "{m.name}", {objprefix}{masterprefix}{prefix}{m.name} }},\n'.format(
                     m=m,
                     prefix=(self.classenum and f'{self.name}::') or '',
                     objprefix=master.objprefix,
                     masterprefix=(master.name and f'{master.name}::') or ''))
 
             # complete and add the functions
-            res.append("""  {{ NULL }}
-}};
+            res.append("""    {{ NULL }}
+  }};
+}} // end anonymous namespace
 #endif
 
+namespace dueca {{
 #ifndef __CUSTOM_GETSTRING_{name}
 const char* const getString(const {objprefix}{masterprefix}{name} &o)
 {{
@@ -1058,7 +1091,8 @@ bool getNext({objprefix}{masterprefix}{name} &o)
   }}
   return false;
 }}
-#endif{namespacecmd1}
+#endif
+}}; // end namespace dueca
 
 #if !defined(__CUSTOM_PACKDATA_{name}) && !defined(__DCO_NOPACK)
 void packData(::dueca::AmorphStore& s,
@@ -1074,7 +1108,7 @@ void unPackData(::dueca::AmorphReStore& s,
 
 namespace dueca {{
 template <>
-const char* getclassname<{masterprefix}{name}>()
+const char* getclassname<{objprefix}{masterprefix}{name}>()
 {{ return "{masterprefix}{name}"; }}
 }};
 """.format(name=self.name, objprefix=master.objprefix,
@@ -1085,30 +1119,32 @@ const char* getclassname<{masterprefix}{name}>()
         else:
             res = ["""
 #include <map>
-{namespacecmd0}#ifndef __CUSTOM_ENUMNAMES_{name}
-struct NameMatch_{name} {{
-  const char* mname;
-  {objprefix}{masterprefix}{name}      enumval;
-}};
-
-static const NameMatch_{name} __{name}_names [] = {{""".format(
+#ifndef __CUSTOM_ENUMNAMES_{name}
+namespace {{
+  struct NameMatch_{name} {{
+    const char* mname;
+    {objprefix}{masterprefix}{name}      enumval;
+  }};
+  static const NameMatch_{name} __{name}_names [] = {{""".format(
     name=self.name, namespacecmd0=master.namespacecmd0,
     objprefix=master.objprefix,
     masterprefix=(master.name and f'{master.name}::') or ''
 )]
             for m in self.members:
                 res.append('''
-  {{ "{m.name}", {objprefix}{masterprefix}{prefix}{m.name} }},'''.format(
+    {{ "{m.name}", {objprefix}{masterprefix}{prefix}{m.name} }},'''.format(
                     m=m,
                     prefix=(self.classenum and f'{self.name}::') or '',
                     objprefix=master.objprefix,
                     masterprefix=(master.name and f'{master.name}::') or ''))
 
             res.append('''
-  {{ NULL }}
-}};
+    {{ NULL }}
+  }};
+}} // end anonymous namespace
 #endif
 
+namespace dueca {{
 #ifndef __CUSTOM_GETSTRING_{name}
 const char* const getString(const {objprefix}{masterprefix}{name} &o)
 {{
@@ -1152,7 +1188,8 @@ bool getNext({objprefix}{masterprefix}{name} &o)
   }}
   return false;
 }}
-#endif{namespacecmd1}
+#endif
+}} // end namespace dueca
 
 #if !defined(__CUSTOM_PACKDATA_{name}) && !defined(__DCO_NOPACK)
 void packData(::dueca::AmorphStore& s,
@@ -1168,7 +1205,7 @@ void unPackData(::dueca::AmorphReStore& s,
 
 namespace dueca {{
 template <>
-const char* getclassname<{masterprefix}{name}>()
+const char* getclassname<{objprefix}{masterprefix}{name}>()
 {{ return "{masterprefix}{name}"; }}
 }};
 '''.format(name=self.name,
@@ -1181,14 +1218,15 @@ const char* getclassname<{masterprefix}{name}>()
            ctype=self.ctype))
         return ''.join(res)
 
-    def enumTraits(self, mastername):
+    def enumTraits(self, mastername, objprefix=''):
         if not self.members:
             return None
         return """
 template <>
-struct dco_nested< %(masterprefix)s%(name)s > : public dco_isenum { };""" % \
+struct dco_nested<%(objprefix)s%(masterprefix)s%(name)s> : public dco_isenum { };""" % \
     joindict(self.__dict__, {'masterprefix' :
-                             (mastername and f'{mastername}::') or ''})
+                             (mastername and f'{mastername}::') or '',
+                             'objprefix': objprefix } )
 
     def staticAccessObject(self, mastername, dname):
         if self.members:
@@ -1401,23 +1439,36 @@ bool %(mastername)s::doFromParameterTableSet_%(name)s(const std::string& n)
         return ''
 
 class SingleMember(MemberBase):
-    def __init__(self, master, comments, name, klassref, default, defaultarg):
+    def __init__(self, master, comments, name, klassref, default, defaultsize, defaultarg):
+        self.defaultsize = defaultsize
         super(SingleMember, self).__init__(
             master, comments, name, klassref, default, defaultarg)
 
     def defaultConstructorArgumentDec(self):
         if self.defaultarg:
             return self.completeConstructorSingleArgumentDec()
+        elif self.defaultsize is not None:
+            return """
+    size_t %(name)s_size = %(defaultsize)s""" % self.__dict__
         return None
 
     def defaultConstructorArgumentImp(self):
         if self.defaultarg:
             return self.completeConstructorArgumentImp()
+        elif self.defaultsize is not None:
+            return """
+    size_t %(name)s_size""" % self.__dict__
         return None
 
     def defaultConstructorList(self):
         if self.defaultarg:
             return self.completeConstructorList()
+        elif self.defaultsize is not None and not self.default:
+            return """
+    %(name)s(%(name)s_size)""" % self.__dict__
+        elif self.defaultsize is not None and self.default:
+            return """
+    %(name)s(%(name)s_size, %(default)s)""" % self.__dict__
         elif self.default:
             return """
     %(name)s(%(default)s)""" % self.__dict__
@@ -1821,9 +1872,13 @@ class Member:
                 master, self.comments, self.name, klassref,
                 self.default, self.defaultsize, self.defaultarg)
         else:
+            #return IterableMember(
+            #    master, self.comments, self.name, klassref,
+            #    self.default, self.defaultsize, self.defaultarg)
+
             return SingleMember(
                 master, self.comments, self.name, klassref,
-                self.default, self.defaultarg)
+                self.default, self.defaultsize, self.defaultarg)
 
 def ROR(c):
     return (c >> 1) | ((c & 0x1) << 31)
@@ -1944,12 +1999,12 @@ class Channel(BuildObject):
 
     def complete(self):
 
-
         global headercommentstring, in_dueca
 
         self.memberprotos.pop()
         self.types = {}
         self.members = [ r.createMember(self) for r in self.memberprotos ]
+        self.datamembers = [ m for m in self.members ]
         self.idx = 0
         for r in self.members:
             self.types[r.klass] = r.klassref
@@ -2171,8 +2226,8 @@ const dueca::ParameterTable* %(name)s::getParameterTable()
 
         # traits definitions for enum defined types
         self.enumtraits = ''.join(
-            [ r.enumTraits(self.name) for r in iter(self.types.values())
-              if r.enumTraits(self.name) ])
+            [ r.enumTraits(self.name, self.objprefix) for r in iter(self.types.values())
+              if r.enumTraits(self.name, self.objprefix) ])
 
         # access objects to get the relative addresses and names of members
         self.accessstatics = ''.join(
@@ -2349,12 +2404,15 @@ class EventAndStream(Channel):
         pass
 
     def complete(self):
+        global head_template, body_template
         super(EventAndStream, self).complete()
-        header = c_header % self.__dict__
+        # header = c_header % self.__dict__
+        header = head_template.render(**self.__dict__)
         f = open(self.name+'.hxx', 'w', encoding='utf-8')
         f.write(header)
         f.close()
-        body = c_body % self.__dict__
+        # body = c_body % self.__dict__
+        body = body_template.render(**self.__dict__)
         f = open(self.name+'.cxx', 'w', encoding='utf-8')
         f.write(body)
         f.close()
@@ -2396,7 +2454,8 @@ class StandaloneEnum(BuildObject):
     def complete(self):
 
         # global variables
-        global headercommentstring, in_dueca, types
+        global headercommentstring, in_dueca, types, pvals
+        global enum_body_template, enum_head_template
 
         enum = types[self.name]
         nameless = copy.copy(self)
@@ -2449,8 +2508,10 @@ class StandaloneEnum(BuildObject):
         # type include?
 
         self.typeincludes = enum.includeCommand() or ''
-        header = e_header.format(**self.__dict__)
-        body = e_body.format(**self.__dict__)
+        # header = e_header.format(**self.__dict__)
+        # body = e_body.format(**self.__dict__)
+        header = enum_head_template.render(**self.__dict__)
+        body = enum_body_template.render(**self.__dict__)
         with open(self.name+'.hxx', 'w', encoding='utf-8') as f:
             f.write(header)
         with open(self.name+'.cxx', 'w', encoding='utf-8') as f:
@@ -2474,7 +2535,7 @@ streamkw = Literal('(') + Literal('Stream').addParseAction(startEventAndStream)
 eventstreamkw = Literal('(') + \
     Literal('EventAndStream').addParseAction(startEventAndStream)
 objectkw = Literal('(') + Literal('Object').addParseAction(startEventAndStream)
-    
+
 # Only enumerator code
 enumeratorkw = Literal('(') + \
     Literal('Enumerator').addParseAction(startEnumerator)
@@ -2634,455 +2695,40 @@ content = ZeroOrMore(comment | ctype | namespace | alignment |
 #endif"""
 
 
-# code content
-c_header = \
-"""/* ------------------------------------------------------------------ */
-/*      item            : %(name)s.hxx
-        generated by    : %(maker)s
-        date            : %(date)s
-        category        : header file
-        description     : DUECA Communication Object (DCO)
-                          automatically generated by dueca-codegen
-        codegen version : %(codegenversion)i
-        language        : C++%(headercomments)s
-*/
-
-#ifndef %(name)s_hxx
-#define %(name)s_hxx
-
-#include <inttypes.h>
-
-#if !defined(__DCO_NOPACK)
-namespace dueca {
-class AmorphStore;
-class AmorphReStore;
-struct DataWriterArraySize;
-};
-#endif
-#if !defined(__DCO_STANDALONE)
-namespace dueca {
-struct CommObjectDataTable;
-};
-#include <gencodegen.h>
-#if GENCODEGEN != %(codegenversion)i
-#error "Generated %(name)s.hxx too old, please clean with 'make mrproper'"
-#endif
-#include <dueca/CommObjectTraits.hxx>
-#endif
-#include <iostream>
-%(extraheader)s
-%(typeincludes)s%(plug_header_include)s
-%(namespacecmd0)s%(packpragma)s
-%(classcomment)s
-struct %(name)s%(inherits)s
-{
-  /** typedef for internal reference */
-  typedef %(name)s __ThisDCOType__;
-
-public:
-  /** The name of this class. */
-  static const char* const classname;
-
-%(subtypecmd)s%(memberdec)s
-public:
-  /** a "magic" number, hashed out of the class definition,
-      that will be used to check consistency of the sent objects
-      across the dueca nodes. */
-  static const uint32_t magic_check_number;
-
-  /** default constructor. */
-  %(name)s(%(defaultconstructorarguments)s);
-%(completeconstructordec)s%(completeconstructordec_s)s
-  /** copy constructor. */
-  %(name)s(const %(name)s& o);
-
-#if !defined(__DCO_NOPACK)
-  /** constructor to restore an %(name)s from amorphous storage. */
-  %(name)s(%(inclassprefix)sAmorphReStore& r);
-#endif%(arraysizeinitconstructordec)s
-
-  /** destructor. */
-  ~%(name)s();
-
-#if !defined(__DCO_STANDALONE)
-  /** new operator "new", which places objects not on a
-      heap, but in one of the memory arenas. This to speed up
-      memory management. */
-  static void* operator new(size_t size);
-
-  /** new operator "delete", to go with the new version
-      of operator new. */
-  static void operator delete(void* p);
-
-  /** placement "new", needed for stl. */
-  inline static void* operator new(size_t size, %(name)s*& o)
-  { return reinterpret_cast<void*>(o); }
-#endif
-
-#if !defined(__DCO_NOPACK)
-  /** packs the %(name)s into amorphous storage. */
-  void packData(::dueca::AmorphStore& s) const;
-
-  /** packs the %(name)s into amorphous storage.
-      only differences with a previous object are packed. */
-  void packDataDiff(::dueca::AmorphStore& s, const %(name)s& ref) const;
-
-  /** unpacks the %(name)s from an amorphous storage. */
-  void unPackData(::dueca::AmorphReStore& s);
-
-  /** unpacks the differences for %(name)s
-      from an amorphous storage. */
-  void unPackDataDiff(::dueca::AmorphReStore& s);
-#endif
-
-  /** Test for equality. */
-  bool operator == (const %(name)s& o) const;
-
-  /** Test for inequality. */
-  inline bool operator != (const %(name)s& o) const
-  { return !(*this == o); }
-
-  /** Assignment operator. */
-  %(name)s& operator=(const %(name)s& o);
-
-  /** prints the %(name)s to a stream. */
-  std::ostream & print(std::ostream& s) const;%(plug_header_classcode)s%(createcodedec)s%(extrainclude)s
-};
-%(namespacecmd1)s%(endpackpragma)s
-#if !defined(__DCO_NOPACK)
-/** pack the object into amorphous storage. */
-inline void packData(::dueca::AmorphStore& s,
-                     const %(objprefix)s%(name)s& o)
-{ o.packData(s); }
-
-/** pack the differences between this object and another
-    into amorphous storage. */
-inline void packDataDiff(dueca::AmorphStore& s,
-                         const %(objprefix)s%(name)s& o,
-                         const %(objprefix)s%(name)s& ref)
-{ o.packDataDiff(s, ref); }
-
-/** unpack the object from amorphous storage. */
-inline void unPackData(::dueca::AmorphReStore& s,
-                       %(objprefix)s%(name)s& o)
-{ o.unPackData(s); }
-
-/** unpack the differences to this object from storage. */
-inline void unPackDataDiff(dueca::AmorphReStore& s,
-                           %(objprefix)s%(name)s& o)
-{ o.unPackDataDiff(s); }
-#endif
-%(publicfunctionsdec)s
-namespace std {
-/** print to a stream. */
-inline std::ostream &
-operator << (std::ostream& s, const %(objprefix)s%(name)s& o)
-{ return o.print(s); }
-};
-
-#if !defined(__DCO_STANDALONE)
-namespace dueca {
-/** Template specialization, defines a trait that is needed if
-    %(name)s is ever used inside other dco objects. */
-template <>
-struct dco_nested<%(objprefix)s%(name)s> : public dco_isnested { };%(enumtraits)s
-};
-#endif
-%(plug_header_code)s
-
-#endif
-"""
-
-c_body = \
-"""/* ------------------------------------------------------------------ */
-/*      item            : %(name)s.cxx
-        generated by    : %(maker)s
-        date            : %(date)s
-        category        : body file
-        description     : DUECA Communication Object (DCO),
-                          automatically generated by dueca-codegen
-        codegen version : %(codegenversion)i
-        language        : C++
-*/
-
-#include "%(name)s.hxx"
-#include <iostream>%(arraydimsdec)s
-%(assertinclude)s
-#if !defined(__DCO_NOPACK)
-#include <dueca/AmorphStore.hxx>
-#include <dueca/PackUnpackTemplates.hxx>
-#endif
-#include <dueca/DataWriterArraySize.hxx>
-%(debugcmd)s
-#if !defined(__DCO_STANDALONE)
-#include <dueca/Arena.hxx>
-#include <dueca/ArenaPool.hxx>
-#include <dueca/DataClassRegistrar.hxx>
-#include <dueca/CommObjectMemberAccess.hxx>
-#include <dueca/DCOFunctor.hxx>
-#include <dueca/DCOMetaFunctor.hxx>
-%(scriptcreatebodyinc)s
-#define DO_INSTANTIATE
-#include <dueca/DataSetSubsidiary.hxx>
-#endif%(plug_body_include)s
-
-
-%(namespacecmd0)s%(arraydimsimp)s%(extraincludebody)s
-
-#if !defined(__DCO_STANDALONE)
-// static CommObjectMemberAccess objects, that can provide flexible access
-// to the members of a %(name)s object%(accessstatics)s
-
-// assemble the above entries into a table in the order in which they
-// appear in the %(name)s object
-static const ::dueca::CommObjectDataTable entriestable[] = {%(tableentries)s
-  { NULL }
-};
-
-#endif
-
-// class name, static
-const char * const %(name)s::classname = "%(name)s";
-
-// magic number, hashed from class name and member names / classes
-const uint32_t %(name)s::magic_check_number=0x%(magic)x;
-
-#if !defined(__DCO_STANDALONE)
-// functor table, provides access to user-defined metafunctions through the
-// data class registry
-static dueca::functortable_type functortable;
-
-// register this class, provides access to a packing/unpacking object,
-// and to the member access tables
-static ::dueca::DataClassRegistrar registrar
-  (%(name)s::classname, %(registrarparent)s,
-   entriestable, &functortable,
-   new ::dueca::DataSetSubsidiary<%(name)s>());
-%(parametertable)s
-#endif
-
-#ifndef __CUSTOM_DEFAULT_CONSTRUCTOR
-%(name)s::%(name)s(%(defaultconstructorargumentsimp)s)%(defaultconstructorlist)s
-{%(defaultconstructorbody)s%(constructorcode)s
-  DOBS("default constructor %(name)s");
-}
-#endif
-
-#ifndef __CUSTOM_FULL_CONSTRUCTOR%(completeconstructorimp)s
-#endif
-
-#ifndef __CUSTOM_FULLSINGLES_CONSTRUCTOR%(completeconstructorimp_s)s
-#endif
-
-#ifndef __CUSTOM_COPY_CONSTRUCTOR
-%(name)s::%(name)s(const %(name)s& other)%(copyconstructorlist)s
-{%(copyconstructorbody)s
-  DOBS("copy constructor %(name)s");
-}
-#endif
-
-#if !defined(__CUSTOM_AMORPHRESTORE_CONSTRUCTOR) && !defined(__DCO_NOPACK)
-%(name)s::%(name)s(%(inclassprefix)sAmorphReStore& s)%(amorphconstructorlist)s
-{%(amorphconstructorbody)s
-  DOBS("amorph constructor %(name)s");
-}
-#endif
-
-#if !defined(__CUSTOM_ARRAY_SIZE_INIT_CONSTRUCTOR)%(arraysizeinitconstructorimp)s
-#endif
-
-#ifndef __CUSTOM_DESTRUCTOR
-%(name)s::~%(name)s()
-{%(destructorbody)s
-  DOBS("destructor %(name)s");
-}
-#endif
-
-#if !defined(__DCO_STANDALONE)
-void* %(name)s::operator new(size_t size)
-{
-  DOBS("operator new %(name)s");
-  static ::dueca::Arena* my_arena = arena_pool.findArena
-    (sizeof(%(name)s));
-  return my_arena->alloc(size);
-}
-
-void %(name)s::operator delete(void* v)
-{
-  DOBS("operator delete %(name)s");
-  static ::dueca::Arena* my_arena = arena_pool.findArena
-    (sizeof(%(name)s));
-  my_arena->free(v);
-}
-#endif
-
-#if !defined(__CUSTOM_FUNCTION_PACKDATADIFF) && !defined(__DCO_NOPACK)
-void %(name)s::packDataDiff(::dueca::AmorphStore& s, const %(name)s& ref) const
-{
-  DOBS("packDataDiff %(name)s");
-  ::dueca::IndexMemory im;%(amorphpackdiff)s
-  im.closeoff(s);
-}
-#endif
-
-#if !defined(__CUSTOM_FUNCTION_UNPACKDATA) && !defined(__DCO_NOPACK)
-void %(name)s::unPackData(::dueca::AmorphReStore& s)
-{
-  DOBS("unPackData %(name)s");
-%(amorphunpackfirst)s
-%(amorphunpacksecond)s
-}
-#endif
-
-#if !defined(__CUSTOM_FUNCTION_UNPACKDATADIFF) && !defined(__DCO_NOPACK)
-void %(name)s::unPackDataDiff(%(inclassprefix)sAmorphReStore& s)
-{
-  DOBS("unPackDataDiff %(name)s");
-  ::dueca::IndexRecall im;%(amorphunpackdiff)s
-}
-#endif
-
-#ifndef __CUSTOM_OPERATOR_EQUAL
-bool %(name)s::operator == (const %(name)s& other) const
-{
-  DOBS("operator == %(name)s");%(operatorequal)s
-  return true;
-}
-#endif
-
-#ifndef __CUSTOM_OPERATOR_ASSIGN
-%(name)s&
-%(name)s::operator=(const %(name)s& other)
-{
-  DOBS("operator = %(name)s");
-  if (this == &other) return *this;%(operatorassign)s
-  return *this;
-}
-#endif
-
-#if !defined(__CUSTOM_FUNCTION_PACKDATA) && !defined(__DCO_NOPACK)
-void %(name)s::packData(::dueca::AmorphStore& s) const
-{
-  DOBS("packData %(name)s");%(amorphpackfirst)s%(amorphpacksecond)s
-}
-#endif
-
-#ifndef __CUSTOM_FUNCTION_PRINT
-std::ostream & %(name)s::print(std::ostream& s) const
-{
-  s << "%(name)s("%(operatorprint)s
-    << ')';
-  return s;
-}
-#endif
-
-%(namespacecmd1)s%(plug_body_code)s%(createcodeimp)s%(publicfunctionsimp)s
-"""
-
-e_header = \
-"""/* ------------------------------------------------------------------ */
-/*      item            : {name}.hxx
-        generated by    : {maker}
-        date            : {date}
-        category        : header file
-        description     : DUECA Communication Object (DCO)
-                          automatically generated by dueca-codegen
-        codegen version : {codegenversion}
-        language        : C++{headercomments}
-*/
-
-#ifndef {name}_hxx
-#define {name}_hxx
-
-#include <inttypes.h>
-
-#if !defined(__DCO_NOPACK)
-namespace dueca {{
-class AmorphStore;
-class AmorphReStore;
-}};
-#endif
-
-#if !defined(__DCO_STANDALONE)
-#include <gencodegen.h>
-#if GENCODEGEN != {codegenversion}
-#error "Generated {name}.hxx too old, please clean with 'make mrproper'"
-#endif
-#include <dueca/CommObjectTraits.hxx>
-#endif
-
-#include <iostream>
-{extraheader}
-{typeincludes}{plug_header_include}
-
-{namespacecmd0}
-{enumdec}
-{namespacecmd1}{extrainclude}
-
-{publicfunctionsdec}
-
-#if !defined(__DCO_STANDALONE)
-namespace dueca {{
-{enumtraits}
-}};
-#endif
-{plug_header_code}
-
-#endif
-"""
-
-e_body = \
-"""/* ------------------------------------------------------------------ */
-/*      item            : {name}.cxx
-        generated by    : {maker}
-        date            : {date}
-        category        : header file
-        description     : DUECA Communication Object (DCO)
-                          automatically generated by dueca-codegen
-        codegen version : {codegenversion}
-        language        : C++
-*/
-
-#include "{name}.hxx"
-{assertinclude}
-#if !defined(__DCO_NOPACK)
-#include <dueca/AmorphStore.hxx>
-#include <dueca/PackUnpackTemplates.hxx>
-#endif
-{debugcmd}
-#if !defined(__DCO_STANDALONE)
-#include <dueca/Arena.hxx>
-#include <dueca/ArenaPool.hxx>
-#include <dueca/DataClassRegistrar.hxx>
-#include <dueca/CommObjectMemberAccess.hxx>
-#include <dueca/DCOFunctor.hxx>
-#include <dueca/DCOMetaFunctor.hxx>
-#define DO_INSTANTIATE
-#include <dueca/DataSetSubsidiary.hxx>
-#endif{plug_body_include}
-
-
-{namespacecmd0}{extraincludebody}
-{namespacecmd1}{plug_body_code}{publicfunctionsimp}
-"""
-
 if __name__ == "__main__":
 
     #do_debug = True
     from platform import python_version
 
-    if list(map(int, python_version().split('.')[:2])) < [3, 7]:
-        import io
-        dcodata = ''.join(io.TextIOWrapper(
-            sys.stdin.buffer, encoding='utf-8').readlines())
-    else:
-        sys.stdin.reconfigure(encoding='utf-8')
-        dcodata = ''.join(sys.stdin.readlines())
+    # find the location of
 
-    try:
-        content.parseString(dcodata, True)
-    except CodegenException as e:
-        print('\n'.join([e.__doc__, '', 'Code generation failed!']))
-        sys.exit(1)
-    except:
-        raise
+
+    if pvals.dcofile:
+        for fname in pvals.dcofile:
+            with open(fname, 'r', encoding='utf-8') as infile:
+                dcodata = ''.join(infile.readlines())
+                currentobject = os.path.basename(fname)[:-4]
+                try:
+                    content.parseString(dcodata, True)
+                except CodegenException as e:
+                    print('\n'.join([e.__doc__, '', 'Code generation failed!']))
+                    sys.exit(1)
+                except:
+                    raise
+
+    else:
+        if list(map(int, python_version().split('.')[:2])) < [3, 7]:
+            import io
+            dcodata = ''.join(io.TextIOWrapper(
+                sys.stdin.buffer, encoding='utf-8').readlines())
+        else:
+            sys.stdin.reconfigure(encoding='utf-8')
+            dcodata = ''.join(sys.stdin.readlines())
+
+        try:
+            content.parseString(dcodata, True)
+        except CodegenException as e:
+            print('\n'.join([e.__doc__, '', 'Code generation failed!']))
+            sys.exit(1)
+        except:
+            raise

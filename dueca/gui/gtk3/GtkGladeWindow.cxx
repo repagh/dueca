@@ -371,16 +371,13 @@ bool GtkGladeWindow::_setValue(const char* wname, const char* mname,
     return _setValue(wname, double(boost::any_cast<int32_t>(b)), warn);
   }
   else if (b.type() == typeid(int64_t)) {
-    return _setValue(wname, double(boost::any_cast<int32_t>(b)), warn);
-  }
-  else if (b.type() == typeid(int64_t)) {
     return _setValue(wname, double(boost::any_cast<int64_t>(b)), warn);
   }
-  else if (b.type() == typeid(uint64_t)) {
-    return _setValue(wname, double(boost::any_cast<int32_t>(b)), warn);
+  else if (b.type() == typeid(uint32_t)) {
+    return _setValue(wname, double(boost::any_cast<uint32_t>(b)), warn);
   }
   else if (b.type() == typeid(uint64_t)) {
-    return _setValue(wname, double(boost::any_cast<int64_t>(b)), warn);
+    return _setValue(wname, double(boost::any_cast<uint64_t>(b)), warn);
   }
   else if (b.type() == typeid(bool)) {
     return _setValue(wname, boost::any_cast<bool>(b), warn);
@@ -775,8 +772,8 @@ bool GtkGladeWindow::_fillOptions(const char* wname,
     if (warn) {
       /* DUECA graphics.
 
-	 Cannot find the given object; check whether it is in the interface,
-	 or check for spelling errors.
+	       Cannot find the given object; check whether it is in the interface,
+	       or check for spelling errors.
       */
       W_XTR("GtkGladeWindow::fillOptions: Could not find gtk object with id \""
 	    << wname << "\"");
@@ -811,7 +808,7 @@ bool GtkGladeWindow::_fillOptions(const char* wname,
     if (warn) {
       /* DUECA graphics.
 
-	 The store object attached to this combobox is not compatible.
+	       The store object attached to this combobox is not compatible.
       */
       W_XTR("GtkGladeWindow::fillOptions: ComboBox object \"" << wname
 	    << "\", store is not compatible");
@@ -867,7 +864,7 @@ bool GtkGladeWindow::fillOptions(const char* dcoclass,
 {
   auto eclass = DataClassRegistry::single().getEntryShared(dcoclass);
   if (!eclass.get()) {
-    /* DUECA Graphics.
+    /* DUECA graphics.
 
        When trying to fill selections for combobox entries in a GUI,
        (GtkGladeWindow::fillOptions), the specified dco data class is
@@ -907,7 +904,7 @@ bool GtkGladeWindow::fillOptions(const char* dcoclass,
           }
         }
         else {
-          /* DUECA Graphics.
+          /* DUECA graphics.
 
 	     There is an enum array specified, but no array format
 	     available for finding it in the interface.

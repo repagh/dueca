@@ -12,14 +12,20 @@ simulation or data acquisition projects on desktop computers, and
 deployment of these projects on simulation or data acquisition
 facilities that typically use networked computers with IO capabilities
 and hardware to drive these facilities and collect and process
-real-time data. The transition to and from desktop development and
-deployment on different facilities should be as smooth as possible,
-enabling rapid prototyping and quick turn-around times between
-development, deployment and test. To enable this, DUECA uses version
-control for both the simulation code, and for the configurations
-needed for each deployment platform, be it development desktop,
-simulator or otherwise. To be able to read the following description,
-please consider the following definitions:
+real-time data.
+
+Normally, you will develop your simulation or experiment on a desktop
+computer without all that hardware, and later bring the simulation to
+your target environment, then check and fine-tune there.
+
+The transition to and from desktop development and deployment on
+different facilities should be as smooth as possible, enabling rapid
+prototyping and quick turn-around times between development,
+deployment and test. To enable this, DUECA uses version control for
+both the simulation code, and for the configurations needed for each
+deployment platform, be it development desktop, simulator or
+otherwise. To be able to read the following description, please
+consider the following definitions:
 
 ### Definitions
 
@@ -44,21 +50,21 @@ please consider the following definitions:
                         "solo". </td></tr>
 
 <tr><td> machine class </td><td> The software and hardware
-	                             configuration for a specific node
-	                             type. Each node needs certain
-	                             software and/or hardware to do its
-	                             function. For example the SIMONA
-	                             Research Simulator has three
-	                             computers for the image
-	                             generation. These run DUECA nodes
-	                             traditionally called srsig1, srsig2,
-	                             and srsig3, i.e., named after the
-	                             computers they run on.<br> These
-	                             nodes all use the same hardware
-	                             (graphics cards) and software, such
-	                             as scene graph libraries, so they are
-	                             defined by machine class
-	                             srs-ig. </td></tr>
+                                 configuration for a specific node
+                                 type. Each node needs certain
+                                 software and/or hardware to do its
+                                 function. For example the SIMONA
+                                 Research Simulator has three
+                                 computers for the image
+                                 generation. These run DUECA nodes
+                                 traditionally called srsig1, srsig2,
+                                 and srsig3, i.e., named after the
+                                 computers they run on.<br> These
+                                 nodes all use the same hardware
+                                 (graphics cards) and software, such
+                                 as scene graph libraries, so they are
+                                 defined by machine class
+                                 srs-ig. </td></tr>
 
 <tr><td> project </td><td> The set of software running a simulation,
                            with configuration files for the platforms,
@@ -78,7 +84,7 @@ please consider the following definitions:
                               into c++ code. </td></tr>
 
 <tr><td> module </td><td> A module is the smallest software unit in a
-                          DUECA project.  Each module will be given an
+                          DUECA project. Each module will be given an
                           object ID within a running DUECA project,
                           and modules are named. A module can
                           communicate with other modules in DUECA
@@ -91,6 +97,12 @@ please consider the following definitions:
 <tr><td> pseudo-module </td><td> A module folder that only contains
                                  data files, no code. </td></tr>
 </table>
+
+Note that a DUECA project can, and often does, borrow modules and DCO
+files from other projects. A configuration file defines where the
+borrowed code can be found. This enables re-use and efficient
+maintenance of common software, for example for visualization and
+interfacing and control of certain simulator hardware.
 
 A number of different types of configuration files is used. These are the
 following:
@@ -116,7 +128,15 @@ following:
 <tr><td> config.cmake </td><td>A file defining additional build
                                  instructions (libraries to search and
                                  link, include paths, etc.) for a
-                                 certain machine class. </td></tr>
+                                 certain machine class. It is wise to
+                                 only add configuration here that is
+                                 specific to the hardware of the
+                                 computer where this machine class is
+                                 used, e.g., IO libraries specific for
+                                 that computer. All software-related
+                                 build configuration can be done in
+                                 the CMakeLists.txt files in the
+                                 modules. </td></tr>
 
 <tr><td> project CMakeLists.txt</td><td>A CMake file defining build
                                 instructions common to a whole
@@ -171,10 +191,10 @@ following:
                                 selection of machine-class specific
                                 build instructions and DUECA
                                 modules. The contents of this file are
-								created when you clone the project for a
-								specific node; based on machinemapping.xml, the
-								appropriate class is chosen. This file is
-								not checked in to the repository.</td></tr>
+                                created when you clone the project for a
+                                specific node; based on machinemapping.xml, the
+                                appropriate class is chosen. This file is
+                                never checked in to the repository.</td></tr>
 
 </table>
 
@@ -276,7 +296,9 @@ and run from the repository.
 Note that when you are deploying your code on another computer for
 another platform (not solo), such as one of the computers running your
 simulator, a "sparse" checkout is done, and only those modules that
-are actually needed (also from the "own" project), are checked out.
+are actually needed (also from the "own" project), are checked out. If
+you want the full set of software (however, `dueca-gproject` will only
+build what is needed), use the `--full` option.
 
 ## Interaction with git version control {#appdevelg_gitinter}
 
@@ -301,7 +323,7 @@ You can use your account on a gitlab or github server to locate the
 remote repositories, for example, you created these empty repositories:
 
     git@gitlab.somewhere.org:i-am-a-gitlab-user/MyNewEyeTracker.git
-	git@gitlab.somewhere.org:i-am-a-gitlab-user/MyExperiment.git
+    git@gitlab.somewhere.org:i-am-a-gitlab-user/MyExperiment.git
 
 These repositories' url's therefore all start with the same path,
 differing only by repository/project name. By defining this in an
@@ -313,7 +335,7 @@ variable:
     export DAPPS_GITROOT=git@gitlab.somewhere.org:i-am-a-gitlab-user/
 
 Now you can use the shorthands `dgr:///MyNewEyeTracker.git` and
-`MyExperiment.git`, and these will also be stored in the project configuration. If you later move repositories, or someone else clones your efforts to their own repository, the translation will also work for them.
+`dgr:///MyExperiment.git`, and these will also be stored in the project configuration. If you later move repositories, or someone else clones your efforts to their own repository, the translation will also work for them.
 
 If you borrow from a project somewhere else, you can always specify the
 full URL. The common steps outlined below will present you with a mix
@@ -336,7 +358,7 @@ automatically or custom defined. Any shortcut `origin:///` will
 automatically be set to the location of the 'origin' repository of the
 checked out project itself as returned from:
 
-	git remote -v
+    git remote -v
 
 A number of other shortcut URL's can be defined through SHELL
 environment variables. These can then be used to represent the
@@ -357,25 +379,25 @@ Simulation we commonly define:
 <tr><th>variable</th><th>value</th><th>replaces prefix</th><th>Description</th></tr>
 
 <tr><td>`DAPPS_GITROOT_pub`</td>
-<td>`git@github.tudelft.nl:dueca/`</td>
+<td>`git@github.com:dueca/`</td>
 <td>`dgrpub:///`</td>
 <td>Open-sourced DUECA modules on GitHub</td></td>
 
 <tr><td>`DAPPS_GITROOT_base`</td>
 <td>`git@gitlab.tudelft.nl:ae-cs-dueca-base/`</td>
 <td>`dgrbase:///`</td>
-<td>Common modules for re-use</td></td>
+<td>Common modules intended for re-use</td></td>
 
 <tr><td>`DAPPS_GITROOT_active`</td>
 <td>`git@gitlab.tudelft.nl:ae-cs-dueca-active/`</td>
 <td>`dgractive:///`</td>
-<td>Widely used projects that are held active on the facilities, for demo's
+<td>Widely used projects that are held active on our facilities, for demo's
 etc.</td></tr>
 
 <tr><td>`DAPPS_GITROOT_archive`</td>
 <td>`git@gitlab.tudelft.nl:ae-cs-dueca-archive/`</td>
 <td>`dgrarchive:///`</td>
-<td>Completed student projects.</td></tr>
+<td>Completed (student) projects</td></tr>
 
 <tr><td>`DAPPS_GITROOT_yard`</td>
 <td>`git@gitlab.tudelft.nl:ae-cs-dueca-yard/`</td>
@@ -388,6 +410,16 @@ etc.</td></tr>
 <td>`dgrstudents:///`</td>
 <td>Currently active student projects.</td></tr>
 </table>
+
+If a student needs to base his or her work on an existing project, which may be one of  the projects in active or in archive, a fork is created for that project into the students group. Students (everyone actually), should work in a named branch. After completion of the project, the students' branch can then be pushed to the base project in the archive or active group. If the work is an extension, and keeps current capabilities of the project intact, these branches can be merged into main.
+
+A forked project may have a different name from the original project. When
+multiple students are working with a variant of the same project (forks)
+at the same time on the simulator or another lab, it may be useful to
+have different names for these forks. Since DUECA 4.1, the build system
+has been modified to accomodate this, see the remarks on "own" and "foreign"
+DCO objects in the section on [comm-objects.lst](#appdevelg_commobjects), as
+well as the remarks on [referencing other module](#appdevelg_modulecmake).
 
 When specifying a repository to the `dueca-gproject` script, the
 shortened URL may then be used. The repository will be stored in the
@@ -417,7 +449,7 @@ If you do not provide the remote url, you will be left with only a local
 project, git wizards know what to do with this.
 
 The script language is either python or scheme, where the more modern
-python option is default
+python option is default.
 
 The graphical user interface will be applied as option to the "solo"
 machine class. Unless you need compatibility with the aging "gtk2",
@@ -430,8 +462,8 @@ performed by a `git clone` command. However, to get the proper file
 structure, and pull the modules that are borrowed from other projects,
 it is better to do this through the dueca-gproject command.
 
-    dueca-gproject clone --name MyOldProject [--node solo] \
-                         --remote <git url> [--version some-version]
+    dueca-gproject clone --remote <git url> \
+                         [--node solo] [--version some-version]
 
 The script uses the mapping between nodes and machine class to check
 out the software corresponding to the right machine class. The "solo"
@@ -460,9 +492,9 @@ That means that if you already have a checked-out clone of your
 project on your computer, a good way to continue working is:
 
     # first get all updates that were made to this project elsewhere
-	git pull
-	# and ensure any changes to borrowed modules and dco's are in
-	dueca-gproject refresh
+    git pull
+    # and ensure any changes to borrowed modules and dco's are in
+    dueca-gproject refresh
 
 See also the next section.
 
@@ -507,7 +539,7 @@ and it will be easy:
   changed. You can use the `-m` option to add a commit message, as an
   example:
 
-	  git commit -a -m "Added an option to configure wind conditions"
+      git commit -a -m "Added an option to configure wind conditions"
 
 - Likewise, after you are done with working on your project for the
   day, or for now (e.g., because you are running to the lab to test
@@ -598,16 +630,18 @@ have already been written and can be re-used. You can add such a
 module to your project by (for example with FlexiStick):
 
     dueca-gproject borrow-module --name flexi-stick \
-                   --remote dgrbase:///FlexiStick.git
+                   --remote dgrpub:///FlexiStick.git
 
 In this example, a somewhat particular url is used for the location of
 the FlexiStick project from which we borrow. Since FlexiStick is one
-of the standard DUECA projects used in our group, the special URL
-`dgrbase:///` can be used. When interacting with git, this will be
-replaced by the value of the `DAPPS_GITROOT_base` environment variable.
+of the standard DUECA projects used, and housed with some other
+software in the project on `github`, the special URL `dgrpub:///` can
+be used. When interacting with git, this will be replaced by the value
+of the `DAPPS_GITROOT_pub` environment variable.
 
 Of course, if you borrow from a project not in that location, specify
-the full git url.
+the full git url, or a shortened url matching another environment
+variable.
 
 ### Creating a module
 
@@ -629,8 +663,8 @@ files; here is some explanation on how and when to do this.
 
 ### modules.xml file
 
-The `modules.xml` files are located under `.config/class/&lt;machine
-class&gt;/`. They list, per machine class, what modules are included
+The `modules.xml` files are located under `.config/class/<machine
+class>/`. They list, per machine class, what modules are included
 for the machine class, and which modules are borrowed. In addition,
 the project url for the own project and each borrowed project is
 recorded there.
@@ -643,12 +677,14 @@ borrowed, must be listed here with their url's. These must be one of
 the many formats of git url that are possible, or use a shorthand
 prefix, e.g., the `dgr:///` prefix, or a `dgrbase:///` prefix to
 indicate a url based on the `DAPPS_GITROOT` or `DAPPS_GITROOT_base`
-environment variable.
+environment variable. The project you are working on uses a specific
+shorthand with the `origin:///` prefix. The location matching that
+prefix is extracted from the git information for the folder.
 
 Here is a small example from a `modules.xml` file.
 
     <project>
-      <url>dgr:///DrivingSimulator.git</url>
+      <url>origin:///DrivingSimulator.git</url>
       <module>ECI</module>
       <module>CarDynamics</module>
       <module>Dashboard</module>
@@ -665,7 +701,7 @@ file for that class, and copy over the relevant modules from the
 `dueca-gproject` refresh to actually get the needed modules and dco
 files.
 
-### DCO objects and comm-objects.lst
+### DCO objects and comm-objects.lst {#appdevelg_commobjects}
 
 Each module folder also has a `comm-objects.lst` file. That file is
 converted into a `comm-objects.h` file that is included in the module
@@ -673,11 +709,82 @@ code, and used for determining which dco files have to be converted
 with the code generator. Simply edit these files, adding the needed
 dco files; lines starting with a "#" or empty lines will be ignored.
 
+Each line in a `comm-objects.lst` file refers to a DCO object, either
+from the "own" project, or from another project. DCO objects liv in the
+`comm-objects` folder, which is treated as a standard module, with some
+additional configuration that ensures that c++ code is generated from the
+`.dco` files. A single non-comment line there would look like:
+
+    SomeProject/comm-objects/SomeObject.dco
+
+That ensures that the build system will be looking for a (borrowed, unless
+`SomeProject` is the active project) project, and configures that the
+`SomeObject.dco` file will be converted to c++ code and built. It also makes
+sure that the `SomeProject/comm-objects` folder can be found by include
+statements in your code.
+
+If you use a DCO object from your "own" project, as you will be likely to
+do, then it is better to use a shortened reference in the `comm-objects.lst`
+file:
+
+    comm-objects/MyObject.dco
+
+If you are working in, e.g., `MyProject`, the build system will interpret
+that as `MyProject/comm-objects/MyObject.dco`. Also if someone else later
+borrows your module to re-use your code, the build system figures out that
+the "own" DCO file still corresponds to `MyProject`. This also ensures that
+you don't have to go in and edit your `comm-objects.lst` file if you later
+re-name `MyProject` to something else. This is in fact so useful (and we were
+for historical reasons stuck with a number of projects that did not have
+this), that there is a "policy" to check this and fix it on existing projects.
+
+run:
+
+    dueca-gproject policies
+
+to check whether this (and other 'good' practices) should be applied to
+your code, and
+
+    dueca-gproject policies --apply
+
+To run this. Also see [the chapter on policies](#policies)
+
 ### A module's CMakeLists.txt
 
 The `CMakeLists.txt` files in the module folders are the proper place
 to add dependencies on external libraries. See also the page on
 [using cmake](@ref cmake).
+
+If you need a dependency on another module (or module code) in your project,
+you can also do that here. Note that in principle, modules should be
+stand-alone, but in some cases it can be convenient to share some code,
+like a mini-library, or headers with for example the definition of all your
+simulation data. In that case you can add that module to the `USEMODULES`
+variable in your `CMakeLists.txt` file, like so:
+
+    USEMODULES
+
+    SomeProject/SomeModule
+
+    MyOtherModule
+
+Note again, like with the references to DCO files in the `comm-objects.lst`
+file, that you can and should omit the name of the current project; in this
+case, it means that there is a dependency on a module from the same project.
+
+The dependency will do the following:
+
+- Configure and build the other module before the dependent one. This ensures
+  that any generated code is available in the proper order
+
+- Pull in the "PUBLIC" (check CMake documentation) dependencies of the other
+  module
+
+- Add the paths to the other module (both to the source folder and the folder
+  for any generated code) to the include path for the compiler.
+
+TLDR; in most cases, you can simply use headers and compiled code from the
+other module.
 
 ## Run configuration and deployment
 
@@ -760,7 +867,7 @@ There is a shortcut if you have a configuration file for the platform:
 
 This populates the proper machine classes, and creates the platform
 and nodes. Optionally, you can uses a `--nodes` argument selecting
-only a part of the nodes.
+only a part of the nodes configured in the `platform-srs.xml` file.
 
 ### Preparing a node's run configuration
 
@@ -768,7 +875,7 @@ When a DUECA executable is started, it is started from the node's run
 folder. This folder should have the files, or links to the files, that
 are needed by the dueca process for this node.
 
-Each node has a run configuration under `run/&lt;platform&gt;/`, named
+Each node has a run configuration under `run/<platform>/`, named
 after the node. Most nodes have three files in there:
 
 - `links.script`, a script that should be "source-d" to run (type
@@ -784,14 +891,17 @@ after the node. Most nodes have three files in there:
   needs to collaborate with the other DUECA processes on the
   simulator. The file as created by the `new-node` command is usually
   correct. The only thing that sometimes is adjusted is the number of
-  threads that should be run by DUECA.
+  threads (priorities) that should be run by DUECA.
 
 Node number 0 is the node with the experiment control interface. This
 node also has the `dueca.mod` or `dueca_mod.py` file that defines the
-complete interface. In general, you can create this file using the
+complete simulation. In general, you can create this file using the
 `dueca.mod` or `dueca_mod.py` from the development stage in the `solo`
 node as a template, and modify it by assigning all modules to their
-proper node.
+proper node. This file is will be read on each of the nodes in your
+simulation, and with the `if this_node_id == some_node:` switches, you
+can make sure that modules are only created in the node where they
+should run.
 
 ### Deployment on a platform
 
@@ -800,12 +910,11 @@ can be created from your development desktop or laptop, as shown
 above. After that, walk over to (or remote login to) the computers of
 the simulator, and on each computer clone the project with
 `dueca-gproject`. In general, the projects are located under the
-`dapps` folder of the username under which you log in to the simulator
-computers. This uses the mapping between node and machine class to
-select the proper machine class, example.
+`dapps` or `gdapps` folder of the username under which you log in to the
+simulator computers. This uses the mapping between node and machine class
+to select the proper machine class, for example:
 
-    dueca-gproject clone --name MyProject --remote <project url> \
-                         --node srsecs
+    dueca-gproject clone --remote <project url> --node srsecs
 
 There are a number of common pitfalls when deploying a project on the
 computers/nodes of a platform:
@@ -828,13 +937,13 @@ computers/nodes of a platform:
   file, the clone/checkout will default to solo.
 
 - the machine-class specific `config.cmake` file contains code to
-  include/link the used widget library (typically gtk2 or gtk3), and
-  to link platform-specific (typically IO) libraries. These typically
-  need to be adjusted.
+  include/link platform-specific (typically IO) libraries. These
+  typically need to be adjusted only for nodes that run on computers
+  with specific hardware (such as control loading or motion systems).
 
 ### Correcting or expanding a platform
 
 You might want to add a node to a platform later. You can simply add
 the node using the `new-node` command. When you have done that, verify
-that the node numbers do not conflict, and that the total number of
+that the node numbers do not conflict, and that the new total number of
 nodes is correct in all `dueca_cnf.py`/`dueca.cnf` files.

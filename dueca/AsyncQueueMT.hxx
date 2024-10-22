@@ -43,7 +43,6 @@ template<class T, class Alloc> class AsyncQueueMT;
 template <class T, class Alloc>
 typename Alloc::element_ptr get_list_spare(AsyncQueueMT<T,Alloc>& list);
 template <class T, class Alloc>
-
 void write_list_back(AsyncQueueMT<T,Alloc>& list,
                      typename Alloc::element_ptr elt);
 template <class T, class Alloc>
@@ -251,13 +250,7 @@ public:
   /** Remove element at head */
   inline void pop()
   {
-    element_ptr tmphead;
-    do {
-      tmphead = data_head;
-      if (tmphead->next == NULL) return;
-    } while (!atomic_swap64(&data_head, tmphead, tmphead->next));
-    returnSpare(tmphead);
-    removed++;
+    getHead();
   }
 
   /** Return the number of elements in the list. */

@@ -31,7 +31,7 @@
 #include <algorithm>
 
 #define CATCH_TOML_ERROR 0
-#define DEBPRINTLEVEL 2
+#define DEBPRINTLEVEL -1
 #include <debprint.h>
 
 #define DO_INSTANTIATE
@@ -61,6 +61,10 @@ std::string encode64(const std::string &val) {
 std::map<std::string,SnapshotInventory::pointer> SnapshotInventory::inventories;
 
 const char* const SnapshotInventory::classname = "initial-inventory";
+
+template<> const char* getclassname<SnapshotInventory>()
+{ return "initial-inventory"; }
+
 
 SnapshotInventory::SnapshotInventory(const char* entity_name) :
   NamedObject(NameSet("dueca", "SnapshotInventory", entity_name)),
@@ -95,6 +99,8 @@ SnapshotInventory::SnapshotInventory(const char* entity_name) :
 {
   store_snapshots.setTrigger(r_snapshots);
   store_snapshots.switchOn();
+  follow_dusime.setTrigger(r_dusime);
+  follow_dusime.switchOn();
 }
 
 SnapshotInventory::~SnapshotInventory()
@@ -280,7 +286,8 @@ void SnapshotInventory::setFiles(const std::string& bfile,
 
         // read the [[initial]] array in there, thanks to a constructor
         // for Snapshot from toml::value, this seems easy
-        for (const auto &ini: toml::find<toml::array>(iset.second, "initial")) {
+        auto iniarr = toml::find<toml::array>(iset.second, "initial");
+        for (const auto &ini: iniarr) {
           tmpsnap.first->second.snaps.emplace_back(ini);
         }
       }

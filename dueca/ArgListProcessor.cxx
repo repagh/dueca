@@ -414,7 +414,7 @@ static T findValue(const bpy::object& current)
   bpy::extract<T> getval(current);
   if (getval.check()) return getval();
   throw(ScriptDataError("expect single value of type \"",
-                        getclassname<T>(), "\""));
+                        dco_traits<T>::_getclassname(), "\""));
 }
 
 
@@ -866,6 +866,7 @@ static void print_translate(std::ostream& os, const char* name)
 {
   for (const char* ptr = name; *ptr; ptr++) {
     if (*ptr == '-') os << '_';
+    else if (*ptr == '+') os << '_';
     else os << *ptr;
   }
 }
@@ -999,7 +1000,8 @@ static bool symbol_compare(const char* one, const char* two)
 {
   while (*one && *two) {
     if (*one != *two &&
-        !(*one == '-' && *two == '_')) return false;
+        !(*one == '-' && *two == '_') &&
+	!(*one == '+' && *two == '_')) return false;
     one++; two++;
   }
   return !(*one || *two);

@@ -19,7 +19,6 @@
 #endif
 
 #include <SharedPtrTemplates.hxx>
-#include <utility>
 #include <vector>
 #include <list>
 #include <sys/types.h>
@@ -33,7 +32,7 @@ using namespace std;
 // Forward declarations
 #include <dueca_ns.h>
 DUECA_NS_START
-
+class UCallbackOrActivity;
 class TriggerTarget;
 class TriggerPuller;
 class TargetAndPuller;
@@ -203,6 +202,7 @@ protected:
 private:
   friend class TriggerPuller;
   friend class TriggerAtom;
+  friend class UCallbackOrActivity;
 protected:
   /** Set of data needed for each object pulling this trigger. */
   struct PullerData
@@ -331,18 +331,22 @@ public:
   */
   void setTrigger(boost::intrusive_ptr<TargetAndPuller> p);
 
-  /** Remove triggering, normally when a puller is destructed */
-  void forgetTrigger(const TriggerPuller* p);
 
   /** Clear all triggers from this target; this is not thread-safe, don't
       call this when running. */
   void clearTriggers();
+
+ private:
+  /** Remove triggering, normally when a puller is destructed */
+  void forgetTrigger(const TriggerPuller* p);
 };
 
 
 
-/** Common base class for objects that pass triggering
+/** Common base class for objects that pass triggering.
 
+    These objects receive triggering events, and process/combine
+    these to pass them on and produce triggering.
  */
 class TargetAndPuller: public TriggerTarget, public TriggerPuller
 {
@@ -386,10 +390,15 @@ public:
       See the explanation above.
    */
   void addTerm(const boost::intrusive_ptr<TargetAndPuller>& p);
+
+  /** Remove a term from this TriggerAnd or TriggerOr object.
+
+      @param p        Object that can serve as a trigger puller. */
+  bool removeTerm(TriggerPuller& p);
 };
 
 
-/** Or combination of different TriggerPullers.
+/** "Or" combination of different TriggerPullers.
 
     Note that you need not make an OR combination directly, it is
     automatically done by the operator || function for
@@ -442,7 +451,7 @@ private:
 };
 
 
-/** And combination of different TriggerPullers.
+/** "And" combination of different TriggerPullers.
 
     Note that you need not make an AND combination directly, it is
     automatically done by the operator && function for

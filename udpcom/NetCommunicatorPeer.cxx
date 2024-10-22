@@ -30,6 +30,7 @@
 
 #define I_NET
 #include <dueca-conf.h>
+#include <dueca/dueca-version.h>
 #include <debug.h>
 #include <dassert.h>
 
@@ -48,7 +49,6 @@ const static double test_failprob = 0.0001;
 // constructor
 NetCommunicatorPeer::NetCommunicatorPeer() :
   NetCommunicator(),
-  master_address(""),
   master_url(""),
   override_data_url(""),
   conf_comm(),
@@ -62,7 +62,8 @@ NetCommunicatorPeer::NetCommunicatorPeer() :
   current_tick(0),
   i_nodeid(uint16_t(0xffff)),
   lastround_npeers(0),
-  myturntosend(false)
+  myturntosend(false),
+  last_run_tick(MAX_TIMETICK)
 {
   PacketCommunicatorSpecification::callback =
     common_callback(this, &NetCommunicatorPeer::unpackPeerData);
@@ -127,10 +128,11 @@ void NetCommunicatorPeer::setupConnection(Activity& activity)
 
     PacketCommunicatorSpecification spec;
     if (!master_url.size()) {
-      //DEB("Initial master url " << master_url);
-      master_url = std::string("ws://") + master_address + std::string(":") +
-        boost::lexical_cast<std::string>(master_port) + std::string("/config");
-      DEB("Constructed master url " << master_url);
+      /* DUECA network.
+
+	 Master url needs to be supplied */
+      W_NET("Master URL needs to be supplied");
+      throw(connectionfails());
     }
     spec.url = master_url;
     spec.buffer_size = config_buffer_size;
@@ -488,9 +490,6 @@ void NetCommunicatorPeer::unpackPeerData(MessageBuffer::ptr_type& buffer)
       // index are correct
       myturntosend = i_.peer_id == follow_id &&
         message_cycle == i_.cycle;
-
-        /* && message_cycle == i_.cycle */;
-
     }
     else {
       data_comm->returnBuffer(buffer);
@@ -585,10 +584,11 @@ void NetCommunicatorPeer::startCyclic(Activity& activity)
   setupConnection(activity);
 
   /* 5: now do cyclic work, block & read UDP messages, */
-  current_tick = SimTime::getTimeTick();
   do {
+    current_tick = SimTime::getTimeTick();
     _oneCycle(activity);
-  } while (message_cycle < last_cycle);
+  } while (message_cycle < last_cycle &&
+	   current_tick < last_run_tick);
 
   /* after this, clear the connections */
   clearConnections();
@@ -729,6 +729,16 @@ bool NetCommunicatorPeer::decodeConfigData()
         // set it for the current send buffer
         current_send_buffer->message_cycle = message_cycle - 0x10;
 
+	// send a check on the DUECA version used here
+	char cbuf[8+6];
+	AmorphStore s(cbuf, 8+6);
+	UDPPeerConfig cmd(UDPPeerConfig::DuecaVersion, peer_id);
+	cmd.packData(s);
+	s.packData(uint16_t(DUECA_VERMAJOR));
+	s.packData(uint16_t(DUECA_VERMINOR));
+	s.packData(uint16_t(DUECA_REVISION));
+	sendConfig(s);
+
         // inform connection is established
         this->clientIsConnected();
       }
@@ -809,10 +819,17 @@ void NetCommunicatorPeer::setStopTime(const TimeTickType& last_tick)
 {
   if (last_tick == MAX_TIMETICK) {
     last_cycle = std::numeric_limits<uint32_t>::max();
+    last_run_tick = MAX_TIMETICK;
     stop_commanded = false;
   }
   else {
+
+    // this will send a stop request, the master will then actually
+    // confirm stop, and the last_cycle is set upon that
     DEB("Commanding stop " << last_tick);
     stop_commanded = true;
+
+    // unless the master is no longer active, for that case give 5 s leeway
+    last_run_tick = last_tick + Ticker::single()->getIncrement(5.0);
   }
 };

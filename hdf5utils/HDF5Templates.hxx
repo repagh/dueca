@@ -18,6 +18,7 @@
 #include <H5Cpp.h>
 #include <inttypes.h>
 #include <fixvector.hxx>
+#include <fixvector_withdefault.hxx>
 #include <varvector.hxx>
 #include <limvector.hxx>
 #include <string>
@@ -28,7 +29,7 @@
 
 DUECA_NS_START;
 
-/** @file HDF5Templates.hxx 
+/** @file HDF5Templates.hxx
 
     Template functions and classes to extract HDF5-relevant information about
     different data types. */
@@ -191,6 +192,23 @@ const H5::DataType* get_hdf5_type(dueca::fixvector<N,T>& t)
 }
 
 /** HDF5 type for common container */
+template<size_t N, typename T, int DEFLT, unsigned BASE>
+const H5::DataType* get_hdf5_type(const dueca::fixvector_withdefault<N,T,DEFLT,BASE>& t)
+{
+  static hsize_t dims[] = { N };
+  static H5::ArrayType data_type(*get_hdf5_type<T>(), 1, dims);
+  return &data_type;
+}
+/** HDF5 type for common container */
+template<size_t N, typename T, int DEFLT, unsigned BASE>
+const H5::DataType* get_hdf5_type(dueca::fixvector_withdefault<N,T,DEFLT,BASE>& t)
+{
+  static hsize_t dims[] = { N };
+  static H5::ArrayType data_type(*get_hdf5_type<T>(), 1, dims);
+  return &data_type;
+}
+
+/** HDF5 type for common container */
 template<typename T>
 const H5::DataType* get_hdf5_type(const dueca::varvector<T>& t)
 {
@@ -251,6 +269,15 @@ template<size_t N, class D>
 const H5::DataType* get_hdf5_elt_type(dueca::fixvector<N,D>& d)
 { return get_hdf5_type<D>(); }
 
+/** for fixed-length vector, becomes 2d dataset */
+template<size_t N, class D, int DEFLT, unsigned BASE>
+const H5::DataType* get_hdf5_elt_type(const dueca::fixvector_withdefault<N,D,DEFLT,BASE>& d)
+{ return get_hdf5_type<D>(); }
+/** for fixed-length vector, becomes 2d dataset */
+template<size_t N, class D, int DEFLT, unsigned BASE>
+const H5::DataType* get_hdf5_elt_type(dueca::fixvector_withdefault<N,D,DEFLT,BASE>& d)
+{ return get_hdf5_type<D>(); }
+
 /** Ignore std::map if trying to write it nested */
 template<typename K, typename T>
 const H5::DataType* get_hdf5_type(const std::map<K,T>& d)
@@ -279,24 +306,16 @@ const H5::DataType* get_hdf5_elt_type(const smartstring& d);
 /** as element, it must be writeable */
 const H5::DataType* get_hdf5_elt_type(smartstring& d);
 
-#if 0
-/** Extract a element, of a map type */
-template<typename K, typename T>
-const H5::DataType* get_hdf5_elt_type(const std::map<K,T>& d)
-{ return NULL; }
-/** Extract a element, of a map type */
-template<typename K, typename T>
-const H5::DataType* get_hdf5_elt_type(std::map<K,T>& d)
-{ return NULL; }
-#else
 /** std::map works as member, written as extensible array with
     key,val pairs. These must be convertible in one go */
 template<typename K, typename T>
 const H5::DataType* get_hdf5_elt_type(const std::map<K,T>& d)
 {
   static H5::CompType *data_type = NULL;
+  static H5::VarLenType *arr_type = NULL;
   static bool once = true;
-  struct pairlike { K first; T second; };
+  typedef std::pair<K,T> pairlike;
+  //struct pairlike { K first; T second; };
   if (once) {
     once = false;
     pairlike example;
@@ -309,18 +328,19 @@ const H5::DataType* get_hdf5_elt_type(const std::map<K,T>& d)
     data_type->insertMember
       ("val", HOFFSET(pairlike, second),
        *dueca::get_hdf5_type(example.second));
-    once = false;
+    arr_type = new H5::VarLenType(data_type);
   }
-  return data_type;
+  return arr_type;
 }
 
-/** Return the length of a map */
+/** std::map works as member, written as extensible array with
+    key,val pairs. These must be convertible in one go */
 template<typename K, typename T>
-const hsize_t get_hdf5_elt_length(const std::map<K,T>& d)
+const H5::DataType* get_hdf5_elt_type(std::map<K,T>& d)
 {
-  return H5S_UNLIMITED;
+  const std::map<K,T>& _d = d;
+  return get_hdf5_elt_type(_d);
 }
-#endif
 
 /** generic element type */
 template<typename T>
@@ -335,6 +355,11 @@ const H5::DataType* get_hdf5_elt_type(T& o)
 /** Return the length of a fixed-size vector */
 template<size_t N, class D>
 const hsize_t get_hdf5_elt_length(const dueca::fixvector<N,D>& d)
+{ return N; }
+
+/** Return the length of a fixed-size vector */
+template<size_t N, class D, int DEFLT, unsigned BASE>
+const hsize_t get_hdf5_elt_length(const dueca::fixvector_withdefault<N,D,DEFLT,BASE>& d)
 { return N; }
 
 /** Return the length of any other element */

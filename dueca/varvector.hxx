@@ -13,9 +13,8 @@
         license         : EUPL-1.2
 */
 
-#ifndef varvector_hxx
+#pragma once
 #define varvector_hxx
-
 #include <dueca_ns.h>
 #include <CommObjectTraits.hxx>
 #include <PackTraits.hxx>
@@ -24,6 +23,7 @@
 #include <algorithm>
 #include <inttypes.h>
 #include <type_traits>
+#include <sstream>
 
 DUECA_NS_START;
 
@@ -257,15 +257,34 @@ public:
 
 /** Helper, for DCO object handling */
 template <typename D>
-struct dco_traits<varvector<D> > : dco_traits_iterable { };
-
-/** Helper, for DCO object handling */
-template <typename D>
-struct pack_traits<varvector<D> >: public pack_var_size, unpack_resize { };
-/** Helper, for DCO object handling */
-template <typename D>
-struct diffpack_traits<varvector<D> >: public diffpack_vector { };
+struct dco_traits<varvector<D> > : dco_traits_iterable,
+  pack_var_size, unpack_resize, diffpack_vector
+{ 
+  /** Representative name */
+  static const char* _getclassname()
+  {
+    static std::stringstream cname;
+    if (cname.str().size() == 0) {
+      cname << "varvector<" 
+            << dco_traits<D>::_getclassname() << ">";
+    }
+    return cname.str().c_str();
+  }
+  /** Value type for the elements of a trait's target */
+  typedef D value_type;
+  typedef void key_type;
+};
 
 DUECA_NS_END;
 
-#endif
+#include "msgpack-unstream-iter.hxx"
+MSGPACKUS_NS_START;
+template <typename S, typename T>
+inline void msg_unpack(S& i0, const S& iend, dueca::varvector<T> & i)
+{
+  uint32_t len = unstream<S>::unpack_arraysize(i0, iend);
+  i.resize(len);
+  for (unsigned ii = 0; ii < len; ii++)
+    msg_unpack(i0, iend, i[ii]);
+}
+MSGPACKUS_NS_END;

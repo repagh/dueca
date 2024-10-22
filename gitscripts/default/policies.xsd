@@ -3,6 +3,7 @@
 	   targetNamespace="https://dueca.tudelft.nl"
 	   xmlns="https://dueca.tudelft.nl"
 	   elementFormDefault="qualified">
+  <!-- Schema for DUECA policies -->
 
   <xs:element name="policies">
     <xs:complexType>
@@ -48,7 +49,10 @@
   <xs:complexType name="param_t">
     <xs:simpleContent>
       <xs:extension base="xs:string">
-	<xs:attribute name="name" type="xs:string" use="required"/>
+	    <xs:attribute name="name" type="xs:string" use="required"/>
+      <xs:attribute name="trim" type="xs:string"/>
+      <xs:attribute name="regex" type="xs:boolean"/>
+      <xs:attribute name="format" type="xs:boolean"/>
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>

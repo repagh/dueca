@@ -12,22 +12,18 @@
         license         : EUPL-1.2
 */
 
+#include "GenericCallback.hxx"
 #define InformationStash_cxx
 #include "InformationStash.hxx"
 #include "NodeManager.hxx"
-#include "EventWriter.hxx"
-#include "Callback.ixx"
 #include "TimedServicer.hxx"
-#define DO_INSTANTIATE
-#include "EventAccessToken.hxx"
-#include <WrapSendEvent.hxx>
+#include <dueca/ChannelWriteToken.hxx>
+#include <dueca/WrapSendEvent.hxx>
 
-#define DEBPRINTLEVEL 0
+#define DEBPRINTLEVEL -1
 #include <debprint.h>
 
 DUECA_NS_START
-
-static void do_nothing() {}
 
 template<class T>
 InformationStash<T>::InformationStash(const char* name) :
@@ -39,7 +35,7 @@ InformationStash<T>::InformationStash(const char* name) :
   sequence(0),
   direct(false),
   service_id(0U),
-  work2(do_nothing)
+  work2(InformationStash_do_nothing)
   //srvc(NULL)
 {
 
@@ -67,7 +63,7 @@ void InformationStash<T>::initialise(unsigned nreserved, bool install_service)
     w_info = new ChannelWriteToken
       (id->getId(), NameSet("dueca", name, ""), T::classname, "",
        Channel::Events, Channel::OneOrMoreEntries,
-       Channel::OnlyFullPacking, Channel::Bulk, NULL, nreserved);
+       Channel::OnlyFullPacking, Channel::Bulk, reinterpret_cast<GenericCallback*>(NULL), nreserved);
   }
 
   if (!service_id && install_service) {
@@ -93,7 +89,7 @@ void InformationStash<T>::initialise(InformationStash<U>* dependent,
     w_info = new ChannelWriteToken
       (id->getId(), NameSet("dueca", name, ""), T::classname, "",
        Channel::Events, Channel::OneOrMoreEntries,
-       Channel::OnlyFullPacking, Bulk, NULL, nreserved);
+       Channel::OnlyFullPacking, Bulk, reinterpret_cast<GenericCallback*>(NULL), nreserved);
   }
 
   if (!service_id && install_service) {

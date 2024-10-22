@@ -18,6 +18,7 @@
 #include <map>
 #include <exception>
 #include <iostream>
+#include <iomanip>
 
 /** An exception to be thrown when things cannot be made */
 class CFCannotMake: public std::exception
@@ -187,6 +188,10 @@ public:
     return jj->second->create(key, spec);
   }
 
+  /** Check for presence of a specific key */
+  bool haveSubcontractor(const typename X::Key& key)
+  { return subcontractors.find(key) != subcontractors.end(); }
+
   /** Add a subcontractor, who can make a specific type of
       object. The subcontractor needs to be derived from
       SubcontractorBase, and implement the create function.
@@ -253,6 +258,9 @@ struct SubcontractorBase
   create(const typename Xbase::Key& key, const typename Xbase::SpecBase& spec)
   = 0;
 
+  /** Print debug information to the given stream
+      @param os         Output stream
+  */
   virtual void print(std::ostream& os) { }
 };
 
