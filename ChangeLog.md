@@ -2,6 +2,22 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [4.1.3] - 2024-11-12
+
+- Fixes gtkgladewindow DCO reading and writing
+- Modify xmldco to let pugi do conversions
+- Compiles and works on Fedora 41
+- By default archive old log files in a separate folder
+- Enable development without upstream git repository
+- Check on possible mismatch event/stream access with read tokens
+
+## [4.1.2] - 2024-10-13
+
+- Fix msgpack inclusion in dco-generated files
+  modified msgpack-unstream-iter.?xx
+- Correct gtk3 channel overview to handle changed order after sorting
+- Documentation fixes websock server
+
 ## [4.1.1] - 2024-09-19
 
 - Add a convenience function to load a gtk3 combo box with values
