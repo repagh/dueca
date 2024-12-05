@@ -1,6 +1,7 @@
 import gi
 gi.require_version("Gtk", "4.0")
-from gi.repository import Gtk, Gio, GObject  # noqa
+from gi.repository import Gtk, GdkPixbuf, Gio, GObject  # noqa
+import cairo
 
 
 class Channel(GObject.GObject):
@@ -10,7 +11,7 @@ class Channel(GObject.GObject):
         self.name = name
         self.children = entries
 
-class Entry(Gobject.Gobject):
+class Entry(GObject.GObject):
     def __init__(self, number: int, label: str, writerid: str, writername: str, 
                  es: bool, nwrites: int, readers=None):
         super(Entry, self).__init__()
@@ -21,8 +22,9 @@ class Entry(Gobject.Gobject):
         self.es = es
         self.nwrites = nwriters
         self.children = readers
+        self.showing = False
 
-class Reader(Gobject.Gobject):
+class Reader(GObject.GObject):
     def __init__(self, readerid: str, readername: str, nreads: int, sel: int, seq: bool):
         super(Reader, self).__init__()
         self.readerid = readerid
@@ -51,37 +53,135 @@ def add_tree_node(item):
         return store
 
 
-def setup(widget, item):
+# expanding column with channel number
+def setup_expand(widget, item):
     """Setup the widget to show in the Gtk.Listview"""
     label = Gtk.Label()
     expander = Gtk.TreeExpander.new()
     expander.set_child(label)
     item.set_child(expander)
 
+def setup_label(widget, item):
+    """Setup the widget to show in the Gtk.Listview"""
+    label = Gtk.Label()    
+    item.set_child(label)
 
-def bind(widget, item):
+def setup_image(widget, item):
+    image = Gtk.Label()
+    item.set_child(image)
+
+def setup_checkbox(widget, item):
+    check = Gtk.CheckButton()
+    item.set_child(check)
+
+def bind_channelnum(widget, item):
     """bind data from the store object to the widget"""
     expander = item.get_child()
     label = expander.get_child()
     row = item.get_item()
     expander.set_list_row(row)
     obj = row.get_item()
-    label.set_label(obj.data)
+    label.set_label(obj.number)
     
-def setup1(widget, item):
-    """Setup the widget to show in the Gtk.Listview"""
-    label = Gtk.Label()    
-    item.set_child(label)
-
-
-def bind1(widget, item):
+def bind_channelname(widget, item):
     """bind data from the store object to the widget"""
     label = item.get_child()
     row = item.get_item()
     obj = row.get_item()
-    label.set_label(obj.data2)
+    label.set_label(obj.name)
 
+def bind_entrynum(widget, item):
+    label = item.get_child()
+    row = item.get_item()
+    obj = row.get_item()
+    label.set_label(str(obj.number))
 
+def bind_writerid(widget, item):
+    label = item.get_child()
+    row = item.get_item()
+    obj = row.get_item()
+    label.set_label(str(obj.writerid))
+    label.set_tooltip_text(obj.writername)
+
+pb_E = GdkPixbuf.Pixbuf.new_from_file(
+    '../../build-linux/pixmaps/event-logo.png')
+pb_S = GdkPixbuf.Pixbuf.new_from_file(
+    '../../build-linux/pixmaps/stream-logo.png')
+
+def bind_es(widget, item):
+    image = item.get_child()
+    row = item.get_item()
+    obj = row.get_item()
+    if item.es:
+        image.set_from_pixbuf(pb_E)
+    else:
+        image.set_from_pixbuf(pb_S)
+
+def bind_nwrites(widget, item):
+    label = item.get_child()
+    row = item.get_item()
+    obj = row.get_item()
+    label.set_label(str(obj.nwrites))
+
+def bind_readers(widget, item):
+    expander = item.get_child()
+    label = expander.get_child()
+    row = item.get_item()
+    expander.set_list_row(row)
+    obj = row.get_item()
+    label.set_label('')
+
+def bind_readerid(widget, item):
+    label = item.get_child()
+    row = item.get_item()
+    obj = row.get_item()
+    label.set_label(str(obj.readerid))
+    label.set_tooltip_text(obj.readername)
+
+def bind_reads(widget, item):
+    label = item.get_child()
+    row = item.get_item()
+    obj = row.get_item()
+    label.set_label(str(obj.nreads))
+
+pb_label = GdkPixbuf.Pixbuf.new_from_file(
+    '../../build-linux/pixmaps/label-logo.png')
+pb_number = GdkPixbuf.Pixbuf.new_from_file(
+    '../../build-linux/pixmaps/number-logo.png')
+pb_multi = GdkPixbuf.Pixbuf.new_from_file(
+    '../../build-linux/pixmaps/multi-logo.png')
+
+def bind_sel(widget, item):
+    image = item.get_child()
+    row = item.get_item()
+    obj = row.get_item()
+    if obj.sel == 0:
+       image.set_from_pixbuf(pb_number) 
+    elif obj.sel == 1:
+       image.set_from_pixbuf(pb_label) 
+    elif obj.sel == 2:
+       image.set_from_pixbuf(pb_multi) 
+
+pb_picking = GdkPixbuf.Pixbuf.new_from_file(
+    '../../build-linux/pixmaps/picking-logo.png')
+pb_sequential = GdkPixbuf.Pixbuf.new_from_file(
+    '../../build-linux/pixmaps/sequential-logo.png')
+
+def bind_seq(widget, item):
+    image = item.get_child()
+    row = item.get_item()
+    obj = row.get_item()
+    if obj.seq:
+        image.set_from_pixbuf(pb_sequential) 
+    else:
+        image.set_from_pixbuf(pb_picking) 
+
+def bind_view(widget, item):
+    check = item.get_child()
+    row = item.get_item()
+    obj = row.get_item()
+    check.set_active(obj.showing)
+    
 def on_activate(app):
     win = Gtk.ApplicationWindow(
         application=app,
@@ -90,14 +190,17 @@ def on_activate(app):
         default_width=400,
     )
     sw = Gtk.ScrolledWindow()
-    list_view = Gtk.ColumnView()  
-    factory = Gtk.SignalListItemFactory()
-    factory.connect("setup", setup)
-    factory.connect("bind", bind)
-    
-    factory1 = Gtk.SignalListItemFactory()
-    factory1.connect("setup", setup1)
-    factory1.connect("bind", bind1)
+    list_view = Gtk.ColumnView()
+
+    factories = []
+    f = Gtk.SignalListItemFactory()
+    f.connect("setup", setup_expand)
+    f.connect("bind", bind_expand)
+    factories.append(f)
+
+    f = Gtk.SignalListItemFactory()
+    f.connect("setup", setup_label)
+    f.connect("bind", bind_channelnum)
     
     
     selection = Gtk.SingleSelection()
