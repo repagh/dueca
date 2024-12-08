@@ -7,6 +7,7 @@ home = ''
 
 class Channel(GObject.GObject):
     def __init__(self, number: int, name: str, entries=None):
+        """ Channel data"""
         super(Channel, self).__init__()
         self.number = number
         self.name = name
@@ -15,6 +16,7 @@ class Channel(GObject.GObject):
 class Entry(GObject.GObject):
     def __init__(self, number: int, label: str, writerid: str, writername: str,
                  es: bool, nwriters: int, readers=None):
+        """Entry data"""
         super(Entry, self).__init__()
         self.number = number
         self.label = label
@@ -28,6 +30,7 @@ class Entry(GObject.GObject):
 class Reader(GObject.GObject):
     def __init__(self, readerid: str, readername: str, nreads: int, sel: int, seq: bool):
         super(Reader, self).__init__()
+        """ Reader data """
         self.readerid = readerid
         self.readername = readername
         self.nreads = nreads
@@ -35,30 +38,31 @@ class Reader(GObject.GObject):
         self.seq = seq
 
 def add_tree_node(item):
+    """Callback function handling expansion of partial rows
 
-    if not (item):
-            print("no item")
-            return model
+    Parameters
+    ----------
+    item : Channel, or Entry definition
+        Data struct with "children" component for expansion
+
+    Returns
+    -------
+    ListStore with the new rows, one for each child. If no children
+    the expander will not show
+    """
+    if isinstance(item, Channel) and item.children:
+        store = Gio.ListStore.new(Entry)
+    elif isinstance(item, Entry) and item.children:
+        store = Gio.ListStore.new(Reader)
     else:
-        if type(item) == Gtk.TreeListRow:
-            item = item.get_item()
-
-            print("converteu")
-            print(item)
-
-        if not item.children:
-            return None
-        if isinstance(item.children[0], Entry):
-            store = Gio.ListStore.new(Entry)
-        elif isinstance(item.children[0], Reader):
-            store = Gio.ListStore.new(Reader)
-        for child in item.children[1:]:
-            store.append(child)
-        return store
+        return None
+    for child in item.children:
+        store.append(child)
+    return store
 
 # expanding column with channel number
 def setup_expand(widget, item):
-    """Setup the widget to show in the Gtk.Listview"""
+    """Setup the widget to show in the Gtk.Listview, expander with label"""
     label = Gtk.Label()
     expander = Gtk.TreeExpander.new()
     expander.set_child(label)
@@ -66,7 +70,7 @@ def setup_expand(widget, item):
 
 # column with only label text
 def setup_label(widget, item):
-    """Setup the widget to show in the Gtk.Listview"""
+    """Setup the widget to show in the Gtk.Listview, simply a label"""
     label = Gtk.Label()
     item.set_child(label)
 
@@ -82,6 +86,18 @@ def setup_checkbox(widget, item):
 
 # channel number shown as label
 def bind_channelnum(widget, item):
+    """Connect the data model to a visual representation.
+
+    The channel number is implemented as label.
+
+    Parameters
+    ----------
+    widget : SignalListItemFactory
+        not needed?
+    item : ColumnViewCell
+        holds widgets as child, and row as item. From the row the underlying
+        data model/instance can be retrieved.
+    """
     label = item.get_child()
     row = item.get_item()
     obj = row.get_item()
@@ -103,23 +119,24 @@ def bind_channelname(widget, item):
 
 # entry number in an expanding column; ... indicated entries+expander
 def bind_entrynum(widget, item):
+    """Entry numbers in the underlying labels. This column also has an
+    expander, that gets fed with the row when presenting a channel row.
+
+    Parameters
+    ----------
+    widget : SignalListItemFactory
+        not used
+    item : ColumViewCell
+        cell with widget and access to row.
+    """
     expander = item.get_child()
     label = expander.get_child()
     row = item.get_item()
     obj = row.get_item()
     if isinstance(obj, Channel):
-        if len(obj.children):
-            label.set_label(str(obj.children[0].number))
-            if len(obj.children) > 1:
-                expander.set_list_row(row)
-            else:
-                expander.set_list_row()
-        else:
-            expander.set_list_row()
+        expander.set_list_row(row)
     elif isinstance(obj, Entry):
         label.set_label(str(obj.number))
-    else:
-        label.set_label('')
 
 # writer id, with name as tooltip
 def bind_writerid(widget, item):
@@ -129,9 +146,6 @@ def bind_writerid(widget, item):
     if isinstance(obj, Entry):
         label.set_label(str(obj.writerid))
         label.set_tooltip_text(obj.writername)
-    elif isinstance(obj, Channel) and obj.children:
-        label.set_label(str(obj.children[0].writerid))
-        label.set_tooltip_text(obj.children[0].writername)
     else:
         label.set_visible(False)
 
@@ -150,11 +164,6 @@ def bind_es(widget, item):
             image.set_from_paintable(pb_E)
         else:
             image.set_from_paintable(pb_S)
-    elif isinstance(obj, Channel) and obj.children:
-        if obj.children[0].es:
-            image.set_from_paintable(pb_E)
-        else:
-            image.set_from_paintable(pb_S)
     else:
         image.set_visible(False)
 
@@ -163,11 +172,8 @@ def bind_nwrites(widget, item):
     label = item.get_child()
     row = item.get_item()
     obj = row.get_item()
-    nwrites = (isinstance(obj, Entry) and str(obj.nwrites)) or \
-        (isinstance(obj, Channel) and obj.children and
-         str(obj.children[0].nwrites)) or None
-    if nwrites:
-        label.set_label(nwrites)
+    if isinstance(obj, Entry):
+        label.set_label(str(obj.nwrites))
 
 # readers as expander and id
 def bind_readerid(widget, item):
@@ -175,24 +181,18 @@ def bind_readerid(widget, item):
     label = expander.get_child()
     row = item.get_item()
     obj = row.get_item()
-    reader = (isinstance(obj, Reader) and obj) or \
-        (isinstance(obj, Entry) and obj.children and obj.children[0]) or \
-        (isinstance(obj, Channel) and obj.children and
-         obj.children[0].children and obj.children[0].children[0]) or None
-
-    if reader:
-        label.set_label(str(reader.readerid))
-        label.set_tooltip_text(reader.readername)
-        expander.set_list_row()
+    if isinstance(obj, Reader):
+        label.set_label(str(obj.readerid))
+        label.set_tooltip_text(obj.readername)
+    elif isinstance(obj, Entry):
+        expander.set_list_row(row)
 
 def bind_nreads(widget, item):
     label = item.get_child()
     row = item.get_item()
     obj = row.get_item()
     if isinstance(obj, Reader):
-        label.set_label(str(obj.nreads))
-    else:
-        label.set_visible(False)
+        label.set_label(obj.nreads)
 
 pb_label = Gdk.Texture.new_from_file(
     Gio.File.new_for_path(f'{home}build-linux/pixmaps/label-logo.png'))
@@ -212,8 +212,6 @@ def bind_sel(widget, item):
             image.set_from_paintable(pb_label)
         elif obj.sel == 2:
             image.set_from_paintable(pb_multi)
-    else:
-        image.set_visible(False)
 
 pb_picking = Gdk.Texture.new_from_file(
     Gio.File.new_for_path(f'{home}build-linux/pixmaps/picking-logo.png'))
@@ -229,13 +227,12 @@ def bind_seq(widget, item):
             image.set_from_paintable(pb_sequential)
         else:
             image.set_from_paintable(pb_picking)
-    else:
-        image.set_visible(False)
 
 def bind_view(widget, item):
     check = item.get_child()
     row = item.get_item()
     obj = row.get_item()
+    showing = None
     if isinstance(obj, Entry):
         check.set_visible(True)
         check.set_active(obj.showing)
@@ -243,10 +240,12 @@ def bind_view(widget, item):
         check.set_visible(False)
 
 def mysortnum(a, b, _data):
-        print(a, b)
-        return a.number - b.number
+    # numeric sort
+    print(a, b)
+    return a.number - b.number
 
 def mysortname(a, b, _data):
+    # alphabetic sort
     if a.name < b.name:
         return -1
     elif a.name > b.name:
@@ -254,15 +253,21 @@ def mysortname(a, b, _data):
     return 0
 
 def on_activate(app):
+    """Setup the window with columnview
+
+    Parameters
+    ----------
+    app : Application
+        _description_
+    """
     win = Gtk.ApplicationWindow(
         application=app,
         title="Gtk4 is Awesome !!!",
         default_height=400,
-        default_width=400,
+        default_width=640,
     )
     sw = Gtk.ScrolledWindow()
     list_view = Gtk.ColumnView()
-
 
     columns = []
     f = Gtk.SignalListItemFactory()
