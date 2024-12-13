@@ -267,7 +267,7 @@ def on_activate(app):
         default_width=640,
     )
     sw = Gtk.ScrolledWindow()
-    list_view = Gtk.ColumnView()
+    column_view = Gtk.ColumnView()
 
     columns = []
     f = Gtk.SignalListItemFactory()
@@ -331,6 +331,7 @@ def on_activate(app):
     f.connect("bind", bind_view)
     columns.append(Gtk.ColumnViewColumn.new("view", f))
 
+    # programmatic add? 
     selection = Gtk.SingleSelection()
     store = Gio.ListStore.new(Channel)
     column_view_sorter = list_view.get_sorter()
