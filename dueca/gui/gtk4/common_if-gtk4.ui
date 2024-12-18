@@ -3,7 +3,7 @@
   <requires lib="gtk" version="4.0"/>
   <object class="GtkAboutDialog" id="about2">
     <property name="program-name">DUECA/DUSIME</property>
-    <property name="version">3.1.x</property>
+    <property name="version">4.1.4</property>
     <property name="copyright" translatable="1">Delft University of Technology</property>
     <property name="comments" translatable="1">Real-Time distributed computation and simulation	</property>
     <property name="website">https://dueca.tudelft.nl</property>
