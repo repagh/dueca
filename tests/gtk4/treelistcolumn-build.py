@@ -5,6 +5,7 @@ import cairo
 
 home = '../../'
 
+# data model
 class Channel(GObject.GObject):
     def __init__(self, number: int, name: str, entries=None):
         """ Channel data"""
@@ -60,6 +61,9 @@ def add_tree_node(item):
         store.append(child)
     return store
 
+def toggle_view(widget, item):
+    print(widget, item)
+
 # expanding column with channel number
 def setup_expand(widget, item):
     """Setup the widget to show in the Gtk.Listview, expander with label"""
@@ -82,6 +86,7 @@ def setup_image(widget, item):
 # checkbox column
 def setup_checkbox(widget, item):
     check = Gtk.CheckButton()
+    # check.connect("toggled", toggle_view, item)
     item.set_child(check)
 
 # channel number shown as label
@@ -192,7 +197,7 @@ def bind_nreads(widget, item):
     row = item.get_item()
     obj = row.get_item()
     if isinstance(obj, Reader):
-        label.set_label(obj.nreads)
+        label.set_label(str(obj.nreads))
 
 pb_label = Gdk.Texture.new_from_file(
     Gio.File.new_for_path(f'{home}build-linux/pixmaps/label-logo.png'))
@@ -236,6 +241,7 @@ def bind_view(widget, item):
     if isinstance(obj, Entry):
         check.set_visible(True)
         check.set_active(obj.showing)
+        check.connect("toggled", toggle_view, obj)
     else:
         check.set_visible(False)
 
@@ -260,90 +266,40 @@ def on_activate(app):
     app : Application
         _description_
     """
-    win = Gtk.ApplicationWindow(
-        application=app,
-        title="Gtk4 is Awesome !!!",
-        default_height=400,
-        default_width=640,
-    )
-    sw = Gtk.ScrolledWindow()
-    column_view = Gtk.ColumnView()
+    builder = Gtk.Builder.new_from_file("channel_overview_gtk4.ui")
+    win = builder.get_object("channel_use_view")
 
-    columns = []
-    f = Gtk.SignalListItemFactory()
-    f.connect("setup", setup_label)
-    f.connect("bind", bind_channelnum)
-    c = Gtk.ColumnViewColumn.new("chan #", f)
-    sorter = Gtk.CustomSorter.new(mysortnum)
-    c.set_sorter(sorter)
-    columns.append(c)
-
-    f = Gtk.SignalListItemFactory()
-    f.connect("setup", setup_label)
-    f.connect("bind", bind_channelname)
-    c = Gtk.ColumnViewColumn.new("channel name", f)
-    sorter = Gtk.CustomSorter.new(mysortname)
-    c.set_sorter(sorter)
-    columns.append(c)
-
-    f = Gtk.SignalListItemFactory()
-    f.connect("setup", setup_expand)
-    f.connect("bind", bind_entrynum)
-    columns.append(Gtk.ColumnViewColumn.new("entry #", f))
-
-    f = Gtk.SignalListItemFactory()
-    f.connect("setup", setup_label)
-    f.connect("bind", bind_writerid)
-    columns.append(Gtk.ColumnViewColumn.new("writer id", f))
-
-    f = Gtk.SignalListItemFactory()
-    f.connect("setup", setup_image)
-    f.connect("bind", bind_es)
-    columns.append(Gtk.ColumnViewColumn.new("E/S", f))
-
-    f = Gtk.SignalListItemFactory()
-    f.connect("setup", setup_label)
-    f.connect("bind", bind_nwrites)
-    columns.append(Gtk.ColumnViewColumn.new("#writes", f))
-
-    f = Gtk.SignalListItemFactory()
-    f.connect("setup", setup_expand)
-    f.connect("bind", bind_readerid)
-    columns.append(Gtk.ColumnViewColumn.new("reader id", f))
-
-    f = Gtk.SignalListItemFactory()
-    f.connect("setup", setup_label)
-    f.connect("bind", bind_nreads)
-    columns.append(Gtk.ColumnViewColumn.new("#reads", f))
-
-    f = Gtk.SignalListItemFactory()
-    f.connect("setup", setup_image)
-    f.connect("bind", bind_sel)
-    columns.append(Gtk.ColumnViewColumn.new("sel", f))
-
-    f = Gtk.SignalListItemFactory()
-    f.connect("setup", setup_image)
-    f.connect("bind", bind_seq)
-    columns.append(Gtk.ColumnViewColumn.new("seq", f))
-
-    f = Gtk.SignalListItemFactory()
-    f.connect("setup", setup_checkbox)
-    f.connect("bind", bind_view)
-    columns.append(Gtk.ColumnViewColumn.new("view", f))
-
-    # programmatic add? 
+    # add the model to the column view
+    columnview = builder.get_object("channel_col_view")
+ 
+    # add the sortable datamodel
     selection = Gtk.SingleSelection()
     store = Gio.ListStore.new(Channel)
-    column_view_sorter = column_view.get_sorter()
+    column_view_sorter = columnview.get_sorter()
     tree_list_row_sorter = Gtk.TreeListRowSorter.new(column_view_sorter)
     model = Gtk.TreeListModel.new(store, False, False, add_tree_node)
     sort_model = Gtk.SortListModel.new(model=model, sorter=tree_list_row_sorter)
     selection.set_model(sort_model)
-    column_view.set_model(selection)
+    columnview.set_model(selection)
 
-    for c in columns:
-        column_view.append_column(c)
-
+    # link the factories to setup and bind functions
+    for fn, f1, f2 in (
+        ("channelnum", setup_label, bind_channelnum),
+        ("channelname", setup_label, bind_channelname),
+        ("entrynum", setup_expand, bind_entrynum),
+        ("writerid", setup_label, bind_writerid),
+        ("es", setup_image, bind_es),
+        ("nwrites", setup_label, bind_nwrites),
+        ("readerid", setup_expand, bind_readerid),
+        ("nreads", setup_label, bind_nreads),
+        ("sel", setup_image, bind_sel),
+        ("seq", setup_image, bind_seq),
+        ("view", setup_checkbox, bind_view)
+        ):
+        f = builder.get_object(f"fact_{fn}")
+        f.connect("setup", f1)
+        f.connect("bind", f2)
+    
     r1 = [Reader("id(0,23)", "eci://PHLAB", 4, 0, False),
           Reader("id(0,24)", "hdf5-logger://PHLAB", 2, 1, True)]
     e1 = [Entry(0, "empty", "id(0,19)", "model-adapter://PHLAB", True, 20, r1)]
@@ -354,8 +310,7 @@ def on_activate(app):
     e1 = [Entry(0, "empty", "id(0,19)", "model-adapter://PHLAB", True, 20, r1),
           Entry(1, "em2", "id(0,29)", "model-adapter://PHLAB", True, 21, r1)]
     store.append(Channel(31, "ExptyChannel://PHLAB", e1))
-    sw.set_child(column_view)
-    win.set_child(sw)
+    win.set_application(app)
     win.present()
 
 
