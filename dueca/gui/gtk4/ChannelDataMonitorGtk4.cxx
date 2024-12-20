@@ -11,6 +11,9 @@
         license         : EUPL-1.2
 */
 
+#include "gio/gio.h"
+#include "gtk/gtk.h"
+#include "gtk/gtksingleselection.h"
 #define ChannelDataMonitor_cxx
 #include "ChannelDataMonitorGtk4.hxx"
 #include <debug.h>
@@ -23,28 +26,64 @@
 
 DUECA_NS_START
 
-ChannelDataMonitorGtk4::ChannelDataMonitorGtk4(ChannelOverviewGtk4  *master,
-                                               const std::string& channelname,
+// anonymous namespace, no leaks beyond this unit
+namespace {
+
+struct ChannelDataViewPair
+{
+  std::string label;
+  std::string value;
+  std::list<ChannelDataViewPair> children;
+};
+
+// Gobject type system
+
+struct ChannelDataViewObject
+{
+  GObject gobject;
+  ChannelDataViewPair data;
+};
+
+G_DEFINE_TYPE(ChannelDataViewObject, channel_data_view_object, G_TYPE_OBJECT);
+
+static void channel_data_view_object_init(ChannelDataViewObject *self)
+{
+  // gtk_widget_init_template (GTK_WIDGET (self));
+}
+
+} // namespace
+
+static GListModel* add_data_element(ChannelDataViewObject* item)
+{
+  if (item->data.children.size()) {
+    auto lm = g_list_store_new(channel_data_view_object_get_type()));
+    for (auto& c: item->data.children) {
+      g_list_store_append(lm, gpointer(&c));
+    }
+    return G_LIST_MODEL(lm);
+  }
+  return G_LIST_MODEL(NULL);
+}
+
+ChannelDataMonitorGtk4::ChannelDataMonitorGtk4(ChannelOverviewGtk4 *master,
+                                               const std::string &channelname,
                                                unsigned channelno,
                                                unsigned entryno,
-                                               const std::string& gladefile) :
+                                               const std::string &gladefile) :
   ChannelDataMonitor(master, channelno, entryno),
   window(),
   store(NULL)
 {
   static GladeCallbackTable cb_table[] = {
-    { "close", "clicked",
-      gtk_callback(&_ThisModule_::cbClose) },
-    { "refresh_data", "clicked",
-      gtk_callback(&_ThisModule_::cbRefreshData) },
+    { "close", "clicked", gtk_callback(&_ThisModule_::cbClose) },
+    { "refresh_data", "clicked", gtk_callback(&_ThisModule_::cbRefreshData) },
     { "channel_data_view", "delete_event",
-      gtk_callback(&_ThisModule_::cbDelete)},
+      gtk_callback(&_ThisModule_::cbDelete) },
     { NULL }
   };
 
-  bool res = window.readGladeFile
-    (gladefile.c_str(), "channel_datamonitor",
-     reinterpret_cast<gpointer>(this), cb_table);
+  bool res = window.readGladeFile(gladefile.c_str(), "channel_datamonitor",
+                                  reinterpret_cast<gpointer>(this), cb_table);
   if (!res) {
     /* DUECA UI.
 
@@ -56,40 +95,42 @@ ChannelDataMonitorGtk4::ChannelDataMonitorGtk4(ChannelOverviewGtk4  *master,
   }
 
   GtkWidget *channeltree = GTK_WIDGET(window["channel_data_view"]);
-  store = gtk_tree_store_new
-    (int(S_nfields),
-     G_TYPE_STRING,   // member name / index
-     G_TYPE_STRING,   // data
-     G_TYPE_BOOLEAN   // is leaf
-     );
+  auto store = g_list_store_new(channel_data_view_object_get_type());
+  auto model = gtk_tree_list_model_new(G_LIST_MODEL(store), FALSE, FALSE, add_data_element, NULL, NULL);
+  auto selection = gtk_single_selection_new(model);
+  gtk_column_view_set_model(GTK_COLUMN_VIEW(channeltree), selection);
+
+    store = gtk_tree_store_new(int(S_nfields),
+                               G_TYPE_STRING,   // member name / index
+                               G_TYPE_STRING,   // data
+                               G_TYPE_BOOLEAN   // is leaf
+    );
   g_object_ref_sink(G_OBJECT(store));
-  gtk_tree_view_set_model(GTK_TREE_VIEW(channeltree),
-                          GTK_TREE_MODEL(store));
+  gtk_tree_view_set_model(GTK_TREE_VIEW(channeltree), GTK_TREE_MODEL(store));
   GtkCellRenderer *rendererlabel = gtk_cell_renderer_text_new();
   GtkCellRenderer *rendererdata = gtk_cell_renderer_text_new();
   g_object_set(G_OBJECT(rendererdata), "family", "Monospace", NULL);
 
   // name column
-  GtkTreeViewColumn *col = gtk_tree_view_column_new_with_attributes
-    ("name", rendererlabel, "text", S_membername, NULL);
+  GtkTreeViewColumn *col = gtk_tree_view_column_new_with_attributes(
+    "name", rendererlabel, "text", S_membername, NULL);
   gtk_tree_view_append_column(GTK_TREE_VIEW(channeltree), col);
-  //g_object_unref(G_OBJECT(col));
+  // g_object_unref(G_OBJECT(col));
 
   // data column
-  GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes
-    ("value", rendererdata, "text", S_memberdata, NULL);
+  GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes(
+    "value", rendererdata, "text", S_memberdata, NULL);
   gtk_tree_view_append_column(GTK_TREE_VIEW(channeltree), col2);
   gtk_tree_view_column_set_expand(col2, TRUE);
-  //g_object_unref(G_OBJECT(col2));
+  // g_object_unref(G_OBJECT(col2));
 
   std::stringstream title;
   title << channelname << "  #" << entryno;
-  gtk_window_set_title
-    (GTK_WINDOW(window["channel_datamonitor"]), title.str().c_str());
+  gtk_window_set_title(GTK_WINDOW(window["channel_datamonitor"]),
+                       title.str().c_str());
 
   // g_object_unref(G_OBJECT(renderer));
 }
-
 
 ChannelDataMonitorGtk4::~ChannelDataMonitorGtk4()
 {
@@ -98,13 +139,13 @@ ChannelDataMonitorGtk4::~ChannelDataMonitorGtk4()
   g_object_unref(G_OBJECT(store));
 }
 
-void ChannelDataMonitorGtk4::cbClose(GtkButton* button, gpointer gp)
+void ChannelDataMonitorGtk4::cbClose(GtkButton *button, gpointer gp)
 {
 
   master->closeMonitor(channelno, entryno);
 }
 
-void ChannelDataMonitorGtk4::cbRefreshData(GtkButton* button, gpointer gp)
+void ChannelDataMonitorGtk4::cbRefreshData(GtkButton *button, gpointer gp)
 {
   master->refreshMonitor(channelno, entryno);
 }
@@ -116,11 +157,11 @@ gboolean ChannelDataMonitorGtk4::cbDelete(GtkWidget *window, GdkEvent *event,
   return TRUE;
 }
 
-inline const char* print_string(const JValue &value)
+inline const char *print_string(const JValue &value)
 {
   static char tmp[9];
   if (value.GetStringLength() == 1) {
-    const char * str = value.GetString();
+    const char *str = value.GetString();
     if (str[0] < 32 || str[0] > 126) {
       snprintf(tmp, sizeof(tmp), "  (0x%02X)", (unsigned(str[0]) & 0xff));
     }
@@ -132,60 +173,53 @@ inline const char* print_string(const JValue &value)
   return value.GetString();
 }
 
-void ChannelDataMonitorGtk4::
-insertJsonValue(GtkTreeIter* itname, const JValue &value)
+void ChannelDataMonitorGtk4::insertJsonValue(GtkTreeIter *itname,
+                                             const JValue &value)
 {
-  static const char* json_fix[] = { "null", "false", "true" };
+  static const char *json_fix[] = { "null", "false", "true" };
 
   switch (value.GetType()) {
   case json::kNullType:
   case json::kFalseType:
   case json::kTrueType:
-    gtk_tree_store_set
-      (store, itname,
-       S_memberdata, json_fix[value.GetType()], S_isleaf, TRUE, -1);
+    gtk_tree_store_set(store, itname, S_memberdata, json_fix[value.GetType()],
+                       S_isleaf, TRUE, -1);
     break;
   case json::kStringType:
-    gtk_tree_store_set
-      (store, itname,
-       S_memberdata, print_string(value), S_isleaf, TRUE, -1);
+    gtk_tree_store_set(store, itname, S_memberdata, print_string(value),
+                       S_isleaf, TRUE, -1);
     break;
   case json::kNumberType:
     if (value.IsInt()) {
-      gtk_tree_store_set
-        (store, itname,
-         S_memberdata,
-         boost::str(boost::format("%5d") % value.GetInt()).c_str(),
-         S_isleaf, TRUE, -1);
+      gtk_tree_store_set(
+        store, itname, S_memberdata,
+        boost::str(boost::format("%5d") % value.GetInt()).c_str(), S_isleaf,
+        TRUE, -1);
     }
     else if (value.IsInt64()) {
-      gtk_tree_store_set
-        (store, itname,
-         S_memberdata,
-         boost::str(boost::format("%5d") % value.GetInt64()).c_str(),
-         S_isleaf, TRUE, -1);
+      gtk_tree_store_set(
+        store, itname, S_memberdata,
+        boost::str(boost::format("%5d") % value.GetInt64()).c_str(), S_isleaf,
+        TRUE, -1);
     }
     else if (value.IsUint64()) {
-      gtk_tree_store_set
-        (store, itname,
-         S_memberdata,
-         boost::str(boost::format("%5d") % value.GetUint64()).c_str(),
-         S_isleaf, TRUE, -1);
+      gtk_tree_store_set(
+        store, itname, S_memberdata,
+        boost::str(boost::format("%5d") % value.GetUint64()).c_str(), S_isleaf,
+        TRUE, -1);
     }
     else if (value.IsDouble()) {
       double v = value.GetDouble();
       if (abs(v) < 10000.0 && abs(v) >= 1.0)
-        gtk_tree_store_set
-          (store, itname,
-           S_memberdata,
-           boost::str(boost::format("%11.5f") % value.GetDouble()).c_str(),
-           S_isleaf, TRUE, -1);
+        gtk_tree_store_set(
+          store, itname, S_memberdata,
+          boost::str(boost::format("%11.5f") % value.GetDouble()).c_str(),
+          S_isleaf, TRUE, -1);
       else {
-        gtk_tree_store_set
-          (store, itname,
-           S_memberdata,
-           boost::str(boost::format("%15.5e") % value.GetDouble()).c_str(),
-           S_isleaf, TRUE, -1);
+        gtk_tree_store_set(
+          store, itname, S_memberdata,
+          boost::str(boost::format("%15.5e") % value.GetDouble()).c_str(),
+          S_isleaf, TRUE, -1);
       }
     }
     else {
@@ -198,18 +232,17 @@ insertJsonValue(GtkTreeIter* itname, const JValue &value)
   removeIterChildren(itname);
 }
 
-
-void ChannelDataMonitorGtk4::
-insertJsonArray(GtkTreeIter* itparent, const JValue &doc)
+void ChannelDataMonitorGtk4::insertJsonArray(GtkTreeIter *itparent,
+                                             const JValue &doc)
 {
   gboolean itvalid;
   GtkTreeIter itname;
   descendIter(itvalid, itname, itparent);
   int idx = 0;
 
-  for (JValue::ConstValueIterator it = doc.Begin();
-       it != doc.End(); ++it) {
-    std::stringstream name; name << std::setw(3) << idx++;
+  for (JValue::ConstValueIterator it = doc.Begin(); it != doc.End(); ++it) {
+    std::stringstream name;
+    name << std::setw(3) << idx++;
 
     // find a new iter
     checkOrCreateIter(itvalid, itname, itparent, name.str().c_str());
@@ -235,19 +268,19 @@ insertJsonArray(GtkTreeIter* itparent, const JValue &doc)
   removeIterSiblings(itvalid, itname);
 }
 
-void ChannelDataMonitorGtk4::
-descendIter(gboolean& itvalid, GtkTreeIter& itname,
-            GtkTreeIter* itparent)
+void ChannelDataMonitorGtk4::descendIter(gboolean &itvalid, GtkTreeIter &itname,
+                                         GtkTreeIter *itparent)
 {
   // find the first child of this parent
-  itvalid = gtk_tree_model_iter_children
-    (GTK_TREE_MODEL(store), &itname, itparent);
+  itvalid =
+    gtk_tree_model_iter_children(GTK_TREE_MODEL(store), &itname, itparent);
   DEB("descending iter")
 }
 
-void ChannelDataMonitorGtk4::
-checkOrCreateIter(gboolean& itvalid, GtkTreeIter& itname,
-                  GtkTreeIter* itparent, const char* name)
+void ChannelDataMonitorGtk4::checkOrCreateIter(gboolean &itvalid,
+                                               GtkTreeIter &itname,
+                                               GtkTreeIter *itparent,
+                                               const char *name)
 {
   // try to re-use existing rows, itname should point to a to-be-reused row
   if (itvalid) {
@@ -262,29 +295,27 @@ checkOrCreateIter(gboolean& itvalid, GtkTreeIter& itname,
   gtk_tree_store_set(store, &itname, 0, name, -1);
 }
 
-void ChannelDataMonitorGtk4::
-removeIterChildren(GtkTreeIter* parent)
+void ChannelDataMonitorGtk4::removeIterChildren(GtkTreeIter *parent)
 {
   GtkTreeIter itchld;
-  gboolean have = gtk_tree_model_iter_children
-    (GTK_TREE_MODEL(store), &itchld, parent);
+  gboolean have =
+    gtk_tree_model_iter_children(GTK_TREE_MODEL(store), &itchld, parent);
   while (have == TRUE) {
     have = gtk_tree_store_remove(store, &itchld);
     DEB("removed a child");
   }
 }
 
-void ChannelDataMonitorGtk4::
-removeIterSiblings(gboolean& have, GtkTreeIter& itname)
+void ChannelDataMonitorGtk4::removeIterSiblings(gboolean &have,
+                                                GtkTreeIter &itname)
 {
-  while(have == TRUE) {
+  while (have == TRUE) {
     have = gtk_tree_store_remove(store, &itname);
     DEB("removed a sibling");
   }
 }
 
-void ChannelDataMonitorGtk4::
-toNextIter(gboolean& have, GtkTreeIter& itname)
+void ChannelDataMonitorGtk4::toNextIter(gboolean &have, GtkTreeIter &itname)
 {
   if (have) {
     have = gtk_tree_model_iter_next(GTK_TREE_MODEL(store), &itname);
@@ -292,8 +323,8 @@ toNextIter(gboolean& have, GtkTreeIter& itname)
   }
 }
 
-void ChannelDataMonitorGtk4::
-insertJson(GtkTreeIter *itparent, const JValue &doc)
+void ChannelDataMonitorGtk4::insertJson(GtkTreeIter *itparent,
+                                        const JValue &doc)
 {
   gboolean itvalid;
   GtkTreeIter itname;
@@ -327,8 +358,7 @@ insertJson(GtkTreeIter *itparent, const JValue &doc)
   removeIterSiblings(itvalid, itname);
 }
 
-
-void ChannelDataMonitorGtk4::refreshData(const ChannelMonitorResult& rdata)
+void ChannelDataMonitorGtk4::refreshData(const ChannelMonitorResult &rdata)
 {
   std::stringstream timespan;
   timespan << rdata.ts_actual.getValidityStart();
@@ -338,7 +368,7 @@ void ChannelDataMonitorGtk4::refreshData(const ChannelMonitorResult& rdata)
   gtk_label_set_text(GTK_LABEL(window["timespan_label"]),
                      timespan.str().c_str());
 
-  //gtk_tree_store_clear(store);
+  // gtk_tree_store_clear(store);
   if (rdata.json.size()) {
 
     JDocument doc;
@@ -349,10 +379,8 @@ void ChannelDataMonitorGtk4::refreshData(const ChannelMonitorResult& rdata)
   DEB1(rdata.json);
 }
 
-void ChannelDataMonitorGtk4::close()
-{ window.hide(); }
+void ChannelDataMonitorGtk4::close() { window.hide(); }
 
-void ChannelDataMonitorGtk4::open()
-{ window.show(); }
+void ChannelDataMonitorGtk4::open() { window.show(); }
 
 DUECA_NS_END

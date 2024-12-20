@@ -101,5 +101,3 @@ private:
 };
 
 DUECA_NS_END
-
-#endif

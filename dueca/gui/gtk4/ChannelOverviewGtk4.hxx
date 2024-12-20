@@ -52,7 +52,7 @@ private: // simulation data
   GtkGladeWindow        window;
 
   /** Tree store for the object with data and widgets */
-  GtkTreeStore          *store;
+  GtkListStore          *store;
 
   /** Widget in the main menu */
   GtkWidget             *menuitem;

@@ -12,6 +12,7 @@
 */
 
 
+#include "gui/gtk4/GtkGladeWindow.hxx"
 #define ActivityView_cc
 
 #include <dueca-conf.h>
@@ -81,7 +82,7 @@ struct ActivityViewGui
 ActivityView::ActivityView(Entity* e, const char* part,
                      const PrioritySpec& ps) :
   ActivityViewBase(e, part, ps),
-  gui(*new ActivityViewGui(DuecaPath::prepend("activity_view.glade3")))
+  gui(*new ActivityViewGui(DuecaPath::prepend("activity_view-gtk4.ui")))
 {
   // check the presence of a DuecaView object, for getting initial
   // access to the interface
@@ -103,6 +104,18 @@ static GladeCallbackTable cb_links[] = {
   { "viewscroll", "button_release_event",
     gtk_callback(&ActivityView::cbViewScroll) },
   { "activity_view", "delete_event", gtk_callback(&ActivityView::deleteView) },
+  { "fact_tick", "setup", gtk_callback(&ActivityView::cbSetupLabel) },
+  { "fact_offset", "setup", gtk_callback(&ActivityView::cbSetupLabel) },
+  { "fact_timestamp", "setup", gtk_callback(&ActivityView::cbSetupLabel) },
+  { "fact_dt", "setup", gtk_callback(&ActivityView::cbSetupLabel) },
+  { "fact_module", "setup", gtk_callback(&ActivityView::cbSetupLabel) },
+  { "fact_name", "setup", gtk_callback(&ActivityView::cbSetupLabel) },
+  { "fact_tick", "bind", gtk_callback(&ActivityView::cbBindTick) },
+  { "fact_offset", "bind", gtk_callback(&ActivityView::cbBindOffset) },
+  { "fact_timestamp", "bind", gtk_callback(&ActivityView::cbBindTimestamp) },
+  { "fact_dt", "bind", gtk_callback(&ActivityView::cbBindDt) },
+  { "fact_module", "bind", gtk_callback(&ActivityView::cbBindModule) },
+  { "fact_name", "bind", gtk_callback(&ActivityView::cbBindName) },
   { NULL, NULL, NULL }
 };
 

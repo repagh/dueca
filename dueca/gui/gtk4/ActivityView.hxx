@@ -20,7 +20,6 @@
 #endif
 
 #include <gtk/gtk.h>
-#include "GtkGladeWindow.hxx"
 #include <ActivityViewBase.hxx>
 
 DUECA_NS_START
@@ -84,6 +83,27 @@ public:
   /** React to a button release on a drawing area, by completing a
       highlight. */
   void cbDrawAreaButtonRelease(gint n_press, gdouble x, gdouble y, unsigned area);
+
+  /** Set-up a label text field for detail */
+  void cbSetupLabel(GtkSignalListItemFactory* f, GObject* obj, gpointer user_data);
+
+  /** bind the tick data to the column view */
+  void cbBindTick(GtkSignalListItemFactory* f, GObject* obj, gpointer user_data);
+
+  /** bind the offset data to the column view */
+  void cbBindOffset(GtkSignalListItemFactory* f, GObject* obj, gpointer user_data);
+
+  /** bind the time stamp data to the column view */
+  void cbBindTimestamp(GtkSignalListItemFactory* f, GObject* obj, gpointer user_data);
+
+  /** bind the deltat data to the column view */
+  void cbBindDt(GtkSignalListItemFactory* f, GObject* obj, gpointer user_data);
+
+  /** bind the module name data to the column view */
+  void cbBindModule(GtkSignalListItemFactory* f, GObject* obj, gpointer user_data);
+
+  /** bind the activity name data to the column view */
+  void cbBindName(GtkSignalListItemFactory* f, GObject* obj, gpointer user_data);
 };
 
 DUECA_NS_END
