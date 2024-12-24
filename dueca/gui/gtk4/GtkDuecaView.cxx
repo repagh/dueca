@@ -839,7 +839,7 @@ gboolean GtkDuecaView::cbOn2(GtkWidget *widget, GdkButtonEvent* event,
 gboolean GtkDuecaView::cbEmerg2(GtkWidget *widget, GdkButtonEvent* event,
                                 gpointer user_data)
 {
-  if (gdk_event_get_event_type(event) != GDK_BUTTON_RELEASE || gdk_button_event_get_button(event) != 1) {
+  if (gdk_event_get_event_type(GDK_EVENT(event)) != GDK_BUTTON_RELEASE || gdk_button_event_get_button(event) != 1) {
     // wrong button, and only act on presses
     return TRUE;
   }
@@ -881,7 +881,7 @@ gboolean GtkDuecaView::cbEmerg2(GtkWidget *widget, GdkButtonEvent* event,
 gboolean GtkDuecaView::cbOff2(GtkWidget *widget, GdkButtonEvent* event,
                               gpointer user_data)
 {
-  if (gdk_event_get_event_type(event) != GDK_BUTTON_RELEASE || gdk_button_event_get_button(event) != 1) {
+  if (gdk_event_get_event_type(GDK_EVENT(event)) != GDK_BUTTON_RELEASE || gdk_button_event_get_button(event) != 1) {
     // wrong button, and only act on presses
     return TRUE;
   }

@@ -12,6 +12,8 @@
 */
 
 
+#include "ActivityLister.hxx"
+#include "gtk/gtk.h"
 #include "gui/gtk4/GtkGladeWindow.hxx"
 #define ActivityView_cc
 
@@ -19,11 +21,8 @@
 #include "ActivityView.hxx"
 #include "PrioritySpec.hxx"
 #include "NodeManager.hxx"
-#include "NameSet.hxx"
 #include "Ticker.hxx"
-#include "ChannelDistribution.hxx"
 #include "SimTime.hxx"
-#include "ParameterTable.hxx"
 #include "GtkDuecaView.hxx"
 #include "DuecaPath.hxx"
 #include "ActivityLog.hxx"
@@ -33,11 +32,6 @@
 #include "dueca.h"
 #include <DataWriter.hxx>
 
-#ifdef HAVE_SSTREAM
-#include <sstream>
-#else
-#include <strstream>
-#endif
 #define W_STS
 #define E_STS
 #include <debug.h>
@@ -63,7 +57,7 @@ struct ActivityViewGui
   GtkGladeWindow                              window;
 
   /** List model, numerical output. */
-  GtkListStore*                               act_store;
+  GListStore*                                 act_store;
 
   /** different canvas widgets. */
   GtkWidget**                                 canvas;
@@ -78,6 +72,34 @@ struct ActivityViewGui
     menuitem(NULL)
   { }
 };
+
+// for the view listy
+struct _DActivityInfo
+{
+  GObject parent;
+  ActivityStrings act;
+};
+
+G_DECLARE_FINAL_TYPE(DActivityInfo, d_activity_info, D, ACTIVITY_INFO, GObject);
+G_DEFINE_TYPE(DActivityInfo, d_activity_info, G_TYPE_OBJECT);
+
+static void d_activity_info_class_init(DActivityInfoClass *klass)
+{
+  //
+}
+
+static void d_activity_info_init(DActivityInfo *self)
+{
+  //
+}
+
+static DActivityInfo *
+d_activity_info_new(const ActivityStrings& desc)
+{
+  auto res = D_ACTIVITY_INFO(g_object_new(d_activity_info_get_type(), NULL));
+  res->act = desc;
+  return res;
+}
 
 ActivityView::ActivityView(Entity* e, const char* part,
                      const PrioritySpec& ps) :
@@ -137,11 +159,14 @@ bool ActivityView::complete()
     return false;
   }
 
-  // combine the activitity list with a store
-  GtkTreeView* aclist = GTK_TREE_VIEW(gui.window["activitylist_view"]);
+  // combine the activitity list with a store/model
+  auto aclist = GTK_COLUMN_VIEW(gui.window["activitylist_view"]);
 
-  gui.act_store = GTK_LIST_STORE(gtk_tree_view_get_model(aclist));
+  gui.act_store = g_list_store_new(d_activity_info_get_type());
 
+  auto selection = gtk_single_selection_new(G_LIST_MODEL(gui.act_store));
+  gtk_column_view_set_model(aclist, GTK_SELECTION_MODEL(selection));
+  
   // add canvases for the different nodes
   gui.canvas = new GtkWidget*
     [DUECA_NS::NodeManager::single()->getNoOfNodes()];
@@ -153,7 +178,7 @@ bool ActivityView::complete()
 
     // create the canvas
     GtkGesture *controller = gtk_gesture_click_new();
-    gtk_event_controller_set_propagation_phase(GTK_PHASE_TARGET);
+    gtk_event_controller_set_propagation_phase(GTK_EVENT_CONTROLLER(controller), GTK_PHASE_TARGET);
     gui.canvas[ii] = gtk_drawing_area_new();
     gtk_widget_add_controller(gui.canvas[ii], GTK_EVENT_CONTROLLER(controller));
     gtk_widget_set_size_request(gui.canvas[ii], 400, 28);
@@ -191,11 +216,11 @@ bool ActivityView::complete()
                          (n_press, x, y, reinterpret_cast<unsigned long>
                           (g_object_get_data(G_OBJECT(gesture), "node"))); }),
                      reinterpret_cast<gpointer>(this));
-    gtk_widget_show(gui.canvas[ii]);
+    gtk_widget_set_visible(gui.canvas[ii], TRUE);
   }
 
   // for good measure
-  gtk_widget_show(gui.window["linebox"]);
+  gtk_widget_set_visible(gui.window["linebox"], TRUE);
 
   // request the DuecaView object to make an entry for my window,
   // opening it on activation
@@ -506,20 +531,16 @@ void ActivityView::cbDrawAreaButtonRelease(gint n_press, gdouble x, gdouble y,
       " to " << tick_end);
 
   // fill list with highlighted actions
-  gtk_list_store_clear(gui.act_store);
+  g_list_store_remove_all(gui.act_store);
+
   try {
     ActivityLister l = current_logs[node].startInvestigation(0);
     bool more = true;
     while(more) {
 
-      GtkTreeIter iter;
-      gtk_list_store_append(gui.act_store, &iter);
-
       ActivityStrings desc = l.getNextActivityDesc
         (level, tick_start, tick_end, more);
-      gtk_list_store_set(gui.act_store, &iter,
-                         0, desc.tick, 1, desc.offset, 2, desc.ts,
-                         3, desc.dt, 4, desc.module, 5, desc.activity, -1);
+      g_list_store_append(gui.act_store, d_activity_info_new(desc));
       DEB(getId() << classname << " append description");
     }
   }
@@ -572,9 +593,9 @@ void ActivityView::updateLines(unsigned node_id)
                     reinterpret_cast<gpointer>(1));
 
   // either configure or redraw
-  GtkAllocation alc;
-  gtk_widget_get_allocation(gui.canvas[node_id], &alc);
-  if (alc.height <
+  graphene_rect_t alc;
+  gtk_widget_compute_bounds(gui.canvas[node_id], gui.canvas[node_id], &alc);
+  if (graphene_rect_get_height(&alc) <
       current_logs[node_id].getNumLevels()*LINESPACE + LINESPACE/2) {
     gtk_widget_set_size_request
       (gui.canvas[node_id], 400,

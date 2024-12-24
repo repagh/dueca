@@ -12,8 +12,10 @@
 */
 
 #include "gio/gio.h"
+#include "glib-object.h"
 #include "gtk/gtk.h"
 #include "gtk/gtksingleselection.h"
+#include "gui/gtk4/GtkGladeWindow.hxx"
 #define ChannelDataMonitor_cxx
 #include "ChannelDataMonitorGtk4.hxx"
 #include <debug.h>
@@ -26,38 +28,26 @@
 
 DUECA_NS_START
 
-// anonymous namespace, no leaks beyond this unit
-namespace {
+// create a type for the DCO data pieces
+G_DECLARE_FINAL_TYPE(DDataEntry, d_data_entry, D, DATA_ENTRY, GObject);
+G_DEFINE_TYPE(DDataEntry, d_data_entry, G_TYPE_OBJECT);
 
-struct ChannelDataViewPair
+static void d_data_entry_class_init(DDataEntryClass *klass)
 {
-  std::string label;
-  std::string value;
-  std::list<ChannelDataViewPair> children;
-};
-
-// Gobject type system
-
-struct ChannelDataViewObject
-{
-  GObject gobject;
-  ChannelDataViewPair data;
-};
-
-G_DEFINE_TYPE(ChannelDataViewObject, channel_data_view_object, G_TYPE_OBJECT);
-
-static void channel_data_view_object_init(ChannelDataViewObject *self)
-{
-  // gtk_widget_init_template (GTK_WIDGET (self));
+  //
 }
 
-} // namespace
-
-static GListModel* add_data_element(ChannelDataViewObject* item)
+static void d_data_entry_init(DDataEntry *self)
 {
+  //
+}
+
+static GListModel *add_data_element(gpointer _item, gpointer user_data)
+{
+  auto item = D_DATA_ENTRY(_item);
   if (item->data.children.size()) {
-    auto lm = g_list_store_new(channel_data_view_object_get_type()));
-    for (auto& c: item->data.children) {
+    auto lm = g_list_store_new(d_data_entry_get_type());
+    for (auto &c : item->data.children) {
       g_list_store_append(lm, gpointer(&c));
     }
     return G_LIST_MODEL(lm);
@@ -66,19 +56,21 @@ static GListModel* add_data_element(ChannelDataViewObject* item)
 }
 
 ChannelDataMonitorGtk4::ChannelDataMonitorGtk4(ChannelOverviewGtk4 *master,
-                                               const std::string &channelname,
                                                unsigned channelno,
                                                unsigned entryno,
                                                const std::string &gladefile) :
   ChannelDataMonitor(master, channelno, entryno),
-  window(),
-  store(NULL)
+  window()
 {
   static GladeCallbackTable cb_table[] = {
     { "close", "clicked", gtk_callback(&_ThisModule_::cbClose) },
     { "refresh_data", "clicked", gtk_callback(&_ThisModule_::cbRefreshData) },
     { "channel_data_view", "delete_event",
       gtk_callback(&_ThisModule_::cbDelete) },
+    { "fact_elemname", "setup", gtk_callback(&_ThisModule_::cbSetupName) },
+    { "fact_elemname", "bind", gtk_callback((&_ThisModule_::cbBindName)) },
+    { "fact_elemvalue", "setup", gtk_callback(&_ThisModule_::cbSetupValue) },
+    { "fact_elemvalue", "bind", gtk_callback((&_ThisModule_::cbBindValue)) },
     { NULL }
   };
 
@@ -94,54 +86,26 @@ ChannelDataMonitorGtk4::ChannelDataMonitorGtk4(ChannelOverviewGtk4 *master,
     return;
   }
 
-  GtkWidget *channeltree = GTK_WIDGET(window["channel_data_view"]);
-  auto store = g_list_store_new(channel_data_view_object_get_type());
-  auto model = gtk_tree_list_model_new(G_LIST_MODEL(store), FALSE, FALSE, add_data_element, NULL, NULL);
-  auto selection = gtk_single_selection_new(model);
-  gtk_column_view_set_model(GTK_COLUMN_VIEW(channeltree), selection);
+  auto channeltree = GTK_COLUMN_VIEW(window["channel_data_view"]);
+  auto store = g_list_store_new(d_data_entry_get_type());
+  auto model = gtk_tree_list_model_new(G_LIST_MODEL(store), FALSE, FALSE,
+                                       add_data_element, NULL, NULL);
+  auto selection = gtk_single_selection_new(G_LIST_MODEL(model));
+  gtk_column_view_set_model(channeltree, GTK_SELECTION_MODEL(selection));
 
-    store = gtk_tree_store_new(int(S_nfields),
-                               G_TYPE_STRING,   // member name / index
-                               G_TYPE_STRING,   // data
-                               G_TYPE_BOOLEAN   // is leaf
-    );
-  g_object_ref_sink(G_OBJECT(store));
-  gtk_tree_view_set_model(GTK_TREE_VIEW(channeltree), GTK_TREE_MODEL(store));
-  GtkCellRenderer *rendererlabel = gtk_cell_renderer_text_new();
-  GtkCellRenderer *rendererdata = gtk_cell_renderer_text_new();
-  g_object_set(G_OBJECT(rendererdata), "family", "Monospace", NULL);
-
-  // name column
-  GtkTreeViewColumn *col = gtk_tree_view_column_new_with_attributes(
-    "name", rendererlabel, "text", S_membername, NULL);
-  gtk_tree_view_append_column(GTK_TREE_VIEW(channeltree), col);
-  // g_object_unref(G_OBJECT(col));
-
-  // data column
-  GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes(
-    "value", rendererdata, "text", S_memberdata, NULL);
-  gtk_tree_view_append_column(GTK_TREE_VIEW(channeltree), col2);
-  gtk_tree_view_column_set_expand(col2, TRUE);
-  // g_object_unref(G_OBJECT(col2));
-
+  // set the title on the window
   std::stringstream title;
-  title << channelname << "  #" << entryno;
+  title << master->getChannelName(channelno) << "  #" << entryno;
   gtk_window_set_title(GTK_WINDOW(window["channel_datamonitor"]),
                        title.str().c_str());
 
   // g_object_unref(G_OBJECT(renderer));
 }
 
-ChannelDataMonitorGtk4::~ChannelDataMonitorGtk4()
-{
-  gtk_tree_store_clear(store);
-  window.hide();
-  g_object_unref(G_OBJECT(store));
-}
+ChannelDataMonitorGtk4::~ChannelDataMonitorGtk4() { window.hide(); }
 
 void ChannelDataMonitorGtk4::cbClose(GtkButton *button, gpointer gp)
 {
-
   master->closeMonitor(channelno, entryno);
 }
 
@@ -173,8 +137,8 @@ inline const char *print_string(const JValue &value)
   return value.GetString();
 }
 
-void ChannelDataMonitorGtk4::insertJsonValue(GtkTreeIter *itname,
-                                             const JValue &value)
+void ChannelDataMonitorGtk4::insertJsonValue(
+  std::string& field, const JValue &value)
 {
   static const char *json_fix[] = { "null", "false", "true" };
 
@@ -182,44 +146,27 @@ void ChannelDataMonitorGtk4::insertJsonValue(GtkTreeIter *itname,
   case json::kNullType:
   case json::kFalseType:
   case json::kTrueType:
-    gtk_tree_store_set(store, itname, S_memberdata, json_fix[value.GetType()],
-                       S_isleaf, TRUE, -1);
+    field = json_fix[value.GetType()];
     break;
   case json::kStringType:
-    gtk_tree_store_set(store, itname, S_memberdata, print_string(value),
-                       S_isleaf, TRUE, -1);
+    field = print_string(value);
     break;
   case json::kNumberType:
     if (value.IsInt()) {
-      gtk_tree_store_set(
-        store, itname, S_memberdata,
-        boost::str(boost::format("%5d") % value.GetInt()).c_str(), S_isleaf,
-        TRUE, -1);
+      field = boost::str(boost::format("%5d") % value.GetInt());
     }
     else if (value.IsInt64()) {
-      gtk_tree_store_set(
-        store, itname, S_memberdata,
-        boost::str(boost::format("%5d") % value.GetInt64()).c_str(), S_isleaf,
-        TRUE, -1);
+      field = boost::str(boost::format("%5d") % value.GetInt64());
     }
     else if (value.IsUint64()) {
-      gtk_tree_store_set(
-        store, itname, S_memberdata,
-        boost::str(boost::format("%5d") % value.GetUint64()).c_str(), S_isleaf,
-        TRUE, -1);
+      field = boost::str(boost::format("%5d") % value.GetUint64());
     }
     else if (value.IsDouble()) {
       double v = value.GetDouble();
       if (abs(v) < 10000.0 && abs(v) >= 1.0)
-        gtk_tree_store_set(
-          store, itname, S_memberdata,
-          boost::str(boost::format("%11.5f") % value.GetDouble()).c_str(),
-          S_isleaf, TRUE, -1);
+        field = boost::str(boost::format("%11.5f") % value.GetDouble());
       else {
-        gtk_tree_store_set(
-          store, itname, S_memberdata,
-          boost::str(boost::format("%15.5e") % value.GetDouble()).c_str(),
-          S_isleaf, TRUE, -1);
+        field = boost::str(boost::format("%15.5e") % value.GetDouble());
       }
     }
     else {
@@ -229,133 +176,71 @@ void ChannelDataMonitorGtk4::insertJsonValue(GtkTreeIter *itname,
   default:
     assert(0);
   }
-  removeIterChildren(itname);
 }
 
-void ChannelDataMonitorGtk4::insertJsonArray(GtkTreeIter *itparent,
+void ChannelDataMonitorGtk4::insertJsonArray(dvplist_t& dl, dvplist_it li,
                                              const JValue &doc)
 {
-  gboolean itvalid;
-  GtkTreeIter itname;
-  descendIter(itvalid, itname, itparent);
   int idx = 0;
 
   for (JValue::ConstValueIterator it = doc.Begin(); it != doc.End(); ++it) {
     std::stringstream name;
     name << std::setw(3) << idx++;
-
-    // find a new iter
-    checkOrCreateIter(itvalid, itname, itparent, name.str().c_str());
+    if (li == dl.end()) {
+      dl.emplace_back(name.str());
+      li = std::prev(dl.end());
+    }
+    else {
+      li->label = name.str();
+    }
 
     if (it->IsObject()) {
-
-      insertJson(&itname, *it);
+      li->value = "";
+      insertJson(li->children, li->children.begin(), *it);
     }
     else if (it->IsArray()) {
-
-      insertJsonArray(&itname, *it);
+      li->value = "[]";
+      insertJsonArray(li->children, li->children.begin(), *it);
     }
     else {
 
-      insertJsonValue(&itname, *it);
+      insertJsonValue(li->value, *it);
     }
-
-    // move to next iter, if it exists
-    toNextIter(itvalid, itname);
-  }
-
-  // remove siblings, if somehow the array has shrunk
-  removeIterSiblings(itvalid, itname);
-}
-
-void ChannelDataMonitorGtk4::descendIter(gboolean &itvalid, GtkTreeIter &itname,
-                                         GtkTreeIter *itparent)
-{
-  // find the first child of this parent
-  itvalid =
-    gtk_tree_model_iter_children(GTK_TREE_MODEL(store), &itname, itparent);
-  DEB("descending iter")
-}
-
-void ChannelDataMonitorGtk4::checkOrCreateIter(gboolean &itvalid,
-                                               GtkTreeIter &itname,
-                                               GtkTreeIter *itparent,
-                                               const char *name)
-{
-  // try to re-use existing rows, itname should point to a to-be-reused row
-  if (itvalid) {
-    // no action
-    DEB("re-using row for name " << name);
-  }
-  else {
-    // insert a new row, with the current parent (or top)
-    gtk_tree_store_append(store, &itname, itparent);
-    DEB("new row for name " << name);
-  }
-  gtk_tree_store_set(store, &itname, 0, name, -1);
-}
-
-void ChannelDataMonitorGtk4::removeIterChildren(GtkTreeIter *parent)
-{
-  GtkTreeIter itchld;
-  gboolean have =
-    gtk_tree_model_iter_children(GTK_TREE_MODEL(store), &itchld, parent);
-  while (have == TRUE) {
-    have = gtk_tree_store_remove(store, &itchld);
-    DEB("removed a child");
   }
 }
 
-void ChannelDataMonitorGtk4::removeIterSiblings(gboolean &have,
-                                                GtkTreeIter &itname)
-{
-  while (have == TRUE) {
-    have = gtk_tree_store_remove(store, &itname);
-    DEB("removed a sibling");
-  }
-}
-
-void ChannelDataMonitorGtk4::toNextIter(gboolean &have, GtkTreeIter &itname)
-{
-  if (have) {
-    have = gtk_tree_model_iter_next(GTK_TREE_MODEL(store), &itname);
-    DEB("check for next sibling");
-  }
-}
-
-void ChannelDataMonitorGtk4::insertJson(GtkTreeIter *itparent,
+void ChannelDataMonitorGtk4::insertJson(dvplist_t& dl, dvplist_it li,
                                         const JValue &doc)
 {
-  gboolean itvalid;
-  GtkTreeIter itname;
-  descendIter(itvalid, itname, itparent);
-
   for (JValue::ConstMemberIterator it = doc.MemberBegin();
        it != doc.MemberEnd(); ++it) {
 
-    // prepare a new iter, at least re-affirm the name
-    checkOrCreateIter(itvalid, itname, itparent, it->name.GetString());
+    if (li == dl.end()) {
+      dl.emplace_back(it->name.GetString());
+      li = std::prev(dl.end());
+    }
+    else {
+      li->label = it->name.GetString();
+    }
 
+    // prepare a new object
     if (it->value.IsObject()) {
 
-      // recursively insert values
-      insertJson(&itname, it->value);
+      li->value = "";
+      // recursively insert values into children
+      insertJson(li->children, li->children.begin(), it->value);
     }
     else if (it->value.IsArray()) {
 
-      // repeat array insert
-      insertJsonArray(&itname, it->value);
+      li->value = "[]";
+      // insert index and value into children
+      insertJsonArray(li->children, li->children.begin(), it->value);
     }
     else {
-      insertJsonValue(&itname, it->value);
+      // insert value into value string
+      insertJsonValue(li->value, it->value);
     }
-
-    // move to next iter, if it exists
-    toNextIter(itvalid, itname);
   }
-
-  // remove siblings, if somehow the object has shrunk
-  removeIterSiblings(itvalid, itname);
 }
 
 void ChannelDataMonitorGtk4::refreshData(const ChannelMonitorResult &rdata)
@@ -374,7 +259,7 @@ void ChannelDataMonitorGtk4::refreshData(const ChannelMonitorResult &rdata)
     JDocument doc;
     doc.Parse(rdata.json.c_str());
 
-    insertJson(NULL, doc);
+    insertJson(data, data.begin(), doc);
   }
   DEB1(rdata.json);
 }
@@ -382,5 +267,55 @@ void ChannelDataMonitorGtk4::refreshData(const ChannelMonitorResult &rdata)
 void ChannelDataMonitorGtk4::close() { window.hide(); }
 
 void ChannelDataMonitorGtk4::open() { window.show(); }
+
+bool ChannelDataMonitorGtk4::isOpen() const
+{
+  return gtk_widget_get_visible(GTK_WIDGET(window["channel_datamonitor"]));
+}
+
+void ChannelDataMonitorGtk4::cbSetupName(GtkSignalListItemFactory *fact,
+                                         GtkListItem *object,
+                                         gpointer user_data)
+{
+  auto label = gtk_label_new("");
+  auto expander = gtk_tree_expander_new();
+  gtk_tree_expander_set_child(GTK_TREE_EXPANDER(expander), label);
+  gtk_list_item_set_child(object, expander);
+}
+
+  /** Create widgets for a value column */
+void ChannelDataMonitorGtk4::cbSetupValue(GtkSignalListItemFactory *fact,
+                                          GtkListItem *object,
+                                          gpointer user_data)
+{
+  auto label = gtk_label_new("");
+  gtk_list_item_set_child(object, label);
+}
+
+  /** Bind name data */
+void ChannelDataMonitorGtk4::cbBindName(GtkSignalListItemFactory *fact,
+                                        GtkListItem *object, gpointer user_data)
+{
+  auto expander = gtk_list_item_get_child(object);
+  auto row = D_DATA_ENTRY(gtk_list_item_get_item(object));
+  auto label = gtk_tree_expander_get_child(GTK_TREE_EXPANDER(expander));
+  if (row->data.children.size()) {
+    gtk_tree_expander_set_list_row(GTK_TREE_EXPANDER(expander),
+                                   GTK_TREE_LIST_ROW(row));
+  }
+  gtk_label_set_label(GTK_LABEL(label), row->data.label.c_str());
+}
+
+  /** Bind value data */
+void ChannelDataMonitorGtk4::cbBindValue(GtkSignalListItemFactory *fact,
+                                         GtkListItem *object,
+                                         gpointer user_data)
+{
+  auto label = gtk_list_item_get_child(object);
+  auto row = D_DATA_ENTRY(gtk_list_item_get_item(object));
+  if (row->data.children.size() == 0) {
+    gtk_label_set_label(GTK_LABEL(label), row->data.value.c_str());
+  }
+}
 
 DUECA_NS_END
