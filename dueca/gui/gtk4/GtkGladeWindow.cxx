@@ -279,6 +279,7 @@ bool GtkGladeWindow::_setValue(const char *wname, const char *value, bool warn)
     return false;
   }
 
+#ifndef NO_COMBOBOX
   if (GTK_IS_COMBO_BOX(o)) {
 
     // find the model, and determine where the value is (should be there!)
@@ -312,6 +313,7 @@ bool GtkGladeWindow::_setValue(const char *wname, const char *value, bool warn)
     }
     return false;
   }
+#endif
 
   if (GTK_IS_DROP_DOWN(o)) {
     auto model = gtk_drop_down_get_model(GTK_DROP_DOWN(o));
@@ -537,6 +539,7 @@ bool GtkGladeWindow::__getValue<std::string>(const char *wname, boost::any &b,
     return false;
   }
 
+#ifndef NO_COMBOBOX
   if (GTK_IS_COMBO_BOX(o)) {
     GtkTreeIter it;
     if (gtk_combo_box_get_active_iter(GTK_COMBO_BOX(o), &it)) {
@@ -557,6 +560,7 @@ bool GtkGladeWindow::__getValue<std::string>(const char *wname, boost::any &b,
     }
     return true;
   }
+#endif
 
   if (GTK_IS_DROP_DOWN(o)) {
     auto item =
@@ -832,6 +836,7 @@ bool GtkGladeWindow::_fillOptions(const char *wname, ElementWriter &writer,
     return false;
   }
 
+#ifndef NO_COMBOBOX
   if (GTK_IS_COMBO_BOX(o)) {
     GtkTreeModel *treemodel = gtk_combo_box_get_model(GTK_COMBO_BOX(o));
     if (treemodel == NULL) {
@@ -874,6 +879,7 @@ bool GtkGladeWindow::_fillOptions(const char *wname, ElementWriter &writer,
     while (writer.setNextValue());
     return true;
   }
+#endif
 
   if (GTK_IS_DROP_DOWN(o)) {
 

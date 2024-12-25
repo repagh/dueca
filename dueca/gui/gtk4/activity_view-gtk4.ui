@@ -1,16 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <requires lib="gtk" version="4.0" />
-  <object class="GtkListStore" id="activitylist">
-    <columns>
-      <column type="gchararray" />
-      <column type="gchararray" />
-      <column type="gchararray" />
-      <column type="gchararray" />
-      <column type="gchararray" />
-      <column type="gchararray" />
-    </columns>
-  </object>
   <object class="GtkAdjustment" id="adjustment_recordspan">
     <property name="lower">0.01</property>
     <property name="upper">2</property>
@@ -200,7 +190,6 @@
                 <property name="vexpand">True</property>
                 <child>
                   <object class="GtkColumnView" id="activitylist_view">
-                    <property name="model">activitylist</property>
                     <child>
                       <object class="GtkColumnViewColumn" id="activity_tick">
                         <property name="title" translatable="1">tick</property>

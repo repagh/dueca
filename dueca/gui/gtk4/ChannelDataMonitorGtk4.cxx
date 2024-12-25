@@ -42,13 +42,22 @@ static void d_data_entry_init(DDataEntry *self)
   //
 }
 
+static DDataEntry *d_data_entry_new(const ChannelDataViewPair& p)
+{
+  auto res = D_DATA_ENTRY(g_object_new(d_data_entry_get_type(), NULL));
+  res->data = p;
+  return res;
+}
+
 static GListModel *add_data_element(gpointer _item, gpointer user_data)
 {
   auto item = D_DATA_ENTRY(_item);
   if (item->data.children.size()) {
     auto lm = g_list_store_new(d_data_entry_get_type());
     for (auto &c : item->data.children) {
-      g_list_store_append(lm, gpointer(&c));
+      auto child = d_data_entry_new(c);
+      g_list_store_append(lm, gpointer(child));
+      g_object_unref(child);
     }
     return G_LIST_MODEL(lm);
   }

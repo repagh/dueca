@@ -20,10 +20,11 @@
 #include <vector>
 #include <string>
 #include <map>
-#include <iostream>
 #include "GtkCaller.hxx"
 #include "GladeException.hxx"
 #include <boost/any.hpp>
+
+#define NO_COMBOBOX
 
 // Forward declaration
 namespace Gtk {
@@ -191,14 +192,14 @@ struct GladeCallbackTable
 
     If you now ensure that the widgets holding this data (for the
     float a TextEntry, an Adjustment, a SpinButton or a Range, for the
-    enum a ComboBox) are properly named, the GtkGladeWindow can:
+    enum a DropDown) are properly named, the GtkGladeWindow can:
 
-    - Set the options for the ComboBox based on the enum values
+    - Set the options for the DropDown based on the enum values
     - Set the data from the "a" and "command" members into the interface
     - Convert data from the interface to the "a" and "command" members.
 
     As an example, for a glade window with a SpinButton named
-    "mywidgets_a" and a ComboBox named "mywidgets_command", the
+    "mywidgets_a" and a DropDown named "mywidgets_command", the
     following code should work:
 
     @code{.cxx}
@@ -242,15 +243,14 @@ struct GladeCallbackTable
 
     In your glade gui, ensure that:
 
-    - Each ComboBox that you want to use has a text entry
+    - Each DropDown that you want to use has a text entry
 
-    - Specify column 0 of the associated GtkListStore for the entry if
+    - Specify column 0 of the associated GListStore for the entry if
       you don't want a mapping (directly use the enum names), column
       1 if you do want a mapping.
 
-    - A ComboBox does not need a GtkListStore in the gui file; if none
-      is found, one will be automatically generated. If you do define
-      a GtkListStore in the ui file, give it two gchararray columns.
+    - A DropDown does not need a GListStore in the gui file; if none
+      is found, one will be automatically generated. 
 
     - The widgets you want to connect to a DCO object need an ID that
       matches the DCO object member you want to link, e.g., ID
@@ -372,13 +372,6 @@ public:
   void connectCallbacksAfter(gpointer client, const GladeCallbackTable *table,
                              bool warn = true);
 
-#if 0
-  /** Connect GObject in-code callbacks, note that this is effective
-      only once, and called when connect_signals=true in the readGladeFile
-      function. */
-  void connectCallbackSymbols(gpointer user_data=NULL);
-#endif
-
   /** Access the widgets in this interface.
 
       Most objects in the interface will be widgets; note that for
@@ -439,7 +432,7 @@ private:
                     bool warn);
 
 public:
-  /** Use the enum items in a DCO object to fill combobox tree models
+  /** Use the enum items in a DCO object to fill DropDown tree models
       in the interface
 
       @param dcoclass  Object class
@@ -609,6 +602,7 @@ bool GtkGladeWindow::loadDropDownText(const char *name, const T &values)
     return false;
   }
 
+#ifndef NO_COMBOBOX
   if (GTK_IS_COMBO_BOX(o)) {
     GtkTreeModel *treemodel = gtk_combo_box_get_model(GTK_COMBO_BOX(o));
     if (treemodel == NULL) {
@@ -634,6 +628,7 @@ bool GtkGladeWindow::loadDropDownText(const char *name, const T &values)
     }
     return true;
   }
+#endif
 
   if (GTK_IS_DROP_DOWN(o)) {
 
@@ -657,7 +652,7 @@ bool GtkGladeWindow::loadDropDownText(const char *name, const T &values)
      combo box or drop down
   */
   W_XTR("GtkGladeWindow::loadDropDownText: Cannot fill options, object not a "
-        "DropDown nor ComboBox \""
+        "DropDown \""
         << name << '"');
   return false;
 }
