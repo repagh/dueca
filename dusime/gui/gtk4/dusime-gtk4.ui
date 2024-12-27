@@ -41,6 +41,7 @@
         </patterns>
       </object>
     </property>
+    <property name="title">Load additional initialization</property>
   </object>
   <object class="GtkWindow" id="dueca_if">
     <property name="name">dueca_if</property>
@@ -325,7 +326,6 @@
                 <child>
                   <object class="GtkColumnViewColumn" id="entity_mstatus_col">
                     <property name="title" translatable="1">m stat</property>
-
                     <property name="factory">
                       <object class="GtkSignalListItemFactory" id="entity_status_fact" />
                     </property>

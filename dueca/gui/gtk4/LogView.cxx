@@ -88,14 +88,6 @@ LogView::LogView(Entity* e, const char* part, const
   // access tokens
   token_valid(this, &LogView::tokenValid),
   token_action(true),
-  /*
-  r_message(getId(), NameSet("dueca", "LogMessage", ""),
-            ChannelDistribution::JOIN_MASTER, Bulk, &token_valid),
-  r_message2(getId(), NameSet("dueca", "LogMessage", ""),
-             ChannelDistribution::NO_OPINION, Bulk, &token_valid),
-  w_level(getId(), NameSet("dueca", "LogLevelCommand", ""),
-          ChannelDistribution::SOLO_SEND, Regular, &token_valid),
-  */
   r_message(getId(), NameSet("dueca", LogMessage::classname, ""),
             LogMessage::classname, entry_any,
             Channel::Events, Channel::OneOrMoreEntries,
@@ -251,22 +243,14 @@ void LogView::pause(bool do_pause)
 }
 
 
-void LogView::setLevel(const LogCategory* cat, int node,
-                       const char* level_as_text)
+void LogView::setLevel(const LogCategory& cat, int node,
+                       unsigned l)
 {
-  // interpret the level
-  LogLevel l(level_as_text);
-
-  if (l.t == LogLevel::Invalid) {
-    cerr << "Cannot interpret log level " << level_as_text << endl;
-    return;
-  }
-
   try {
     DataWriter<LogLevelCommand> c(w_level, SimTime::getTimeTick());
     c.data().node = node;
-    c.data().level = l;
-    c.data().category = *cat;
+    c.data().level = LogLevel::Type(l);
+    c.data().category = cat;
   }
   catch (const exception& e) {
     cerr << "Cannot send level command " << e.what() << endl;

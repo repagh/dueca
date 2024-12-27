@@ -103,6 +103,18 @@ GtkCaller *gtk_callback(RET (T::*call)(P1, P2, P3, P4, P5, P6, P7, P8,
   return new GtkCallerImp8<T, RET, P1, P2, P3, P4, P5, P6, P7, P8>(call);
 }
 
+/** Implement a callback with a caller;
+
+    use caller->callback() to get a callback
+    function, and insert the caller pointer into user_data */
+inline GtkCaller *gtk_caller_new(const GtkCaller &caller, gpointer client,
+                                 gpointer user_data = NULL)
+{
+  auto cb = caller.clone(client);
+  cb->setGPointer(user_data);
+  return cb;
+}
+
 /** Structure that assembles a widget name, a callback function and
     the widget signal that should trigger the callback function. */
 struct GladeCallbackTable
@@ -205,7 +217,8 @@ struct GladeCallbackTable
     @code{.cxx}
     // define a mapping between the enum values, and interface strings
     // note that whithout mappings (use NULL), the enum values are used
-    // directly in the interface
+    // directly in the interface. The mapping must remain valid, use a 
+    // "static" keyword for that.
 
     // each enum gets a mapping to label strings
     static const GtkGladeWindow::OptionMapping mapping_command[] = {
@@ -250,7 +263,7 @@ struct GladeCallbackTable
       1 if you do want a mapping.
 
     - A DropDown does not need a GListStore in the gui file; if none
-      is found, one will be automatically generated. 
+      is found, one will be automatically generated.
 
     - The widgets you want to connect to a DCO object need an ID that
       matches the DCO object member you want to link, e.g., ID
@@ -601,34 +614,6 @@ bool GtkGladeWindow::loadDropDownText(const char *name, const T &values)
       << name << "\"");
     return false;
   }
-
-#ifndef NO_COMBOBOX
-  if (GTK_IS_COMBO_BOX(o)) {
-    GtkTreeModel *treemodel = gtk_combo_box_get_model(GTK_COMBO_BOX(o));
-    if (treemodel == NULL) {
-      treemodel = GTK_TREE_MODEL(gtk_list_store_new(1, G_TYPE_STRING));
-      gtk_combo_box_set_model(GTK_COMBO_BOX(o), treemodel);
-    }
-    GtkListStore *store = GTK_LIST_STORE(treemodel);
-    if (store == NULL) {
-    /* DUECA graphics.
-
-           Supply a compatible store in the UI.
-         */
-      W_XTR("GtkGladeWindow::loadComboText: ComboBox object \""
-            << name << "\", store is not compatible");
-      return false;
-    }
-    gtk_list_store_clear(store);
-    GtkTreeIter it;
-    gtk_tree_model_get_iter_first(treemodel, &it);
-    for (const auto &s : values) {
-      gtk_list_store_append(store, &it);
-      gtk_list_store_set(store, &it, 0, s.c_str(), -1);
-    }
-    return true;
-  }
-#endif
 
   if (GTK_IS_DROP_DOWN(o)) {
 

@@ -329,15 +329,15 @@ bool GtkDuecaView::complete()
       { "nodes_state_fact", "bind",
         gtk_callback(&GtkDuecaView::bindNodeState) },
     /* These are not menu items with activities
-                        { "quit", "activate",
-               gtk_callback(&GtkDuecaView::cbWantToQuit)
-                 }, { "dueca_if", "delete_event",
-                     gtk_callback(&GtkDuecaView::deleteView)
-                       }, { "about", "activate",
-                 gtk_callback(&GtkDuecaView::cbShowAbout)
-                   }, { "read_extra_mod", "activate",
-                          gtk_callback(&GtkDuecaView::cbExtraModDialog) },
-                      */
+                            { "quit", "activate",
+                   gtk_callback(&GtkDuecaView::cbWantToQuit)
+                     }, { "dueca_if", "delete_event",
+                         gtk_callback(&GtkDuecaView::deleteView)
+                           }, { "about", "activate",
+                     gtk_callback(&GtkDuecaView::cbShowAbout)
+                       }, { "read_extra_mod", "activate",
+                              gtk_callback(&GtkDuecaView::cbExtraModDialog) },
+                          */
       { NULL, NULL, NULL, NULL }
     };
     window.connectCallbacks(reinterpret_cast<gpointer>(this), cb_links);
@@ -467,7 +467,7 @@ const ParameterTable *GtkDuecaView::getParameterTable()
   return table;
 }
 
-gpointer GtkDuecaView::requestViewEntry(const char *name, void *object)
+GMenuItem *GtkDuecaView::requestViewEntry(const char *name, void *object)
 {
   GMenuItem *viewmenu;
 
@@ -685,37 +685,26 @@ void GtkDuecaView::cbShowQuit(GSimpleAction *action, GVariant *arg,
   }
 }
 
+static void process_file_result(GObject *dialog, GAsyncResult *res,
+                                gpointer view)
+{
+  auto file = gtk_file_dialog_open_finish(GTK_FILE_DIALOG(dialog), res, NULL);
+  if (file) {
+    Environment::getInstance()->readMod(g_file_peek_path(file));
+    g_object_unref(file);
+  }
+}
+
 void GtkDuecaView::cbExtraModDialog(GSimpleAction *action, GVariant *arg,
                                     gpointer user_data)
 {
   if (DUECA_NS::EntityManager::single()->stopIsOK()) {
-    gtk_widget_set_visible(gw_common["select_md2"], TRUE);
+    gtk_file_dialog_open(GTK_FILE_DIALOG(window["additional_def"]),
+                         GTK_WINDOW(window["dueca_if"]), NULL,
+                         process_file_result, this);
   }
   else {
     gtk_widget_set_visible(gw_common["dont_change_a_running"], TRUE);
-  }
-}
-
-void GtkDuecaView::cbReadMod(GtkWidget *widget, gpointer user_data)
-{
-  // close the window
-  gtk_widget_set_visible(gw_common["select_md2"], FALSE);
-
-  if (user_data) {
-    const gchar *filename =
-      gtk_file_dialog_open(GTK_FILE_DIALOG(gw_common["select_md2"]));
-
-    if (filename == NULL) {
-      return;
-    }
-
-    // obtain the filename
-    vstring fname(filename);
-
-    // ask environment to add this filename to the configuration
-    if (fname.size()) {
-      Environment::getInstance()->readMod(fname);
-    }
   }
 }
 
@@ -856,7 +845,8 @@ void GtkDuecaView::cbOn2(GtkWidget *widget, gpointer user_data)
   }
 }
 
-void GtkDuecaView::cbEmerg2(GtkGestureClick *click, gint n_press, gdouble x, gdouble y, gpointer user_data)
+void GtkDuecaView::cbEmerg2(GtkGestureClick *click, gint n_press, gdouble x,
+                            gdouble y, gpointer user_data)
 {
   if (safe_armed) {
     // pressed for the second time. Exciting. Does the event indicate
@@ -891,8 +881,7 @@ void GtkDuecaView::cbEmerg2(GtkGestureClick *click, gint n_press, gdouble x, gdo
   }
 }
 
-void GtkDuecaView::cbOff2(GtkWidget *widget,
-                              gpointer user_data)
+void GtkDuecaView::cbOff2(GtkWidget *widget, gpointer user_data)
 {
   if (EntityManager::single()->controlEntities(0)) {
     gtk_dueca_button_load_image(widget, 1);
@@ -907,8 +896,7 @@ void GtkDuecaView::cbOff2(GtkWidget *widget,
   }
 }
 
-void GtkDuecaView::cbSafe2(GtkWidget *widget, 
-                               gpointer user_data)
+void GtkDuecaView::cbSafe2(GtkWidget *widget, gpointer user_data)
 {
   if (EntityManager::single()->controlEntities(1)) {
     gtk_dueca_button_load_image(widget, 1);
@@ -922,6 +910,81 @@ void GtkDuecaView::cbSafe2(GtkWidget *widget,
     // transition not possible, reset to unpressed
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), FALSE);
   }
+}
+
+void setupExpander(GtkSignalListItemFactory *fact, GtkListItem *item,
+                   gpointer user_data)
+{
+  auto label = gtk_label_new("");
+  auto expander = gtk_tree_expander_new();
+  gtk_tree_expander_set_child(GTK_TREE_EXPANDER(expander), label);
+  gtk_list_item_set_child(item, expander);
+}
+
+void setupLabel(GtkSignalListItemFactory *fact, GtkListItem *item,
+                gpointer user_data)
+{
+  auto label = gtk_label_new("");
+  gtk_list_item_set_child(item, label);
+}
+
+void bindModuleName(GtkSignalListItemFactory *fact, GtkListItem *item,
+                    gpointer user_data)
+{
+  auto expander = gtk_list_item_get_child(item);
+  auto row = D_ENTITY_STATUS(gtk_list_item_get_item(item));
+  auto label = gtk_tree_expander_get_child(GTK_TREE_EXPANDER(expander));
+  if (row->s.children.size()) {
+    gtk_tree_expander_set_list_row(GTK_TREE_EXPANDER(expander),
+                                   GTK_TREE_LIST_ROW(row));
+  }
+  gtk_label_set_label(GTK_LABEL(label), row->s.name.c_str());
+}
+
+void bindModuleStatus(GtkSignalListItemFactory *fact, GtkListItem *item,
+                      gpointer user_data)
+{
+  auto label = gtk_list_item_get_child(item);
+  auto row = D_ENTITY_STATUS(gtk_list_item_get_item(item));
+  gtk_label_set_label(GTK_LABEL(label),
+                      row->s.status->getModuleState().getString());
+}
+
+void bindSimulationStatus(GtkSignalListItemFactory *fact, GtkListItem *item,
+                          gpointer user_data)
+{
+  auto label = gtk_list_item_get_child(item);
+  auto row = D_ENTITY_STATUS(gtk_list_item_get_item(item));
+  gtk_label_set_label(GTK_LABEL(label),
+                      row->s.status->getSimulationState().getString());
+}
+
+void bindModuleNode(GtkSignalListItemFactory *fact, GtkListItem *item,
+                    gpointer user_data)
+{
+  auto label = gtk_list_item_get_child(item);
+  auto row = D_ENTITY_STATUS(gtk_list_item_get_item(item));
+  gtk_label_set_label(GTK_LABEL(label),
+                      boost::str(boost::format("%d") % row->s.nodeno).c_str());
+}
+
+void bindNodeNumber(GtkSignalListItemFactory *fact, GtkListItem *item,
+                    gpointer user_data)
+{
+  auto label = gtk_list_item_get_child(item);
+  auto row = D_NODE_STATUS(gtk_list_item_get_item(item));
+  gtk_label_set_label(GTK_LABEL(label),
+                      boost::str(boost::format("%d") % row->nodeno).c_str());
+}
+
+void bindNodeState(GtkSignalListItemFactory *fact, GtkListItem *item,
+                   gpointer user_data)
+{
+  auto label = gtk_list_item_get_child(item);
+  auto row = D_NODE_STATUS(gtk_list_item_get_item(item));
+  gtk_label_set_label(
+    GTK_LABEL(label),
+    getString(NodeManager::single()->getNodeState(row->nodeno)));
 }
 
 void GtkDuecaView::requestToKeepRunning(bool keep_running)

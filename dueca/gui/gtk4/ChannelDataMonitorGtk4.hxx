@@ -35,6 +35,8 @@ struct ChannelDataViewPair
   std::string label;
   std::string value;
   std::list<ChannelDataViewPair> children;
+  ChannelDataViewPair(const std::string& label) :
+    label(label) {}
 };
 
 typedef std::list<ChannelDataViewPair> dvplist_t;
@@ -69,13 +71,13 @@ public:
   ~ChannelDataMonitorGtk4();
 
   /** New data from the handler */
-  void refreshData(const ChannelMonitorResult &rdata);
+  void refreshData(const ChannelMonitorResult &rdata) override;
 
   /** close the window */
-  void close();
+  void close() override;
 
   /** open the window */
-  void open();
+  void open() override;
 
   /** Current status */
   bool isOpen() const override;

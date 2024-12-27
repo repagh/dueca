@@ -12,8 +12,8 @@
 */
 
 #include "gtk/gtk.h"
+#include "gtk/gtkdropdown.h"
 #define GtkGladeWindow_cxx
-
 
 #include <dueca-conf.h>
 #include "GtkGladeWindow.hxx"
@@ -262,6 +262,124 @@ bool GtkGladeWindow::_setValue(const char *wname, double value, bool warn)
   return false;
 }
 
+static const char *
+_representationInMap(const GtkGladeWindow::OptionMapping *mapping,
+                     const char *key, bool warn)
+{
+  for (auto m = mapping; m->ename != NULL; m++) {
+    if (!strcmp(m->ename, key)) {
+      if (m->representation != NULL) {
+        return m->representation;
+      }
+      else {
+        return key;
+      }
+    }
+  }
+  if (warn) {
+    /* DUECA graphics.
+
+       In the given key is missing from the option string mapping for
+       selecting an Enum with a ComboBox or DropDown. Check the mapping
+       against the DCO definition for the enum.
+    */
+    W_XTR("GtkGladeWindow::fillOptions: Key \""
+          << key << "\" not given in options mapping");
+  }
+  return key;
+}
+
+static const char *_keyFromMap(const GtkGladeWindow::OptionMapping *mapping,
+                               unsigned idx)
+{
+  auto m = mapping;
+  for (auto i = idx; i--;) {
+    if (m && m->ename) {
+      if (idx) {
+        m++;
+      }
+      else {
+        return m->ename;
+      }
+    }
+    else {
+      return NULL;
+    }
+  }
+  return NULL;
+}
+
+static int _indexInMap(const GtkGladeWindow::OptionMapping *mapping,
+                       const char *key)
+{
+  int idx = 0;
+  auto m = mapping;
+  for (; m->ename && strcmp(m->ename, key); m++) {
+    idx++;
+  }
+  if (m->ename)
+    return idx;
+  return -1;
+}
+
+bool GtkGladeWindow::_fillOptions(const char *wname, ElementWriter &writer,
+                                  ElementReader &reader,
+                                  const OptionMapping *mapping, bool warn)
+{
+  GObject *o = getObject(wname);
+  if (o == NULL) {
+    if (warn) {
+      /* DUECA graphics.
+
+         Cannot find the given object; check whether it is in the interface,
+         or check for spelling errors.
+      */
+      W_XTR("GtkGladeWindow::fillOptions: Could not find gtk object with id \""
+            << wname << "\"");
+    }
+    return false;
+  }
+
+  if (GTK_IS_DROP_DOWN(o)) {
+
+    // check whether a model or the right kind of model is set
+    auto model = gtk_string_list_new(NULL);
+
+    // reader and writer are coupled, run through all options
+    writer.setFirstValue();
+    do {
+      std::string value;
+      reader.peek(value);
+      if (mapping) {
+        value = _representationInMap(mapping, value.c_str(), warn);
+      }
+      gtk_string_list_append(model, value.c_str());
+    }
+    while (writer.setNextValue());
+
+    gtk_drop_down_set_model(GTK_DROP_DOWN(o), G_LIST_MODEL(model));
+    return true;
+  }
+
+  // when using a mapping, set a pointer in a property
+  if (mapping) {
+    g_object_set_data(o, "d_mapping", gpointer(mapping));
+  }
+
+  // when here, neither combobox nor dropdown to fill
+  if (warn) {
+    /* DUECA graphics.
+
+       Cannot feed options to the given object; check whether it is
+       a GtkComboBox or GtkDropDown.
+    */
+    W_XTR("GtkGladeWindow::fillOptions: Cannot fill options, object not a "
+          "ComboBox or DropDown\""
+          << wname << '"');
+  }
+  return false;
+}
+
 bool GtkGladeWindow::_setValue(const char *wname, const char *value, bool warn)
 {
   GObject *o = getObject(wname);
@@ -279,54 +397,31 @@ bool GtkGladeWindow::_setValue(const char *wname, const char *value, bool warn)
     return false;
   }
 
-#ifndef NO_COMBOBOX
-  if (GTK_IS_COMBO_BOX(o)) {
-
-    // find the model, and determine where the value is (should be there!)
-    GtkTreeModel *mdl = gtk_combo_box_get_model(GTK_COMBO_BOX(o));
-    GtkTreeIter it;
-    gboolean itvalid = gtk_tree_model_get_iter_first(mdl, &it);
-    gchararray val = NULL;
-    gtk_tree_model_get(mdl, &it, 0, &val, -1);
-
-    while (itvalid && strcmp(val, value)) {
-      itvalid = gtk_tree_model_iter_next(mdl, &it);
-      if (itvalid)
-        gtk_tree_model_get(mdl, &it, 0, &val, -1);
-    }
-    if (itvalid) {
-      gtk_combo_box_set_active_iter(GTK_COMBO_BOX(o), &it);
-      return true;
-    }
-
-    // no valid match found
-    gtk_combo_box_set_active_iter(GTK_COMBO_BOX(o), NULL);
-    if (warn) {
-      /* DUECA graphics.
-
-         Failed to find the matching entry (string) when trying to set
-         the active GtkComboBox entry. Do the entry names (column 0 of
-         your GtkListStore) match the names of the DCO member's enum?
-      */
-      W_XTR("GtkGladeWindow::setValue: No matching item for gtk combo \""
-            << wname << "\", missing \"" << value << '"');
-    }
-    return false;
-  }
-#endif
-
   if (GTK_IS_DROP_DOWN(o)) {
-    auto model = gtk_drop_down_get_model(GTK_DROP_DOWN(o));
-    guint pos = 0;
-    auto item = GTK_STRING_OBJECT(g_list_model_get_object(model, 0));
-    while (item) {
-      if (strcmp(gtk_string_object_get_string(item), value) == 0) {
-        gtk_drop_down_set_selected(GTK_DROP_DOWN(o), pos);
-        return true;
+    auto *mapping =
+      reinterpret_cast<OptionMapping *>(g_object_get_data(o, "d_mapping"));
+    if (mapping) {
+      auto res = _indexInMap(mapping, value);
+      if (res >= 0) {
+        gtk_drop_down_set_selected(GTK_DROP_DOWN(o), res);
       }
-      item = GTK_STRING_OBJECT(g_list_model_get_item(model, ++pos));
+      else {
+        return false;
+      }
     }
-    return false;
+    else {
+      auto model = GTK_STRING_LIST(gtk_drop_down_get_model(GTK_DROP_DOWN(o)));
+      guint pos = 0;
+      auto item = gtk_string_list_get_string(model, pos);
+      while (item) {
+        if (strcmp(item, value) == 0) {
+          gtk_drop_down_set_selected(GTK_DROP_DOWN(o), pos);
+          return true;
+        }
+        item = gtk_string_list_get_string(model, ++pos);
+      }
+      return false;
+    }
   }
 
   if (GTK_IS_ENTRY(o)) {
@@ -539,34 +634,21 @@ bool GtkGladeWindow::__getValue<std::string>(const char *wname, boost::any &b,
     return false;
   }
 
-#ifndef NO_COMBOBOX
-  if (GTK_IS_COMBO_BOX(o)) {
-    GtkTreeIter it;
-    if (gtk_combo_box_get_active_iter(GTK_COMBO_BOX(o), &it)) {
-      GtkTreeModel *treemodel = gtk_combo_box_get_model(GTK_COMBO_BOX(o));
-      gchararray val;
-      gtk_tree_model_get(treemodel, &it, 0, &val, -1);
-      b = std::string(val);
-    }
-    else if (warn) {
-      /* DUECA graphics.
-
-         Attempting to get an active entry from a combo box, but none
-         is active. Maybe pre-select an entry.
-      */
-      W_XTR("GtkGladeWindow::getValue, no active entry in combobox \"" << wname
-                                                                       << '"');
-      return false;
-    }
-    return true;
-  }
-#endif
-
   if (GTK_IS_DROP_DOWN(o)) {
-    auto item =
-      GTK_STRING_OBJECT(gtk_drop_down_get_selected_item(GTK_DROP_DOWN(o)));
-    if (item) {
-      b = std::string(gtk_string_object_get_string(item));
+    auto item = gtk_drop_down_get_selected(GTK_DROP_DOWN(o));
+    auto *mapping =
+      reinterpret_cast<OptionMapping *>(g_object_get_data(o, "d_mapping"));
+    const char *res = NULL;
+    if (mapping) {
+      res = _keyFromMap(mapping, item);
+    }
+    else {
+      auto slist = GTK_STRING_LIST(gtk_drop_down_get_model(GTK_DROP_DOWN(o)));
+      res = gtk_string_list_get_string(slist, item);
+    }
+    if (res) {
+      b = std::string(res);
+      return true;
     }
     else if (warn) {
       /* DUECA graphics.
@@ -576,17 +658,14 @@ bool GtkGladeWindow::__getValue<std::string>(const char *wname, boost::any &b,
        */
       W_XTR("GtkGladeWindow::getValue, no active entry in drop down \"" << wname
                                                                         << '"');
-      return false;
     }
-    return true;
+    return false;
   }
 
   if (GTK_IS_ENTRY(o)) {
     GtkEntry *e = GTK_ENTRY(o);
-    if (e != NULL) {
-      b = std::string(gtk_entry_buffer_get_text(gtk_entry_get_buffer(e)));
-      return true;
-    }
+    b = std::string(gtk_entry_buffer_get_text(gtk_entry_get_buffer(e)));
+    return true;
   }
 
   if (warn) {
@@ -790,129 +869,6 @@ unsigned GtkGladeWindow::getValues(CommObjectWriter &dco, const char *format,
     }
   }
   return nset;
-}
-
-static const char *_searchInMap(const GtkGladeWindow::OptionMapping *mapping,
-                                const char *key, bool warn)
-{
-  for (auto m = mapping; m->ename != NULL; m++) {
-    if (!strcmp(m->ename, key)) {
-      if (m->representation != NULL) {
-        return m->representation;
-      }
-      else {
-        return key;
-      }
-    }
-  }
-  if (warn) {
-    /* DUECA graphics.
-
-       In the given key is missing from the option string mapping for
-       selecting an Enum with a ComboBox or DropDown. Check the mapping
-       against the DCO definition for the enum.
-    */
-    W_XTR("GtkGladeWindow::fillOptions: Key \""
-          << key << "\" not given in options mapping");
-  }
-  return key;
-}
-
-bool GtkGladeWindow::_fillOptions(const char *wname, ElementWriter &writer,
-                                  ElementReader &reader,
-                                  const OptionMapping *mapping, bool warn)
-{
-  GObject *o = getObject(wname);
-  if (o == NULL) {
-    if (warn) {
-      /* DUECA graphics.
-
-         Cannot find the given object; check whether it is in the interface,
-         or check for spelling errors.
-      */
-      W_XTR("GtkGladeWindow::fillOptions: Could not find gtk object with id \""
-            << wname << "\"");
-    }
-    return false;
-  }
-
-#ifndef NO_COMBOBOX
-  if (GTK_IS_COMBO_BOX(o)) {
-    GtkTreeModel *treemodel = gtk_combo_box_get_model(GTK_COMBO_BOX(o));
-    if (treemodel == NULL) {
-      treemodel = GTK_TREE_MODEL(
-        mapping != NULL ? gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING)
-                        : gtk_list_store_new(1, G_TYPE_STRING));
-      gtk_combo_box_set_model(GTK_COMBO_BOX(o), treemodel);
-    }
-
-    GtkListStore *store = GTK_LIST_STORE(treemodel);
-    if (store == NULL) {
-      if (warn) {
-      /* DUECA graphics.
-
-             The store object attached to this combobox is not compatible.
-          */
-        W_XTR("GtkGladeWindow::fillOptions: ComboBox object \""
-              << wname << "\", store is not compatible");
-      }
-      return false;
-    }
-    gtk_list_store_clear(store);
-
-    // iterate through the values
-    writer.setFirstValue();
-    GtkTreeIter it;
-    gtk_tree_model_get_iter_first(treemodel, &it);
-    do {
-      std::string value;
-      reader.peek(value);
-      gtk_list_store_append(store, &it);
-      if (mapping) {
-        gtk_list_store_set(store, &it, 0, value.c_str(), 1,
-                           _searchInMap(mapping, value.c_str(), warn), -1);
-      }
-      else {
-        gtk_list_store_set(store, &it, 0, value.c_str(), -1);
-      }
-    }
-    while (writer.setNextValue());
-    return true;
-  }
-#endif
-
-  if (GTK_IS_DROP_DOWN(o)) {
-
-    // check whether a model or the right kind of model is set
-    auto model = G_LIST_STORE(gtk_drop_down_get_model(GTK_DROP_DOWN(o)));
-    if (!model) {
-      model = g_list_store_new(gtk_string_object_get_type());
-      gtk_drop_down_set_model(GTK_DROP_DOWN(o), G_LIST_MODEL(model));
-    }
-
-    // reader and writer are coupled, run through all options
-    writer.setFirstValue();
-    do {
-      std::string value;
-      reader.peek(value);
-      g_list_store_append(model, gtk_string_object_new(value.c_str()));
-    }
-    while (writer.setNextValue());
-    return true;
-  }
-
-  // when here, neither combobox nor dropdown to fill
-  if (warn) {
-    /* DUECA graphics.
-
-       Cannot feed options to the given object; check whether it is
-       a GtkComboBox or GtkDropDown.
-    */
-    W_XTR("GtkGladeWindow::fillOptions: Cannot fill options, object not a "
-          "ComboBox or DropDown\""
-          << wname << '"');
-  }
-  return false;
 }
 
 static const GtkGladeWindow::OptionMapping *

@@ -44,13 +44,13 @@ public:
 
   /** Clone call, creates a copied caller that carries a reference to
       an object. */
-  virtual GtkCaller* clone(void* obj) = 0;
+  virtual GtkCaller* clone(void* obj) const = 0;
 
   /** Return a pointer to the GtkCallback function. */
   virtual GtkSignalFunc callback() = 0;
 
   /** Pass this pointer as user data to gtk signal */
-  virtual gpointer user_data() {return reinterpret_cast<gpointer>(this);}
+  virtual gpointer user_data() {return reinterpret_cast<const gpointer>(this);}
 
   /** Set the value of the gpointer member. */
   void setGPointer(gpointer g);
@@ -87,11 +87,11 @@ public:
   call(call), obj(obj) { }
 
   /** Clone with object specialization. */
-  GtkCaller* clone(void* obj)
+  GtkCaller* clone(void* obj) const override
   { return new GtkCallerImp1(reinterpret_cast<T*>(obj), *this); }
 
   /** Execute call. */
-  RET operator () (P1 a)
+  RET operator () (P1 a) const
   { return (obj ->* call)(a, gp); }
 
   /** Return a pointer to the GtkCallback function. */
@@ -142,7 +142,7 @@ public:
     call(call), obj(obj) { }
 
   /** Clone with object specialization. */
-  GtkCaller* clone(void* obj)
+  GtkCaller* clone(void* obj) const override
   { return new GtkCallerImp2(reinterpret_cast<T*>(obj), *this); }
 
   /** Execute call. */
@@ -197,7 +197,7 @@ public:
     call(call), obj(obj) { }
 
   /** Clone with object specialization. */
-  GtkCaller* clone(void* obj)
+  GtkCaller* clone(void* obj) const override
   { return new GtkCallerImp3(reinterpret_cast<T*>(obj), *this); }
 
   /** Execute call. */
@@ -254,7 +254,7 @@ public:
     call(call), obj(obj) { }
 
   /** Clone with object specialization. */
-  GtkCaller* clone(void* obj)
+  GtkCaller* clone(void* obj) const override
   { return new GtkCallerImp4(reinterpret_cast<T*>(obj), *this); }
 
   /** Execute call. */
@@ -313,7 +313,7 @@ public:
     call(call), obj(obj) { }
 
   /** Clone with object specialization. */
-  GtkCaller* clone(void* obj)
+  GtkCaller* clone(void* obj) const override
   { return new GtkCallerImp5(reinterpret_cast<T*>(obj), *this); }
 
   /** Execute call. */
@@ -373,7 +373,7 @@ public:
     call(call), obj(obj) { }
 
   /** Clone with object specialization. */
-  GtkCaller* clone(void* obj)
+  GtkCaller* clone(void* obj) const override
   { return new GtkCallerImp6(reinterpret_cast<T*>(obj), *this); }
 
   /** Execute call. */
@@ -434,7 +434,7 @@ public:
     call(call), obj(obj) { }
 
   /** Clone with object specialization. */
-  GtkCaller* clone(void* obj)
+  GtkCaller* clone(void* obj) const override
   { return new GtkCallerImp7(reinterpret_cast<T*>(obj), *this); }
 
   /** Execute call. */
@@ -495,7 +495,7 @@ public:
     call(call), obj(obj) { }
 
   /** Clone with object specialization. */
-  GtkCaller* clone(void* obj)
+  GtkCaller* clone(void* obj) const override
   { return new GtkCallerImp8(reinterpret_cast<T*>(obj), *this); }
 
   /** Execute call. */

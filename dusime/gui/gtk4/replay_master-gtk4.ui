@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <requires lib="gtk" version="4.0"/>
-  <object class="GtkListStore" id="replay_recording_list">
-    <columns>
-      <column type="guint"/>
-      <column type="gchararray"/>
-      <column type="gchararray"/>
-      <column type="gdouble"/>
-      <column type="gchararray"/>
-    </columns>
-  </object>
+  <requires lib="gtk" version="4.0" />
   <object class="GtkWindow" id="replay_select_view">
     <property name="child">
       <object class="GtkBox">
@@ -69,7 +60,8 @@
                           <object class="GtkButton" id="replay_sendinitial">
                             <property name="sensitive">0</property>
                             <property name="can-focus">0</property>
-                            <property name="tooltip-text" translatable="1">Send the selected initial condition</property>
+                            <property name="tooltip-text" translatable="1">Send the selected initial
+                              condition</property>
                             <property name="label" translatable="1">load initial</property>
                             <property name="use-underline">1</property>
                             <property name="icon-name">go-up</property>
@@ -79,7 +71,8 @@
                           <object class="GtkButton" id="replay_sendrecording">
                             <property name="sensitive">0</property>
                             <property name="can-focus">0</property>
-                            <property name="tooltip-text" translatable="1">Load the selected recording for replay</property>
+                            <property name="tooltip-text" translatable="1">Load the selected
+                              recording for replay</property>
                             <property name="label" translatable="1">load replay</property>
                             <property name="use-underline">1</property>
                             <property name="icon-name">go-next</property>
@@ -105,7 +98,8 @@
                                   <object class="GtkRadioMenuItem" id="replay_advanceafter">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="1">Select this to continue to the Advance mode after the replayed recording ends</property>
+                                    <property name="tooltip-text" translatable="1">Select this to
+                                      continue to the Advance mode after the replayed recording ends</property>
                                     <property name="label" translatable="1">Advance after replay</property>
                                     <property name="use-underline">True</property>
                                     <property name="draw-as-radio">True</property>
@@ -116,7 +110,8 @@
                                   <object class="GtkRadioMenuItem" id="replay_holdafter">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="1">Return to hold mode after replay recording ends</property>
+                                    <property name="tooltip-text" translatable="1">Return to hold
+                                      mode after replay recording ends</property>
                                     <property name="label" translatable="1">Hold after Replay</property>
                                     <property name="use-underline">True</property>
                                     <property name="active">True</property>
@@ -195,45 +190,50 @@
                     </child>
                     <child>
                       <object class="GtkScrolledWindow">
-                        <property name="focusable">1</property>
+                        <property name="propagate-natural-width">1</property>
                         <property name="vexpand">1</property>
                         <property name="shadow-type">in</property>
-                        <property name="child">
-                          <object class="GtkTreeView" id="replay_recording_overview">
-                            <property name="focusable">1</property>
-                            <property name="vexpand">1</property>
-                            <property name="model">replay_recording_list</property>
-                            <property name="search-column">0</property>
-                            <child internal-child="selection">
-                              <object class="GtkTreeSelection" id="replay_recording_selection"/>
-                            </child>
+                        <child>
+                          <object class="GtkColumnView" id="replay_recording_overview">
                             <child>
-                              <object class="GtkTreeViewColumn" id="col_name">
-                                <property name="min-width">2</property>
+                              <object class="GtkColumnViewColumn">
                                 <property name="title" translatable="1">name</property>
-                                <property name="clickable">1</property>
-                                <property name="sort-indicator">1</property>
-                                <property name="sort-column-id">1</property>
+                                <property name="factory">
+                                  <object class="GtkSignalListItemFactory"
+                                    id="replay_name_fact" />
+                                </property>
                               </object>
                             </child>
                             <child>
-                              <object class="GtkTreeViewColumn" id="col_date">
+                              <object class="GtkColumnViewColumn" id="col_date">
                                 <property name="title" translatable="1">date</property>
+                                <property name="factory">
+                                  <object class="GtkSignalListItemFactory"
+                                    id="replay_date_fact" />
+                                </property>
                                 <property name="sort-indicator">1</property>
                               </object>
                             </child>
                             <child>
-                              <object class="GtkTreeViewColumn" id="col_duration">
+                              <object class="GtkColumnViewColumn" id="col_duration">
                                 <property name="title" translatable="1">duration</property>
+                                <property name="factory">
+                                  <object class="GtkSignalListItemFactory"
+                                    id="replay_duration_fact" />
+                                </property>
                               </object>
                             </child>
                             <child>
-                              <object class="GtkTreeViewColumn" id="col_initial">
+                              <object class="GtkColumnViewColumn" id="col_initial">
                                 <property name="title" translatable="1">initial state</property>
+                                <property name="factory">
+                                  <object class="GtkSignalListItemFactory"
+                                    id="replay_initial_fact" />
+                                </property>
                               </object>
                             </child>
                           </object>
-                        </property>
+                        </child>
                       </object>
                     </child>
                   </object>
@@ -325,7 +325,7 @@
               </object>
             </child>
             <child>
-              <placeholder/>
+              <placeholder />
             </child>
           </object>
         </child>

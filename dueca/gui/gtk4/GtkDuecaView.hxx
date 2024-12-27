@@ -148,7 +148,7 @@ public:
 public:
   /** This call allows accessories in DUECA to get entries in the view
       menu. */
-  void *requestViewEntry(const char *name, void *object);
+  GMenuItem *requestViewEntry(const char *name, void *object);
 
   /** Access the main window. */
   inline GtkGladeWindow &accessMainView() { return window; }
