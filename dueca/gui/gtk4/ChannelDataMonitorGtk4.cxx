@@ -16,7 +16,7 @@
 #include "gtk/gtk.h"
 #include "gtk/gtksingleselection.h"
 #include "gui/gtk4/GtkGladeWindow.hxx"
-#define ChannelDataMonitor_cxx
+#define ChannelDataMonitor_csxx
 #include "ChannelDataMonitorGtk4.hxx"
 #include <debug.h>
 #include <boost/lexical_cast.hpp>

@@ -76,8 +76,8 @@ class GtkCallerImp1: public GtkCaller
 public:
   /** Constructor.
       \param  call pointer to the callback function. */
-  GtkCallerImp1(RET (T:: *call) (P1, gpointer)) :
-    call(call), obj(reinterpret_cast<T*>(NULL)) { }
+  GtkCallerImp1(RET (T:: *call) (P1, gpointer), gpointer obj=NULL) :
+    call(call), obj(reinterpret_cast<T*>(obj)) { }
 
   /** Implementing constructor. */
   GtkCallerImp1(T* obj, const GtkCallerImp1& o) : call(o.call), obj(obj) { }
@@ -131,8 +131,8 @@ class GtkCallerImp2: public GtkCaller
 public:
   /** Constructor.
       \param  call pointer to the callback function. */
-  GtkCallerImp2(RET (T:: *call) (P1, P2, gpointer)) :
-    call(call), obj(reinterpret_cast<T*>(NULL)) { }
+  GtkCallerImp2(RET (T:: *call) (P1, P2, gpointer), gpointer obj=NULL) :
+    call(call), obj(reinterpret_cast<T*>(obj)) { }
 
   /** Implementing constructor. */
   GtkCallerImp2(T* obj, const GtkCallerImp2& o) : call(o.call), obj(obj) { }
@@ -186,8 +186,8 @@ class GtkCallerImp3: public GtkCaller
 public:
   /** Constructor.
       \param  call pointer to the callback function. */
-  GtkCallerImp3(RET (T:: *call) (P1, P2, P3, gpointer)) :
-    call(call), obj(reinterpret_cast<T*>(NULL)) { }
+  GtkCallerImp3(RET (T:: *call) (P1, P2, P3, gpointer), gpointer obj=NULL) :
+    call(call), obj(reinterpret_cast<T*>(obj)) { }
 
   /** Implementing constructor. */
   GtkCallerImp3(T* obj, const GtkCallerImp3& o) : call(o.call), obj(obj) { }
@@ -243,8 +243,8 @@ class GtkCallerImp4: public GtkCaller
 public:
   /** Constructor.
       \param  call pointer to the callback function. */
-  GtkCallerImp4(RET (T:: *call) (P1, P2, P3, P4, gpointer)) :
-    call(call), obj(reinterpret_cast<T*>(NULL)) { }
+  GtkCallerImp4(RET (T:: *call) (P1, P2, P3, P4, gpointer), gpointer obj=NULL) :
+    call(call), obj(reinterpret_cast<T*>(obj)) { }
 
   /** Implementing constructor. */
   GtkCallerImp4(T* obj, const GtkCallerImp4& o) : call(o.call), obj(obj) { }
@@ -302,8 +302,8 @@ class GtkCallerImp5: public GtkCaller
 public:
   /** Constructor.
       \param  call pointer to the callback function. */
-  GtkCallerImp5(RET (T:: *call) (P1, P2, P3, P4, P5, gpointer)) :
-    call(call), obj(reinterpret_cast<T*>(NULL)) { }
+  GtkCallerImp5(RET (T:: *call) (P1, P2, P3, P4, P5, gpointer), gpointer obj=NULL) :
+    call(call), obj(reinterpret_cast<T*>(obj)) { }
 
   /** Implementing constructor. */
   GtkCallerImp5(T* obj, const GtkCallerImp5& o) : call(o.call), obj(obj) { }
@@ -362,8 +362,8 @@ class GtkCallerImp6: public GtkCaller
 public:
   /** Constructor.
       \param  call pointer to the callback function. */
-  GtkCallerImp6(RET (T:: *call) (P1, P2, P3, P4, P5, P6, gpointer)) :
-    call(call), obj(reinterpret_cast<T*>(NULL)) { }
+  GtkCallerImp6(RET (T:: *call) (P1, P2, P3, P4, P5, P6, gpointer), gpointer obj=NULL) :
+    call(call), obj(reinterpret_cast<T*>(obj)) { }
 
   /** Implementing constructor. */
   GtkCallerImp6(T* obj, const GtkCallerImp6& o) : call(o.call), obj(obj) { }
@@ -423,8 +423,8 @@ class GtkCallerImp7: public GtkCaller
 public:
   /** Constructor.
       \param  call pointer to the callback function. */
-  GtkCallerImp7(RET (T:: *call) (P1, P2, P3, P4, P5, P6, P7, gpointer)) :
-    call(call), obj(reinterpret_cast<T*>(NULL)) { }
+  GtkCallerImp7(RET (T:: *call) (P1, P2, P3, P4, P5, P6, P7, gpointer), gpointer obj=NULL) :
+    call(call), obj(reinterpret_cast<T*>(obj)) { }
 
   /** Implementing constructor. */
   GtkCallerImp7(T* obj, const GtkCallerImp7& o) : call(o.call), obj(obj) { }
@@ -484,8 +484,8 @@ class GtkCallerImp8: public GtkCaller
 public:
   /** Constructor.
       \param  call pointer to the callback function. */
-  GtkCallerImp8(RET (T:: *call) (P1, P2, P3, P4, P5, P6, P7, P8, gpointer)) :
-    call(call), obj(reinterpret_cast<T*>(NULL)) { }
+  GtkCallerImp8(RET (T:: *call) (P1, P2, P3, P4, P5, P6, P7, P8, gpointer), gpointer obj=NULL) :
+    call(call), obj(reinterpret_cast<T*>(obj)) { }
 
   /** Implementing constructor. */
   GtkCallerImp8(T* obj, const GtkCallerImp8& o) : call(o.call), obj(obj) { }

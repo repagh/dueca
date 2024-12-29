@@ -43,29 +43,29 @@ class ElementReader;
 
 /** creation of a caller, 1 parameter and the gpointer parameter. */
 template <class T, typename RET, typename P1>
-GtkCaller *gtk_callback(RET (T::*call)(P1, gpointer))
+GtkCaller *gtk_callback(RET (T::*call)(P1, gpointer), gpointer obj=NULL)
 {
-  return new GtkCallerImp1<T, RET, P1>(call);
+  return new GtkCallerImp1<T, RET, P1>(call, obj);
 }
 
 /** creation of a caller, 2 parameters and the gpointer parameter. */
 template <class T, typename RET, typename P1, typename P2>
-GtkCaller *gtk_callback(RET (T::*call)(P1, P2, gpointer))
+GtkCaller *gtk_callback(RET (T::*call)(P1, P2, gpointer), gpointer obj=NULL)
 {
-  return new GtkCallerImp2<T, RET, P1, P2>(call);
+  return new GtkCallerImp2<T, RET, P1, P2>(call, obj);
 }
 
 /** creation of a caller, 3 parameters and the gpointer parameter. */
 template <class T, typename RET, typename P1, typename P2, typename P3>
-GtkCaller *gtk_callback(RET (T::*call)(P1, P2, P3, gpointer))
+GtkCaller *gtk_callback(RET (T::*call)(P1, P2, P3, gpointer), gpointer obj=NULL)
 {
-  return new GtkCallerImp3<T, RET, P1, P2, P3>(call);
+  return new GtkCallerImp3<T, RET, P1, P2, P3>(call, obj);
 }
 
 /** creation of a caller, 4 parameters and the gpointer parameter. */
 template <class T, typename RET, typename P1, typename P2, typename P3,
           typename P4>
-GtkCaller *gtk_callback(RET (T::*call)(P1, P2, P3, P4, gpointer))
+GtkCaller *gtk_callback(RET (T::*call)(P1, P2, P3, P4, gpointer), gpointer obj=NULL)
 {
   return new GtkCallerImp4<T, RET, P1, P2, P3, P4>(call);
 }
@@ -73,34 +73,34 @@ GtkCaller *gtk_callback(RET (T::*call)(P1, P2, P3, P4, gpointer))
 /** creation of a caller, 5 parameters and the gpointer parameter. */
 template <class T, typename RET, typename P1, typename P2, typename P3,
           typename P4, typename P5>
-GtkCaller *gtk_callback(RET (T::*call)(P1, P2, P3, P4, P5, gpointer))
+GtkCaller *gtk_callback(RET (T::*call)(P1, P2, P3, P4, P5, gpointer), gpointer obj=NULL)
 {
-  return new GtkCallerImp5<T, RET, P1, P2, P3, P4, P5>(call);
+  return new GtkCallerImp5<T, RET, P1, P2, P3, P4, P5>(call, obj);
 }
 
 /** creation of a caller, 6 parameters and the gpointer parameter. */
 template <class T, typename RET, typename P1, typename P2, typename P3,
           typename P4, typename P5, typename P6>
-GtkCaller *gtk_callback(RET (T::*call)(P1, P2, P3, P4, P5, P6, gpointer))
+GtkCaller *gtk_callback(RET (T::*call)(P1, P2, P3, P4, P5, P6, gpointer), gpointer obj=NULL)
 {
-  return new GtkCallerImp6<T, RET, P1, P2, P3, P4, P5, P6>(call);
+  return new GtkCallerImp6<T, RET, P1, P2, P3, P4, P5, P6>(call, obj);
 }
 
 /** creation of a caller, 7 parameters and the gpointer parameter. */
 template <class T, typename RET, typename P1, typename P2, typename P3,
           typename P4, typename P5, typename P6, typename P7>
-GtkCaller *gtk_callback(RET (T::*call)(P1, P2, P3, P4, P5, P6, P7, gpointer))
+GtkCaller *gtk_callback(RET (T::*call)(P1, P2, P3, P4, P5, P6, P7, gpointer), gpointer obj=NULL)
 {
-  return new GtkCallerImp7<T, RET, P1, P2, P3, P4, P5, P6, P7>(call);
+  return new GtkCallerImp7<T, RET, P1, P2, P3, P4, P5, P6, P7>(call, obj);
 }
 
 /** creation of a caller, 8 parameters and the gpointer parameter. */
 template <class T, typename RET, typename P1, typename P2, typename P3,
           typename P4, typename P5, typename P6, typename P7, typename P8>
 GtkCaller *gtk_callback(RET (T::*call)(P1, P2, P3, P4, P5, P6, P7, P8,
-                                       gpointer))
+                                       gpointer), gpointer obj=NULL)
 {
-  return new GtkCallerImp8<T, RET, P1, P2, P3, P4, P5, P6, P7, P8>(call);
+  return new GtkCallerImp8<T, RET, P1, P2, P3, P4, P5, P6, P7, P8>(call, obj);
 }
 
 /** Implement a callback with a caller;

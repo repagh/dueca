@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <requires lib="gtk" version="4.0"/>
+  <requires lib="gtk" version="4.0" />
   <object class="GtkWindow" id="initials_view">
     <property name="child">
       <object class="GtkBox">
@@ -27,7 +27,8 @@
               <object class="GtkButton" id="initials_send">
                 <property name="sensitive">0</property>
                 <property name="can-focus">0</property>
-                <property name="tooltip-text" translatable="1">Send the currently selected initial state</property>
+                <property name="tooltip-text" translatable="1">Send the currently selected initial
+                  state</property>
                 <property name="label" translatable="1">send</property>
                 <property name="use-underline">1</property>
                 <property name="icon-name">go-up</property>
@@ -37,7 +38,8 @@
               <object class="GtkToolItem" id="initials_custom1">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="tooltip-text" translatable="1">Name of the last selected or sent initial state.</property>
+                <property name="tooltip-text" translatable="1">Name of the last selected or sent
+                  initial state.</property>
                 <child>
                   <object class="GtkLabel" id="initials_selected">
                     <property name="label" translatable="1">&lt;&lt; none selected &gt;&gt;</property>
@@ -56,7 +58,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <child>
-                  <object class="GtkLabel" id="initials_status"/>
+                  <object class="GtkLabel" id="initials_status" />
                 </child>
               </object>
             </child>
@@ -66,7 +68,8 @@
           <object class="GtkEntry" id="initials_newentryname">
             <property name="focusable">1</property>
             <property name="text" translatable="1">anonymous</property>
-            <property name="primary-icon-tooltip-text" translatable="1">Name for the next new initial states (snapshot) captured.</property>
+            <property name="primary-icon-tooltip-text" translatable="1">Name for the next new
+              initial states (snapshot) captured.</property>
           </object>
         </child>
         <child>
