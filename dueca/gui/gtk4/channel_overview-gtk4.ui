@@ -10,16 +10,13 @@
         <child>
           <object class="GtkFlowBox">
             <child>
-              <object class="GtkButton">
+              <object class="GtkButton" id="close">
                 <child>
                   <object class="GtkBox">
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkImage">
                         <property name="icon-name">window-close</property>
-                        <child>
-                          <object class="GtkButton" />
-                        </child>
                       </object>
                     </child>
                     <child>
@@ -32,7 +29,7 @@
               </object>
             </child>
             <child>
-              <object class="GtkButton">
+              <object class="GtkButton" id="refresh_times">
                 <child>
                   <object class="GtkBox">
                     <property name="orientation">vertical</property>

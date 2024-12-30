@@ -165,64 +165,6 @@ static unsigned glut_key(unsigned keyval)
   return 0xffffffff;
 }
 
-static gint on_motion(GtkWidget *w, GdkEventMotion *event, gpointer self)
-{
-  DuecaGtkInteraction *dgi = reinterpret_cast<DuecaGtkInteraction *>(self);
-  int x, y;
-  GdkModifierType state;
-  gdk_window_get_device_position(event->window, event->device, &x, &y, &state);
-  if ((state & GDK_BUTTON1_MASK) != 0 || (state & GDK_BUTTON2_MASK) != 0 ||
-      (state & GDK_BUTTON3_MASK) != 0 || (state & GDK_BUTTON4_MASK) != 0 ||
-      (state & GDK_BUTTON5_MASK) != 0) {
-    dgi->motion(x, y);
-  }
-  else {
-    dgi->passive(x, y);
-  }
-  return 0;
-}
-
-static gint on_button(GtkWidget *w, gint npress, gdouble x, gdouble y,
-                      gpointer self)
-{
-  DuecaGtkInteraction *dgi = reinterpret_cast<DuecaGtkInteraction *>(self);
-  int x, y;
-  GdkModifierType state;
-  gdk_window_get_device_position(event->window, event->device, &x, &y, &state);
-  switch (event->button) {
-  case 1:
-    dgi->mouse(GLUT_LEFT_BUTTON, GLUT_DOWN, x, y);
-    break;
-  case 2:
-    dgi->mouse(GLUT_MIDDLE_BUTTON, GLUT_DOWN, x, y);
-    break;
-  case 3:
-    dgi->mouse(GLUT_RIGHT_BUTTON, GLUT_DOWN, x, y);
-    break;
-  }
-  return 0;
-}
-
-static gint on_release(GtkWidget *w, GdkEventButton *event, gpointer self)
-{
-  DuecaGtkInteraction *dgi = reinterpret_cast<DuecaGtkInteraction *>(self);
-  int x, y;
-  GdkModifierType state;
-  gdk_window_get_device_position(event->window, event->device, &x, &y, &state);
-  switch (event->button) {
-  case 1:
-    dgi->mouse(GLUT_LEFT_BUTTON, GLUT_UP, x, y);
-    break;
-  case 2:
-    dgi->mouse(GLUT_MIDDLE_BUTTON, GLUT_UP, x, y);
-    break;
-  case 3:
-    dgi->mouse(GLUT_RIGHT_BUTTON, GLUT_UP, x, y);
-    break;
-  }
-  return 0;
-}
-
 static int glut_button(unsigned button)
 {
   unsigned buttons[] = { GLUT_LEFT_BUTTON, GLUT_MIDDLE_BUTTON,
@@ -239,6 +181,7 @@ static gint process_event(GtkEventControllerLegacy *ctrl, GdkEvent *event,
   switch (gdk_event_get_event_type(event)) {
   case GDK_MOTION_NOTIFY:
     dgi->motion(x, y);
+    dgi->passive(x, y);
     return TRUE;
   case GDK_BUTTON_PRESS: {
     auto button = gdk_button_event_get_button(event);

@@ -74,7 +74,7 @@ ChannelDataMonitorGtk4::ChannelDataMonitorGtk4(ChannelOverviewGtk4 *master,
   static GladeCallbackTable cb_table[] = {
     { "close", "clicked", gtk_callback(&_ThisModule_::cbClose) },
     { "refresh_data", "clicked", gtk_callback(&_ThisModule_::cbRefreshData) },
-    { "channel_data_view", "delete_event",
+    { "channel_data_view", "close-request",
       gtk_callback(&_ThisModule_::cbDelete) },
     { "fact_elemname", "setup", gtk_callback(&_ThisModule_::cbSetupName) },
     { "fact_elemname", "bind", gtk_callback((&_ThisModule_::cbBindName)) },

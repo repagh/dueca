@@ -113,7 +113,7 @@ struct LogViewGui::GuiInfo
 };
 
 LogViewGui::LogViewGui(LogView *master, unsigned int nodes) :
-  gui(*(new GuiInfo(DuecaPath::prepend("logview.glade3")))),
+  gui(*(new GuiInfo(DuecaPath::prepend("logview-gtk4.ui")))),
   master(master),
   nodes(nodes),
   maxrows(100),
@@ -131,7 +131,7 @@ static GladeCallbackTable cb_links[] = {
   { "close", "clicked", gtk_callback(&LogViewGui::closeView) },
   { "pause", "clicked", gtk_callback(&LogViewGui::pauseLogging) },
   { "play", "clicked", gtk_callback(&LogViewGui::playLogging) },
-  { "log_view", "delete_event", gtk_callback(&LogViewGui::deleteView) },
+  { "log_view", "close-request", gtk_callback(&LogViewGui::deleteView) },
 
   // log table setup bindings
   { "log_time_fact", "setup", gtk_callback(&LogViewGui::cbSetupLabel) },
@@ -193,11 +193,6 @@ void LogViewGui::playLogging(GtkButton *button, gpointer user_data)
   master->pause(false);
 }
 
-// a hand-used table
-static GladeCallbackTable cb_renderer[] = {
-  { NULL, "signal::edited", gtk_callback(&LogViewGui::editedLevel) }
-};
-
 bool LogViewGui::open(unsigned int nrows)
 {
   // maximum number of rows
@@ -255,8 +250,8 @@ bool LogViewGui::open(unsigned int nrows)
     gtk_column_view_append_column(GTK_COLUMN_VIEW(gui.controltable), column);
 
     // release
-    g_object_unref(fact);
-    g_object_unref(column);
+    //g_object_unref(fact);
+    //g_object_unref(column);
   }
   delete cbbind;
   delete cbsetup;
@@ -280,7 +275,7 @@ void LogViewGui::appendLogCategory(const LogCategory &cat)
 {
   auto item = d_log_level_new(cat, nodes);
   g_list_store_append(gui.controltable_store, item);
-  g_object_unref(item);
+  // g_object_unref(item);
 }
 
 void LogViewGui::cbSetupLabel(GtkSignalListItemFactory *fact,
@@ -288,7 +283,7 @@ void LogViewGui::cbSetupLabel(GtkSignalListItemFactory *fact,
 {
   auto label = gtk_label_new("");
   gtk_list_item_set_child(object, label);
-  g_object_unref(label);
+  // g_object_unref(label);
 }
 
 static void LogViewGui_changeLevel(GtkDropDown *self, GParamSpecUInt *pspec,
@@ -316,7 +311,7 @@ void LogViewGui::cbSetupDropboxLevel(GtkSignalListItemFactory *fact,
   g_signal_connect(dd, "notify::selected", G_CALLBACK(LogViewGui_changeLevel),
                    this->master);
   gtk_list_item_set_child(object, dd);
-  g_object_unref(dd);
+  // g_object_unref(dd);
 }
 
   /** bind  log time */

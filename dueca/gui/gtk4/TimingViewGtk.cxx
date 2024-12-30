@@ -122,7 +122,7 @@ static DTimingSummary *d_timing_summary_new(const std::string &maker_and_act,
 TimingViewGtk::TimingViewGtk(Entity *e, const char *part,
                              const PrioritySpec &ps) :
   TimingView(e, part, ps),
-  gui(*(new GuiInfo(DuecaPath::prepend("timingview.glade3"))))
+  gui(*(new GuiInfo(DuecaPath::prepend("timingview-gtk4.ui"))))
 {
   // check the presence of a DuecaView object, for getting initial
   // access to the interface
@@ -145,7 +145,7 @@ static GladeCallbackTable cb_links[] = {
     reinterpret_cast<gpointer>(1) },
   { "timingview_close", "clicked",
     gtk_callback(&TimingViewGtk::activateMenuItem) },
-  { "timingview_window", "delete_event",
+  { "timingview_window", "close-request",
     gtk_callback(&TimingViewGtk::deleteView) },
   { NULL, NULL, NULL }
 };

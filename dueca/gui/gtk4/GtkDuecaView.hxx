@@ -81,15 +81,6 @@ class GtkDuecaView : public Module, public DuecaView
   /** remember arming. */
   bool safe_armed;
 
-  /** Alternative widget style. */
-  gchar *rc_altstyle;
-
-  /** ALternative style for confirm widget. */
-  gchar *rc_cfaltstyle;
-
-  /** ALternative style for quit and shutdown widgets. */
-  gchar *rc_quitaltstyle;
-
   /** Window based on glade file. */
   GtkGladeWindow window;
 
@@ -192,9 +183,6 @@ public:
   /** File chooser for extra files. */
   void cbExtraModDialog(GSimpleAction *menuitem, GVariant *parameter,
                         gpointer user_data);
-
-  /** Read extra model file. */
-  void cbReadMod(GtkWidget *widget, gpointer user_data);
 
   /** callback, close the view on deletion by window manager. */
   gboolean deleteView(GtkWidget *window, GdkEvent *event, gpointer user_data);

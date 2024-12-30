@@ -100,6 +100,9 @@ public:
   */
   void openWindow();
 
+  /** If position given, place the window */
+  void placeWindow();
+
   /** Select cursor type
 
       <ul>

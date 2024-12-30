@@ -21,9 +21,9 @@
 
 DUECA_NS_START;
 
-extern GdkGLContext *DUECA_GTK3GL_common_gc;
+extern GdkGLContext *DUECA_GTK4GL_common_gc;
 
-DuecaGLWidget::DuecaGLWidget(DuecaGLWidgetArea* area) :
+DuecaGLWidget::DuecaGLWidget(DuecaGLWidgetArea *area) :
   DuecaGtkInteraction(GTK_WIDGET(area)),
   area(area)
 {
@@ -31,16 +31,23 @@ DuecaGLWidget::DuecaGLWidget(DuecaGLWidgetArea* area) :
     this->_init();
 }
 
-static gboolean on_render(DuecaGLWidgetArea *area,
-                          GdkGLContext* context, gpointer self)
+static gboolean on_render(DuecaGLWidgetArea *area, GdkGLContext *context,
+                          gpointer self)
 {
-  reinterpret_cast<DuecaGLWidget*>(self)->display();
+  reinterpret_cast<DuecaGLWidget *>(self)->display();
   return TRUE;
 }
 
 static GdkGLContext *on_context(DuecaGLWidgetArea *area, gpointer self)
 {
-  return DUECA_GTK3GL_common_gc;
+  if (DUECA_GTK4GL_common_gc) {
+    return DUECA_GTK4GL_common_gc;
+  }
+  auto ctxt = gdk_surface_create_gl_context(GDK_SURFACE(area), NULL);
+  if (CSE.getShareGLContexts()) {
+    DUECA_GTK4GL_common_gc = ctxt;
+  }
+  return ctxt;
 }
 
 static void on_realize(DuecaGLWidgetArea *area, gpointer self)
@@ -49,7 +56,7 @@ static void on_realize(DuecaGLWidgetArea *area, gpointer self)
   if (gtk_gl_area_get_error(area) != NULL) {
     return;
   }
-  reinterpret_cast<DuecaGLWidget*>(self)->initGL();
+  reinterpret_cast<DuecaGLWidget *>(self)->initGL();
 }
 
 void DuecaGLWidget::_init()
@@ -62,28 +69,20 @@ void DuecaGLWidget::_init()
   if (CSE.getGraphicStencilBufferSize()) {
     gtk_gl_area_set_has_stencil_buffer(GTK_GL_AREA(area), TRUE);
   }
-  gtk_gl_area_set_has_alpha(GTK_GL_AREA(area), TRUE);
+  //gtk_gl_area_set_has_alpha(GTK_GL_AREA(area), TRUE);
 
   g_signal_connect(area, "render", G_CALLBACK(on_render), this);
   g_signal_connect(area, "realize", G_CALLBACK(on_realize), this);
-  if (DUECA_GTK3GL_common_gc) {
-    g_signal_connect(area, "create-context", G_CALLBACK(on_context), this);
-  }
+  g_signal_connect(area, "create-context", G_CALLBACK(on_context), this);
 
   DuecaGtkInteraction::init(GTK_WIDGET(area));
 }
 
-void DuecaGLWidget::redraw()
-{
-  gtk_gl_area_queue_render(area);
-}
+void DuecaGLWidget::redraw() { gtk_gl_area_queue_render(area); }
 
-void DuecaGLWidget::makeCurrent()
-{
-  gtk_gl_area_make_current(area);
-}
+void DuecaGLWidget::makeCurrent() { gtk_gl_area_make_current(area); }
 
-void DuecaGLWidget::init(DuecaGLWidgetArea* area2)
+void DuecaGLWidget::init(DuecaGLWidgetArea *area2)
 {
   if (area == NULL && area2 != NULL) {
     area = area2;
@@ -94,11 +93,7 @@ void DuecaGLWidget::init(DuecaGLWidgetArea* area2)
   }
 }
 
-
-DuecaGLWidget::~DuecaGLWidget()
-{
-
-}
+DuecaGLWidget::~DuecaGLWidget() {}
 
 void DuecaGLWidget::initGL()
 {

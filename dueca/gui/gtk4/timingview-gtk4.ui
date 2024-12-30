@@ -7,91 +7,59 @@
     <property name="title" translatable="yes">Timing Summary</property>
     <child>
       <object class="GtkBox">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
         <property name="orientation">vertical</property>
+
         <child>
-          <object class="GtkToolbar" id="toolbar2">
+          <object class="GtkBox">
+            <property name="orientation">horizontal</property>
+            <style>
+              <class name="toolbar" />
+            </style>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="toolbar_style">both</property>
             <child>
-              <object class="GtkToolButton" id="timingview_clear">
+              <object class="GtkButton" id="timingview_clear">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">clear all</property>
                 <property name="use_underline">True</property>
-                <signal name="clicked" handler="on_timingview_clear_clicked" swapped="no" />
               </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="homogeneous">True</property>
-              </packing>
             </child>
             <child>
-              <object class="GtkToolButton" id="update_sync">
+              <object class="GtkButton" id="update_sync">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">update sync</property>
                 <property name="use_underline">True</property>
-                <signal name="clicked" handler="on_update_sync_clicked" swapped="no" />
               </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="homogeneous">True</property>
-              </packing>
             </child>
             <child>
-              <object class="GtkToolButton" id="clear_sync">
+              <object class="GtkButton" id="clear_sync">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">clear sync</property>
                 <property name="use_underline">True</property>
-                <signal name="clicked" handler="on_update_sync_clicked" swapped="no" />
               </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="homogeneous">True</property>
-              </packing>
             </child>
             <child>
-              <object class="GtkSeparatorToolItem">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="homogeneous">False</property>
-              </packing>
+              <object class="GtkSeparator" />
             </child>
             <child>
-              <object class="GtkToolButton" id="timingview_close">
+              <object class="GtkButton" id="timingview_close">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">close</property>
                 <property name="use_underline">True</property>
-                <signal name="clicked" handler="on_timingview_close_clicked" after="yes"
-                  swapped="no" />
               </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="homogeneous">True</property>
-              </packing>
             </child>
           </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">0</property>
-          </packing>
         </child>
         <child>
           <object class="GtkScrolledWindow" id="timing_scrolledwindow">
             <property name="propagate-natural-width">True</property>
             <child>
               <object class="GtkColumnView" id="synctable">
-                <property name="tooltip_text" translatable="yes">This window shows the timing
-                  information for the nodes in this DUECA system.</property>
+                <property name="tooltip_text" translatable="yes">This window shows the timing information for the nodes in this DUECA system.</property>
                 <child>
                   <object class="GtkColumnViewColumn">
                     <property name="title" translatable="yes">node</property>
@@ -167,11 +135,6 @@
               </object>
             </child>
           </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
-          </packing>
         </child>
         <child>
           <object class="GtkScrolledWindow" id="scrolledwindow4">
@@ -179,8 +142,8 @@
             <property name="vexpand">true</property>
             <child>
               <object class="GtkColumnView" id="timingtable">
-                <property name="tooltip_text" translatable="yes">This window shows log results from
-                  all activities that are instrumented\nresults are shown as logs come in</property>
+                <property name="tooltip_text" translatable="yes">This window shows log results from all activities that are instrumented
+results are shown as logs come in</property>
                 <child>
                   <object class="GtkColumnViewColumn">
                     <property name="title" translatable="yes">activity</property>
@@ -272,11 +235,6 @@
               </object>
             </child>
           </object>
-          <packing>
-            <property name="expand">True</property>
-            <property name="fill">True</property>
-            <property name="position">2</property>
-          </packing>
         </child>
       </object>
     </child>

@@ -78,7 +78,7 @@ ReplayMasterGtk4::ReplayMasterGtk4(Entity *e, const char *part,
   // initialize the data you need in your simulation or process
   inco_inventory(SnapshotInventory::findSnapshotInventory(getPart())),
   replays(ReplayMaster::findReplayMaster(getPart())),
-  gladefile(DuecaPath::prepend("replay_master_gtk4.ui")),
+  gladefile(DuecaPath::prepend("replay_master-gtk4.ui")),
   window(),
   replay_store(NULL),
   menuitem(NULL),
@@ -268,7 +268,7 @@ bool ReplayMasterGtk4::complete()
     { "record_name", "changed", gtk_callback(&_ThisModule_::cbRecordName) },
     { "record_prepare", "clicked",
       gtk_callback(&_ThisModule_::cbRecordPrepare) },
-    { "replay_select_view", "delete-event",
+    { "replay_select_view", "close-request",
       gtk_callback(&_ThisModule_::cbDelete) },
     { NULL }
   };

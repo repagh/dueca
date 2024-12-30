@@ -68,10 +68,10 @@ public:
   void cbRecordSpan(GtkWidget* spin, gpointer gp);
 
   /** Update view window after scrolling. */
-  int cbViewScroll(GtkWidget *w, GdkButtonEvent *e, gpointer gp);
+  int cbViewScroll(GtkAdjustment *w, gpointer gp);
 
   /** Redraw stuff. */
-  int cbDraw(GtkWidget *w, cairo_t *cr);
+  int cbDraw(GtkDrawingArea *w, cairo_t *cr, int width, int height);
 
   /** realize widget stuff. */
   int cbConfigure(GtkWidget *w, GdkEvent *event);
@@ -85,25 +85,25 @@ public:
   void cbDrawAreaButtonRelease(gint n_press, gdouble x, gdouble y, unsigned area);
 
   /** Set-up a label text field for detail */
-  void cbSetupLabel(GtkSignalListItemFactory* f, GObject* obj, gpointer user_data);
+  void cbSetupLabel(GtkSignalListItemFactory* f, GtkListItem* obj, gpointer user_data);
 
   /** bind the tick data to the column view */
-  void cbBindTick(GtkSignalListItemFactory* f, GObject* obj, gpointer user_data);
+  void cbBindTick(GtkSignalListItemFactory* f, GtkListItem* obj, gpointer user_data);
 
   /** bind the offset data to the column view */
-  void cbBindOffset(GtkSignalListItemFactory* f, GObject* obj, gpointer user_data);
+  void cbBindOffset(GtkSignalListItemFactory* f, GtkListItem* obj, gpointer user_data);
 
   /** bind the time stamp data to the column view */
-  void cbBindTimestamp(GtkSignalListItemFactory* f, GObject* obj, gpointer user_data);
+  void cbBindTimestamp(GtkSignalListItemFactory* f, GtkListItem* obj, gpointer user_data);
 
   /** bind the deltat data to the column view */
-  void cbBindDt(GtkSignalListItemFactory* f, GObject* obj, gpointer user_data);
+  void cbBindDt(GtkSignalListItemFactory* f, GtkListItem* obj, gpointer user_data);
 
   /** bind the module name data to the column view */
-  void cbBindModule(GtkSignalListItemFactory* f, GObject* obj, gpointer user_data);
+  void cbBindModule(GtkSignalListItemFactory* f, GtkListItem* obj, gpointer user_data);
 
   /** bind the activity name data to the column view */
-  void cbBindName(GtkSignalListItemFactory* f, GObject* obj, gpointer user_data);
+  void cbBindName(GtkSignalListItemFactory* f, GtkListItem* obj, gpointer user_data);
 };
 
 DUECA_NS_END

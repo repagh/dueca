@@ -218,7 +218,7 @@ bool ChannelOverviewGtk4::complete()
     { "close", "clicked", gtk_callback(&_ThisModule_::cbClose) },
     { "refresh_times", "clicked",
       gtk_callback(&_ThisModule_::cbRefreshCounts) },
-    { "channel_use_view", "delete_event",
+    { "channel_use_view", "close-request",
       gtk_callback(&_ThisModule_::cbDelete) },
 
     // for each of the columns in the column view, bind to one of my set-up

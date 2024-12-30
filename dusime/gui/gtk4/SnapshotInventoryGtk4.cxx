@@ -92,7 +92,7 @@ SnapshotInventoryGtk4::SnapshotInventoryGtk4(Entity *e, const char *part,
   Module(e, classname, part),
 
   // initialize the data you need in your simulation or process
-  gladefile(DuecaPath::prepend("initials_inventory_gtk4.ui")),
+  gladefile(DuecaPath::prepend("initials_inventory-gtk4.ui")),
   window(),
   snaps_store(NULL),
   menuitem(NULL),
@@ -202,9 +202,9 @@ bool SnapshotInventoryGtk4::complete()
     { "initials_newentryname", "changed",
       gtk_callback(&_ThisModule_::cbSetName) },
     { "initials_send", "clicked", gtk_callback(&_ThisModule_::cbSendInitial) },
-    { "initials_selection", "changed",
-      gtk_callback(&_ThisModule_::cbSelection) },
-    { "initials_view", "delete_event", gtk_callback(&_ThisModule_::cbDelete) },
+    // { "initials_selection", "changed",
+    //   gtk_callback(&_ThisModule_::cbSelection) },
+    { "initials_view", "close-request", gtk_callback(&_ThisModule_::cbDelete) },
     { "initials_name_fact", "setup",
       gtk_callback(&_ThisModule_::cbSetupExpander) },
     { "initials_datetime_fact", "setup",
@@ -390,16 +390,18 @@ bool SnapshotInventoryGtk4::setPositionAndSize(const std::vector<int> &p)
   return true;
 }
 
-void cbSetupLabel(GtkSignalListItemFactory *fact, GtkListItem *object,
-                  gpointer user_data)
+void SnapshotInventoryGtk4::cbSetupLabel(GtkSignalListItemFactory *fact,
+                                         GtkListItem *object,
+                                         gpointer user_data)
 {
   auto label = gtk_label_new("");
   gtk_list_item_set_child(object, label);
   g_object_unref(label);
 }
 
-void cbSetupExpander(GtkSignalListItemFactory *fact, GtkListItem *object,
-                     gpointer user_data)
+void SnapshotInventoryGtk4::cbSetupExpander(GtkSignalListItemFactory *fact,
+                                            GtkListItem *object,
+                                            gpointer user_data)
 {
   auto label = gtk_label_new("");
   auto expander = gtk_tree_expander_new();
@@ -407,8 +409,8 @@ void cbSetupExpander(GtkSignalListItemFactory *fact, GtkListItem *object,
   gtk_list_item_set_child(object, expander);
 }
 
-void cbBindName(GtkSignalListItemFactory *fact, GtkListItem *object,
-                gpointer user_data)
+void SnapshotInventoryGtk4::cbBindName(GtkSignalListItemFactory *fact,
+                                       GtkListItem *object, gpointer user_data)
 {
   auto expander = gtk_list_item_get_child(object);
   auto row = D_SNAP_SHOT_SET(gtk_list_item_get_item(object));
@@ -420,16 +422,18 @@ void cbBindName(GtkSignalListItemFactory *fact, GtkListItem *object,
   gtk_label_set_label(GTK_LABEL(label), row->name.c_str());
 }
 
-void cbBindDateTime(GtkSignalListItemFactory *fact, GtkListItem *object,
-                    gpointer user_data)
+void SnapshotInventoryGtk4::cbBindDateTime(GtkSignalListItemFactory *fact,
+                                           GtkListItem *object,
+                                           gpointer user_data)
 {
   auto label = gtk_list_item_get_child(object);
   auto row = D_SNAP_SHOT_SET(gtk_list_item_get_item(object));
   gtk_label_set_label(GTK_LABEL(label), row->date_time.c_str());
 }
 
-void cbBindOrigin(GtkSignalListItemFactory *fact, GtkListItem *object,
-                  gpointer user_data)
+void SnapshotInventoryGtk4::cbBindOrigin(GtkSignalListItemFactory *fact,
+                                         GtkListItem *object,
+                                         gpointer user_data)
 {
   auto row = D_SNAP_SHOT_SET(gtk_list_item_get_item(object));
   if (row->snap) {
@@ -438,8 +442,9 @@ void cbBindOrigin(GtkSignalListItemFactory *fact, GtkListItem *object,
   }
 }
 
-void cbBindCoding(GtkSignalListItemFactory *fact, GtkListItem *object,
-                  gpointer user_data)
+void SnapshotInventoryGtk4::cbBindCoding(GtkSignalListItemFactory *fact,
+                                         GtkListItem *object,
+                                         gpointer user_data)
 {
   auto row = D_SNAP_SHOT_SET(gtk_list_item_get_item(object));
   if (row->snap) {
@@ -448,8 +453,9 @@ void cbBindCoding(GtkSignalListItemFactory *fact, GtkListItem *object,
   }
 }
 
-void cbBindSample(GtkSignalListItemFactory *fact, GtkListItem *object,
-                  gpointer user_data)
+void SnapshotInventoryGtk4::cbBindSample(GtkSignalListItemFactory *fact,
+                                         GtkListItem *object,
+                                         gpointer user_data)
 {
   auto row = D_SNAP_SHOT_SET(gtk_list_item_get_item(object));
   if (row->snap) {

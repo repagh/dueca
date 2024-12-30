@@ -2,31 +2,34 @@
 <interface>
   <requires lib="gtk" version="4.10" />
   <menu id="app-menubar">
-    <section>
+    <submenu id="file">
       <attribute name="label" translatable="1">_File</attribute>
-      <item>
-        <attribute name="label" translatable="1">_Open additional</attribute>
-        <attribute name="action">app.openadditional</attribute>
-      </item>
-      <item>
-        <attribute name="label" translatable="1">_Quit</attribute>
-        <attribute name="action">app.quit</attribute>
-      </item>
-    </section>
-    <section>
+      <section>
+        <item>
+          <attribute name="label" translatable="1">_Open additional</attribute>
+          <attribute name="action">app.openadditional</attribute>
+        </item>
+        <item>
+          <attribute name="label" translatable="1">_Quit</attribute>
+          <attribute name="action">app.quit</attribute>
+        </item>
+      </section>
+    </submenu>
+    <submenu id="view_menu">
       <attribute name="label" translatable="1">_View</attribute>
-    </section>
-    <section>
+    <!--  <section id="view_section">
+      </section>-->
+    </submenu>
+    <submenu>
       <attribute name="label" translatable="1">_Help</attribute>
-      <item>
-        <attribute name="label" translatable="1">_About</attribute>
-        <attribute name="action">app.about</attribute>
-      </item>
-    </section>
+      <section>
+        <item>
+          <attribute name="label" translatable="1">_About</attribute>
+          <attribute name="action">app.about</attribute>
+        </item>
+      </section>
+    </submenu>
   </menu>
-  <object class="GtkGestureClick" id="emergency_gest">
-    <property name="widget">emergency</property>
-  </object>
   <object class="GtkFileDialog" id="additional_def">
     <property name="accept-label">Load Additional</property>
     <property name="default-filter">
@@ -327,7 +330,7 @@
                   <object class="GtkColumnViewColumn" id="entity_mstatus_col">
                     <property name="title" translatable="1">m stat</property>
                     <property name="factory">
-                      <object class="GtkSignalListItemFactory" id="entity_status_fact" />
+                      <object class="GtkSignalListItemFactory" id="entity_mstatus_fact" />
                     </property>
 
                   </object>
