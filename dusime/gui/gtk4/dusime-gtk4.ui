@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <requires lib="gtk" version="4.10" />
+  <requires lib="gtk" version="4.0" />
   <menu id="app-menubar">
     <submenu id="file">
       <attribute name="label" translatable="1">_File</attribute>
@@ -46,7 +46,7 @@
     </property>
     <property name="title">Load additional initialization</property>
   </object>
-  <object class="GtkWindow" id="dueca_if">
+  <object class="GtkApplicationWindow" id="dueca_if">
     <property name="name">dueca_if</property>
     <property name="title" translatable="1">DUECA/DUSIME control panel</property>
     <property name="icon_name">applications-utilities</property>

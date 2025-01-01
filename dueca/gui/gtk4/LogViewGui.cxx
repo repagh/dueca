@@ -46,6 +46,7 @@ static void d_log_entry_init(DLogEntry *self) {}
 static DLogEntry *d_log_entry_new(const LogMessage &m)
 {
   auto res = D_LOG_ENTRY(g_object_new(d_log_entry_get_type(), NULL));
+  // logmessage is a fixed-size type, assignment to uninitialized mem is possible.
   res->msg = m;
   return res;
 }
@@ -68,6 +69,7 @@ static DLogLevel *d_log_level_new(const LogCategory &m, unsigned nnodes)
 {
   auto res = D_LOG_LEVEL(g_object_new(d_log_level_get_type(), NULL));
   res->cat = m;
+  new(&res->level) std::vector<unsigned>();
   res->level.resize(nnodes);
   for (auto n = nnodes; n--;)
     res->level[n] = 2;
@@ -258,7 +260,7 @@ bool LogViewGui::open(unsigned int nrows)
 
   // request the DuecaView object to make an entry for my window,
   // opening it on activation
-  gui.menuitem = GtkDuecaView::single()->requestViewEntry(
+  gui.menuitem = GtkDuecaView::single()->requestViewEntry("errorlog",
     "Error Log View", GTK_WIDGET(gui.gwindow["log_view"]));
 
   return true;

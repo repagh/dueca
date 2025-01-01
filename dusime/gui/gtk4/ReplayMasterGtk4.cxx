@@ -12,6 +12,7 @@
 */
 
 #include "gtk/gtk.h"
+#include "gtk/gtkdropdown.h"
 #define ReplayMasterGtk4_cxx
 #include "ReplayMasterGtk4.hxx"
 
@@ -261,10 +262,8 @@ bool ReplayMasterGtk4::complete()
       gtk_callback(&_ThisModule_::cbSendInitial) },
     { "replay_sendrecording", "clicked",
       gtk_callback(&_ThisModule_::cbSendReplay) },
-    { "replay_holdafter", "toggled",
-      gtk_callback(&_ThisModule_::cbSelectHoldAfter) },
-    { "replay_advanceafter", "toggled",
-      gtk_callback(&_ThisModule_::cbSelectAdvanceAfter) },
+    { "replay_todoafter", "notify::selected",
+      gtk_callback(&_ThisModule_::cbSelectTodoAfter) },
     { "record_name", "changed", gtk_callback(&_ThisModule_::cbRecordName) },
     { "record_prepare", "clicked",
       gtk_callback(&_ThisModule_::cbRecordPrepare) },
@@ -291,8 +290,9 @@ bool ReplayMasterGtk4::complete()
 
        The advance mode cannot be controlled programmatically. Look in
        the options for your DUSIME module to enable this. */
-    W_MOD("Replay cannot continue with advance, disabling");
-    gtk_widget_set_sensitive(GTK_WIDGET(window["replay_advanceafter"]), FALSE);
+    W_MOD("ReplayMaster cannot set DUSIME to advance, disabling option to continue.");
+    auto model = GTK_STRING_LIST(gtk_drop_down_get_model(GTK_DROP_DOWN(window["replay_todoafter"])));
+    gtk_string_list_remove(model, 1);
   }
 
   // set up the model behind the column view
@@ -320,9 +320,10 @@ bool ReplayMasterGtk4::complete()
     (std::string("Record&Replay control - ") + getPart()).c_str());
 
   // insert in DUECA's menu
-  menuitem = GTK_WIDGET(GtkDuecaView::single()->requestViewEntry(
+  menuitem = GtkDuecaView::single()->requestViewEntry(
+    (std::string("replay_") + getPart()).c_str(),
     (std::string("Replay Control - ") + getPart()).c_str(),
-    window.getObject("replay_select_view")));
+    window.getObject("replay_select_view"));
 
   return res;
 }
@@ -371,18 +372,11 @@ void ReplayMasterGtk4::cbSendReplay(GtkButton *btn, gpointer gp)
   replays->sendSelected();
 }
 
-void ReplayMasterGtk4::cbSelectHoldAfter(GtkWidget *widget, gpointer gp)
+void ReplayMasterGtk4::cbSelectTodoAfter(GObject *widget, GParamSpec *pspec,
+                                         gpointer gp)
 {
-  if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget))) {
-    replays->setAdvanceAfterReplay(false);
-  }
-}
-
-void ReplayMasterGtk4::cbSelectAdvanceAfter(GtkWidget *widget, gpointer gp)
-{
-  if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget))) {
-    replays->setAdvanceAfterReplay(true);
-  }
+  auto sel = gtk_drop_down_get_selected(GTK_DROP_DOWN(widget));
+  replays->setAdvanceAfterReplay(bool(sel));
 }
 
 void ReplayMasterGtk4::cbSelectReplay(GtkSelectionModel *sel, guint position,

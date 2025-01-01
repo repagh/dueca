@@ -52,22 +52,7 @@ private:
   GListStore *snaps_store;
 
   /** Widget in the main DUECA menu */
-  GtkWidget *menuitem;
-
-  /** Current iterator for the snapshot set */
-  GtkTreeIter set_iterator;
-
-  /** Organisation of the snaphot information */
-  enum StoreFields {
-    S_name,
-    S_time,
-    S_origin,
-    S_coding,
-    S_example,
-    S_isset,
-    S_isinitial,
-    S_numcolumns
-  };
+  GMenuItem *menuitem;
 
   /** File with existing initials */
   std::string reference_file;

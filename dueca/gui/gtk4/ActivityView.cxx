@@ -63,7 +63,7 @@ struct ActivityViewGui
   GtkWidget **canvas;
 
   /** Menu item. */
-  GtkWidget *menuitem;
+  GMenuItem *menuitem;
 
   /** Constructor. */
   ActivityViewGui(const vstring &gladefile) :
@@ -197,10 +197,12 @@ bool ActivityView::complete()
                        reinterpret_cast<ActivityView *>(av)->cbConfigure(w, e);
                      }),
                      reinterpret_cast<gpointer>(this));
-    gtk_drawing_area_set_draw_func(GTK_DRAWING_AREA(gui.canvas[ii]), 
-                     +[](GtkDrawingArea *w, cairo_t *cr, int width, int height, gpointer av) {
-                       reinterpret_cast<ActivityView *>(av)->cbDraw(w, cr, width, height);
-                     }, this, NULL);
+    gtk_drawing_area_set_draw_func(
+      GTK_DRAWING_AREA(gui.canvas[ii]),
+      +[](GtkDrawingArea *w, cairo_t *cr, int width, int height, gpointer av) {
+        reinterpret_cast<ActivityView *>(av)->cbDraw(w, cr, width, height);
+      },
+      this, NULL);
     g_signal_connect(
       G_OBJECT(controller), "pressed",
       G_CALLBACK(+[](GtkGestureClick *gesture, gint n_press, gdouble x,
@@ -229,8 +231,8 @@ bool ActivityView::complete()
 
   // request the DuecaView object to make an entry for my window,
   // opening it on activation
-  gui.menuitem = GTK_WIDGET(GtkDuecaView::single()->requestViewEntry(
-    "Activity View", GTK_WIDGET(gui.window["activity_view"])));
+  gui.menuitem = GtkDuecaView::single()->requestViewEntry(
+    "activity", "Activity View", GTK_WIDGET(gui.window["activity_view"]));
 
   return true;
 }
@@ -340,8 +342,7 @@ void ActivityView::cbRecordSpan(GtkWidget *spin, gpointer gp)
   gtk_adjustment_set_upper(adj2, dspan);
 }
 
-int ActivityView::cbViewScroll(GtkAdjustment *scroll,
-                               gpointer gp)
+int ActivityView::cbViewScroll(GtkAdjustment *scroll, gpointer gp)
 {
   for (int node = current_logs.size(); node--;) {
     g_object_set_data(G_OBJECT(gui.canvas[node]), "dirty",
@@ -623,48 +624,54 @@ void ActivityView::cbBindTick(GtkSignalListItemFactory *f, GtkListItem *item,
                               gpointer user_data)
 {
   auto label = gtk_list_item_get_child(item);
-  auto row = D_ACTIVITY_INFO(gtk_list_item_get_item(item));
-  gtk_label_set_text(GTK_LABEL(label), row->act.tick);
+  auto row = gtk_list_item_get_item(item);
+  auto act = D_ACTIVITY_INFO(gtk_tree_list_row_get_item(GTK_TREE_LIST_ROW(row)));
+  gtk_label_set_text(GTK_LABEL(label), act->act.tick);
 }
 
 void ActivityView::cbBindOffset(GtkSignalListItemFactory *f, GtkListItem *item,
                                 gpointer user_data)
 {
   auto label = gtk_list_item_get_child(item);
-  auto row = D_ACTIVITY_INFO(gtk_list_item_get_item(item));
-  gtk_label_set_text(GTK_LABEL(label), row->act.offset);
+  auto row = gtk_list_item_get_item(item);
+  auto act = D_ACTIVITY_INFO(gtk_tree_list_row_get_item(GTK_TREE_LIST_ROW(row)));
+  gtk_label_set_text(GTK_LABEL(label), act->act.offset);
 }
 
 void ActivityView::cbBindTimestamp(GtkSignalListItemFactory *f,
                                    GtkListItem *item, gpointer user_data)
 {
   auto label = gtk_list_item_get_child(item);
-  auto row = D_ACTIVITY_INFO(gtk_list_item_get_item(item));
-  gtk_label_set_text(GTK_LABEL(label), row->act.ts);
+  auto row = gtk_list_item_get_item(item);
+  auto act = D_ACTIVITY_INFO(gtk_tree_list_row_get_item(GTK_TREE_LIST_ROW(row)));
+  gtk_label_set_text(GTK_LABEL(label), act->act.ts);
 }
 
 void ActivityView::cbBindDt(GtkSignalListItemFactory *f, GtkListItem *item,
                             gpointer user_data)
 {
   auto label = gtk_list_item_get_child(item);
-  auto row = D_ACTIVITY_INFO(gtk_list_item_get_item(item));
-  gtk_label_set_text(GTK_LABEL(label), row->act.dt);
+  auto row = gtk_list_item_get_item(item);
+  auto act = D_ACTIVITY_INFO(gtk_tree_list_row_get_item(GTK_TREE_LIST_ROW(row)));
+  gtk_label_set_text(GTK_LABEL(label), act->act.dt);
 }
 
 void ActivityView::cbBindModule(GtkSignalListItemFactory *f, GtkListItem *item,
                                 gpointer user_data)
 {
   auto label = gtk_list_item_get_child(item);
-  auto row = D_ACTIVITY_INFO(gtk_list_item_get_item(item));
-  gtk_label_set_text(GTK_LABEL(label), row->act.module);
+  auto row = gtk_list_item_get_item(item);
+  auto act = D_ACTIVITY_INFO(gtk_tree_list_row_get_item(GTK_TREE_LIST_ROW(row)));
+  gtk_label_set_text(GTK_LABEL(label), act->act.module);
 }
 
 void ActivityView::cbBindName(GtkSignalListItemFactory *f, GtkListItem *item,
                               gpointer user_data)
 {
   auto label = gtk_list_item_get_child(item);
-  auto row = D_ACTIVITY_INFO(gtk_list_item_get_item(item));
-  gtk_label_set_text(GTK_LABEL(label), row->act.activity);
+  auto row = gtk_list_item_get_item(item);
+  auto act = D_ACTIVITY_INFO(gtk_tree_list_row_get_item(GTK_TREE_LIST_ROW(row)));
+  gtk_label_set_text(GTK_LABEL(label), act->act.activity);
 }
 
 DUECA_NS_END

@@ -130,7 +130,7 @@ bool NetUseOverviewGtk4::complete()
   }
 
   menuitem = GTK_WIDGET(GtkDuecaView::single()->requestViewEntry(
-    "Net Use View", GTK_WIDGET(window["net_use_view"])));
+    "netuse", "Net Use View", GTK_WIDGET(window["net_use_view"])));
   tlabel = window["maxtime_label"];
   sutlabel = window["sutlabel"];
 

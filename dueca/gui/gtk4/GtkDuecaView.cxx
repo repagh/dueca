@@ -39,6 +39,7 @@
 #include <sys/stat.h>
 #include <StatusT1.hxx>
 #include <boost/format.hpp>
+#include "GtkHandler.hxx"
 
 #define W_CNF
 #define E_CNF
@@ -138,6 +139,12 @@ struct CoreEntityStatus
   unsigned nodeno;
   unsigned ident;
   std::list<std::shared_ptr<CoreEntityStatus>> children;
+  CoreEntityStatus() :
+    name(""),
+    status(NULL),
+    nodeno(0U),
+    ident(0U)
+  {}
   CoreEntityStatus(const char *name, StatusT1 *status, unsigned nodeno,
                    unsigned ident) :
     name(name),
@@ -145,9 +152,21 @@ struct CoreEntityStatus
     nodeno(nodeno),
     ident(ident)
   {}
+  CoreEntityStatus &operator=(const CoreEntityStatus &o)
+  {
+    this->name = o.name;
+    this->status = o.status;
+    this->nodeno = o.nodeno;
+    this->ident = o.ident;
+    children.clear();
+    for (const auto &x : o.children) {
+      children.push_back(x);
+    }
+    return *this;
+  }
 };
 
-// data type to hold entity status
+
 struct _DEntityStatus
 {
   GObject parent;
@@ -159,7 +178,10 @@ G_DEFINE_TYPE(DEntityStatus, d_entity_status, G_TYPE_OBJECT);
 DEntityStatus *d_entity_status_new(const CoreEntityStatus &c)
 {
   auto res = D_ENTITY_STATUS(g_object_new(d_entity_status_get_type(), NULL));
-  res->s = c;
+  // placement new; the object should have the memory for the CoreEntityStatus,
+  // but assignment is not possible with the include list new(&(res->s))
+  // CoreEntityStatus(c);
+  new(&(res->s)) CoreEntityStatus(c);
   return res;
 }
 
@@ -180,54 +202,10 @@ static GListModel *expand_entity(gpointer _item, gpointer user_data)
   }
   return G_LIST_MODEL(NULL);
 }
-static GdkPaintable *emergency_icons[2] = { NULL, NULL };
-static GdkPaintable *button_icons[5] = { NULL, NULL, NULL };
-
-inline void gtk_dueca_button_load_image(GtkWidget *btn, unsigned imno)
-{
-  assert(imno < 5);
-  auto img = GTK_IMAGE(gtk_widget_get_first_child(btn));
-  gtk_image_set_from_paintable(img, button_icons[imno]);
-}
-
-inline void gtk_dueca_emergency_load_image(GtkWidget *btn, unsigned imno)
-{
-  assert(imno < 2);
-  auto img = GTK_IMAGE(gtk_widget_get_first_child(btn));
-  gtk_image_set_from_paintable(img, emergency_icons[imno]);
-}
-
-inline GdkPaintable *loadTextureFromFile(const char *fname)
-{
-  GError *error = NULL;
-  auto tex = gdk_texture_new_from_file(
-    g_file_new_for_path(DuecaPath::prepend(fname).c_str()), &error);
-  if (error) {
-    /* DUECA UI.
-
-       Cannot load icon texture. Check DUECA installation.
-    */
-    E_XTR("Could not load texture \"" << fname << "\": " << error->message);
-    g_error_free(error);
-    error = NULL;
-    return NULL;
-  }
-  g_object_ref(G_OBJECT(tex));
-  return GDK_PAINTABLE(tex);
-}
 
 bool GtkDuecaView::complete()
 {
-  // load the emergency and button icons
-  if (!emergency_icons[0]) {
-    emergency_icons[0] = loadTextureFromFile("pixmaps/abort.xpm");
-    emergency_icons[1] = loadTextureFromFile("pixmaps/confirm-abort.xpm");
-    button_icons[0] = loadTextureFromFile("pixmaps/inactive.xpm");
-    button_icons[1] = loadTextureFromFile("pixmaps/inprogress.xpm");
-    button_icons[2] = loadTextureFromFile("pixmaps/active.xpm");
-    button_icons[3] = loadTextureFromFile("pixmaps/incomplete.xpm");
-    button_icons[4] = loadTextureFromFile("pixmaps/fell-back.xpm");
-  }
+  load_dueca_buttons();
 
   /* Switch activity on. */
   update_interface.setTrigger(waker);
@@ -283,9 +261,12 @@ bool GtkDuecaView::complete()
 
     // set up nodes store
     nodes_list = GTK_COLUMN_VIEW(window["nodes_list"]);
-    nodes_store = g_list_store_new(d_entity_status_get_type());
+    nodes_store = g_list_store_new(d_node_status_get_type());
     auto nselection = gtk_single_selection_new(G_LIST_MODEL(nodes_store));
     gtk_column_view_set_model(nodes_list, GTK_SELECTION_MODEL(nselection));
+    for (unsigned n = 0; n < NodeManager::single()->getNoOfNodes(); n++) {
+      g_list_store_append(nodes_store, d_node_status_new(n));
+    }
 
     // rapid access to commonly used widgets
     hw_off = window["hw_off"];
@@ -328,15 +309,15 @@ bool GtkDuecaView::complete()
       { "nodes_state_fact", "bind",
         gtk_callback(&GtkDuecaView::bindNodeState) },
       { "dueca_if", "close-request", gtk_callback(&GtkDuecaView::deleteView) },
-    /* These are not menu items with activities
-                                { "quit", "activate",
-                       gtk_callback(&GtkDuecaView::cbWantToQuit)
-                         },  { "about", "activate",
-                         gtk_callback(&GtkDuecaView::cbShowAbout)
-                           }, { "read_extra_mod", "activate",
-                                  gtk_callback(&GtkDuecaView::cbExtraModDialog)
-         },
-                              */
+      /* These are not menu items with activities
+                                      { "quit", "activate",
+                             gtk_callback(&GtkDuecaView::cbWantToQuit)
+                               },  { "about", "activate",
+                               gtk_callback(&GtkDuecaView::cbShowAbout)
+                                 }, { "read_extra_mod", "activate",
+                                        gtk_callback(&GtkDuecaView::cbExtraModDialog)
+               },
+                                    */
       { NULL, NULL, NULL, NULL }
     };
     window.connectCallbacks(reinterpret_cast<gpointer>(this), cb_links);
@@ -410,6 +391,12 @@ bool GtkDuecaView::complete()
     }
   }
 
+  // default images on the buttons
+  gtk_dueca_button_load_image(hw_off, 0);
+  gtk_dueca_button_load_image(hw_safe, 0);
+  gtk_dueca_button_load_image(hw_on, 0);
+  gtk_dueca_emergency_load_image(emergency, 0);
+
   return res;
 }
 
@@ -466,23 +453,31 @@ const ParameterTable *GtkDuecaView::getParameterTable()
   return table;
 }
 
-GMenuItem *GtkDuecaView::requestViewEntry(const char *name, void *object)
+GMenuItem *GtkDuecaView::requestViewEntry(const char *name, const char *label,
+                                          void *object)
 {
-  auto viewmenu = G_MENU(window["view_menu"]);
+  auto viewmenu = G_MENU(window.getObject("view_menu"));
 
   // code the action name with the pointer of the object/view to toggle
-  auto actionname =
-    boost::str(boost::format("app.toggle_view::%1$#x") % uint64_t(object));
-  auto *newitem = g_menu_item_new(name, actionname.c_str());
-  // g_menu_item_set_attribute(newitem, "target", "b", FALSE);
-  g_menu_append_item(viewmenu, newitem);
+  auto actionname = boost::str(boost::format("app.toggle_view_%s") % name);
 
-  // for checkbox, action should have boolean state and no parameter
+  // create and install the action, for a checkbox, action should have boolean
+  // state and no parameter
   auto initoff = g_variant_new_boolean(FALSE);
-  auto *action = g_simple_action_new_stateful(actionname.c_str(),
-                                              G_VARIANT_TYPE_BOOLEAN, initoff);
+  auto action = g_simple_action_new_stateful(actionname.c_str(), NULL, initoff);
+
+  // code the window in the action's data table, and connect to our
+  // toggling callback
   g_object_set_data(G_OBJECT(action), "window", object);
   g_signal_connect(action, "activate", G_CALLBACK(hide_or_show_view), action);
+
+  // add the action to the application?
+  g_action_map_add_action(G_ACTION_MAP(GtkHandler::application()),
+                          G_ACTION(action));
+
+  // create a new item in the menu
+  auto newitem = g_menu_item_new(label, actionname.c_str());
+  g_menu_append_item(viewmenu, newitem);
 
   return newitem;
 }
@@ -495,14 +490,14 @@ void GtkDuecaView::cbQuit(GtkButton *button, gpointer gp)
 
   // put yellow on the quit button
   // gtk_widget_modify_style (window["button_quit"], rc_altstyle);
-  gtk_style_context_add_class(
-    gtk_widget_get_style_context(window["button_quit"]), "quit-yellow");
+  // gtk_style_context_add_class(
+  //  gtk_widget_get_style_context(window["button_quit"]), "quit-yellow");
 
   // enable confirm button + make it green
   gtk_widget_set_sensitive(window["button_confirm"], 1);
   // gtk_widget_modify_style (window["button_confirm"], rc_cfaltstyle);
-  gtk_style_context_add_class(
-    gtk_widget_get_style_context(window["button_confirm"]), "confirm-green");
+  // gtk_style_context_add_class(
+  //  gtk_widget_get_style_context(window["button_confirm"]), "confirm-green");
 }
 
 void GtkDuecaView::cbStop(GtkButton *button, gpointer gp)
@@ -516,8 +511,8 @@ void GtkDuecaView::cbStop(GtkButton *button, gpointer gp)
   gtk_widget_set_sensitive(window["button_run"], 0);
 
   // gtk_widget_modify_style (window["button_stop"], rc_altstyle);
-  gtk_style_context_add_class(
-    gtk_widget_get_style_context(window["button_stop"]), "button-amber");
+  // gtk_style_context_add_class(
+  //  gtk_widget_get_style_context(window["button_stop"]), "button-amber");
 }
 
 void GtkDuecaView::cbSafe(GtkButton *button, gpointer gp)
@@ -784,7 +779,7 @@ void GtkDuecaView::refreshEntitiesView()
   if (!entities_store)
     return;
 
-  gtk_widget_queue_draw(GTK_WIDGET(entities_list));
+  // gtk_widget_queue_draw(GTK_WIDGET());
 }
 
 void *GtkDuecaView::insertEntityNode(const char *name, void *vparent,
@@ -823,7 +818,7 @@ void GtkDuecaView::refreshNodesView()
 {
   if (!nodes_store)
     return;
-  gtk_widget_queue_draw(GTK_WIDGET(nodes_list));
+  // gtk_widget_queue_draw(GTK_WIDGET(nodes_list));
 }
 
 void GtkDuecaView::cbOn2(GtkWidget *widget, gpointer user_data)
@@ -929,59 +924,66 @@ void GtkDuecaView::bindModuleName(GtkSignalListItemFactory *fact,
                                   GtkListItem *item, gpointer user_data)
 {
   auto expander = gtk_list_item_get_child(item);
-  auto row = D_ENTITY_STATUS(gtk_list_item_get_item(item));
+  auto row = gtk_list_item_get_item(item);
+  auto obj = D_ENTITY_STATUS(gtk_tree_list_row_get_item(GTK_TREE_LIST_ROW(row)));
   auto label = gtk_tree_expander_get_child(GTK_TREE_EXPANDER(expander));
-  if (row->s.children.size()) {
+  if (obj->s.children.size()) {
     gtk_tree_expander_set_list_row(GTK_TREE_EXPANDER(expander),
                                    GTK_TREE_LIST_ROW(row));
+  } 
+  else {
+    gtk_tree_expander_set_list_row(GTK_TREE_EXPANDER(expander), NULL);
   }
-  gtk_label_set_label(GTK_LABEL(label), row->s.name.c_str());
+  gtk_label_set_label(GTK_LABEL(label), obj->s.name.c_str());
 }
 
 void GtkDuecaView::bindModuleStatus(GtkSignalListItemFactory *fact,
                                     GtkListItem *item, gpointer user_data)
 {
   auto label = gtk_list_item_get_child(item);
-  auto row = D_ENTITY_STATUS(gtk_list_item_get_item(item));
+  auto row = gtk_list_item_get_item(item);
+  auto obj = D_ENTITY_STATUS(gtk_tree_list_row_get_item(GTK_TREE_LIST_ROW(row)));
   gtk_label_set_label(GTK_LABEL(label),
-                      row->s.status->getModuleState().getString());
+                      obj->s.status->getModuleState().getString());
 }
 
 void GtkDuecaView::bindSimulationStatus(GtkSignalListItemFactory *fact,
                                         GtkListItem *item, gpointer user_data)
 {
   auto label = gtk_list_item_get_child(item);
-  auto row = D_ENTITY_STATUS(gtk_list_item_get_item(item));
+  auto row = gtk_list_item_get_item(item);
+  auto obj = D_ENTITY_STATUS(gtk_tree_list_row_get_item(GTK_TREE_LIST_ROW(row)));
   gtk_label_set_label(GTK_LABEL(label),
-                      row->s.status->getSimulationState().getString());
+                      obj->s.status->getSimulationState().getString());
 }
 
 void GtkDuecaView::bindModuleNode(GtkSignalListItemFactory *fact,
                                   GtkListItem *item, gpointer user_data)
 {
   auto label = gtk_list_item_get_child(item);
-  auto row = D_ENTITY_STATUS(gtk_list_item_get_item(item));
+  auto row = gtk_list_item_get_item(item);
+  auto obj = D_ENTITY_STATUS(gtk_tree_list_row_get_item(GTK_TREE_LIST_ROW(row)));
   gtk_label_set_label(GTK_LABEL(label),
-                      boost::str(boost::format("%d") % row->s.nodeno).c_str());
+                      boost::str(boost::format("%d") % obj->s.nodeno).c_str());
 }
 
 void GtkDuecaView::bindNodeNumber(GtkSignalListItemFactory *fact,
                                   GtkListItem *item, gpointer user_data)
 {
   auto label = gtk_list_item_get_child(item);
-  auto row = D_NODE_STATUS(gtk_list_item_get_item(item));
+  auto obj = D_NODE_STATUS(gtk_list_item_get_item(item));
   gtk_label_set_label(GTK_LABEL(label),
-                      boost::str(boost::format("%d") % row->nodeno).c_str());
+                      boost::str(boost::format("%d") % obj->nodeno).c_str());
 }
 
 void GtkDuecaView::bindNodeState(GtkSignalListItemFactory *fact,
                                  GtkListItem *item, gpointer user_data)
 {
   auto label = gtk_list_item_get_child(item);
-  auto row = D_NODE_STATUS(gtk_list_item_get_item(item));
+  auto obj = D_NODE_STATUS(gtk_list_item_get_item(item));
   gtk_label_set_label(
     GTK_LABEL(label),
-    getString(NodeManager::single()->getNodeState(row->nodeno)));
+    getString(NodeManager::single()->getNodeState(obj->nodeno)));
 }
 
 void GtkDuecaView::requestToKeepRunning(bool keep_running)

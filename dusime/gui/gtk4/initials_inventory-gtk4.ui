@@ -79,7 +79,7 @@
                   <object class="GtkColumnViewColumn">
                     <property name="title" translatable="1">date/time</property>
                     <property name="factory">
-                      <object class="GtkSignalListItemFactory" id="initials_daterime_fact" />
+                      <object class="GtkSignalListItemFactory" id="initials_datetime_fact" />
                     </property>
                   </object>
                 </child>

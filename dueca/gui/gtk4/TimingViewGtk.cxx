@@ -162,7 +162,7 @@ bool TimingViewGtk::complete()
   auto selection = gtk_single_selection_new(G_LIST_MODEL(gui.table_store));
   gtk_column_view_set_model(GTK_COLUMN_VIEW(gui.table),
                             GTK_SELECTION_MODEL(selection));
-  g_object_unref(selection);
+  // g_object_unref(selection);
 
   // also to the table with sync summary
   auto synctable = gui.gwindow["timingtable"];
@@ -175,12 +175,12 @@ bool TimingViewGtk::complete()
   }
   gtk_column_view_set_model(GTK_COLUMN_VIEW(synctable),
                             GTK_SELECTION_MODEL(selection2));
-  g_object_unref(selection2);
+  //g_object_unref(selection2);
 
   // request the DuecaView object to make an entry for my window,
   // opening it on activation
   gui.menuitem =
-    GtkDuecaView::single()->requestViewEntry("Timing View", GTK_WIDGET(window));
+    GtkDuecaView::single()->requestViewEntry("timing", "Timing View", GTK_WIDGET(window));
 
   return can_start;
 }

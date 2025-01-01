@@ -283,47 +283,48 @@ bool ChannelDataMonitorGtk4::isOpen() const
 }
 
 void ChannelDataMonitorGtk4::cbSetupName(GtkSignalListItemFactory *fact,
-                                         GtkListItem *object,
+                                         GtkListItem *item,
                                          gpointer user_data)
 {
   auto label = gtk_label_new("");
   auto expander = gtk_tree_expander_new();
   gtk_tree_expander_set_child(GTK_TREE_EXPANDER(expander), label);
-  gtk_list_item_set_child(object, expander);
+  gtk_list_item_set_child(item, expander);
 }
 
   /** Create widgets for a value column */
 void ChannelDataMonitorGtk4::cbSetupValue(GtkSignalListItemFactory *fact,
-                                          GtkListItem *object,
+                                          GtkListItem *item,
                                           gpointer user_data)
 {
   auto label = gtk_label_new("");
-  gtk_list_item_set_child(object, label);
+  gtk_list_item_set_child(item, label);
 }
 
   /** Bind name data */
 void ChannelDataMonitorGtk4::cbBindName(GtkSignalListItemFactory *fact,
-                                        GtkListItem *object, gpointer user_data)
+                                        GtkListItem *item, gpointer user_data)
 {
-  auto expander = gtk_list_item_get_child(object);
-  auto row = D_DATA_ENTRY(gtk_list_item_get_item(object));
+  auto expander = gtk_list_item_get_child(item);
+  auto row = gtk_list_item_get_item(item);
+  auto dat = D_DATA_ENTRY(gtk_tree_list_row_get_item(GTK_TREE_LIST_ROW(row)));
   auto label = gtk_tree_expander_get_child(GTK_TREE_EXPANDER(expander));
-  if (row->data.children.size()) {
+  if (dat->data.children.size()) {
     gtk_tree_expander_set_list_row(GTK_TREE_EXPANDER(expander),
                                    GTK_TREE_LIST_ROW(row));
   }
-  gtk_label_set_label(GTK_LABEL(label), row->data.label.c_str());
+  gtk_label_set_label(GTK_LABEL(label), dat->data.label.c_str());
 }
 
-  /** Bind value data */
 void ChannelDataMonitorGtk4::cbBindValue(GtkSignalListItemFactory *fact,
-                                         GtkListItem *object,
+                                         GtkListItem *item,
                                          gpointer user_data)
 {
-  auto label = gtk_list_item_get_child(object);
-  auto row = D_DATA_ENTRY(gtk_list_item_get_item(object));
-  if (row->data.children.size() == 0) {
-    gtk_label_set_label(GTK_LABEL(label), row->data.value.c_str());
+  auto label = gtk_list_item_get_child(item);
+  auto row = gtk_list_item_get_item(item);
+  auto dat = D_DATA_ENTRY(gtk_tree_list_row_get_item(GTK_TREE_LIST_ROW(row)));
+  if (dat->data.children.size() == 0) {
+    gtk_label_set_label(GTK_LABEL(label), dat->data.value.c_str());
   }
 }
 

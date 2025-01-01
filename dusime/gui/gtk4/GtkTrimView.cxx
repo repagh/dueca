@@ -116,8 +116,8 @@ GtkTrimView::GtkTrimView() :
 #endif
   // request the DuecaView object to make an entry for my window,
   // opening it on activation
-  menuitem = GTK_WIDGET(GtkDuecaView::single()->requestViewEntry(
-    "Trim Window", GTK_WIDGET(trim_view)));
+  menuitem = GtkDuecaView::single()->requestViewEntry("trim", "Trim Window",
+                                                      GTK_WIDGET(trim_view));
 
   // some assertions about the stuff
   //  assert(GTK_CTREE(trim_tree) != NULL);
@@ -166,6 +166,7 @@ void GtkTrimView::cancelCalculation(GtkButton *button, gpointer user_data)
 
 static void deep_refresh(GtkTreeStore *tree, GtkTreeIter *iter)
 {
+#if 0
   GtkTreeIter child;
   gboolean has_child =
     gtk_tree_model_iter_children(GTK_TREE_MODEL(tree), &child, iter);
@@ -206,6 +207,7 @@ static void deep_refresh(GtkTreeStore *tree, GtkTreeIter *iter)
   else {
     gtk_tree_store_set(tree, iter, 3, "");
   }
+#endif
 }
 #if 1
 void GtkTrimView::selectRow(GtkTreeView *ctree, GList *node, gint column,

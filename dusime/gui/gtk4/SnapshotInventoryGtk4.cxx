@@ -96,7 +96,6 @@ SnapshotInventoryGtk4::SnapshotInventoryGtk4(Entity *e, const char *part,
   window(),
   snaps_store(NULL),
   menuitem(NULL),
-  set_iterator(),
   reference_file(),
   store_file()
 {
@@ -287,9 +286,10 @@ bool SnapshotInventoryGtk4::complete()
     (std::string("Initials control - ") + getPart()).c_str());
 
   // insert in DUECA's menu
-  menuitem = GTK_WIDGET(GtkDuecaView::single()->requestViewEntry(
+  menuitem = GtkDuecaView::single()->requestViewEntry(
+    (std::string("initial_") + getPart()).c_str(),
     (std::string("Initial state - ") + getPart()).c_str(),
-    G_OBJECT(window["initials_view"])));
+    G_OBJECT(window["initials_view"]));
 
   return res;
 }
@@ -391,76 +391,80 @@ bool SnapshotInventoryGtk4::setPositionAndSize(const std::vector<int> &p)
 }
 
 void SnapshotInventoryGtk4::cbSetupLabel(GtkSignalListItemFactory *fact,
-                                         GtkListItem *object,
+                                         GtkListItem *item,
                                          gpointer user_data)
 {
   auto label = gtk_label_new("");
-  gtk_list_item_set_child(object, label);
-  g_object_unref(label);
+  gtk_list_item_set_child(item, label);
 }
 
 void SnapshotInventoryGtk4::cbSetupExpander(GtkSignalListItemFactory *fact,
-                                            GtkListItem *object,
+                                            GtkListItem *item,
                                             gpointer user_data)
 {
   auto label = gtk_label_new("");
   auto expander = gtk_tree_expander_new();
   gtk_tree_expander_set_child(GTK_TREE_EXPANDER(expander), label);
-  gtk_list_item_set_child(object, expander);
+  gtk_list_item_set_child(item, expander);
 }
 
 void SnapshotInventoryGtk4::cbBindName(GtkSignalListItemFactory *fact,
-                                       GtkListItem *object, gpointer user_data)
+                                       GtkListItem *item, gpointer user_data)
 {
-  auto expander = gtk_list_item_get_child(object);
-  auto row = D_SNAP_SHOT_SET(gtk_list_item_get_item(object));
+  auto expander = gtk_list_item_get_child(item);
+  auto row = gtk_list_item_get_item(item);
+  auto snap = D_SNAP_SHOT_SET(gtk_tree_list_row_get_item(GTK_TREE_LIST_ROW(row)));
   auto label = gtk_tree_expander_get_child(GTK_TREE_EXPANDER(expander));
-  if (row->snaps.size()) {
+  if (snap->snaps.size()) {
     gtk_tree_expander_set_list_row(GTK_TREE_EXPANDER(expander),
                                    GTK_TREE_LIST_ROW(row));
   }
-  gtk_label_set_label(GTK_LABEL(label), row->name.c_str());
+  gtk_label_set_label(GTK_LABEL(label), snap->name.c_str());
 }
 
 void SnapshotInventoryGtk4::cbBindDateTime(GtkSignalListItemFactory *fact,
-                                           GtkListItem *object,
+                                           GtkListItem *item,
                                            gpointer user_data)
 {
-  auto label = gtk_list_item_get_child(object);
-  auto row = D_SNAP_SHOT_SET(gtk_list_item_get_item(object));
-  gtk_label_set_label(GTK_LABEL(label), row->date_time.c_str());
+  auto label = gtk_list_item_get_child(item);
+  auto row = gtk_list_item_get_item(item);
+  auto snap = D_SNAP_SHOT_SET(gtk_tree_list_row_get_item(GTK_TREE_LIST_ROW(row)));
+  gtk_label_set_label(GTK_LABEL(label), snap->date_time.c_str());
 }
 
 void SnapshotInventoryGtk4::cbBindOrigin(GtkSignalListItemFactory *fact,
-                                         GtkListItem *object,
+                                         GtkListItem *item,
                                          gpointer user_data)
 {
-  auto row = D_SNAP_SHOT_SET(gtk_list_item_get_item(object));
-  if (row->snap) {
-    auto label = gtk_list_item_get_child(object);
-    gtk_label_set_label(GTK_LABEL(label), row->snap->origin.c_str());
+  auto row = gtk_list_item_get_item(item);
+  auto snap = D_SNAP_SHOT_SET(gtk_tree_list_row_get_item(GTK_TREE_LIST_ROW(row)));
+  if (snap->snap) {
+    auto label = gtk_list_item_get_child(item);
+    gtk_label_set_label(GTK_LABEL(label), snap->snap->origin.c_str());
   }
 }
 
 void SnapshotInventoryGtk4::cbBindCoding(GtkSignalListItemFactory *fact,
-                                         GtkListItem *object,
+                                         GtkListItem *item,
                                          gpointer user_data)
 {
-  auto row = D_SNAP_SHOT_SET(gtk_list_item_get_item(object));
-  if (row->snap) {
-    auto label = gtk_list_item_get_child(object);
-    gtk_label_set_label(GTK_LABEL(label), row->snap->coding.c_str());
+  auto row = gtk_list_item_get_item(item);
+  auto snap = D_SNAP_SHOT_SET(gtk_tree_list_row_get_item(GTK_TREE_LIST_ROW(row)));
+  if (snap->snap) {
+    auto label = gtk_list_item_get_child(item);
+    gtk_label_set_label(GTK_LABEL(label), snap->snap->coding.c_str());
   }
 }
 
 void SnapshotInventoryGtk4::cbBindSample(GtkSignalListItemFactory *fact,
-                                         GtkListItem *object,
+                                         GtkListItem *item,
                                          gpointer user_data)
 {
-  auto row = D_SNAP_SHOT_SET(gtk_list_item_get_item(object));
-  if (row->snap) {
-    auto label = gtk_list_item_get_child(object);
-    gtk_label_set_label(GTK_LABEL(label), row->snap->sample.c_str());
+  auto row = gtk_list_item_get_item(item);
+  auto snap = D_SNAP_SHOT_SET(gtk_tree_list_row_get_item(GTK_TREE_LIST_ROW(row)));
+  if (snap->snap) {
+    auto label = gtk_list_item_get_child(item);
+    gtk_label_set_label(GTK_LABEL(label), snap->snap->sample.c_str());
   }
 }
 

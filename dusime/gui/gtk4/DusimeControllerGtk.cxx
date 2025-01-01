@@ -174,12 +174,12 @@ void DusimeControllerGtk::refreshButtonState(const SimulationState &btn_state)
   gtk_widget_set_sensitive(snap, button_sens[idx_sens][5]);
 
   // given the current confirmed state, set the button image
-  gtk_dueca_button_set_image(inactive, button_image[int(btn_state.get())][0]);
-  gtk_dueca_button_set_image(holdcurrent,
+  gtk_dueca_button_load_image(inactive, button_image[int(btn_state.get())][0]);
+  gtk_dueca_button_load_image(holdcurrent,
                              button_image[int(btn_state.get())][1]);
-  gtk_dueca_button_set_image(calibrate, button_image[int(btn_state.get())][2]);
-  gtk_dueca_button_set_image(advance, button_image[int(btn_state.get())][3]);
-  gtk_dueca_button_set_image(replay, button_image[int(btn_state.get())][4]);
+  gtk_dueca_button_load_image(calibrate, button_image[int(btn_state.get())][2]);
+  gtk_dueca_button_load_image(advance, button_image[int(btn_state.get())][3]);
+  gtk_dueca_button_load_image(replay, button_image[int(btn_state.get())][4]);
 
   // There is a single button active/pressed, others are not
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(inactive),

@@ -56,8 +56,14 @@ private: // simulation data
   GtkGladeWindow window;
 
   /** Widget for this module/window in the main menu */
-  GtkWidget *menuitem;
+  GMenuItem *menuitem;
 
+  /** Window widget */
+  GtkWidget *channel_window;
+
+  /** Tree widget */
+  GtkColumnView *channel_tree;
+  
 public: // class name and trim/parameter tables
   /** Name of the module. */
   static const char *const classname;

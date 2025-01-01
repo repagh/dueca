@@ -53,7 +53,7 @@ private:
   GListStore *replay_store;
 
   /** Widget in the main DUECA menu */
-  GtkWidget *menuitem;
+  GMenuItem *menuitem;
 
   /** File for existing replay actions */
   std::string reference_file;
@@ -104,10 +104,7 @@ private:
   void cbSendReplay(GtkButton *button, gpointer gp);
 
   /** Select the action for after a replay */
-  void cbSelectHoldAfter(GtkWidget *widget, gpointer gp);
-
-  /** Select the action for after a replay */
-  void cbSelectAdvanceAfter(GtkWidget *widget, gpointer gp);
+  void cbSelectTodoAfter(GObject *widget, GParamSpec *pspec, gpointer gp);
 
   /** Closing via the window manager */
   gboolean cbDelete(GtkWidget *window, GdkEvent *event, gpointer user_data);
