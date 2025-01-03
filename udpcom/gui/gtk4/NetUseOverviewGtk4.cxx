@@ -63,6 +63,7 @@ bool NetUseOverviewGtk4::complete()
 
   static GladeCallbackTable cb_table[] = {
     { "close", "clicked", gtk_callback(&_ThisModule_::cbClose) },
+    { "net_use_view", "close-request", gtk_callback(&_ThisModule_::deleteView) },
     { NULL, NULL, NULL }
   };
 
@@ -129,8 +130,8 @@ bool NetUseOverviewGtk4::complete()
     capacity_log.push_back(NetCapacityLog(ii));
   }
 
-  menuitem = GTK_WIDGET(GtkDuecaView::single()->requestViewEntry(
-    "netuse", "Net Use View", GTK_WIDGET(window["net_use_view"])));
+  menuitem = GtkDuecaView::single()->requestViewEntry(
+    "netuse", "Net Use View", GTK_WIDGET(window["net_use_view"]));
   tlabel = window["maxtime_label"];
   sutlabel = window["sutlabel"];
 
@@ -254,7 +255,17 @@ void NetUseOverviewGtk4::cbClose(GtkButton *button, gpointer gp)
 {
   // do not do this directly, but go through the menu item. Also
   // updates the flag there + closes the window.
-  g_signal_emit_by_name(G_OBJECT(menuitem), "activate", NULL);
+  //g_signal_emit_by_name(G_OBJECT(menuitem), "activate", NULL);
+  GtkDuecaView::toggleView(menuitem);
+}
+
+gboolean NetUseOverviewGtk4::deleteView(GtkWindow *win, gpointer gp)
+{
+  // do not do this directly, but go through the menu item. Also
+  // updates the flag there + closes the window.
+  //g_signal_emit_by_name(G_OBJECT(menuitem), "activate", NULL);
+  GtkDuecaView::toggleView(menuitem);
+  return TRUE;
 }
 
 DUECA_NS_END;

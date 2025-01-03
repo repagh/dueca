@@ -115,7 +115,7 @@ void GtkHandler::init(bool xlib_lock)
   I_SYS("Initializing gtk4 application");
 
   // create an application
-  app = gtk_application_new(APPLICATION_ID, G_APPLICATION_FLAGS_NONE);
+  app = gtk_application_new(APPLICATION_ID, G_APPLICATION_NON_UNIQUE);
   g_signal_connect(app, "activate", G_CALLBACK(app_activate),
   		   reinterpret_cast<gpointer>(this));
   g_application_hold(G_APPLICATION(app));

@@ -105,7 +105,6 @@ struct _DChannelInfo
 G_DECLARE_FINAL_TYPE(DChannelInfo, d_channel_info, D, CHANNEL_INFO, GObject);
 G_DEFINE_TYPE(DChannelInfo, d_channel_info, G_TYPE_OBJECT);
 
-
 // constructor
 ChannelOverviewGtk4::ChannelOverviewGtk4(Entity *e, const char *part,
                                          const PrioritySpec &ps) :
@@ -118,7 +117,7 @@ ChannelOverviewGtk4::ChannelOverviewGtk4(Entity *e, const char *part,
   gladefile(DuecaPath::prepend("channel_overview-gtk4.ui")),
   monitor_gladefile(DuecaPath::prepend("channel_datamonitor-gtk4.ui")),
   window(),
-  menuitem(NULL)
+  menuaction(NULL)
 {
   //
 }
@@ -155,7 +154,7 @@ static void d_channel_info_class_init(DChannelInfoClass *klass)
 
 static void d_channel_info_init(DChannelInfo *self)
 {
-  new(self) _DChannelInfo();
+  new (self) _DChannelInfo();
 }
 
 static GListModel *add_data_element(gpointer _item, gpointer user_data)
@@ -218,8 +217,7 @@ bool ChannelOverviewGtk4::complete()
     { "close", "clicked", gtk_callback(&_ThisModule_::cbClose) },
     { "refresh_times", "clicked",
       gtk_callback(&_ThisModule_::cbRefreshCounts) },
-    { "channel_view", "close-request",
-      gtk_callback(&_ThisModule_::cbDelete) },
+    { "channel_view", "close-request", gtk_callback(&_ThisModule_::cbHide) },
 
     // for each of the columns in the column view, bind to one of my set-up
     // functions, which create the widgets to be shown there, and to
@@ -302,7 +300,7 @@ bool ChannelOverviewGtk4::complete()
       return false;
   }
 
-  menuitem = GtkDuecaView::single()->requestViewEntry(
+  menuaction = GtkDuecaView::single()->requestViewEntry(
     "channelview", "Channel View", G_OBJECT(channel_window));
 
   /* All your parameters have been set. You may do extended
@@ -316,16 +314,12 @@ ChannelOverviewGtk4::~ChannelOverviewGtk4()
   //
 }
 
-void ChannelOverviewGtk4::reflectChanges(unsigned ichan) 
+void ChannelOverviewGtk4::reflectChanges(unsigned ichan) { showChanges(); }
+
+void ChannelOverviewGtk4::reflectChanges(unsigned ichan, unsigned ientry)
 {
   showChanges();
 }
-
-void ChannelOverviewGtk4::reflectChanges(unsigned ichan, unsigned ientry) 
-{
-  showChanges();
-}
-
 
 void ChannelOverviewGtk4::reflectChanges(unsigned ichan, unsigned ientry,
                                          uint32_t ireader)
@@ -334,9 +328,10 @@ void ChannelOverviewGtk4::reflectChanges(unsigned ichan, unsigned ientry,
   showChanges();
 }
 
-void ChannelOverviewGtk4::reflectCounts() {
-  //gtk_widget_queue_draw(GTK_WIDGET(window["col_nwrites"]));
-  //gtk_widget_queue_draw(GTK_WIDGET(window["col_nreads"]));
+void ChannelOverviewGtk4::reflectCounts()
+{
+  // gtk_widget_queue_draw(GTK_WIDGET(window["col_nwrites"]));
+  // gtk_widget_queue_draw(GTK_WIDGET(window["col_nreads"]));
 }
 
 void ChannelOverviewGtk4::showChanges()
@@ -348,7 +343,7 @@ void ChannelOverviewGtk4::showChanges()
 
 void ChannelOverviewGtk4::cbClose(GtkButton *button, gpointer gp)
 {
-  g_signal_emit_by_name(G_OBJECT(menuitem), "activate", NULL);
+  GtkDuecaView::toggleView(menuaction);
 }
 
 void ChannelOverviewGtk4::cbRefreshCounts(GtkButton *button, gpointer gp)
@@ -356,10 +351,9 @@ void ChannelOverviewGtk4::cbRefreshCounts(GtkButton *button, gpointer gp)
   refreshCounts();
 }
 
-gboolean ChannelOverviewGtk4::cbDelete(GtkWidget *window, GdkEvent *event,
-                                       gpointer user_data)
+gboolean ChannelOverviewGtk4::cbHide(GtkWidget *window, gpointer user_data)
 {
-  g_signal_emit_by_name(G_OBJECT(menuitem), "activate", NULL);
+  GtkDuecaView::toggleView(menuaction);
   return TRUE;
 }
 
@@ -386,9 +380,9 @@ void ChannelOverviewGtk4::monitorToggle(GtkToggleButton *btn, _DChannelInfo *ci)
     ci->entry->monitor->close();
   }
 
-  //gtk_widget_queue_draw(GTK_WIDGET(btn));
-  //g_signal_emit_by_name(btn, "notify");
-  // showChanges();
+  // gtk_widget_queue_draw(GTK_WIDGET(btn));
+  // g_signal_emit_by_name(btn, "notify");
+  //  showChanges();
 }
 
 void ChannelOverviewGtk4::cbSetupLabel(GtkSignalListItemFactory *fact,

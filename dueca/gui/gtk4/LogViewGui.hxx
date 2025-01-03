@@ -71,7 +71,7 @@ public:
   void closeView(GtkButton *button, gpointer user_data);
 
   /** callback, close the view on deletion by window manager. */
-  gboolean deleteView(GtkWidget *window, GdkEvent *event, gpointer user_data);
+  gboolean deleteView(GtkWidget *window, gpointer user_data);
 
   /** callback, stop logging. */
   void pauseLogging(GtkButton *button, gpointer user_data);

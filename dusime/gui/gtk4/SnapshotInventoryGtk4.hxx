@@ -52,7 +52,7 @@ private:
   GListStore *snaps_store;
 
   /** Widget in the main DUECA menu */
-  GMenuItem *menuitem;
+  GAction *menuaction;
 
   /** File with existing initials */
   std::string reference_file;
@@ -109,7 +109,7 @@ private:
   void cbSelection(GtkSelectionModel *sel, guint position, guint n_items, gpointer gp);
 
   /** Closing via the window manager */
-  gboolean cbDelete(GtkWidget *window, GdkEvent *event, gpointer user_data);
+  gboolean cbDelete(GtkWidget *window, gpointer user_data);
 
   /** Window position */
   bool setPositionAndSize(const std::vector<int> &p);

@@ -12,10 +12,7 @@
 */
 
 #include "LogMessage.hxx"
-#include "gio/gio.h"
-#include "glib-object.h"
 #include "gtk/gtk.h"
-#include "gtk/gtkdropdown.h"
 #include <sstream>
 #define LogViewGui_cxx
 #include "LogViewGui.hxx"
@@ -92,7 +89,7 @@ struct LogViewGui::GuiInfo
   GListStore *table_store;
 
   /** The item we add to the menu of DUECA's main window. */
-  GMenuItem *menuitem;
+  GAction *menuaction;
 
   /** Table with log level controls. */
   GtkWidget *controltable;
@@ -108,7 +105,7 @@ struct LogViewGui::GuiInfo
     gladefile(gladefile),
     table(NULL),
     table_store(NULL),
-    menuitem(NULL),
+    menuaction(NULL),
     controltable(NULL),
     controltable_store(NULL)
   {}
@@ -172,13 +169,13 @@ static GladeCallbackTable cb_links[] = {
 
 void LogViewGui::closeView(GtkButton *button, gpointer user_data)
 {
-  g_signal_emit_by_name(G_OBJECT(gui.menuitem), "activate", NULL);
+  GtkDuecaView::toggleView(gui.menuaction);
 }
 
-gboolean LogViewGui::deleteView(GtkWidget *window, GdkEvent *event,
+gboolean LogViewGui::deleteView(GtkWidget *window, 
                                 gpointer user_data)
 {
-  g_signal_emit_by_name(G_OBJECT(gui.menuitem), "activate", NULL);
+  g_signal_emit_by_name(G_OBJECT(gui.menuaction), "activate", NULL);
 
   // with this, the click is handled. By preventing further handlers,
   // the window is not destroyed.
@@ -260,7 +257,7 @@ bool LogViewGui::open(unsigned int nrows)
 
   // request the DuecaView object to make an entry for my window,
   // opening it on activation
-  gui.menuitem = GtkDuecaView::single()->requestViewEntry("errorlog",
+  gui.menuaction= GtkDuecaView::single()->requestViewEntry("errorlog",
     "Error Log View", GTK_WIDGET(gui.gwindow["log_view"]));
 
   return true;
@@ -321,6 +318,7 @@ void LogViewGui::cbBindLogTime(GtkSignalListItemFactory *fact,
                                GtkListItem *item, gpointer user_data)
 {
   auto label = GTK_LABEL(gtk_list_item_get_child(item));
+  gtk_widget_set_halign(GTK_WIDGET(label), GTK_ALIGN_END);
   auto entry = D_LOG_ENTRY(gtk_list_item_get_item(item));
   std::stringstream time;
   entry->msg.time.showtime(time);
@@ -356,6 +354,7 @@ void LogViewGui::cbBindLogLineFile(GtkSignalListItemFactory *fact,
                                    GtkListItem *item, gpointer user_data)
 {
   auto label = GTK_LABEL(gtk_list_item_get_child(item));
+  gtk_widget_set_halign(GTK_WIDGET(label), GTK_ALIGN_START);
   auto entry = D_LOG_ENTRY(gtk_list_item_get_item(item));
   auto point = LogPoints::single().getPoint(entry->msg.logpoint,
                                             entry->msg.context.parts.node);
@@ -398,6 +397,7 @@ void LogViewGui::cbBindLogActivityName(GtkSignalListItemFactory *fact,
                                        GtkListItem *item, gpointer user_data)
 {
   auto label = GTK_LABEL(gtk_list_item_get_child(item));
+  gtk_widget_set_halign(GTK_WIDGET(label), GTK_ALIGN_START);
   auto entry = D_LOG_ENTRY(gtk_list_item_get_item(item));
   gtk_label_set_text(
     label, ActivityDescriptions::single()[entry->msg.context].name.c_str());
@@ -407,6 +407,7 @@ void LogViewGui::cbBindLogMessage(GtkSignalListItemFactory *fact,
                                   GtkListItem *item, gpointer user_data)
 {
   auto label = GTK_LABEL(gtk_list_item_get_child(item));
+  gtk_widget_set_halign(GTK_WIDGET(label), GTK_ALIGN_START);
   auto entry = D_LOG_ENTRY(gtk_list_item_get_item(item));
   gtk_label_set_text(label, entry->msg.message.c_str());
 }

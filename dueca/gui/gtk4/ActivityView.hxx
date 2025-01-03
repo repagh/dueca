@@ -56,7 +56,7 @@ public:
   void cbClose(GtkButton* button, gpointer gp);
 
   /** callback, close the view on deletion by window manager. */
-  gboolean deleteView(GtkWidget *window, GdkEvent *event, gpointer user_data);
+  gboolean deleteView(GtkWidget *window, gpointer user_data);
 
   /** Collect new activity log data. */
   void cbUpdate(GtkButton* button, gpointer gp);
@@ -74,7 +74,7 @@ public:
   int cbDraw(GtkDrawingArea *w, cairo_t *cr, int width, int height);
 
   /** realize widget stuff. */
-  int cbConfigure(GtkWidget *w, GdkEvent *event);
+  int cbConfigure(GtkWidget *w, gpointer user_data);
 
   /** React to a button press on a drawing area, by starting a
       highlight. */

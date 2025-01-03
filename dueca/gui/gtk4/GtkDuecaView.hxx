@@ -139,7 +139,10 @@ public:
 public:
   /** This call allows accessories in DUECA to get entries in the view
       menu. */
-  GMenuItem *requestViewEntry(const char *name, const char* label, void *object);
+  GAction *requestViewEntry(const char *name, const char* label, void *object);
+
+  /** Helper to change a view programatically */
+  static bool toggleView(GAction *action);
 
   /** Access the main window. */
   inline GtkGladeWindow &accessMainView() { return window; }
@@ -185,7 +188,7 @@ public:
                         gpointer user_data);
 
   /** callback, close the view on deletion by window manager. */
-  gboolean deleteView(GtkWidget *window, GdkEvent *event, gpointer user_data);
+  gboolean deleteView(GtkWindow *window, gpointer user_data);
 
   /** Wanting to quit DUECA. */
   void cbWantToQuit(GtkWidget *widget, gpointer user_data);

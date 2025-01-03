@@ -82,7 +82,7 @@ ReplayMasterGtk4::ReplayMasterGtk4(Entity *e, const char *part,
   gladefile(DuecaPath::prepend("replay_master-gtk4.ui")),
   window(),
   replay_store(NULL),
-  menuitem(NULL),
+  menuaction(NULL),
   reference_file(""),
   store_file("recordings-%Y%m%d_%H%M%S.ddff"),
   files_initialized(false)
@@ -290,8 +290,10 @@ bool ReplayMasterGtk4::complete()
 
        The advance mode cannot be controlled programmatically. Look in
        the options for your DUSIME module to enable this. */
-    W_MOD("ReplayMaster cannot set DUSIME to advance, disabling option to continue.");
-    auto model = GTK_STRING_LIST(gtk_drop_down_get_model(GTK_DROP_DOWN(window["replay_todoafter"])));
+    W_MOD("ReplayMaster cannot set DUSIME to advance, disabling option to "
+          "continue.");
+    auto model = GTK_STRING_LIST(
+      gtk_drop_down_get_model(GTK_DROP_DOWN(window["replay_todoafter"])));
     gtk_string_list_remove(model, 1);
   }
 
@@ -320,7 +322,7 @@ bool ReplayMasterGtk4::complete()
     (std::string("Record&Replay control - ") + getPart()).c_str());
 
   // insert in DUECA's menu
-  menuitem = GtkDuecaView::single()->requestViewEntry(
+  menuaction = GtkDuecaView::single()->requestViewEntry(
     (std::string("replay_") + getPart()).c_str(),
     (std::string("Replay Control - ") + getPart()).c_str(),
     window.getObject("replay_select_view"));
@@ -362,7 +364,8 @@ void ReplayMasterGtk4::stopModule(const TimeSpec &ts)
 
 void ReplayMasterGtk4::cbClose(GtkButton *button, gpointer gp)
 {
-  g_signal_emit_by_name(G_OBJECT(menuitem), "activate", NULL);
+  // g_signal_emit_by_name(G_OBJECT(menuaction), "activate", NULL);
+  GtkDuecaView::toggleView(menuaction);
 }
 
 void ReplayMasterGtk4::cbSendReplay(GtkButton *btn, gpointer gp)
@@ -427,11 +430,11 @@ void ReplayMasterGtk4::cbSendInitial(GtkButton *button, gpointer gp)
   }
 }
 
-gboolean ReplayMasterGtk4::cbDelete(GtkWidget *window, GdkEvent *event,
-                                    gpointer user_data)
+gboolean ReplayMasterGtk4::cbDelete(GtkWidget *window, gpointer user_data)
 {
   // fixes the menu check, and closes the window
-  g_signal_emit_by_name(G_OBJECT(menuitem), "activate", NULL);
+  // g_signal_emit_by_name(G_OBJECT(menuaction), "activate", NULL);
+  GtkDuecaView::toggleView(menuaction);
 
   // indicate that the event is handled
   return TRUE;

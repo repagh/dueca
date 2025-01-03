@@ -54,7 +54,7 @@ public:
   void requestSync(GtkButton *button, gpointer user_data);
 
   /** callback, close the view on deletion by window manager. */
-  gboolean deleteView(GtkWidget *window, GdkEvent *event, gpointer user_data);
+  gboolean deleteView(GtkWidget *window, gpointer user_data);
 
   /** Write a sync report to the interface */
   void updateSync(int node, const SyncReport &report);

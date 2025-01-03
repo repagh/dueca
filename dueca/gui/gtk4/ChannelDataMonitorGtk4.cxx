@@ -42,7 +42,7 @@ static void d_data_entry_init(DDataEntry *self)
   //
 }
 
-static DDataEntry *d_data_entry_new(const ChannelDataViewPair& p)
+static DDataEntry *d_data_entry_new(const ChannelDataViewPair &p)
 {
   auto res = D_DATA_ENTRY(g_object_new(d_data_entry_get_type(), NULL));
   res->data = p;
@@ -123,8 +123,7 @@ void ChannelDataMonitorGtk4::cbRefreshData(GtkButton *button, gpointer gp)
   master->refreshMonitor(channelno, entryno);
 }
 
-gboolean ChannelDataMonitorGtk4::cbDelete(GtkWidget *window, GdkEvent *event,
-                                          gpointer user_data)
+gboolean ChannelDataMonitorGtk4::cbDelete(GtkWidget *window, gpointer user_data)
 {
   master->closeMonitor(channelno, entryno);
   return TRUE;
@@ -146,8 +145,8 @@ inline const char *print_string(const JValue &value)
   return value.GetString();
 }
 
-void ChannelDataMonitorGtk4::insertJsonValue(
-  std::string& field, const JValue &value)
+void ChannelDataMonitorGtk4::insertJsonValue(std::string &field,
+                                             const JValue &value)
 {
   static const char *json_fix[] = { "null", "false", "true" };
 
@@ -187,7 +186,7 @@ void ChannelDataMonitorGtk4::insertJsonValue(
   }
 }
 
-void ChannelDataMonitorGtk4::insertJsonArray(dvplist_t& dl, dvplist_it li,
+void ChannelDataMonitorGtk4::insertJsonArray(dvplist_t &dl, dvplist_it li,
                                              const JValue &doc)
 {
   int idx = 0;
@@ -218,7 +217,7 @@ void ChannelDataMonitorGtk4::insertJsonArray(dvplist_t& dl, dvplist_it li,
   }
 }
 
-void ChannelDataMonitorGtk4::insertJson(dvplist_t& dl, dvplist_it li,
+void ChannelDataMonitorGtk4::insertJson(dvplist_t &dl, dvplist_it li,
                                         const JValue &doc)
 {
   for (JValue::ConstMemberIterator it = doc.MemberBegin();
@@ -283,8 +282,7 @@ bool ChannelDataMonitorGtk4::isOpen() const
 }
 
 void ChannelDataMonitorGtk4::cbSetupName(GtkSignalListItemFactory *fact,
-                                         GtkListItem *item,
-                                         gpointer user_data)
+                                         GtkListItem *item, gpointer user_data)
 {
   auto label = gtk_label_new("");
   auto expander = gtk_tree_expander_new();
@@ -294,8 +292,7 @@ void ChannelDataMonitorGtk4::cbSetupName(GtkSignalListItemFactory *fact,
 
   /** Create widgets for a value column */
 void ChannelDataMonitorGtk4::cbSetupValue(GtkSignalListItemFactory *fact,
-                                          GtkListItem *item,
-                                          gpointer user_data)
+                                          GtkListItem *item, gpointer user_data)
 {
   auto label = gtk_label_new("");
   gtk_list_item_set_child(item, label);
@@ -317,8 +314,7 @@ void ChannelDataMonitorGtk4::cbBindName(GtkSignalListItemFactory *fact,
 }
 
 void ChannelDataMonitorGtk4::cbBindValue(GtkSignalListItemFactory *fact,
-                                         GtkListItem *item,
-                                         gpointer user_data)
+                                         GtkListItem *item, gpointer user_data)
 {
   auto label = gtk_list_item_get_child(item);
   auto row = gtk_list_item_get_item(item);

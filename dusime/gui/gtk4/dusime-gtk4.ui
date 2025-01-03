@@ -153,7 +153,8 @@
         <child>
           <object class="GtkToggleButton" id="hw_off">
             <child>
-              <object class="GtkImage" id="hw_off_img" />
+              <object class="GtkImage" id="hw_off_img">
+              </object>
             </child>
             <layout>
               <property name="column">4</property>

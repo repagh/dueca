@@ -43,7 +43,7 @@ private: // simulation data
   GtkWidget                         *sutlabel;
 
   /** Menu item */
-  GtkWidget                         *menuitem;
+  GAction                           *menuitem;
 
   /** Canvases for load results */
   std::vector<GtkWidget*>            loadcanvas;
@@ -83,6 +83,9 @@ public:
 
   /** Close the window. */
   void cbClose(GtkButton* button, gpointer gp);
+
+  /** Close the window. */
+  gboolean deleteView(GtkWindow* win, gpointer gp);
 };
 
 DUECA_NS_END;

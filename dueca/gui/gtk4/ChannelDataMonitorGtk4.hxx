@@ -104,7 +104,7 @@ private:
   /** refresh data */
   void cbRefreshData(GtkButton *button, gpointer gp);
   /** window delete selected */
-  gboolean cbDelete(GtkWidget *window, GdkEvent *event, gpointer user_data);
+  gboolean cbDelete(GtkWidget *window, gpointer user_data);
   /** helper */
   void insertJsonValue(std::string &field, const json::Value &value);
   /** helper */

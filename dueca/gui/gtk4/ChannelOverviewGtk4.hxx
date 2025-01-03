@@ -56,7 +56,7 @@ private: // simulation data
   GtkGladeWindow window;
 
   /** Widget for this module/window in the main menu */
-  GMenuItem *menuitem;
+  GAction *menuaction;
 
   /** Window widget */
   GtkWidget *channel_window;
@@ -116,12 +116,7 @@ private:
   /** refresh read/write count */
   void cbRefreshCounts(GtkButton *button, gpointer gp);
   /** window delete selected */
-  gboolean cbDelete(GtkWidget *window, GdkEvent *event, gpointer user_data);
-  /** hover in the tree area */
-  gboolean cbHover(GtkWidget *window, GdkMotionEvent *event,
-                   gpointer user_data);
-  /** leave the tree area */
-  gboolean cbLeave(GtkWidget *window, GdkEvent *event, gpointer user_data);
+  gboolean cbHide(GtkWidget *window, gpointer user_data);
 
   /** setup for a label */
   void cbSetupLabel(GtkSignalListItemFactory *fact, GtkListItem *item,

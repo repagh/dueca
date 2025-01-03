@@ -61,7 +61,7 @@ class TimingViewGtk::GuiInfo
   GListStore *table_store;
 
   /** The item we add to the menu of DUECA's main window. */
-  GMenuItem *menuitem;
+  GAction *menuaction;
 
   /** List store for sync status table */
   GListStore *synctable_store;
@@ -70,7 +70,7 @@ class TimingViewGtk::GuiInfo
   GuiInfo(const vstring &gladefile) :
     gladefile(gladefile),
     table(NULL),
-    menuitem(NULL)
+    menuaction(NULL)
   {}
 };
 
@@ -175,12 +175,12 @@ bool TimingViewGtk::complete()
   }
   gtk_column_view_set_model(GTK_COLUMN_VIEW(synctable),
                             GTK_SELECTION_MODEL(selection2));
-  //g_object_unref(selection2);
+  // g_object_unref(selection2);
 
   // request the DuecaView object to make an entry for my window,
   // opening it on activation
-  gui.menuitem =
-    GtkDuecaView::single()->requestViewEntry("timing", "Timing View", GTK_WIDGET(window));
+  gui.menuaction = GtkDuecaView::single()->requestViewEntry(
+    "timing", "Timing View", GTK_WIDGET(window));
 
   return can_start;
 }
@@ -218,14 +218,14 @@ void TimingViewGtk::updateSync(int node, const SyncReport &report)
 
 void TimingViewGtk::activateMenuItem(GtkButton *button, gpointer user_data)
 {
-  g_signal_emit_by_name(G_OBJECT(gui.menuitem), "activate", NULL);
+  GtkDuecaView::toggleView(gui.menuaction);
+ //g_signal_emit_by_name(G_OBJECT(gui.menuaction), "activate", NULL);
 }
 
-gboolean TimingViewGtk::deleteView(GtkWidget *window, GdkEvent *event,
-                                   gpointer user_data)
+gboolean TimingViewGtk::deleteView(GtkWidget *window, gpointer user_data)
 {
-  g_signal_emit_by_name(G_OBJECT(gui.menuitem), "activate", NULL);
-
+  //g_signal_emit_by_name(G_OBJECT(gui.menuaction), "activate", NULL);
+  GtkDuecaView::toggleView(gui.menuaction);
   // with this, the click is handled.
   return TRUE;
 }
@@ -355,7 +355,8 @@ void cbBindSummaryLogtime(GtkSignalListItemFactory *fact, GtkListItem *item,
 {
   auto row = D_TIMING_SUMMARY(gtk_list_item_get_item(item));
   auto label = GTK_LABEL(gtk_list_item_get_child(item));
-  gtk_label_set_text(label, boost::str(boost::format("%8d") % row->tstart).c_str());
+  gtk_label_set_text(label,
+                     boost::str(boost::format("%8d") % row->tstart).c_str());
 }
 
 void cbBindSummaryMinStart(GtkSignalListItemFactory *fact, GtkListItem *item,
@@ -363,7 +364,8 @@ void cbBindSummaryMinStart(GtkSignalListItemFactory *fact, GtkListItem *item,
 {
   auto row = D_TIMING_SUMMARY(gtk_list_item_get_item(item));
   auto label = GTK_LABEL(gtk_list_item_get_child(item));
-  gtk_label_set_text(label, boost::str(boost::format("%5d") % row->data.min_start).c_str());
+  gtk_label_set_text(
+    label, boost::str(boost::format("%5d") % row->data.min_start).c_str());
 }
 
 void cbBindSummaryAvgStart(GtkSignalListItemFactory *fact, GtkListItem *item,
@@ -371,7 +373,8 @@ void cbBindSummaryAvgStart(GtkSignalListItemFactory *fact, GtkListItem *item,
 {
   auto row = D_TIMING_SUMMARY(gtk_list_item_get_item(item));
   auto label = GTK_LABEL(gtk_list_item_get_child(item));
-  gtk_label_set_text(label, boost::str(boost::format("%5d") % row->data.avg_start).c_str());
+  gtk_label_set_text(
+    label, boost::str(boost::format("%5d") % row->data.avg_start).c_str());
 }
 
 void cbBindSummaryMaxStart(GtkSignalListItemFactory *fact, GtkListItem *item,
@@ -379,7 +382,8 @@ void cbBindSummaryMaxStart(GtkSignalListItemFactory *fact, GtkListItem *item,
 {
   auto row = D_TIMING_SUMMARY(gtk_list_item_get_item(item));
   auto label = GTK_LABEL(gtk_list_item_get_child(item));
-  gtk_label_set_text(label, boost::str(boost::format("%5d") % row->data.max_start).c_str());
+  gtk_label_set_text(
+    label, boost::str(boost::format("%5d") % row->data.max_start).c_str());
 }
 
 void cbBindSummaryMinComplete(GtkSignalListItemFactory *fact, GtkListItem *item,
@@ -387,7 +391,8 @@ void cbBindSummaryMinComplete(GtkSignalListItemFactory *fact, GtkListItem *item,
 {
   auto row = D_TIMING_SUMMARY(gtk_list_item_get_item(item));
   auto label = GTK_LABEL(gtk_list_item_get_child(item));
-  gtk_label_set_text(label, boost::str(boost::format("%5d") % row->data.min_complete).c_str());
+  gtk_label_set_text(
+    label, boost::str(boost::format("%5d") % row->data.min_complete).c_str());
 }
 
 void cbBindSummaryAvgComplete(GtkSignalListItemFactory *fact, GtkListItem *item,
@@ -395,7 +400,8 @@ void cbBindSummaryAvgComplete(GtkSignalListItemFactory *fact, GtkListItem *item,
 {
   auto row = D_TIMING_SUMMARY(gtk_list_item_get_item(item));
   auto label = GTK_LABEL(gtk_list_item_get_child(item));
-  gtk_label_set_text(label, boost::str(boost::format("%5d") % row->data.avg_complete).c_str());
+  gtk_label_set_text(
+    label, boost::str(boost::format("%5d") % row->data.avg_complete).c_str());
 }
 
 void cbBindSummaryMaxComplete(GtkSignalListItemFactory *fact, GtkListItem *item,
@@ -403,7 +409,8 @@ void cbBindSummaryMaxComplete(GtkSignalListItemFactory *fact, GtkListItem *item,
 {
   auto row = D_TIMING_SUMMARY(gtk_list_item_get_item(item));
   auto label = GTK_LABEL(gtk_list_item_get_child(item));
-  gtk_label_set_text(label, boost::str(boost::format("%5d") % row->data.max_complete).c_str());
+  gtk_label_set_text(
+    label, boost::str(boost::format("%5d") % row->data.max_complete).c_str());
 }
 
 void cbBindSummaryNWarn(GtkSignalListItemFactory *fact, GtkListItem *item,
@@ -411,7 +418,8 @@ void cbBindSummaryNWarn(GtkSignalListItemFactory *fact, GtkListItem *item,
 {
   auto row = D_TIMING_SUMMARY(gtk_list_item_get_item(item));
   auto label = GTK_LABEL(gtk_list_item_get_child(item));
-  gtk_label_set_text(label, boost::str(boost::format("%5d") % row->data.n_warning).c_str());
+  gtk_label_set_text(
+    label, boost::str(boost::format("%5d") % row->data.n_warning).c_str());
 }
 
 void cbBindSummaryNCrit(GtkSignalListItemFactory *fact, GtkListItem *item,
@@ -419,7 +427,8 @@ void cbBindSummaryNCrit(GtkSignalListItemFactory *fact, GtkListItem *item,
 {
   auto row = D_TIMING_SUMMARY(gtk_list_item_get_item(item));
   auto label = GTK_LABEL(gtk_list_item_get_child(item));
-  gtk_label_set_text(label, boost::str(boost::format("%5d") % row->data.n_critical).c_str());
+  gtk_label_set_text(
+    label, boost::str(boost::format("%5d") % row->data.n_critical).c_str());
 }
 
 void cbBindSummaryNuser(GtkSignalListItemFactory *fact, GtkListItem *item,
@@ -427,7 +436,8 @@ void cbBindSummaryNuser(GtkSignalListItemFactory *fact, GtkListItem *item,
 {
   auto row = D_TIMING_SUMMARY(gtk_list_item_get_item(item));
   auto label = GTK_LABEL(gtk_list_item_get_child(item));
-  gtk_label_set_text(label, boost::str(boost::format("%5d") % row->data.n_user).c_str());
+  gtk_label_set_text(
+    label, boost::str(boost::format("%5d") % row->data.n_user).c_str());
 }
 
 DUECA_NS_END
