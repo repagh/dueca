@@ -188,7 +188,7 @@ results are shown as logs come in</property>
                   <object class="GtkColumnViewColumn">
                     <property name="title" translatable="yes">min cmpl</property>
                     <property name="factory">
-                      <object class="GtkSignalListItemFactory" id="summary_mincompl_fact" />
+                      <object class="GtkSignalListItemFactory" id="summary_mincmpl_fact" />
                     </property>
                   </object>
                 </child>
@@ -196,7 +196,7 @@ results are shown as logs come in</property>
                   <object class="GtkColumnViewColumn">
                     <property name="title" translatable="yes">avg cmpl</property>
                     <property name="factory">
-                      <object class="GtkSignalListItemFactory" id="summary_avgcompl_fact" />
+                      <object class="GtkSignalListItemFactory" id="summary_avgcmpl_fact" />
                     </property>
                   </object>
                 </child>

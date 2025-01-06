@@ -63,6 +63,9 @@ private: // simulation data
 
   /** Tree widget */
   GtkColumnView *channel_tree;
+
+  /** Store with the channel data */
+  GListStore *store;
   
 public: // class name and trim/parameter tables
   /** Name of the module. */

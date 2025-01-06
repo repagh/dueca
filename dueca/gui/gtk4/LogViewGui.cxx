@@ -162,7 +162,7 @@ static GladeCallbackTable cb_links[] = {
 
   // level table bind bindings
   { "ctr_memo_fact", "bind", gtk_callback(&LogViewGui::cbBindCatMEMO) },
-  { "ctr_explain_fact", "bind", gtk_callback(&LogViewGui::cbBindCatMEMO) },
+  { "ctr_explain_fact", "bind", gtk_callback(&LogViewGui::cbBindCatExplain) },
 
   { NULL, NULL, NULL }
 };

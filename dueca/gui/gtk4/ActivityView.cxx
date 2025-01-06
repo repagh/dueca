@@ -41,7 +41,7 @@
 /** If defined, also give an alphanumeric output on the log. */
 #undef DO_PRINT
 
-#define DEBPRINTLEVEL -1
+#define DEBPRINTLEVEL -2
 #include <debprint.h>
 
 DUECA_NS_START
@@ -194,7 +194,8 @@ bool ActivityView::complete()
     // add a callback for expose and one for realize
     g_signal_connect(G_OBJECT(gui.canvas[ii]), "realize",
                      G_CALLBACK(+[](GtkWidget *w, gpointer av) {
-                       reinterpret_cast<ActivityView *>(av)->cbConfigure(w, NULL);
+                       reinterpret_cast<ActivityView *>(av)->cbConfigure(w,
+                                                                         NULL);
                      }),
                      this);
     gtk_drawing_area_set_draw_func(
@@ -300,14 +301,13 @@ void ActivityView::cbClose(GtkButton *button, gpointer gp)
 {
   // do not do this directly, but go through the menu item. Also
   // updates the flag there + closes the window.
-  //g_signal_emit_by_name(G_OBJECT(gui.menuitem), "activate", NULL);
+  // g_signal_emit_by_name(G_OBJECT(gui.menuitem), "activate", NULL);
   GtkDuecaView::toggleView(gui.menuitem);
 }
 
-gboolean ActivityView::deleteView(GtkWidget *window,
-                                  gpointer user_data)
+gboolean ActivityView::deleteView(GtkWidget *window, gpointer user_data)
 {
-  //g_signal_emit_by_name(G_OBJECT(gui.menuitem), "activate", NULL);
+  // g_signal_emit_by_name(G_OBJECT(gui.menuitem), "activate", NULL);
   GtkDuecaView::toggleView(gui.menuitem);
 
   // with this, the click is handled.
@@ -318,8 +318,8 @@ void ActivityView::cbViewSpan(GtkWidget *spin, gpointer gp)
 {
   // vspan = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spin));
   vspan = gtk_range_get_value(GTK_RANGE(spin));
-  GtkAdjustment *adj2 =
-    gtk_scrollbar_get_adjustment(GTK_SCROLLBAR(gui.window.getObject("viewscroll")));
+  GtkAdjustment *adj2 = gtk_scrollbar_get_adjustment(
+    GTK_SCROLLBAR(gui.window.getObject("viewscroll")));
   gtk_adjustment_set_page_size(adj2, vspan);//->page_size = vspan;
   gtk_adjustment_set_upper(adj2, dspan);//->upper = dspan;
 
@@ -339,13 +339,14 @@ void ActivityView::cbRecordSpan(GtkWidget *spin, gpointer gp)
 {
   // dspan = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spin));
   dspan = gtk_range_get_value(GTK_RANGE(spin));
-  GtkAdjustment *adj2 =
-    gtk_scrollbar_get_adjustment(GTK_SCROLLBAR(gui.window.getObject("viewscroll")));
+  GtkAdjustment *adj2 = gtk_scrollbar_get_adjustment(
+    GTK_SCROLLBAR(gui.window.getObject("viewscroll")));
   gtk_adjustment_set_upper(adj2, dspan);
 }
 
 int ActivityView::cbViewScroll(GtkAdjustment *scroll, gpointer gp)
 {
+
   for (int node = current_logs.size(); node--;) {
     g_object_set_data(G_OBJECT(gui.canvas[node]), "dirty",
                       reinterpret_cast<gpointer>(1));
@@ -384,8 +385,8 @@ int ActivityView::cbDraw(GtkDrawingArea *w, cairo_t *cr, int width, int height)
 
     // what part to draw depends on the scroll bar and the selected
     // view span
-  GtkAdjustment *va =
-    gtk_scrollbar_get_adjustment(GTK_SCROLLBAR(gui.window.getObject("viewscroll")));
+  GtkAdjustment *va = gtk_scrollbar_get_adjustment(
+    GTK_SCROLLBAR(gui.window.getObject("viewscroll")));
   float tick_start = (ticks_per_sec * gtk_adjustment_get_value(va));
   float tick_end = tick_start + vspan * ticks_per_sec;
 
@@ -525,8 +526,8 @@ void ActivityView::cbDrawAreaButtonRelease(gint n_press, gdouble x, gdouble y,
   GtkWidget *w = gui.canvas[node];
   auto winwidth = gtk_widget_get_width(w);
   // figure out start and end times.
-  GtkAdjustment *va =
-    gtk_scrollbar_get_adjustment(GTK_SCROLLBAR(gui.window.getObject("viewscroll")));
+  GtkAdjustment *va = gtk_scrollbar_get_adjustment(
+    GTK_SCROLLBAR(gui.window.getObject("viewscroll")));
   float tick_start =
     ticks_per_sec * (gtk_adjustment_get_value(va) +
                      float(hlnew.start) / float(winwidth) * vspan);
@@ -600,17 +601,24 @@ void ActivityView::updateLines(unsigned node_id)
 
   // either configure or redraw
   graphene_rect_t alc;
-  if (gtk_widget_compute_bounds(gui.canvas[node_id], gui.canvas[node_id],
-                                &alc)) {
-    if (graphene_rect_get_height(&alc) <
-        current_logs[node_id].getNumLevels() * LINESPACE + LINESPACE / 2) {
-      gtk_widget_set_size_request(
-        gui.canvas[node_id], 400,
-        current_logs[node_id].getNumLevels() * LINESPACE + LINESPACE / 2);
-      gtk_widget_queue_resize(gui.canvas[node_id]);
-    }
+  if (!gtk_widget_compute_bounds(gui.canvas[node_id], gui.canvas[node_id],
+                                 &alc)) {
+    /* DUECA UI.
+
+       Cannot, for some reason, get the size of the current activity drawing
+       canvas.
+    */
+  }
+  else if (graphene_rect_get_height(&alc) <
+           current_logs[node_id].getNumLevels() * LINESPACE + LINESPACE / 2) {
+    gtk_widget_set_size_request(
+      gui.canvas[node_id], 400,
+      current_logs[node_id].getNumLevels() * LINESPACE + LINESPACE / 2);
+    gtk_widget_queue_resize(gui.canvas[node_id]);
+    DEB("Drawing area resize");
   }
   else {
+    DEB("Queueing a redraw");
     gtk_widget_queue_draw(gui.canvas[node_id]);
   }
 }

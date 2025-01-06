@@ -98,6 +98,7 @@ struct _DChannelInfo
   std::shared_ptr<ChannelOverview::ChannelInfoSet::EntryInfoSet> entry;
   std::shared_ptr<ChannelOverview::ChannelInfoSet::EntryInfoSet::ReadInfoSet>
     reader;
+  GListStore *sublist;
 };
 
 // GTK4
@@ -127,6 +128,7 @@ d_channel_info_new(std::shared_ptr<ChannelOverview::ChannelInfoSet> channel)
 {
   auto res = D_CHANNEL_INFO(g_object_new(d_channel_info_get_type(), NULL));
   res->channel = channel;
+  res->sublist = NULL;
   return res;
 }
 
@@ -135,6 +137,7 @@ DChannelInfo *d_channel_info_new(
 {
   auto res = D_CHANNEL_INFO(g_object_new(d_channel_info_get_type(), NULL));
   res->entry = entry;
+  res->sublist = NULL;
   return res;
 }
 
@@ -144,6 +147,7 @@ DChannelInfo *d_channel_info_new(
 {
   auto res = D_CHANNEL_INFO(g_object_new(d_channel_info_get_type(), NULL));
   res->reader = reader;
+  res->sublist = NULL;
   return res;
 }
 
@@ -154,7 +158,12 @@ static void d_channel_info_class_init(DChannelInfoClass *klass)
 
 static void d_channel_info_init(DChannelInfo *self)
 {
-  new (self) _DChannelInfo();
+  // placement construction to get correct list initialization
+  new (&(self->channel)) std::shared_ptr<ChannelOverview::ChannelInfoSet>;
+  new (&(self->entry))
+    std::shared_ptr<ChannelOverview::ChannelInfoSet::EntryInfoSet>;
+  new (&(self->reader))
+    std::shared_ptr<ChannelOverview::ChannelInfoSet::EntryInfoSet::ReadInfoSet>;
 }
 
 static GListModel *add_data_element(gpointer _item, gpointer user_data)
@@ -167,6 +176,7 @@ static GListModel *add_data_element(gpointer _item, gpointer user_data)
 
       g_list_store_append(lm, gpointer(d_channel_info_new(e)));
     }
+    item->sublist = lm;
     return G_LIST_MODEL(lm);
   }
 
@@ -176,6 +186,7 @@ static GListModel *add_data_element(gpointer _item, gpointer user_data)
     for (auto &r : item->entry->rdata) {
       g_list_store_append(lm, gpointer(d_channel_info_new(r)));
     }
+    item->sublist = lm;
     return G_LIST_MODEL(lm);
   }
 
@@ -280,7 +291,7 @@ bool ChannelOverviewGtk4::complete()
   channel_tree = GTK_COLUMN_VIEW(window["channel_col_view"]);
   // the backing is a gtk list store with a custom-defined g object, which
   // only links to the data in the application
-  auto store = g_list_store_new(d_channel_info_get_type());
+  store = g_list_store_new(d_channel_info_get_type());
   auto model = gtk_tree_list_model_new(G_LIST_MODEL(store), FALSE, FALSE,
                                        add_data_element, NULL, NULL);
   auto selection = gtk_single_selection_new(G_LIST_MODEL(model));
@@ -314,18 +325,196 @@ ChannelOverviewGtk4::~ChannelOverviewGtk4()
   //
 }
 
-void ChannelOverviewGtk4::reflectChanges(unsigned ichan) { showChanges(); }
+static bool findPlaceInList(GListModel *list, unsigned &loc,
+                            const std::function<int(gpointer)> &compareIt)
+{
+  auto n = g_list_model_get_n_items(list);
+  for (auto i = n; i--;) {
+    gpointer item = g_list_model_get_item(list, i);
+    switch (compareIt(item)) {
+    case 0: // match
+      loc = i;
+      return true;
+    case -1: // item in list is smaller
+      loc = i + 1;
+      return false;
+    case 1: // item in list (still) bigger
+      break;
+    }
+  }
+  loc = 0;
+  return false;
+}
+
+void ChannelOverviewGtk4::reflectChanges(unsigned ichan)
+{
+  // channels (should have) consecutive numbering corresponding to the store?
+  unsigned idx;
+  if (findPlaceInList(G_LIST_MODEL(store), idx, [ichan](gpointer i) {
+        if (D_CHANNEL_INFO(i)->channel->chanid == ichan)
+          return 0;
+        if (D_CHANNEL_INFO(i)->channel->chanid > ichan)
+          return 1;
+        return -1;
+      })) {
+
+    // channel was found, stuff changed, splice the same thing back again here
+    auto citem = g_list_model_get_item(G_LIST_MODEL(store), ichan);
+    g_object_ref(citem);
+    g_list_store_splice(store, idx, 1, &citem, 1);
+    g_object_unref(citem);
+  }
+  else {
+
+    // new channel to the list at place idx
+    auto citem =
+      reinterpret_cast<gpointer>(d_channel_info_new(infolist[ichan]));
+    g_list_store_splice(store, idx, 0, &citem, 1);
+  }
+}
 
 void ChannelOverviewGtk4::reflectChanges(unsigned ichan, unsigned ientry)
 {
-  showChanges();
+  // channel must be there already
+  unsigned idxc;
+  if (!findPlaceInList(G_LIST_MODEL(store), idxc, [ichan](gpointer i) {
+        if (D_CHANNEL_INFO(i)->channel->chanid == ichan)
+          return 0;
+        if (D_CHANNEL_INFO(i)->channel->chanid > ichan)
+          return 1;
+        return -1;
+      })) {
+    assert(0);
+  }
+
+  // find the channel info entry
+  auto citem = D_CHANNEL_INFO(g_list_model_get_item(G_LIST_MODEL(store), idxc));
+
+  // now find the entry in the sublist.
+  if (citem->sublist) {
+    unsigned idxe;
+    if (findPlaceInList(G_LIST_MODEL(citem->sublist), idxe,
+                        [ientry](gpointer i) {
+                          if (D_CHANNEL_INFO(i)->entry->wdata.entryid == ientry)
+                            return 0;
+                          if (D_CHANNEL_INFO(i)->entry->wdata.entryid > ientry)
+                            return 1;
+                          return -1;
+                        })) {
+
+      // entry may be changed or deleted?
+      if (infolist[ichan]->entries[ientry].get()) {
+
+        // changed
+        auto eitem = g_list_model_get_item(G_LIST_MODEL(citem->sublist), idxe);
+        g_object_ref(eitem);
+        g_list_store_splice(citem->sublist, idxe, 1, &eitem, 1);
+        g_object_unref(eitem);
+      }
+      else {
+
+        // deleted
+        g_list_store_splice(citem->sublist, idxe, 1, NULL, 0);
+      }
+    }
+    else {
+
+      // new entry at location idxe
+      auto eitem = reinterpret_cast<gpointer>(
+        d_channel_info_new(infolist[ichan]->entries[ientry]));
+      g_list_store_splice(store, idxe, 0, &eitem, 1);
+    }
+  }
+}
+
+typedef std::list<
+  std::shared_ptr<ChannelOverview::ChannelInfoSet::EntryInfoSet::ReadInfoSet>>
+  rlist_t;
+static auto findReader(unsigned readerid, const rlist_t &rdata)
+{
+  for (rlist_t::const_iterator ii = rdata.begin(); ii != rdata.end(); ii++) {
+    if (readerid == (*ii)->readerid)
+      return ii;
+  }
+  return rdata.end();
 }
 
 void ChannelOverviewGtk4::reflectChanges(unsigned ichan, unsigned ientry,
                                          uint32_t ireader)
 {
-  // for now, redraw queue the whole?
-  showChanges();
+  // channel must be there already
+  unsigned idxc;
+  if (!findPlaceInList(G_LIST_MODEL(store), idxc, [ichan](gpointer i) {
+        if (D_CHANNEL_INFO(i)->channel->chanid == ichan)
+          return 0;
+        if (D_CHANNEL_INFO(i)->channel->chanid > ichan)
+          return 1;
+        return -1;
+      })) {
+    assert(0);
+  }
+
+  // find the channel info entry
+  auto citem = D_CHANNEL_INFO(g_list_model_get_item(G_LIST_MODEL(store), idxc));
+
+  // now find the entry in the sublist.
+  if (citem->sublist) {
+    unsigned idxe;
+    if (!findPlaceInList(
+          G_LIST_MODEL(citem->sublist), idxe, [ientry](gpointer i) {
+            if (D_CHANNEL_INFO(i)->entry->wdata.entryid == ientry)
+              return 0;
+            if (D_CHANNEL_INFO(i)->entry->wdata.entryid > ientry)
+              return 1;
+            return -1;
+          })) {
+      assert(0);
+    }
+
+    // find the entry info
+    auto eitem =
+      D_CHANNEL_INFO(g_list_model_get_item(G_LIST_MODEL(citem->sublist), idxe));
+
+    // is the reader list visible?
+    if (eitem->sublist) {
+
+      // find the reader info in the overview list
+      auto itr = findReader(ireader, infolist[ichan]->entries[ientry]->rdata);
+
+      // find the index in the reader list
+      unsigned idxr;
+      if (findPlaceInList(G_LIST_MODEL(eitem->sublist), idxr,
+                          [ireader](gpointer i) {
+                            if (D_CHANNEL_INFO(i)->reader->readerid == ireader)
+                              return 0;
+                            if (D_CHANNEL_INFO(i)->reader->readerid > ireader)
+                              return 1;
+                            return -1;
+                          })) {
+
+        if (itr == infolist[ichan]->entries[ientry]->rdata.end()) {
+
+          // gone from the overview, remove also from the reader list
+          g_list_store_splice(eitem->sublist, idxr, 1, NULL, 0);
+        }
+        else {
+
+          // apparently updated, splice trick
+          auto ritem =
+            g_list_model_get_item(G_LIST_MODEL(eitem->sublist), idxr);
+          g_object_ref(ritem);
+          g_list_store_splice(eitem->sublist, idxr, 1, &ritem, 1);
+          g_object_unref(ritem);
+        }
+      }
+      else {
+
+        // add to the list
+        auto ritem = reinterpret_cast<gpointer>(d_channel_info_new(*itr));
+        g_list_store_splice(store, idxr, 0, &ritem, 1);
+      }
+    }
+  }
 }
 
 void ChannelOverviewGtk4::reflectCounts()

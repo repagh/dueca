@@ -144,7 +144,7 @@ public:
                           gpointer user_data);
 
   /** bind summary */
-  void cbBindSummaryNuser(GtkSignalListItemFactory *fact, GtkListItem *object,
+  void cbBindSummaryNUser(GtkSignalListItemFactory *fact, GtkListItem *object,
                           gpointer user_data);
 };
 
