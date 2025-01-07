@@ -219,11 +219,11 @@ struct dco_traits<fixvector<N, D>> : public dco_traits_iterablefix,
   /** Helper function, creates a representative classname. */
   static const char* _getclassname()
   {
-    static char *cname = NULL;
+    static const char *cname = NULL;
     if (!cname) {
-      auto _n = boost::str(boost::format("fixvector<%d,%s>") % N % dco_traits<D>::_getclassname());
-      cname = new char[_n.size()+1]; cname[_n.size()] = '\0';
-      strncpy(cname, _n.c_str(), _n.size());
+      PrintToChars _n;
+      _n << "fixvector<" << N << "," << dco_traits<D>::_getclassname() << ">";
+      cname = _n.getNewCString();
     }
     return cname;
   }
