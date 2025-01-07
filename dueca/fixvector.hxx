@@ -15,15 +15,15 @@
 
 #pragma once
 #define fixvector_hxx
-#include "AmorphStore.hxx"
 #include <CommObjectTraits.hxx>
 #include <PackTraits.hxx>
 #include <dueca_ns.h>
 #include <iterator>
+#include <AmorphStore.hxx>
 #include <string>
 #include <type_traits>
 #include <vectorexceptions.hxx>
-#include <sstream>
+#include <boost/format.hpp>
 
 DUECA_NS_START;
 
@@ -219,13 +219,15 @@ struct dco_traits<fixvector<N, D>> : public dco_traits_iterablefix,
   /** Helper function, creates a representative classname. */
   static const char* _getclassname()
   {
-    static std::stringstream cname;
-    if (cname.str().size() == 0) {
-      cname << "fixvector<" << N << ","
-            << dco_traits<D>::_getclassname() << ">";
+    static char *cname = NULL;
+    if (!cname) {
+      auto _n = boost::str(boost::format("fixvector<%d,%s>") % N % dco_traits<D>::_getclassname());
+      cname = new char[_n.size()+1]; cname[_n.size()] = '\0';
+      strncpy(cname, _n.c_str(), _n.size());
     }
-    return cname.str().c_str();
+    return cname;
   }
+
   /** Value type for the elements of a trait's target */
   typedef D value_type;
   /** Value type for the keys of a trait's target, not used. */
