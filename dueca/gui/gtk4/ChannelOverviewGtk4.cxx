@@ -124,7 +124,7 @@ ChannelOverviewGtk4::ChannelOverviewGtk4(Entity *e, const char *part,
 }
 
 DChannelInfo *
-d_channel_info_new(std::shared_ptr<ChannelOverview::ChannelInfoSet> channel)
+d_channel_info_new(std::shared_ptr<ChannelOverview::ChannelInfoSet> &channel)
 {
   auto res = D_CHANNEL_INFO(g_object_new(d_channel_info_get_type(), NULL));
   res->channel = channel;
@@ -133,7 +133,7 @@ d_channel_info_new(std::shared_ptr<ChannelOverview::ChannelInfoSet> channel)
 }
 
 DChannelInfo *d_channel_info_new(
-  std::shared_ptr<ChannelOverview::ChannelInfoSet::EntryInfoSet> entry)
+  std::shared_ptr<ChannelOverview::ChannelInfoSet::EntryInfoSet> &entry)
 {
   auto res = D_CHANNEL_INFO(g_object_new(d_channel_info_get_type(), NULL));
   res->entry = entry;
@@ -142,8 +142,8 @@ DChannelInfo *d_channel_info_new(
 }
 
 DChannelInfo *d_channel_info_new(
-  std::shared_ptr<ChannelOverview::ChannelInfoSet::EntryInfoSet::ReadInfoSet>
-    reader)
+  const std::shared_ptr<
+    ChannelOverview::ChannelInfoSet::EntryInfoSet::ReadInfoSet> &reader)
 {
   auto res = D_CHANNEL_INFO(g_object_new(d_channel_info_get_type(), NULL));
   res->reader = reader;
@@ -177,7 +177,9 @@ static GListModel *add_data_element(gpointer _item, gpointer user_data)
       g_list_store_append(lm, gpointer(d_channel_info_new(e)));
     }
     item->sublist = lm;
-    DEB("expand for entries, channel " << item->channel->chanid << " list " << reinterpret_cast<void*>(lm) << " check " << G_IS_LIST_STORE(lm));
+    DEB("expand for entries, channel " << item->channel->chanid << " list "
+                                       << reinterpret_cast<void *>(lm)
+                                       << " check " << G_IS_LIST_STORE(lm));
     g_object_ref(lm);
     return G_LIST_MODEL(lm);
   }
@@ -189,7 +191,9 @@ static GListModel *add_data_element(gpointer _item, gpointer user_data)
       g_list_store_append(lm, gpointer(d_channel_info_new(r)));
     }
     item->sublist = lm;
-    DEB("expand for readers, entry " << item->entry->wdata.entryid << " list " << reinterpret_cast<void*>(lm) << " check " << G_IS_LIST_STORE(lm));
+    DEB("expand for readers, entry " << item->entry->wdata.entryid << " list "
+                                     << reinterpret_cast<void *>(lm)
+                                     << " check " << G_IS_LIST_STORE(lm));
     return G_LIST_MODEL(lm);
   }
 
@@ -379,6 +383,13 @@ void ChannelOverviewGtk4::reflectChanges(unsigned ichan)
 
 void ChannelOverviewGtk4::reflectChanges(unsigned ichan, unsigned ientry)
 {
+  if (infolist[ichan]->entries[ientry]) {
+    DEB("Channel" << ichan << " adding/modifying entry " << ientry);
+  }
+  else {
+    DEB("Channel" << ichan << " removing entry " << ientry);
+  }
+
   // channel must be there already
   unsigned idxc;
   if (!findPlaceInList(G_LIST_MODEL(store), idxc, [ichan](gpointer i) {
@@ -402,7 +413,9 @@ void ChannelOverviewGtk4::reflectChanges(unsigned ichan, unsigned ientry)
   // now find the entry in the sublist.
   if (citem->sublist) {
 
-    DEB("Adding entry to channel " << citem->channel->chanid << " list " << reinterpret_cast<void*>(citem->sublist));
+    DEB("Changing entry in channel "
+        << citem->channel->chanid << " list "
+        << reinterpret_cast<void *>(citem->sublist));
     unsigned idxe;
     if (findPlaceInList(G_LIST_MODEL(citem->sublist), idxe,
                         [ientry](gpointer i) {
@@ -437,7 +450,6 @@ void ChannelOverviewGtk4::reflectChanges(unsigned ichan, unsigned ientry)
       g_object_unref(eitem);
     }
   }
-
 }
 
 typedef std::list<
@@ -455,6 +467,19 @@ static auto findReader(unsigned readerid, const rlist_t &rdata)
 void ChannelOverviewGtk4::reflectChanges(unsigned ichan, unsigned ientry,
                                          uint32_t ireader)
 {
+#if DEBPRINTLEVEL >= 0
+
+  if (infolist[ichan]->entries[ientry]->getReader(ireader) !=
+      infolist[ichan]->entries[ientry]->rdata.end()) {
+    DEB("Channel" << ichan << " e " << ientry << " adding/modifying reader "
+                  << ireader);
+  }
+  else {
+    DEB("Channel" << ichan << " e " << ientry << " removing reader "
+                  << ireader);
+  }
+#endif
+
   // channel must be there already
   unsigned idxc;
   if (!findPlaceInList(G_LIST_MODEL(store), idxc, [ichan](gpointer i) {

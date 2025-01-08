@@ -268,7 +268,7 @@ unsigned ChannelOverview::_processReadInfo(const ChannelReadInfo& data)
        (new ChannelInfoSet::EntryInfoSet::ReadInfoSet(readerid, data)));
   }
 
-  reflectChanges(chanid, entryid, data.creationid);
+  reflectChanges(chanid, entryid, readerid);
   return readerid;
 }
 
@@ -287,6 +287,13 @@ ChannelOverview::ChannelInfoSet::EntryInfoSet::EntryInfoSet
   seq_id(0),
   monitor(NULL)
 { }
+
+ChannelOverview::ChannelInfoSet::EntryInfoSet::readerlist_t::const_iterator ChannelOverview::ChannelInfoSet::EntryInfoSet::getReader(unsigned readerid) const
+{
+  readerlist_t::const_iterator ii = rdata.begin();
+  for (; ii != rdata.end() && (*ii)->readerid != readerid; ii++);
+  return ii;
+}
 
 ChannelOverview::ChannelInfoSet::EntryInfoSet::ReadInfoSet::ReadInfoSet
 (unsigned readerid, const ChannelReadInfo& rdata) :
