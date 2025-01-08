@@ -166,6 +166,13 @@ static void d_channel_info_init(DChannelInfo *self)
     std::shared_ptr<ChannelOverview::ChannelInfoSet::EntryInfoSet::ReadInfoSet>;
 }
 
+static void d_channel_info_clear(DChannelInfo *ci)
+{
+  ci->channel.reset();
+  ci->entry.reset();
+  ci->reader.reset();
+}
+
 static GListModel *add_data_element(gpointer _item, gpointer user_data)
 {
   auto item = D_CHANNEL_INFO(_item);
@@ -438,6 +445,8 @@ void ChannelOverviewGtk4::reflectChanges(unsigned ichan, unsigned ientry)
       else {
 
         // deleted
+        auto eitem = g_list_model_get_item(G_LIST_MODEL(citem->sublist), idxe);
+        d_channel_info_clear(D_CHANNEL_INFO(eitem));
         g_list_store_splice(citem->sublist, idxe, 1, NULL, 0);
       }
     }
@@ -539,6 +548,9 @@ void ChannelOverviewGtk4::reflectChanges(unsigned ichan, unsigned ientry,
         if (itr == infolist[ichan]->entries[ientry]->rdata.end()) {
 
           // gone from the overview, remove also from the reader list
+          auto ritem =
+            g_list_model_get_item(G_LIST_MODEL(eitem->sublist), idxr);
+          d_channel_info_clear(D_CHANNEL_INFO(ritem));
           g_list_store_splice(eitem->sublist, idxr, 1, NULL, 0);
         }
         else {
