@@ -268,7 +268,7 @@ unsigned ChannelOverview::_processReadInfo(const ChannelReadInfo& data)
        (new ChannelInfoSet::EntryInfoSet::ReadInfoSet(readerid, data)));
   }
 
-  reflectChanges(chanid, entryid, readerid);
+  reflectChanges(chanid, entryid, readerid, data.creationid);
   return readerid;
 }
 
@@ -288,10 +288,10 @@ ChannelOverview::ChannelInfoSet::EntryInfoSet::EntryInfoSet
   monitor(NULL)
 { }
 
-ChannelOverview::ChannelInfoSet::EntryInfoSet::readerlist_t::const_iterator ChannelOverview::ChannelInfoSet::EntryInfoSet::getReader(unsigned readerid) const
+ChannelOverview::ChannelInfoSet::EntryInfoSet::readerlist_t::const_iterator ChannelOverview::ChannelInfoSet::EntryInfoSet::getReader(unsigned creationid) const
 {
   readerlist_t::const_iterator ii = rdata.begin();
-  for (; ii != rdata.end() && (*ii)->readerid != readerid; ii++);
+  for (; ii != rdata.end() && (*ii)->rdata.creationid != creationid; ii++);
   return ii;
 }
 
@@ -484,7 +484,7 @@ void ChannelOverview::reflectChanges(unsigned chanid, unsigned entryid)
 }
 
 void ChannelOverview::reflectChanges(unsigned chanid, unsigned entryid,
-                                     uint32_t readid)
+                                     uint32_t readid, unsigned creationid)
 {
   DEB("updated channel " << chanid << " entry " << entryid);
 }

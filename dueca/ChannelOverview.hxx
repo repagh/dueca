@@ -322,7 +322,7 @@ protected:
   virtual void reflectChanges(unsigned channelid, unsigned entryid);
   /** update model */
   virtual void reflectChanges(unsigned channelid, unsigned entryid,
-                              uint32_t readerid);
+                              uint32_t readerid, unsigned creationid);
   /** update counts */
   virtual void reflectCounts();
 
