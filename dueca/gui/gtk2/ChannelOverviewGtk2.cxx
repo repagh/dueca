@@ -553,7 +553,7 @@ void ChannelOverviewGtk2::reflectChanges(unsigned ichan, unsigned ientry,
     gboolean not_at_end = TRUE;
     gtk_tree_model_get
       (GTK_TREE_MODEL(store), &itreader, 12, &reader_in_tree, -1);
-    while (ireader > reader_in_tree && not_at_end == TRUE) {
+    while (creationid > reader_in_tree && not_at_end == TRUE) {
       position++;
       not_at_end = gtk_tree_model_iter_next(GTK_TREE_MODEL(store), &itreader);
       if (not_at_end) {
@@ -565,9 +565,9 @@ void ChannelOverviewGtk2::reflectChanges(unsigned ichan, unsigned ientry,
   auto re = std::find_if
     (infolist[ichan]->entries[ientry]->rdata.begin(),
      infolist[ichan]->entries[ientry]->rdata.end(),
-     match_readid(ireader));
+     match_readid(creationid));
 
-  if (ireader != reader_in_tree &&
+  if (creationid != reader_in_tree &&
       re != infolist[ichan]->entries[ientry]->rdata.end()) {
 
     // new entry
@@ -587,7 +587,7 @@ void ChannelOverviewGtk2::reflectChanges(unsigned ichan, unsigned ientry,
        17, (*re)->rdata.sequential ? sequent_icon[0] : sequent_icon[1],
        -1);
   }
-  else if (ireader == reader_in_tree &&
+  else if (creationid == reader_in_tree &&
            re == infolist[ichan]->entries[ientry]->rdata.end()) {
 
     // delete the entry
@@ -598,7 +598,7 @@ void ChannelOverviewGtk2::reflectChanges(unsigned ichan, unsigned ientry,
 
        Failure updating entry information
     */
-    E_XTR("Channel overview logic failure " << ireader);
+    E_XTR("Channel overview logic failure " << creationid);
   }
 }
 
