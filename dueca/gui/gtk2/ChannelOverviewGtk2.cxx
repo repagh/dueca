@@ -52,7 +52,7 @@ const ParameterTable* ChannelOverviewGtk2::getMyParameterTable()
 
     { "count-delay",
       new VarProbe<_ThisModule_,unsigned>
-      (&_ThisModule_::delay_countcollect),
+      (&ChannelOverviewGtk2::delay_countcollect),
       "Delay to wait before collecting a requested count" },
 
     { "glade-file",
