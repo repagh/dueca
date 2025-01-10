@@ -384,6 +384,7 @@ void ChannelOverview::processWriteInfo(const TimeSpec& ts, ChannelReadToken*& r)
 
           // just in case, remove the monitor
           delete infolist[chanid]->entries[entryid]->monitor;
+          infolist[chanid]->entries[entryid]->monitor = NULL;
           infolist[chanid]->entries[entryid].reset();
 
           // delete, add, replace the entry

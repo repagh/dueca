@@ -123,10 +123,32 @@ ChannelOverviewGtk4::ChannelOverviewGtk4(Entity *e, const char *part,
   //
 }
 
+static void d_channel_info_clear(DChannelInfo *ci)
+{
+  DEB("Clearing channel info " << reinterpret_cast<void*>(ci));
+  ci->channel.reset();
+  ci->entry.reset();
+  ci->reader.reset();
+  /* if (ci->sublist) {
+    for (auto ii = g_list_model_get_n_items(G_LIST_MODEL(ci->sublist)); ii--; ) {
+      d_channel_info_clear(D_CHANNEL_INFO(g_list_model_get_item(G_LIST_MODEL(ci->sublist), ii)));
+    } 
+    g_object_unref(ci->sublist);
+    ci->sublist = NULL;
+  } */
+}
+
+void d_channel_info_destroy(gpointer data)
+{
+  auto ci = D_CHANNEL_INFO(data);
+  if (ci) d_channel_info_clear(ci);
+}
+
 DChannelInfo *
 d_channel_info_new(std::shared_ptr<ChannelOverview::ChannelInfoSet> &channel)
 {
   auto res = D_CHANNEL_INFO(g_object_new(d_channel_info_get_type(), NULL));
+  g_object_set_data_full(G_OBJECT(res), "mydestroy", gpointer(res), d_channel_info_destroy);
   res->channel = channel;
   res->sublist = NULL;
   return res;
@@ -136,6 +158,7 @@ DChannelInfo *d_channel_info_new(
   std::shared_ptr<ChannelOverview::ChannelInfoSet::EntryInfoSet> &entry)
 {
   auto res = D_CHANNEL_INFO(g_object_new(d_channel_info_get_type(), NULL));
+  g_object_set_data_full(G_OBJECT(res), "mydestroy", gpointer(res), d_channel_info_destroy);
   res->entry = entry;
   res->sublist = NULL;
   return res;
@@ -146,6 +169,7 @@ DChannelInfo *d_channel_info_new(
     ChannelOverview::ChannelInfoSet::EntryInfoSet::ReadInfoSet> &reader)
 {
   auto res = D_CHANNEL_INFO(g_object_new(d_channel_info_get_type(), NULL));
+  g_object_set_data_full(G_OBJECT(res), "mydestroy", gpointer(res), d_channel_info_destroy);
   res->reader = reader;
   res->sublist = NULL;
   return res;
@@ -166,33 +190,39 @@ static void d_channel_info_init(DChannelInfo *self)
     std::shared_ptr<ChannelOverview::ChannelInfoSet::EntryInfoSet::ReadInfoSet>;
 }
 
-static void d_channel_info_clear(DChannelInfo *ci)
+void sublist_destroyed(gpointer _ci, GObject* oldlist)
 {
+  auto ci = D_CHANNEL_INFO(_ci);
+  DEB("Sublist destroy, clearing channel info " << _ci);
   ci->channel.reset();
   ci->entry.reset();
   ci->reader.reset();
+  ci->sublist = NULL;
 }
 
 static GListModel *add_data_element(gpointer _item, gpointer user_data)
 {
   auto item = D_CHANNEL_INFO(_item);
   // if this row has a channel, and it has entries, return these in a list
-  if (item->channel && item->channel->entries.size()) {
+  if (item->channel) {
     auto lm = g_list_store_new(d_channel_info_get_type());
     for (auto &e : item->channel->entries) {
-
-      g_list_store_append(lm, gpointer(d_channel_info_new(e)));
+      auto listmem = d_channel_info_new(e);
+      g_object_weak_ref(G_OBJECT(lm), sublist_destroyed, listmem);
+      g_list_store_append(lm, gpointer(listmem));
     }
     item->sublist = lm;
     DEB("expand for entries, channel " << item->channel->chanid << " list "
                                        << reinterpret_cast<void *>(lm)
                                        << " check " << G_IS_LIST_STORE(lm));
-    g_object_ref(lm);
+    //g_object_ref(lm);
+
+
     return G_LIST_MODEL(lm);
   }
 
   // if this row has an entry, and that has readers, return in a list
-  if (item->entry && item->entry->rdata.size()) {
+  if (item->entry) {
     auto lm = g_list_store_new(d_channel_info_get_type());
     for (auto &r : item->entry->rdata) {
       g_list_store_append(lm, gpointer(d_channel_info_new(r)));
@@ -201,12 +231,22 @@ static GListModel *add_data_element(gpointer _item, gpointer user_data)
     DEB("expand for readers, entry " << item->entry->wdata.entryid << " list "
                                      << reinterpret_cast<void *>(lm)
                                      << " check " << G_IS_LIST_STORE(lm));
+    g_object_weak_ref(G_OBJECT(lm), sublist_destroyed, _item);
     return G_LIST_MODEL(lm);
   }
 
-  // nothing to expand, null list.
+  // leaf node, never anything to expand, null list.
   item->sublist = NULL;
   return G_LIST_MODEL(NULL);
+}
+
+static void remove_data_element(gpointer _elt)
+{
+  auto elt = D_CHANNEL_INFO(_elt);
+  DEB("Removing expansion " << reinterpret_cast<void*>(elt));
+  if (elt) {
+    d_channel_info_clear(elt);
+  }
 }
 
 static GdkPaintable *stream_icon = NULL;
@@ -308,8 +348,8 @@ bool ChannelOverviewGtk4::complete()
   // only links to the data in the application
   store = g_list_store_new(d_channel_info_get_type());
   auto model = gtk_tree_list_model_new(G_LIST_MODEL(store), FALSE, FALSE,
-                                       add_data_element, NULL, NULL);
-  auto selection = gtk_single_selection_new(G_LIST_MODEL(model));
+                                       add_data_element, NULL, remove_data_element);
+  auto selection = gtk_no_selection_new(G_LIST_MODEL(model));
   gtk_column_view_set_model(channel_tree, GTK_SELECTION_MODEL(selection));
 
   // create icons for different channel types
@@ -385,6 +425,7 @@ void ChannelOverviewGtk4::reflectChanges(unsigned ichan)
   }
 }
 
+// @todo: solve crash when activated row is deleted
 void ChannelOverviewGtk4::reflectChanges(unsigned ichan, unsigned ientry)
 {
   if (infolist[ichan]->entries[ientry]) {
@@ -427,10 +468,9 @@ void ChannelOverviewGtk4::reflectChanges(unsigned ichan, unsigned ientry)
             auto ei = D_CHANNEL_INFO(i);
             DEB("Pointer to entry info " << reinterpret_cast<void *>(ei));
             DEB("Entry use count " << ei->entry.use_count());
-            if (D_CHANNEL_INFO(i)->entry->wdata.entryid == ientry)
-              return 0;
-            if (D_CHANNEL_INFO(i)->entry->wdata.entryid > ientry)
-              return 1;
+            if (!ei->entry) return 1; 
+            if (ei->entry->wdata.entryid == ientry) return 0;
+            if (ei->entry->wdata.entryid > ientry) return 1;
             return -1;
           })) {
 
@@ -439,9 +479,6 @@ void ChannelOverviewGtk4::reflectChanges(unsigned ichan, unsigned ientry)
 
         // changed
         g_list_model_items_changed(G_LIST_MODEL(citem->sublist), idxe, 0, 0);
-        // auto eitem = g_list_model_get_item(G_LIST_MODEL(citem->sublist),
-        // idxe); g_object_ref(eitem); g_list_store_splice(citem->sublist, idxe,
-        // 1, &eitem, 1); g_object_unref(eitem);
       }
       else {
 
@@ -547,12 +584,6 @@ void ChannelOverviewGtk4::reflectChanges(unsigned ichan, unsigned ientry,
 
           // indicate change in the readers list
           g_list_model_items_changed(G_LIST_MODEL(eitem->sublist), idxr, 0, 0);
-          // apparently updated, splice trick
-          // auto ritem =
-          //  g_list_model_get_item(G_LIST_MODEL(eitem->sublist), idxr);
-          // g_object_ref(ritem);
-          // g_list_store_splice(eitem->sublist, idxr, 1, &ritem, 1);
-          // g_object_unref(ritem);
         }
       }
       else {
