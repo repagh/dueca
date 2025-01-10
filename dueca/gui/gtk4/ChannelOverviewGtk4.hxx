@@ -23,8 +23,7 @@
 // include headers for functions/classes you need in the module
 #include <ChannelOverview.hxx>
 #include "GtkGladeWindow.hxx"
-#include "gtk/gtk.h"
-#include "gui/gtk4/GtkCaller.hxx"
+#include <gtk/gtk.h>
 
 DUECA_NS_START
 
@@ -71,7 +70,7 @@ private: // simulation data
   /** Callback function object */
   //GtkCaller *expand_subtree;
   GtkCallerImp1<ChannelOverviewGtk4, GListModel*, gpointer> expand_subtree;
-  
+
 public: // class name and trim/parameter tables
   /** Name of the module. */
   static const char *const classname;
@@ -108,13 +107,13 @@ public: // construction and further specification
 
 protected:
   /** update view */
-  void reflectChanges(unsigned channelid);
+  void reflectChanges(unsigned channelid) final;
   /** update view */
-  void reflectChanges(unsigned channelid, unsigned entryid);
+  void reflectChanges(unsigned channelid, unsigned entryid) final;
   /** update view */
-  void reflectChanges(unsigned channelid, unsigned entryid, unsigned readerid);
+  void reflectChanges(unsigned channelid, unsigned entryid, unsigned readerid) final;
   /** update counts */
-  void reflectCounts();
+  void reflectCounts(unsigned chanid) final;
   /** redraw view */
   void showChanges();
 

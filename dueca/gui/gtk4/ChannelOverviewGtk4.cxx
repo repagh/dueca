@@ -16,12 +16,6 @@
         license         : EUPL-1.2
 */
 
-#include "ChannelOverview.hxx"
-#include "ChannelReadInfo.hxx"
-#include "gio/gio.h"
-#include "glib-object.h"
-#include "glib.h"
-#include "gtk/gtk.h"
 #include <boost/smart_ptr/shared_ptr.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
@@ -99,6 +93,8 @@ struct _DChannelInfo
   unsigned channel;
   unsigned entry;
   unsigned reader;
+  uint32_t count;
+  bool monitor;
   _ChannelInfoType type;
 
   GListStore *sublist;
@@ -155,7 +151,76 @@ DChannelInfo *d_channel_info_new(unsigned channel, unsigned entry,
   return res;
 }
 
-static void d_channel_info_class_init(DChannelInfoClass *klass) {}
+enum ChannelInfoProperty { D_CINFO_COUNT = 1, D_MONITOR, D_NPROPERTIES };
+
+static void d_channel_info_set_property(GObject *object, guint property_id,
+                                        const GValue *value, GParamSpec *pspec)
+{
+  DChannelInfo *self = D_CHANNEL_INFO(object);
+
+  switch ((ChannelInfoProperty)property_id) {
+  case D_CINFO_COUNT:
+    self->count = g_value_get_uint(value);
+    break;
+
+  case D_MONITOR:
+    self->monitor = g_value_get_boolean(value);
+    break;
+
+  default:
+      /* We don't have any other property... */
+    G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
+    break;
+  }
+}
+
+static void d_channel_info_get_property(GObject *object, guint property_id,
+                                        GValue *value, GParamSpec *pspec)
+{
+  DChannelInfo *self = D_CHANNEL_INFO(object);
+
+  switch ((ChannelInfoProperty)property_id) {
+  case D_CINFO_COUNT:
+    g_value_set_uint(value, self->count);
+    break;
+
+  case D_MONITOR:
+    g_value_set_boolean(value, self->monitor);
+    break;
+
+  default:
+      /* We don't have any other property... */
+    G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
+    break;
+  }
+}
+
+void d_channel_info_set_count(DChannelInfo *obj, unsigned count)
+{
+  GValue cnt = G_VALUE_INIT;
+  g_value_init(&cnt, G_TYPE_UINT);
+  g_value_set_uint(&cnt, count);
+  g_object_set_property(G_OBJECT(obj), "rwcount", &cnt);
+}
+
+static GParamSpec *object_properties[D_NPROPERTIES] = {
+  NULL,
+};
+
+static void d_channel_info_class_init(DChannelInfoClass *_klass)
+{
+  auto klass = G_OBJECT_CLASS(_klass);
+  klass->set_property = d_channel_info_set_property;
+  klass->get_property = d_channel_info_get_property;
+
+  object_properties[D_CINFO_COUNT] = g_param_spec_uint(
+    "rwcount", "Count", "Counter", 0, 0xffffffff, 0, G_PARAM_READWRITE);
+  object_properties[D_MONITOR] = g_param_spec_boolean(
+    "monitor", "Monitor", "state of monitor window", FALSE, G_PARAM_READWRITE);
+
+  g_object_class_install_properties(klass, G_N_ELEMENTS(object_properties),
+                                    object_properties);
+}
 
 static void d_channel_info_init(DChannelInfo *self) {}
 
@@ -178,7 +243,8 @@ GListModel *ChannelOverviewGtk4::cbExpandEntriesReaders(gpointer _item,
     auto lm = g_list_store_new(d_channel_info_get_type());
     for (unsigned ii = 0; ii < infolist[item->channel]->entries.size(); ii++) {
       if (infolist[item->channel]->entries[ii]) {
-        g_list_store_append(lm, d_channel_info_new(item->channel, ii));
+        g_list_store_append(
+          lm, d_channel_info_new(item->channel, ii));
       }
     }
 
@@ -384,8 +450,7 @@ void ChannelOverviewGtk4::reflectChanges(unsigned ichan)
   else {
 
     // new channel to the list at place idx
-    auto citem =
-      reinterpret_cast<gpointer>(d_channel_info_new(ichan));
+    auto citem = reinterpret_cast<gpointer>(d_channel_info_new(ichan));
     g_list_store_splice(store, idx, 0, &citem, 1);
   }
 }
@@ -414,11 +479,6 @@ void ChannelOverviewGtk4::reflectChanges(unsigned ichan, unsigned ientry)
 
   // find the channel info entry
   auto citem = D_CHANNEL_INFO(g_list_model_get_item(G_LIST_MODEL(store), idxc));
-
-  // re-insert it at this place, to get a notify
-  // g_object_ref(citem);
-  // g_list_store_splice(store, idxc, 1, reinterpret_cast<gpointer *>(&citem),
-  // 1); g_object_unref(citem);
 
   // now find the entry in the sublist.
   if (citem->sublist) {
@@ -454,8 +514,8 @@ void ChannelOverviewGtk4::reflectChanges(unsigned ichan, unsigned ientry)
     else {
 
       // new entry at location idxe
-      auto eitem = reinterpret_cast<gpointer>(
-        d_channel_info_new(ichan, ientry));
+      auto eitem =
+        reinterpret_cast<gpointer>(d_channel_info_new(ichan, ientry));
       g_list_store_splice(citem->sublist, idxe, 0, &eitem, 1);
       g_object_unref(eitem);
     }
@@ -464,7 +524,7 @@ void ChannelOverviewGtk4::reflectChanges(unsigned ichan, unsigned ientry)
 }
 
 void ChannelOverviewGtk4::reflectChanges(unsigned ichan, unsigned ientry,
-                                         uint32_t ireader)
+                                         unsigned ireader)
 {
 #if DEBPRINTLEVEL >= 0
 
@@ -497,14 +557,14 @@ void ChannelOverviewGtk4::reflectChanges(unsigned ichan, unsigned ientry,
   // now find the entry in the sublist.
   if (citem->sublist) {
     unsigned idxe;
-    if (!findPlaceInList(
-          G_LIST_MODEL(citem->sublist), idxe, [ientry](gpointer i) {
-            if (D_CHANNEL_INFO(i)->entry == ientry)
-              return 0;
-            if (D_CHANNEL_INFO(i)->entry > ientry)
-              return 1;
-            return -1;
-          })) {
+    if (!findPlaceInList(G_LIST_MODEL(citem->sublist), idxe,
+                         [ientry](gpointer i) {
+                           if (D_CHANNEL_INFO(i)->entry == ientry)
+                             return 0;
+                           if (D_CHANNEL_INFO(i)->entry > ientry)
+                             return 1;
+                           return -1;
+                         })) {
       assert(0);
     }
 
@@ -549,7 +609,8 @@ void ChannelOverviewGtk4::reflectChanges(unsigned ichan, unsigned ientry,
       else {
 
         // add to the list
-        auto ritem = reinterpret_cast<gpointer>(d_channel_info_new(ichan, ientry, ireader));
+        auto ritem = reinterpret_cast<gpointer>(
+          d_channel_info_new(ichan, ientry, ireader));
         g_list_store_splice(eitem->sublist, idxr, 0, &ritem, 1);
         g_object_unref(ritem);
       }
@@ -563,10 +624,75 @@ void ChannelOverviewGtk4::reflectChanges(unsigned ichan, unsigned ientry,
   g_list_model_items_changed(G_LIST_MODEL(store), idxc, 0, 0);
 }
 
-void ChannelOverviewGtk4::reflectCounts()
+inline ChannelOverview::ChannelInfoSet *
+findInfo(const ChannelOverview::infolist_t &info, unsigned channel)
 {
-  // gtk_widget_queue_draw(GTK_WIDGET(window["col_nwrites"]));
-  // gtk_widget_queue_draw(GTK_WIDGET(window["col_nreads"]));
+  if (channel >= info.size())
+    return NULL;
+  return info[channel].get();
+}
+
+inline ChannelOverview::ChannelInfoSet::EntryInfoSet *
+findInfo(const ChannelOverview::infolist_t &info, unsigned channel,
+         unsigned entry)
+{
+  auto ch = findInfo(info, channel);
+  if (!ch)
+    return NULL;
+  if (entry >= ch->entries.size())
+    return NULL;
+  return ch->entries[entry].get();
+}
+
+inline ChannelOverview::ChannelInfoSet::EntryInfoSet::ReadInfoSet *
+findInfo(const ChannelOverview::infolist_t &info, unsigned channel,
+         unsigned entry, unsigned reader)
+{
+  auto en = findInfo(info, channel, entry);
+  if (!en)
+    return NULL;
+  auto rdr = en->getReader(reader);
+  if (rdr != en->rdata.end()) {
+    return (*rdr).get();
+  }
+  return NULL;
+}
+
+void ChannelOverviewGtk4::reflectCounts(unsigned ichan)
+{
+  unsigned idxc;
+  if (findPlaceInList(G_LIST_MODEL(store), idxc, [ichan](gpointer i) {
+        if (D_CHANNEL_INFO(i)->channel == ichan)
+          return 0;
+        if (D_CHANNEL_INFO(i)->channel > ichan)
+          return 1;
+        return -1;
+      })) {
+
+    auto channel =
+      D_CHANNEL_INFO(g_list_model_get_item(G_LIST_MODEL(store), idxc));
+    auto elist = channel->sublist;
+    if (!elist)
+      return;
+    for (guint idxe = 0U; idxe < g_list_model_get_n_items(G_LIST_MODEL(elist));
+         idxe++) {
+      auto entry =
+        D_CHANNEL_INFO(g_list_model_get_item(G_LIST_MODEL(elist), idxe));
+      auto edata = findInfo(infolist, ichan, entry->entry);
+      d_channel_info_set_count(entry, edata->seq_id);
+
+      auto rlist = entry->sublist;
+      if (rlist) {
+        for (guint idxr = 0U;
+             idxr < g_list_model_get_n_items(G_LIST_MODEL(rlist)); idxr++) {
+          auto reader =
+            D_CHANNEL_INFO(g_list_model_get_item(G_LIST_MODEL(rlist), idxr));
+          auto rdata = findInfo(infolist, ichan, reader->entry, reader->reader);
+          d_channel_info_set_count(reader, rdata->seq_id);
+        }
+      }
+    }
+  }
 }
 
 void ChannelOverviewGtk4::showChanges()
@@ -602,17 +728,21 @@ void ChannelOverviewGtk4::closeMonitor(unsigned ichan, unsigned ientry)
 void ChannelOverviewGtk4::monitorToggle(GtkToggleButton *btn, _DChannelInfo *ci)
 {
   gboolean open = gtk_toggle_button_get_active(btn);
-  auto &monitor = infolist[ci->channel]->entries[ci->entry]->monitor;
+  auto entry = findInfo(infolist, ci->channel, ci->entry);
+  if (entry) {
 
-  if (open == TRUE) {
-    if (!monitor) {
-      monitor = new ChannelDataMonitorGtk4(
-        this, ci->channel, ci->entry, monitor_gladefile);
+    auto &monitor = entry->monitor;
+
+    if (open == TRUE) {
+      if (!monitor) {
+        monitor = new ChannelDataMonitorGtk4(this, ci->channel, ci->entry,
+                                             monitor_gladefile);
+      }
+      monitor->open();
     }
-    monitor->open();
-  }
-  else {
-    monitor->close();
+    else {
+      monitor->close();
+    }
   }
 }
 
@@ -670,10 +800,11 @@ void ChannelOverviewGtk4::cbBindChannelNum(GtkSignalListItemFactory *fact,
 {
   auto row = gtk_list_item_get_item(item);
   auto chn = D_CHANNEL_INFO(gtk_tree_list_row_get_item(GTK_TREE_LIST_ROW(row)));
-  if (chn->channel) {
+  auto channel = findInfo(infolist, chn->channel);
+  if (chn->type == Channel && channel) {
     auto label = GTK_LABEL(gtk_list_item_get_child(item));
     gtk_label_set_label(
-      label, boost::str(boost::format("%d") % chn->channel->chanid).c_str());
+      label, boost::str(boost::format("%d") % channel->chanid).c_str());
     // g_object_unref(label);
   }
 }
@@ -684,9 +815,10 @@ void ChannelOverviewGtk4::cbBindChannelName(GtkSignalListItemFactory *fact,
 {
   auto row = gtk_list_item_get_item(item);
   auto chn = D_CHANNEL_INFO(gtk_tree_list_row_get_item(GTK_TREE_LIST_ROW(row)));
-  if (chn->channel) {
+  auto channel = findInfo(infolist, chn->channel);
+  if (chn->type == Channel && channel) {
     auto label = GTK_LABEL(gtk_list_item_get_child(item));
-    gtk_label_set_label(label, chn->channel->name.c_str());
+    gtk_label_set_label(label, channel->name.c_str());
     gtk_widget_set_halign(GTK_WIDGET(label), GTK_ALIGN_START);
   }
 }
@@ -697,17 +829,20 @@ void ChannelOverviewGtk4::cbBindEntryNum(GtkSignalListItemFactory *fact,
   auto row = gtk_list_item_get_item(item);
   auto chn = D_CHANNEL_INFO(gtk_tree_list_row_get_item(GTK_TREE_LIST_ROW(row)));
   auto expander = GTK_TREE_EXPANDER(gtk_list_item_get_child(item));
-  if (chn->channel && chn->channel->entries.size()) {
+
+  if (chn->type == Channel) {
     gtk_tree_expander_set_list_row(expander, GTK_TREE_LIST_ROW(row));
   }
-  else if (chn->entry) {
+  else if (chn->type == Entry) {
+
+    auto entry = findInfo(infolist, chn->channel, chn->entry);
+    if (!entry)
+      return;
     auto label = GTK_LABEL(gtk_tree_expander_get_child(expander));
     gtk_label_set_label(
-      label,
-      boost::lexical_cast<std::string>(chn->entry->wdata.entryid).c_str());
+      label, boost::lexical_cast<std::string>(entry->wdata.entryid).c_str());
     gtk_widget_set_halign(GTK_WIDGET(label), GTK_ALIGN_END);
-    gtk_widget_set_tooltip_text(GTK_WIDGET(label),
-                                chn->entry->wdata.label.c_str());
+    gtk_widget_set_tooltip_text(GTK_WIDGET(label), entry->wdata.label.c_str());
   }
 }
 
@@ -716,12 +851,17 @@ void ChannelOverviewGtk4::cbBindWriterId(GtkSignalListItemFactory *fact,
 {
   auto row = gtk_list_item_get_item(item);
   auto chn = D_CHANNEL_INFO(gtk_tree_list_row_get_item(GTK_TREE_LIST_ROW(row)));
-  if (chn->entry) {
+  if (chn->type == Entry) {
+    auto entry = findInfo(infolist, chn->channel, chn->entry);
+    if (!entry)
+      return;
     auto label = gtk_list_item_get_child(item);
     gtk_label_set_text(
       GTK_LABEL(label),
-      boost::lexical_cast<std::string>(chn->entry->wdata.clientid).c_str());
-    // gtk_widget_set_tooltip_text(label, chn->entry->wdata.clientid);
+      boost::lexical_cast<std::string>(entry->wdata.clientid).c_str());
+    gtk_widget_set_tooltip_text(
+      GTK_WIDGET(label),
+      ObjectManager::single()->getNameSet(entry->wdata.clientid).name.c_str());
   }
 }
 
@@ -730,15 +870,29 @@ void ChannelOverviewGtk4::cbBindES(GtkSignalListItemFactory *fact,
 {
   auto row = gtk_list_item_get_item(item);
   auto chn = D_CHANNEL_INFO(gtk_tree_list_row_get_item(GTK_TREE_LIST_ROW(row)));
-  if (chn->entry) {
+  if (chn->type == Entry) {
+    auto entry = findInfo(infolist, chn->channel, chn->entry);
+    if (!entry)
+      return;
     auto img = gtk_list_item_get_child(item);
-    if (chn->entry->wdata.eventtype) {
+    if (entry->wdata.eventtype) {
       gtk_image_set_from_paintable(GTK_IMAGE(img), GDK_PAINTABLE(event_icon));
     }
     else {
       gtk_image_set_from_paintable(GTK_IMAGE(img), GDK_PAINTABLE(stream_icon));
     }
+    gtk_widget_set_tooltip_text(GTK_WIDGET(img),
+                                entry->wdata.dataclass.c_str());
   }
+}
+
+gboolean uint2text(GBinding *bnd, const GValue *source, GValue *target,
+                   gpointer user_data)
+{
+  g_value_set_string(
+    target,
+    boost::str(boost::format("%8d") % g_value_get_uint(source)).c_str());
+  return TRUE;
 }
 
 void ChannelOverviewGtk4::cbBindNWrites(GtkSignalListItemFactory *fact,
@@ -746,11 +900,17 @@ void ChannelOverviewGtk4::cbBindNWrites(GtkSignalListItemFactory *fact,
 {
   auto row = gtk_list_item_get_item(item);
   auto chn = D_CHANNEL_INFO(gtk_tree_list_row_get_item(GTK_TREE_LIST_ROW(row)));
-  if (chn->entry) {
+  if (chn->type == Entry) {
+    auto entry = findInfo(infolist, chn->channel, chn->entry);
+    if (!entry)
+      return;
     auto label = gtk_list_item_get_child(item);
-    gtk_label_set_label(
+    g_object_bind_property_full(chn, "rwcount", label, "label",
+                                G_BINDING_DEFAULT, uint2text, NULL, NULL, NULL);
+    d_channel_info_set_count(chn, entry->seq_id);
+    /* gtk_label_set_label(
       GTK_LABEL(label),
-      boost::lexical_cast<std::string>(chn->entry->seq_id).c_str());
+      boost::lexical_cast<std::string>(entry->seq_id).c_str()); */
   }
 }
 
@@ -760,14 +920,20 @@ void ChannelOverviewGtk4::cbBindReaderId(GtkSignalListItemFactory *fact,
   auto row = gtk_list_item_get_item(item);
   auto chn = D_CHANNEL_INFO(gtk_tree_list_row_get_item(GTK_TREE_LIST_ROW(row)));
   auto expander = GTK_TREE_EXPANDER(gtk_list_item_get_child(item));
-  if (chn->entry && chn->entry->rdata.size()) {
+  if (chn->type == Entry) {
     gtk_tree_expander_set_list_row(expander, GTK_TREE_LIST_ROW(row));
   }
-  else if (chn->reader) {
+  else if (chn->type == Reader) {
+    auto reader = findInfo(infolist, chn->channel, chn->entry, chn->reader);
+    if (!reader)
+      return;
     auto label = gtk_tree_expander_get_child(expander);
     gtk_label_set_label(
       GTK_LABEL(label),
-      boost::lexical_cast<std::string>(chn->reader->readerid).c_str());
+      boost::lexical_cast<std::string>(reader->readerid).c_str());
+    gtk_widget_set_tooltip_text(
+      GTK_WIDGET(label),
+      ObjectManager::single()->getNameSet(reader->rdata.clientid).name.c_str());
   }
 }
 
@@ -776,11 +942,17 @@ void ChannelOverviewGtk4::cbBindNReads(GtkSignalListItemFactory *fact,
 {
   auto row = gtk_list_item_get_item(item);
   auto chn = D_CHANNEL_INFO(gtk_tree_list_row_get_item(GTK_TREE_LIST_ROW(row)));
-  if (chn->reader) {
+  if (chn->type == Reader) {
+    auto reader = findInfo(infolist, chn->channel, chn->entry, chn->reader);
+    if (!reader)
+      return;
     auto label = gtk_list_item_get_child(item);
-    gtk_label_set_label(
-      GTK_LABEL(label),
-      boost::lexical_cast<std::string>(chn->reader->seq_id).c_str());
+    g_object_bind_property_full(chn, "rwcount", label, "label",
+                                G_BINDING_DEFAULT, uint2text, NULL, NULL, NULL);
+    d_channel_info_set_count(chn, reader->seq_id);
+    // gtk_label_set_label(
+    //   GTK_LABEL(label),
+    //   boost::lexical_cast<std::string>(reader->seq_id).c_str());
   }
 }
 
@@ -789,11 +961,14 @@ void ChannelOverviewGtk4::cbBindSel(GtkSignalListItemFactory *fact,
 {
   auto row = gtk_list_item_get_item(item);
   auto chn = D_CHANNEL_INFO(gtk_tree_list_row_get_item(GTK_TREE_LIST_ROW(row)));
-  if (chn->reader) {
+  if (chn->type == Reader) {
+    auto reader = findInfo(infolist, chn->channel, chn->entry, chn->reader);
+    if (!reader)
+      return;
     auto img = gtk_list_item_get_child(item);
     gtk_image_set_from_paintable(
       GTK_IMAGE(img),
-      select_icon[min(chn->reader->rdata.action, ChannelReadInfo::byLabel)]);
+      select_icon[min(reader->rdata.action, ChannelReadInfo::byLabel)]);
   }
 }
 
@@ -802,10 +977,13 @@ void ChannelOverviewGtk4::cbBindSeq(GtkSignalListItemFactory *fact,
 {
   auto row = gtk_list_item_get_item(item);
   auto chn = D_CHANNEL_INFO(gtk_tree_list_row_get_item(GTK_TREE_LIST_ROW(row)));
-  if (chn->reader) {
+  if (chn->type == Reader) {
+    auto reader = findInfo(infolist, chn->channel, chn->entry, chn->reader);
+    if (!reader)
+      return;
     auto img = gtk_list_item_get_child(item);
 
-    if (chn->reader->rdata.sequential) {
+    if (reader->rdata.sequential) {
       gtk_image_set_from_paintable(GTK_IMAGE(img), sequent_icon[0]);
     }
     else {
@@ -820,7 +998,11 @@ void ChannelOverviewGtk4::cbBindView(GtkSignalListItemFactory *fact,
   auto row = gtk_list_item_get_item(item);
   auto chn = D_CHANNEL_INFO(gtk_tree_list_row_get_item(GTK_TREE_LIST_ROW(row)));
   auto toggle = gtk_list_item_get_child(item);
-  if (chn->entry) {
+  if (chn->type == Entry) {
+
+    auto entry = findInfo(infolist, chn->channel, chn->entry);
+    if (!entry)
+      return;
 
     // data property needs to point to the current row
     auto existing = g_object_get_data(G_OBJECT(toggle), "entry-row");
@@ -828,8 +1010,7 @@ void ChannelOverviewGtk4::cbBindView(GtkSignalListItemFactory *fact,
       g_object_set_data(G_OBJECT(toggle), "entry-row", row);
     }
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle),
-                                 chn->entry->monitor &&
-                                   chn->entry->monitor->isOpen());
+                                 entry->monitor && entry->monitor->isOpen());
     gtk_widget_set_visible(toggle, TRUE);
   }
   else {

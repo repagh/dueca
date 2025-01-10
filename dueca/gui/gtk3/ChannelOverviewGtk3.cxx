@@ -552,7 +552,7 @@ struct match_readid
 };
 
 void ChannelOverviewGtk3::reflectChanges(unsigned ichan, unsigned ientry,
-                                         uint32_t ireader, unsigned creationid)
+                                         unsigned creationid)
 {
   // was the entry already in the tree?
   GtkTreeIter itchan, itentry, itreader;
@@ -649,7 +649,7 @@ void ChannelOverviewGtk3::reflectChanges(unsigned ichan, unsigned ientry,
 
        Failure updating entry information
     */
-    E_XTR("Channel overview logic failure " << ireader);
+    E_XTR("Channel overview logic failure " << creationid);
   }
 }
 

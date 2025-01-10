@@ -48,7 +48,7 @@ public:
   virtual GtkCaller *clone(void *obj) const = 0;
 
   /** Return a pointer to the GtkCallback function. */
-  virtual GtkSignalFunc callback() = 0;
+  virtual GtkSignalFunc callback() const = 0;
 
   /** Pass this pointer as user data to gtk signal */
   virtual gpointer user_data()
@@ -108,7 +108,8 @@ public:
   RET operator()(P1 a) const { return (obj->*call)(a, gp); }
 
   /** Return a pointer to the GtkCallback function. */
-  GtkSignalFunc callback() { return reinterpret_cast<GtkSignalFunc>(base); }
+  GtkSignalFunc callback() const override
+  { return reinterpret_cast<GtkSignalFunc>(base); }
 
   /** Return an uncast pointer */
   barefunction_t c_callback() { return base; }
@@ -174,7 +175,8 @@ public:
   RET operator()(P1 a, P2 b) { return (obj->*call)(a, b, gp); }
 
   /** Return a pointer to the GtkCallback function. */
-  GtkSignalFunc callback() { return reinterpret_cast<GtkSignalFunc>(base); }
+  GtkSignalFunc callback() const override
+  { return reinterpret_cast<GtkSignalFunc>(base); }
 
   /** Return an uncast pointer */
   barefunction_t c_callback() { return base; }
@@ -240,7 +242,8 @@ public:
   RET operator()(P1 a, P2 b, P3 c) { return (obj->*call)(a, b, c, gp); }
 
   /** Return a pointer to the GtkCallback function. */
-  GtkSignalFunc callback() { return reinterpret_cast<GtkSignalFunc>(base); }
+  GtkSignalFunc callback() const override
+  { return reinterpret_cast<GtkSignalFunc>(base); }
 
   /** Return an uncast pointer */
   barefunction_t c_callback() { return base; }
@@ -311,7 +314,8 @@ public:
   }
 
   /** Return a pointer to the GtkCallback function. */
-  GtkSignalFunc callback() { return reinterpret_cast<GtkSignalFunc>(base); }
+  GtkSignalFunc callback() const override
+  { return reinterpret_cast<GtkSignalFunc>(base); }
 
   /** Return an uncast pointer */
   barefunction_t c_callback() { return base; }
@@ -342,7 +346,7 @@ class GtkCallerImp5 : public GtkCaller
 public:
   /** pointer to the member function. */
   typedef RET (T::*function_t)(P1, P2, P3, P4, P5, gpointer);
- 
+
   /** type of the c function. */
   typedef RET (*barefunction_t)(P1, P2, P3, P4, P5, gpointer);
 
@@ -384,7 +388,8 @@ public:
   }
 
   /** Return a pointer to the GtkCallback function. */
-  GtkSignalFunc callback() { return reinterpret_cast<GtkSignalFunc>(base); }
+  GtkSignalFunc callback() const override
+  { return reinterpret_cast<GtkSignalFunc>(base); }
 
   /** Return an uncast pointer */
   barefunction_t c_callback() { return base; }
@@ -416,7 +421,7 @@ class GtkCallerImp6 : public GtkCaller
 public:
   /** pointer to the member function. */
   typedef RET (T::*function_t)(P1, P2, P3, P4, P5, P6, gpointer);
- 
+
   /** type of the c function. */
   typedef RET (*barefunction_t)(P1, P2, P3, P4, P5, P6, gpointer);
 
@@ -458,7 +463,8 @@ public:
   }
 
   /** Return a pointer to the GtkCallback function. */
-  GtkSignalFunc callback() { return reinterpret_cast<GtkSignalFunc>(base); }
+  GtkSignalFunc callback() const override
+  { return reinterpret_cast<GtkSignalFunc>(base); }
 
   /** Return an uncast pointer */
   barefunction_t c_callback() { return base; }
@@ -533,7 +539,8 @@ public:
   }
 
   /** Return a pointer to the GtkCallback function. */
-  GtkSignalFunc callback() { return reinterpret_cast<GtkSignalFunc>(base); }
+  GtkSignalFunc callback() const override
+  { return reinterpret_cast<GtkSignalFunc>(base); }
 
   /** Return an uncast pointer */
   barefunction_t c_callback() { return base; }
@@ -610,7 +617,8 @@ public:
   }
 
   /** Return a pointer to the GtkCallback function. */
-  GtkSignalFunc callback() { return reinterpret_cast<GtkSignalFunc>(base); }
+  GtkSignalFunc callback() const override
+  { return reinterpret_cast<GtkSignalFunc>(base); }
 
   /** Return an uncast pointer */
   barefunction_t c_callback() { return base; }

@@ -272,7 +272,7 @@ bool ChannelOverviewGtk2::complete()
     if (error) {
       /* DUECA UI.
 
-         Cannot load icon pixbuf. Check DUECA installation. 
+         Cannot load icon pixbuf. Check DUECA installation.
       */
       E_XTR("Could not load pixbuf " << error->message);
       g_error_free(error); error = NULL;
@@ -283,7 +283,7 @@ bool ChannelOverviewGtk2::complete()
     if (error) {
       /* DUECA UI.
 
-         Cannot load icon pixbuf. Check DUECA installation. 
+         Cannot load icon pixbuf. Check DUECA installation.
       */
       E_XTR("Could not load pixbuf " << error->message);
       g_error_free(error); error = NULL;
@@ -294,7 +294,7 @@ bool ChannelOverviewGtk2::complete()
     if (error) {
       /* DUECA UI.
 
-         Cannot load icon pixbuf. Check DUECA installation. 
+         Cannot load icon pixbuf. Check DUECA installation.
       */
       E_XTR("Could not load pixbuf " << error->message);
       g_error_free(error); error = NULL;
@@ -305,7 +305,7 @@ bool ChannelOverviewGtk2::complete()
     if (error) {
       /* DUECA UI.
 
-         Cannot load icon pixbuf. Check DUECA installation. 
+         Cannot load icon pixbuf. Check DUECA installation.
       */
       E_XTR("Could not load pixbuf " << error->message);
       g_error_free(error); error = NULL;
@@ -316,7 +316,7 @@ bool ChannelOverviewGtk2::complete()
     if (error) {
       /* DUECA UI.
 
-         Cannot load icon pixbuf. Check DUECA installation. 
+         Cannot load icon pixbuf. Check DUECA installation.
       */
       E_XTR("Could not load pixbuf " << error->message);
       g_error_free(error); error = NULL;
@@ -327,7 +327,7 @@ bool ChannelOverviewGtk2::complete()
     if (error) {
       /* DUECA UI.
 
-         Cannot load icon pixbuf. Check DUECA installation. 
+         Cannot load icon pixbuf. Check DUECA installation.
       */
       E_XTR("Could not load pixbuf " << error->message);
       g_error_free(error); error = NULL;
@@ -338,7 +338,7 @@ bool ChannelOverviewGtk2::complete()
     if (error) {
       /* DUECA UI.
 
-         Cannot load icon pixbuf. Check DUECA installation. 
+         Cannot load icon pixbuf. Check DUECA installation.
       */
       E_XTR("Could not load pixbuf " << error->message);
       g_error_free(error); error = NULL;
@@ -501,7 +501,7 @@ struct match_readid
 };
 
 void ChannelOverviewGtk2::reflectChanges(unsigned ichan, unsigned ientry,
-                                         uint32_t ireader, unsigned creationid)
+                                         unsigned creationid)
 {
   // was the entry already in the tree?
   GtkTreeIter itchan, itentry, itreader;
