@@ -118,7 +118,7 @@ class CommObjectsListIterator:
         self._iter = iter(colist.dco)
 
     def __iter__(self):
-        return self._iter
+        return self
 
     def __next__(self):
         elem = next(self._iter)

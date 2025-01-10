@@ -24,6 +24,7 @@
 #include <ChannelOverview.hxx>
 #include "GtkGladeWindow.hxx"
 #include "gtk/gtk.h"
+#include "gui/gtk4/GtkCaller.hxx"
 
 DUECA_NS_START
 
@@ -66,6 +67,10 @@ private: // simulation data
 
   /** Store with the channel data */
   GListStore *store;
+
+  /** Callback function object */
+  //GtkCaller *expand_subtree;
+  GtkCallerImp1<ChannelOverviewGtk4, GListModel*, gpointer> expand_subtree;
   
 public: // class name and trim/parameter tables
   /** Name of the module. */
@@ -180,6 +185,9 @@ private:
   /** bind to a column */
   void cbBindView(GtkSignalListItemFactory *fact, GtkListItem *item,
                   gpointer user_data);
+
+  /** expand a sub-list, entries or readers */
+  GListModel *cbExpandEntriesReaders(gpointer _item, gpointer user_data);
 
 public:
   /** Call from an opened monitor to close again */
