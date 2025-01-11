@@ -46,6 +46,7 @@ typedef std::list<ChannelDataViewPair>::iterator dvplist_it;
 struct _DDataEntry
 {
   GObject parent;
+  GListModel *children;
   ChannelDataViewPair data;
 };
 
@@ -60,6 +61,9 @@ class ChannelDataMonitorGtk4 : public ChannelDataMonitor
 
   /** Tree store for the object with data and widgets */
   dvplist_t data;
+
+  /** gtk store */
+  GListStore *store;
 
 public:
   /** Constructor */

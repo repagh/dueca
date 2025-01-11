@@ -29,6 +29,7 @@ DUECA_NS_START
 
 // GObject derived struct to pass data between interface and application
 struct _DChannelInfo;
+typedef _DChannelInfo DChannelInfo;
 struct ChannelOverviewGtk4Private;
 
 /** A view on the DUECA channels
@@ -44,7 +45,7 @@ class ChannelOverviewGtk4 : public ChannelOverview
   typedef ChannelOverviewGtk4 _ThisModule_;
 
 private: // simulation data
-  //ChannelOverviewGtk4Private *self;
+  // ChannelOverviewGtk4Private *self;
 
   /** glade file */
   std::string gladefile;
@@ -68,8 +69,8 @@ private: // simulation data
   GListStore *store;
 
   /** Callback function object */
-  //GtkCaller *expand_subtree;
-  GtkCallerImp1<ChannelOverviewGtk4, GListModel*, gpointer> expand_subtree;
+  // GtkCaller *expand_subtree;
+  GtkCallerImp1<ChannelOverviewGtk4, GListModel *, gpointer> expand_subtree;
 
 public: // class name and trim/parameter tables
   /** Name of the module. */
@@ -111,13 +112,25 @@ protected:
   /** update view */
   void reflectChanges(unsigned channelid, unsigned entryid) final;
   /** update view */
-  void reflectChanges(unsigned channelid, unsigned entryid, unsigned readerid) final;
+  void reflectChanges(unsigned channelid, unsigned entryid,
+                      unsigned readerid) final;
   /** update counts */
   void reflectCounts(unsigned chanid) final;
   /** redraw view */
   void showChanges();
 
 private:
+  /** Search for the gtk object linking/representing a channel */
+  DChannelInfo *findChannel(unsigned ichan, unsigned &idxc);
+
+  /** Search for the gtk object linking/representing an entry */
+  DChannelInfo *findEntry(unsigned ichan, unsigned ientry, unsigned &idxc,
+                          unsigned &idxe);
+
+  /** Search for the gtk object linking/representing a reader */
+  DChannelInfo *findReader(unsigned ichan, unsigned ientry, unsigned ireader,
+                           unsigned &idxc, unsigned &idxe);
+
   /** close callback */
   void cbClose(GtkButton *button, gpointer gp);
   /** refresh read/write count */
@@ -193,7 +206,7 @@ public:
   void closeMonitor(unsigned channelno, unsigned entryno);
 
   /** Toggle callback, to open/close monitor */
-  void monitorToggle(GtkToggleButton *btn, _DChannelInfo *path_str);
+  void monitorToggle(GtkCheckButton *btn, _DChannelInfo *path_str);
 };
 
 DUECA_NS_END

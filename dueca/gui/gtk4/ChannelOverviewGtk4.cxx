@@ -16,6 +16,7 @@
         license         : EUPL-1.2
 */
 
+#include "glib-object.h"
 #include <boost/smart_ptr/shared_ptr.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
@@ -203,6 +204,14 @@ void d_channel_info_set_count(DChannelInfo *obj, unsigned count)
   g_object_set_property(G_OBJECT(obj), "rwcount", &cnt);
 }
 
+void d_channel_info_set_monitor(DChannelInfo *obj, bool monitor)
+{
+  GValue mon = G_VALUE_INIT;
+  g_value_init(&mon, G_TYPE_BOOLEAN);
+  g_value_set_boolean(&mon, monitor);
+  g_object_set_property(G_OBJECT(obj), "monitor", &mon);
+}
+
 static GParamSpec *object_properties[D_NPROPERTIES] = {
   NULL,
 };
@@ -243,8 +252,7 @@ GListModel *ChannelOverviewGtk4::cbExpandEntriesReaders(gpointer _item,
     auto lm = g_list_store_new(d_channel_info_get_type());
     for (unsigned ii = 0; ii < infolist[item->channel]->entries.size(); ii++) {
       if (infolist[item->channel]->entries[ii]) {
-        g_list_store_append(
-          lm, d_channel_info_new(item->channel, ii));
+        g_list_store_append(lm, d_channel_info_new(item->channel, ii));
       }
     }
 
@@ -430,6 +438,42 @@ static bool findPlaceInList(GListModel *list, unsigned &loc,
   }
   loc = 0;
   return false;
+}
+
+DChannelInfo *ChannelOverviewGtk4::findChannel(unsigned ichan, unsigned &idxc)
+{
+  if (findPlaceInList(G_LIST_MODEL(store), idxc, [ichan](gpointer i) {
+        if (D_CHANNEL_INFO(i)->channel == ichan)
+          return 0;
+        if (D_CHANNEL_INFO(i)->channel > ichan)
+          return 1;
+        return -1;
+      })) {
+    return D_CHANNEL_INFO(g_list_model_get_item(G_LIST_MODEL(store), idxc));
+  }
+  else {
+    idxc = 0;
+    return NULL;
+  }
+}
+
+DChannelInfo *ChannelOverviewGtk4::findEntry(unsigned ichan, unsigned ientry,
+                                             unsigned &idxc, unsigned &idxe)
+{
+  auto chn = findChannel(ichan, idxc);
+  if (chn && chn->sublist) {
+    if (findPlaceInList(G_LIST_MODEL(chn->sublist), idxe, [ientry](gpointer i) {
+          if (D_CHANNEL_INFO(i)->entry == ientry)
+            return 0;
+          if (D_CHANNEL_INFO(i)->entry > ientry)
+            return 1;
+          return -1;
+        })) {
+      return D_CHANNEL_INFO(
+        g_list_model_get_item(G_LIST_MODEL(chn->sublist), idxe));
+    }
+    return NULL;
+  }
 }
 
 void ChannelOverviewGtk4::reflectChanges(unsigned ichan)
@@ -720,14 +764,20 @@ gboolean ChannelOverviewGtk4::cbHide(GtkWidget *window, gpointer user_data)
 
 void ChannelOverviewGtk4::closeMonitor(unsigned ichan, unsigned ientry)
 {
-  infolist[ichan]->entries[ientry]->monitor->close();
-
-  showChanges();
+  auto entry = findInfo(infolist, ichan, ientry);
+  if (entry) {
+    entry->monitor->close();
+    unsigned idxc, idxe;
+    auto e = findEntry(ichan, ientry, idxc, idxe);
+    if (e) {
+      d_channel_info_set_monitor(e, FALSE);
+    }
+  }
 }
 
-void ChannelOverviewGtk4::monitorToggle(GtkToggleButton *btn, _DChannelInfo *ci)
+void ChannelOverviewGtk4::monitorToggle(GtkCheckButton *btn, _DChannelInfo *ci)
 {
-  gboolean open = gtk_toggle_button_get_active(btn);
+  gboolean open = gtk_check_button_get_active(btn);
   auto entry = findInfo(infolist, ci->channel, ci->entry);
   if (entry) {
 
@@ -779,14 +829,14 @@ void ChannelOverviewGtk4_monitorToggle(GObject *w, gpointer self)
   auto ci = D_CHANNEL_INFO(gtk_tree_list_row_get_item(GTK_TREE_LIST_ROW(row)));
   if (self && ci) {
     reinterpret_cast<ChannelOverviewGtk4 *>(self)->monitorToggle(
-      GTK_TOGGLE_BUTTON(w), ci);
+      GTK_CHECK_BUTTON(w), ci);
   }
 }
 
 void ChannelOverviewGtk4::cbSetupCheckbox(GtkSignalListItemFactory *fact,
                                           GtkListItem *item, gpointer user_data)
 {
-  auto checkbox = gtk_toggle_button_new();
+  auto checkbox = gtk_check_button_new();
   g_signal_connect(G_OBJECT(checkbox), "toggled",
                    G_CALLBACK(ChannelOverviewGtk4_monitorToggle),
                    gpointer(this));
@@ -1009,8 +1059,12 @@ void ChannelOverviewGtk4::cbBindView(GtkSignalListItemFactory *fact,
     if (existing != row) {
       g_object_set_data(G_OBJECT(toggle), "entry-row", row);
     }
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle),
-                                 entry->monitor && entry->monitor->isOpen());
+    g_object_bind_property(chn, "monitor", toggle, "active",
+                           G_BINDING_BIDIRECTIONAL);
+    d_channel_info_set_monitor(chn, entry->monitor && entry->monitor->isOpen());
+    // gtk_check_button_set_active(GTK_CHECK_BUTTON(toggle),
+    //                              entry->monitor &&
+    //                              entry->monitor->isOpen());
     gtk_widget_set_visible(toggle, TRUE);
   }
   else {
