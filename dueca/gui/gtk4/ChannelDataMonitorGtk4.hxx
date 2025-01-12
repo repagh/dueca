@@ -42,14 +42,6 @@ struct ChannelDataViewPair
 typedef std::list<ChannelDataViewPair> dvplist_t;
 typedef std::list<ChannelDataViewPair>::iterator dvplist_it;
 
-// Gobject type system
-struct _DDataEntry
-{
-  GObject parent;
-  GListModel *children;
-  ChannelDataViewPair data;
-};
-
 /** Class handling a channel entry view window */
 class ChannelDataMonitorGtk4 : public ChannelDataMonitor
 {
