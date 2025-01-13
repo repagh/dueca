@@ -472,8 +472,8 @@ DChannelInfo *ChannelOverviewGtk4::findEntry(unsigned ichan, unsigned ientry,
       return D_CHANNEL_INFO(
         g_list_model_get_item(G_LIST_MODEL(chn->sublist), idxe));
     }
-    return NULL;
   }
+  return NULL;
 }
 
 void ChannelOverviewGtk4::reflectChanges(unsigned ichan)
