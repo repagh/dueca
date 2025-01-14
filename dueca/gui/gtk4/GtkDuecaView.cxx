@@ -20,6 +20,7 @@
 // actions
 // https://developer.gnome.org/documentation/tutorials/actions.html
 
+#include "gio/gio.h"
 #include <memory>
 #define GtkDuecaView_cc
 #include <dueca-conf.h>
@@ -114,7 +115,7 @@ static GParamSpec *node_status_properties[D_NSP_NPROPERTIES] = {
   NULL,
 
   g_param_spec_string("status", "Status", "Node status description", "",
-                      (GParamFlags)(G_PARAM_READABLE | G_PARAM_EXPLICIT_NOTIFY |
+                      (GParamFlags)(G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY |
                                     G_PARAM_CONSTRUCT))
 };
 
@@ -202,7 +203,8 @@ static void d_entity_status_get_property(GObject *object, guint property_id,
     g_value_set_string(value, self->s->status->getModuleState().getString());
     break;
   case D_ES_SIMSTATUS:
-    g_value_set_string(value, self->s->status->getSimulationState().getString());
+    g_value_set_string(value,
+                       self->s->status->getSimulationState().getString());
     break;
   default:
     G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
@@ -215,10 +217,10 @@ static GParamSpec *entity_status_properties[D_ES_NPROPERTIES] = {
   NULL,
 
   g_param_spec_string("mstatus", "MStatus", "Module status description", "",
-                      (GParamFlags)(G_PARAM_READABLE | G_PARAM_EXPLICIT_NOTIFY |
+                      (GParamFlags)(G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY |
                                     G_PARAM_CONSTRUCT)),
   g_param_spec_string("sstatus", "SStatus", "Simulation Status", "",
-                      (GParamFlags)(G_PARAM_READABLE | G_PARAM_EXPLICIT_NOTIFY |
+                      (GParamFlags)(G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY |
                                     G_PARAM_CONSTRUCT))
 };
 
@@ -238,7 +240,7 @@ static void d_entity_status_dispose(GObject *object)
     self->children = NULL;
   }
   // chain up to parent
-  G_OBJECT_CLASS (d_entity_status_parent_class)->dispose(object);
+  G_OBJECT_CLASS(d_entity_status_parent_class)->dispose(object);
 }
 
 static void d_entity_status_class_init(DEntityStatusClass *_klass)
@@ -402,10 +404,6 @@ bool GtkDuecaView::complete()
     nodes_store = g_list_store_new(d_node_status_get_type());
     auto nselection = gtk_no_selection_new(G_LIST_MODEL(nodes_store));
     gtk_column_view_set_model(nodes_list, GTK_SELECTION_MODEL(nselection));
-    for (unsigned n = 0; n < unsigned(NodeManager::single()->getNoOfNodes());
-         n++) {
-      g_list_store_append(nodes_store, d_node_status_new(n));
-    }
 
     // rapid access to commonly used widgets
     hw_off = window["hw_off"];
@@ -937,7 +935,8 @@ void GtkDuecaView::refreshEntitiesView()
 }
 
 static DEntityStatus *
-findESInStore(GListModel *store, const std::function<bool(DEntityStatus*)> &compareIt)
+findESInStore(GListModel *store,
+              const std::function<bool(DEntityStatus *)> &compareIt)
 {
   auto n = g_list_model_get_n_items(store);
   for (auto i = n; i--;) {
@@ -947,7 +946,8 @@ findESInStore(GListModel *store, const std::function<bool(DEntityStatus*)> &comp
     }
     else if (item->children) {
       auto sub = findESInStore(G_LIST_MODEL(item->children), compareIt);
-      if (sub) return sub;
+      if (sub)
+        return sub;
     }
   }
   return NULL;
@@ -976,8 +976,8 @@ void *GtkDuecaView::insertEntityNode(const char *name, void *vparent,
     }
   }
   else {
-    std::shared_ptr<CoreEntityStatus> ptr(new CoreEntityStatus(
-                                           name, obj, dueca_node, ++ident));
+    std::shared_ptr<CoreEntityStatus> ptr(
+      new CoreEntityStatus(name, obj, dueca_node, ++ident));
     g_list_store_append(entities_store, d_entity_status_new(ptr));
   }
 
@@ -988,6 +988,18 @@ void GtkDuecaView::refreshNodesView()
 {
   if (!nodes_store)
     return;
+
+  if (!g_list_model_get_n_items(G_LIST_MODEL(nodes_store))) {
+    for (unsigned n = 0; n < unsigned(NodeManager::single()->getNoOfNodes());
+         n++) {
+      g_list_store_append(nodes_store, d_node_status_new(n));
+    }
+  }
+
+  for (auto n = g_list_model_get_n_items(G_LIST_MODEL(nodes_store)); n--;) {
+    auto obj = g_list_model_get_item(G_LIST_MODEL(nodes_store), n);
+    g_object_notify_by_pspec(G_OBJECT(obj), node_status_properties[D_NSP_STATUS]);
+  }
   // gtk_widget_queue_draw(GTK_WIDGET(nodes_list));
 }
 
