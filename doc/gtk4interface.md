@@ -18,7 +18,23 @@ The fourth version of the gtk toolkit, gtk4, looks a lot like later versions gtk
 
 ## Workbench
 
+You can install workbench by Sonny Piers using flatpack:
+
+    flatpack flatpak install flathub re.sonny.Workbench
+
+Run it using 
+
+    flatpack run re.sonny.Workbench
+
+Workbench lets you create an interface specification with a simple script editor. While creating the specification, Workbench can show you the resulting interface. 
+
+Ctrl-N will give you a new project, Ctrl-O gives a window to open an existing project. Check the library for examples. While you edit the "Blueprint" specification of your interface, the file with the .ui extension will also be written. That file can then directly be read by DUECA's GtkGladeWindow.
+
+To figure out how to use Workbench, look at the examples in its library. 
+
 ## Simple button linking
+
+
 
 ## Sucking the data in to fill a DCO object
 

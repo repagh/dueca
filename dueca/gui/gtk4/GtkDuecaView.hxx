@@ -14,6 +14,7 @@
 #ifndef GtkDuecaView_hh
 #define GtkDuecaView_hh
 
+#include <memory>
 #ifdef GtkDuecaView_cc
 #endif
 
@@ -30,6 +31,32 @@
 
 DUECA_NS_START
 struct ParameterTable;
+
+// entity status, DUECA side
+struct CoreEntityStatus
+{
+  // name of the entity/module
+  std::string name;
+
+  // status summary
+  dueca::StatusT1 *status;
+
+  // node number
+  unsigned nodeno;
+
+  // unique identification counter
+  unsigned ident;
+
+  // optionally, children
+  std::list<std::shared_ptr<CoreEntityStatus>> children;
+
+  // link to the status
+  GObject *gstatus;
+
+  // complete constructor
+  CoreEntityStatus(const char *name, dueca::StatusT1 *status, unsigned nodeno,
+                   unsigned ident);
+};
 
 /** Handles -- at least part of -- the communication with the
     experiment leader via the user interface. */
@@ -62,6 +89,9 @@ class GtkDuecaView : public Module, public DuecaView
 
   /** Variant of the interface. */
   bool simple_io;
+
+  /** map to quickly find status objects */
+  std::map<unsigned,std::shared_ptr<CoreEntityStatus>> status_map;
 
   /** Widgets for entity level control. */
   GtkWidget *hw_off, *hw_safe, *hw_on, *emergency;
@@ -241,6 +271,9 @@ public:
   void bindNodeState(GtkSignalListItemFactory *fact, GtkListItem *item,
                      gpointer user_data);
 
+  /** Callback when nodes list visible */
+  void cbNodesListVisible(GtkWidget *cv, gpointer user_data);
+
   /** Auxiliary, clean styles from buttons */
   void clean_style(GtkWidget *w);
 
@@ -257,6 +290,8 @@ public:
       \returns          A pointer to the node on the toolkit side. */
   virtual void *insertEntityNode(const char *name, void *parent, int dueca_node,
                                  StatusT1 *obj);
+
+
 
   /** Refresh the entity list view. */
   void refreshEntitiesView();
