@@ -16,6 +16,7 @@
         license         : EUPL-1.2
 */
 
+#include "glib-object.h"
 #define SnapshotInventoryGtk4_cxx
 
 // include the definition of the module class
@@ -83,16 +84,25 @@ static DSnapShot *d_snap_shot_new(const std::list<Snapshot>::const_iterator &ii)
   return res;
 }
 
+static void d_snap_shop_set_unref_children(gpointer _item, GObject *oldlist)
+{
+  auto item = D_SNAP_SHOT_SET(_item);
+  item->children = NULL;
+}
+
 static GListModel *add_data_element(gpointer _item, gpointer user_data)
 {
   auto item = D_SNAP_SHOT_SET(_item);
-  auto lm = g_list_store_new(d_snap_shot_set_get_type());
+  assert(item->children == NULL);
+  auto lm = g_list_store_new(d_snap_shot_get_type());
   for (auto c = item->data->second.snaps.begin();
        c != item->data->second.snaps.end(); c++) {
     auto child = d_snap_shot_new(c);
     g_list_store_append(lm, gpointer(child));
     g_object_unref(child);
   }
+  g_object_weak_ref(G_OBJECT(lm), d_snap_shop_set_unref_children, item);
+  item->children = lm;
   return G_LIST_MODEL(lm);
 }
 
@@ -345,14 +355,18 @@ void SnapshotInventoryGtk4::cbSelection(GtkSelectionModel *sel, guint position,
                                         guint n_items, gpointer gp)
 {
   if (gtk_selection_model_is_selected(sel, position)) {
+
     auto it = D_SNAP_SHOT_SET(
       g_list_model_get_item(G_LIST_MODEL(snaps_store), position));
+    assert(inventory->changeSelection(it->data->first.c_str()));
+
     gtk_label_set_text(GTK_LABEL(window["initials_selected"]),
                        it->data->first.c_str());
     gtk_widget_set_sensitive(GTK_WIDGET(window["initials_send"]), TRUE);
     gtk_label_set_text(GTK_LABEL(window["initials_status"]), "selected");
   }
   else {
+
     gtk_label_set_text(GTK_LABEL(window["initials_selected"]),
                        "<< none selected >>");
     gtk_widget_set_sensitive(GTK_WIDGET(window["initials_send"]), FALSE);
@@ -377,8 +391,8 @@ bool SnapshotInventoryGtk4::setPositionAndSize(const std::vector<int> &p)
   else {
     /* DUECA UI.
 
-       Window setting needs 2 (for size) or 4 (also location)
-       arguments. */
+         Window setting needs 2 (for size) or 4 (also location)
+         arguments. */
     E_CNF(getId() << '/' << classname << " need 2 or 4 arguments");
     return false;
   }

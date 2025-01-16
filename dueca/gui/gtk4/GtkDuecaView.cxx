@@ -20,9 +20,6 @@
 // actions
 // https://developer.gnome.org/documentation/tutorials/actions.html
 
-#include "gio/gio.h"
-#include "glib-object.h"
-#include <memory>
 #define GtkDuecaView_cc
 #include <dueca-conf.h>
 
@@ -203,9 +200,7 @@ d_entity_status_new(const std::shared_ptr<dueca::CoreEntityStatus> &c,
   auto res = D_ENTITY_STATUS(g_object_new(d_entity_status_get_type(), NULL));
   res->s = c;
   res->level = level;
-  //if (level == 0) {
-  //  res->children = g_list_store_new(d_entity_status_get_type());
-  //}
+  res->children = NULL;
   return res;
 }
 
@@ -236,11 +231,18 @@ static void d_entity_status_class_init(DEntityStatusClass *_klass)
 // default initialization of the object is to zeros
 static void d_entity_status_init(DEntityStatus *self) {}
 
+// gtk will may remove the children list
+static void sublist_destroyed(gpointer _ci, GObject *oldlist)
+{
+  auto ci = D_ENTITY_STATUS(_ci);
+  ci->children = NULL;
+}
+
 // callback from expander
 static GListModel *expand_entity(gpointer _item, gpointer user_data)
 {
   auto item = D_ENTITY_STATUS(_item);
-  if (item->level == 0) {
+  if (item->level == 0 && item->children == NULL) {
     auto level = item->level + 1U;
     auto lm = g_list_store_new(d_entity_status_get_type());
     for (auto const &c : item->s->children) {
@@ -248,10 +250,11 @@ static GListModel *expand_entity(gpointer _item, gpointer user_data)
       g_list_store_append(lm, child);
       g_object_unref(child);
     }
+    g_object_weak_ref(G_OBJECT(lm), sublist_destroyed, item);
     item->children = lm;
-    return G_LIST_MODEL(lm);
   }
-  return G_LIST_MODEL(NULL);
+
+  return reinterpret_cast<GListModel*>(item->children);
 }
 
 // forward declaration for a function that hides or shows windows
@@ -984,7 +987,7 @@ void GtkDuecaView::refreshNodesView()
 {
   if (!nodes_store)
     return;
-  
+
   // trigger this here
   cbNodesListVisible(NULL, NULL);
 
