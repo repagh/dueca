@@ -145,7 +145,7 @@ public:
 
   /** Is called after the constructor and after insertion of parameter
       values; completes construction. */
-  bool complete();
+  bool complete() final;
 
   /** Destructor. */
   ~GtkDuecaView();
@@ -155,13 +155,13 @@ public:
 
   /** Start the GtkDuecaView module. Is not really used, GtkDuecaView is
       intrinsically started. */
-  void startModule(const TimeSpec &time);
+  void startModule(const TimeSpec &time) final;
 
   /** Stop the GtkDuecaView module. As for startModule, not really used. */
-  void stopModule(const TimeSpec &time);
+  void stopModule(const TimeSpec &time) final;
 
   /** Will always be prepared. */
-  bool isPrepared();
+  bool isPrepared() final;
 
   /** Update interface. */
   void updateInterface(const TimeSpec &time);
@@ -280,7 +280,7 @@ public:
   /** update buttons entity control */
   void updateEntityButtons(const ModuleState &confirmed_state,
                            const ModuleState &command_state,
-                           bool emergency_flag);
+                           bool emergency_flag) final;
 
   /** Insert a new entity node.
       \param  name      name for the node
@@ -289,18 +289,21 @@ public:
       \param  obj       pointer to the object on the Dueca side.
       \returns          A pointer to the node on the toolkit side. */
   virtual void *insertEntityNode(const char *name, void *parent, int dueca_node,
-                                 StatusT1 *obj);
+                                 StatusT1 *obj) override;
 
 
 
   /** Refresh the entity list view. */
-  void refreshEntitiesView();
+  void refreshEntitiesView() override;
 
   /** Refresh the nodes list view. */
-  void refreshNodesView();
+  void refreshNodesView() override;
 
   /** Control the switch-off buttons */
-  void requestToKeepRunning(bool keep_running);
+  void requestToKeepRunning(bool keep_running) override;
+
+  /** Reflect the change in a single node */
+  void syncNode(void *nid) override;
 };
 
 DUECA_NS_END

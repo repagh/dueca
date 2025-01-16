@@ -21,6 +21,7 @@
 // https://developer.gnome.org/documentation/tutorials/actions.html
 
 #include "gio/gio.h"
+#include "glib-object.h"
 #include <memory>
 #define GtkDuecaView_cc
 #include <dueca-conf.h>
@@ -438,9 +439,10 @@ bool GtkDuecaView::complete()
       { "nodes_state_fact", "bind",
         gtk_callback(&GtkDuecaView::bindNodeState) },
       { "dueca_if", "close-request", gtk_callback(&GtkDuecaView::deleteView) },
+#if 0
       { "nodes_list", "realize",
         gtk_callback(&GtkDuecaView::cbNodesListVisible) },
-
+#endif
       { NULL, NULL, NULL, NULL }
     };
     window.connectCallbacks(reinterpret_cast<gpointer>(this), cb_links);
@@ -554,7 +556,7 @@ bool GtkDuecaView::PositionAndSize(const vector<int> &p)
 
 void GtkDuecaView::cbNodesListVisible(GtkWidget *w, gpointer user_data)
 {
-  auto n = g_list_model_get_n_items(G_LIST_MODEL(nodes_list));
+  auto n = g_list_model_get_n_items(G_LIST_MODEL(nodes_store));
   for (; n < unsigned(NodeManager::single()->getNoOfNodes()); n++) {
     g_list_store_append(nodes_store, d_node_status_new(n));
   }
@@ -982,6 +984,9 @@ void GtkDuecaView::refreshNodesView()
 {
   if (!nodes_store)
     return;
+  
+  // trigger this here
+  cbNodesListVisible(NULL, NULL);
 
   for (auto n = g_list_model_get_n_items(G_LIST_MODEL(nodes_store)); n--;) {
     auto obj = g_list_model_get_item(G_LIST_MODEL(nodes_store), n);
@@ -989,6 +994,28 @@ void GtkDuecaView::refreshNodesView()
                              node_status_properties[D_NSP_STATUS]);
   }
   // gtk_widget_queue_draw(GTK_WIDGET(nodes_list));
+}
+
+static void refreshNodeStatus(GListModel* list, unsigned ident)
+{
+  for (unsigned ii = g_list_model_get_n_items(list); ii--; ) {
+    auto es =  D_ENTITY_STATUS(g_list_model_get_item(list, ii));
+    if (es->s->ident == ident) {
+      g_object_notify_by_pspec(G_OBJECT(es), entity_status_properties[D_ES_MODULESTATUS]);
+      g_object_notify_by_pspec(G_OBJECT(es), entity_status_properties[D_ES_SIMSTATUS]);
+      return;
+    }
+    if (es->children) {
+      refreshNodeStatus(G_LIST_MODEL(es->children), ident);
+    }
+  }
+}
+
+void GtkDuecaView::syncNode(void *_nodeid)
+{
+  auto nodeid = reinterpret_cast<unsigned long>(_nodeid);
+
+  refreshNodeStatus(G_LIST_MODEL(entities_store), nodeid);
 }
 
 void GtkDuecaView::cbOn2(GtkWidget *widget, gpointer user_data)

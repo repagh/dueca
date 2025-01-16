@@ -88,6 +88,10 @@ const ParameterTable *ChannelOverviewGtk4::getMyParameterTable()
 // entry info or reader info
 enum _ChannelInfoType { Unknown, Channel, Entry, Reader };
 
+// should re-design, with separate ChannelInfo, EntryInfo and ReaderInfo types
+// count only on the entry and reader, 
+// sublist only on the channel and entry
+// type to be detected
 struct _DChannelInfo
 {
   GObject parent;
