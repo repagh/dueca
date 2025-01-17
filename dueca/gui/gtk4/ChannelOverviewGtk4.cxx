@@ -322,12 +322,30 @@ gint smallerString(gconstpointer _1, gconstpointer _2, gpointer self)
   auto r2 = GTK_TREE_LIST_ROW(const_cast<gpointer>(_2));
   auto const c1 = D_CHANNEL_INFO(gtk_tree_list_row_get_item(r1));
   auto const c2 = D_CHANNEL_INFO(gtk_tree_list_row_get_item(r2));
-  if (c1->type == Channel && c2->type == Channel) {
-    if (infolist[c1->channel]->name < infolist[c2->channel]->name)
-      return -1;
-    if (infolist[c1->channel]->name > infolist[c2->channel]->name)
-      return 1;
-  }
+
+  if (infolist[c1->channel]->name < infolist[c2->channel]->name)
+    return -1;
+  if (infolist[c1->channel]->name > infolist[c2->channel]->name)
+    return 1;
+
+  // channel nnames are equal, next comparison, channel with "anything else"
+  if (c1->type == Channel) 
+    return -1;
+  if (c2->type == Channel)
+    return 1;
+
+  // now compare on entry no
+  if (c1->entry < c2->entry)
+    return -1;
+  if (c1->entry > c2->entry)
+    return 1;
+
+  // channel and entry numbers are equal, next on reader
+  if (c1->reader < c2->reader)
+    return -1;
+  if (c1->reader > c2->reader)
+    return 1;
+
   return 0;
 }
 
@@ -337,12 +355,29 @@ gint smallerNumber(gconstpointer _1, gconstpointer _2, gpointer self)
   auto r2 = GTK_TREE_LIST_ROW(const_cast<gpointer>(_2));
   auto const c1 = D_CHANNEL_INFO(gtk_tree_list_row_get_item(r1));
   auto const c2 = D_CHANNEL_INFO(gtk_tree_list_row_get_item(r2));
-  if (c1->type == Channel && c2->type == Channel) {
-    if (c1->channel < c2->channel)
-      return -1;
-    if (c1->channel > c2->channel)
-      return 1;
-  }
+  if (c1->channel < c2->channel)
+    return -1;
+  if (c1->channel > c2->channel)
+    return 1;
+  
+  // channel numbers are equal, next comparison, channel with "anything else"
+  if (c1->type == Channel) 
+    return -1;
+  if (c2->type == Channel)
+    return 1;
+
+  // now compare on entry no
+  if (c1->entry < c2->entry)
+    return -1;
+  if (c1->entry > c2->entry)
+    return 1;
+
+  // channel and entry numbers are equal, next on reader
+  if (c1->reader < c2->reader)
+    return -1;
+  if (c1->reader > c2->reader)
+    return 1;
+
   return 0;
 }
 
