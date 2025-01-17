@@ -5,6 +5,9 @@
 # This project generates and transports data. The solo version also
 # logs data with the hdf5 logger, logging is checked a bit.
 
+# a second system that is tested is SimpleSimulation. This uses
+# a grapics window, and multi-player connection is tested.
+
 # virtual framebuffer x server
 find_program(XVFB NAMES Xvfb)
 find_program(XVNCSERVER NAMES vncserver)
@@ -67,6 +70,7 @@ set(CONTROLFILES
   simplesimulationmulti    # SimpleSimulation, 3x, inter communications
   triggering               # DuecaTestCommunication, trigger variants
   dtcwebsock               # DuecaTestCommunication, websocket test
+  replayscenario_gtk4      # Re-run this, but with gtk4
 )
 
 # run these tests with enough python modules
@@ -163,7 +167,7 @@ if (PYTHON_HAVE_PIL EQUAL 0 AND
   message(STATUS "Created the \"${CMAKE_CURRENT_BINARY_DIR}/viewrun\" tool")
 
 elseif(XVNCSERVER MATCHES ".*-NOTFOUND")
-  message(WARNING "No Xnest, cannot create a scenario creation script")
+  message(WARNING "No vncserver, cannot create a scenario creation script")
 endif()
 
 # User interaction with DUECA windows is read from xml files, and replayed
