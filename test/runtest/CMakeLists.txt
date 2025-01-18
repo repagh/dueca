@@ -10,7 +10,8 @@
 
 # virtual framebuffer x server
 find_program(XVFB NAMES Xvfb)
-find_program(XVNCSERVER NAMES vncserver)
+find_program(XNEST NAMES Xnest)
+find_program(NESTSERVER NAMES ${RUNTEST_SERVER})
 find_program(WINDOWMANAGER NAMES openbox)
 find_program(WMCTRL NAMES wmctrl)
 find_package(LibXml2 REQUIRED)
@@ -156,8 +157,16 @@ if (PYTHON_HAVE_PIL EQUAL 0 AND
     PYTHON_HAVE_WMCTRL EQUAL 0 AND
     PYTHON_HAVE_PYNPUT EQUAL 0 AND
     PYTHON_HAVE_ATTRS EQUAL 0 AND
-    NOT XVNCSERVER MATCHES ".*-NOTFOUND" AND
+    NOT NESTSERVER MATCHES ".*-NOTFOUND" AND
     NOT WINDOWMANAGER MATCHES ".*-NOTFOUND")
+
+  if (${NESTSERVER} EQUAL "xvncserver")
+    set(NESTEXTRAARGS "-geometry ${DISPLAYSIZE} -noxstartup -SecurityTypes None")
+    set(NESTSERVER_CLEAN "${NESTSERVER} -kill ${DISPLAY}")
+  else()
+    set(NESTSERVER_CLEAN "kill \${NESTSERVERPID}")
+    set(NESTEXTRAARGS "-screen ${DISPLAYSIZE} +extension GLX")
+  endif()
 
   configure_file(createrun.in createrun @ONLY)
   execute_process(COMMAND chmod +x ${CMAKE_CURRENT_BINARY_DIR}/createrun)
@@ -166,8 +175,8 @@ if (PYTHON_HAVE_PIL EQUAL 0 AND
   message(STATUS "Created the \"${CMAKE_CURRENT_BINARY_DIR}/createrun\" tool")
   message(STATUS "Created the \"${CMAKE_CURRENT_BINARY_DIR}/viewrun\" tool")
 
-elseif(XVNCSERVER MATCHES ".*-NOTFOUND")
-  message(WARNING "No vncserver, cannot create a scenario creation script")
+elseif(NESTSERVER MATCHES ".*-NOTFOUND")
+  message(WARNING "No ${RUNTEST_SERVER}, cannot create a scenario creation script")
 endif()
 
 # User interaction with DUECA windows is read from xml files, and replayed
