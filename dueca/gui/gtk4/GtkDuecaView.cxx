@@ -967,6 +967,10 @@ void *GtkDuecaView::insertEntityNode(const char *name, void *vparent,
         new CoreEntityStatus(name, obj, dueca_node, ++ident));
     }
     else {
+      /* DUECA UI.
+
+         Issue in inserting status summary in the right place.
+      */
       E_STS("Cannot find parent for status " << name);
     }
   }
