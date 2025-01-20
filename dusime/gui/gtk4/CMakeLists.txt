@@ -14,7 +14,7 @@ set(SOURCES
 
 if (GTK4_VERSION VERSION_LESS "4.10.0")
   FIND_PROGRAM(XMLSTARLET NAMES xmlstarlet)
-  EXCUTE_PROCESS(COMMAND ${XMLSTARLET} edit --delete "interface/object[@class='GtkFileDialog']" dusime-gtk4.ui
+  EXECUTE_PROCESS(COMMAND ${XMLSTARLET} edit --delete "interface/object[@class='GtkFileDialog']" dusime-gtk4.ui
     OUTPUT_FILE "${CMAKE_CURRENT_BINARY_DIR}"/dusime-gtk4.ui)
   set(PROCESSED_DIR "${CMAKE_CURRENT_BINARY_DIR}/")
 endif()
