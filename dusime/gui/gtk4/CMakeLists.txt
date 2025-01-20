@@ -14,12 +14,14 @@ set(SOURCES
 
 if (GTK4_VERSION VERSION_LESS "4.10.0")
   FIND_PROGRAM(XMLSTARLET NAMES xmlstarlet)
-  EXECUTE_PROCESS(COMMAND ${XMLSTARLET} edit --delete "interface/object[@class='GtkFileDialog']" dusime-gtk4.ui
-    OUTPUT_FILE "${CMAKE_CURRENT_BINARY_DIR}"/dusime-gtk4.ui)
-  set(PROCESSED_DIR "${CMAKE_CURRENT_BINARY_DIR}/")
+  EXECUTE_PROCESS(COMMAND ${XMLSTARLET} edit --delete "interface/object[@class='GtkFileDialog']" ${CMAKE_CURRENT_SOURCE_DIR}/dusime-gtk4.ui
+    OUTPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/dusime-gtk4.ui)
+  set(DUSIMEUI ${CMAKE_CURRENT_BINARY_DIR}/dusime-gtk4.ui)
+else()
+  set(DUSIMEUI ${CMAKE_CURRENT_SOURCE_DIR}/dusime-gtk4.ui)
 endif()
 
-set(GLADEFILES ${PROCESSED_DIR}dusime-gtk4.ui trimcalc_window-gtk4.ui
+set(GLADEFILES ${DUSIMEUI} trimcalc_window-gtk4.ui
   replay_master-gtk4.ui initials_inventory-gtk4.ui)
 
 configure_file(dueca-dusime-gtk4.pc.in dueca-dusime-gtk4.pc @ONLY)
