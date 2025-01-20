@@ -217,7 +217,7 @@ struct GladeCallbackTable
     @code{.cxx}
     // define a mapping between the enum values, and interface strings
     // note that whithout mappings (use NULL), the enum values are used
-    // directly in the interface. The mapping must remain valid, use a 
+    // directly in the interface. The mapping must remain valid, use a
     // "static" keyword for that.
 
     // each enum gets a mapping to label strings
@@ -418,6 +418,9 @@ public:
                      window.
   */
   void hide(const char *widget = NULL);
+
+  /** Callback for placing the window */
+  void placeWindow(GtkWidget *w, gpointer user_data);
 
   /** Struct for mapping enum name to representation string */
   struct OptionMapping

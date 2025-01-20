@@ -59,6 +59,34 @@ GtkGladeWindow::~GtkGladeWindow()
   g_object_unref(builder);
 }
 
+void GtkGladeWindow::placeWindow(GtkWidget *win, gpointer user_data)
+{
+  auto gdk_display_id = gdk_display_get_default();
+  if (GDK_IS_X11_DISPLAY(gdk_display_id)) {
+    auto surf = GDK_SURFACE(gtk_native_get_surface(GTK_NATIVE(win)));
+    if (surf) {
+      auto xw = GDK_SURFACE_XID(surf);
+      auto xd = GDK_SURFACE_XDISPLAY(surf);
+      if (xd) {
+        XMoveWindow(xd, xw, offset_x, offset_y);
+      }
+    }
+  }
+  else if (GDK_IS_WAYLAND_DISPLAY(gdk_display_id)) {
+    /* DUECA extra.
+
+       Under wayland, it is (currently) not possible to request a window
+       position
+    */
+    W_XTR("Cannot influence window position on wayland");
+  }
+}
+
+static void GtkGladeWindow_placeWindow(GtkWidget *win, gpointer _self)
+{
+  reinterpret_cast<GtkGladeWindow *>(_self)->placeWindow(win, NULL);
+}
+
 bool GtkGladeWindow::readGladeFile(const char *file, const char *mainwidget,
                                    gpointer client,
                                    const GladeCallbackTable *table,
@@ -83,25 +111,8 @@ bool GtkGladeWindow::readGladeFile(const char *file, const char *mainwidget,
 
   // position requested?
   if (offset_x >= 0 && offset_y >= 0) {
-    auto gdk_display_id = gdk_display_get_default();
-    if (GDK_IS_X11_DISPLAY(gdk_display_id)) {
-      auto surf = GDK_SURFACE(gtk_native_get_surface(GTK_NATIVE(window)));
-      if (surf) {
-        auto xw = GDK_SURFACE_XID(surf);
-        auto xd = GDK_SURFACE_XDISPLAY(surf);
-        if (xd) {
-          XMoveWindow(xd, xw, offset_x, offset_y);
-        }
-      }
-    }
-    else if (GDK_IS_WAYLAND_DISPLAY(gdk_display_id)) {
-      /* DUECA extra.
-
-              Under wayland, it is (currently) not possible to request a window
-              position
-            */
-      W_XTR("Cannot influence window position on wayland");
-    }
+    g_signal_connect(window, "realize", G_CALLBACK(GtkGladeWindow_placeWindow),
+                     this);
   }
 
   // size requested?
