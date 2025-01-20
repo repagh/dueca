@@ -11,8 +11,6 @@
         license         : EUPL-1.2
 */
 
-#include "gtk/gtk.h"
-#include "gtk/gtkdropdown.h"
 #define GtkGladeWindow_cxx
 
 #include <dueca-conf.h>
@@ -24,6 +22,13 @@
 #include <dueca/DataClassRegistry.hxx>
 #include <dueca/CommObjectMemberAccess.hxx>
 #include <dueca/DataSetConverter.hxx>
+#include "gdk/gdk.h"
+#ifdef GDK_WINDOWING_X11
+#include <gdk/x11/gdkx.h>
+#endif
+#ifdef GDK_WINDOWING_WAYLAND
+#include <gdk/wayland/gdkwayland.h>
+#endif
 #define E_CNF
 #define W_CNF
 #include "debug.h"
@@ -78,6 +83,23 @@ bool GtkGladeWindow::readGladeFile(const char *file, const char *mainwidget,
 
   // position requested?
   if (offset_x >= 0 && offset_y >= 0) {
+    auto gdk_display_id = gdk_display_get_default();
+    if (GDK_IS_X11_DISPLAY(gdk_display_id)) {
+
+      auto xw = GDK_SURFACE_XID(
+        GDK_SURFACE(gtk_native_get_surface(GTK_NATIVE(window))));
+      auto xd = GDK_SURFACE_XDISPLAY(
+        GDK_SURFACE(gtk_native_get_surface(GTK_NATIVE(window))));
+      XMoveWindow(xd, xw, offset_x, offset_y);
+    }
+    else if (GDK_IS_WAYLAND_DISPLAY(gdk_display_id)) {
+    /* DUECA extra.
+
+          Under wayland, it is (currently) not possible to request a window
+          position
+        */
+      W_XTR("Cannot influence window position on wayland");
+    }
     // replace with call to windowing toolkit?
     // gtk_window_move(GTK_WINDOW(window), offset_x, offset_y);
   }

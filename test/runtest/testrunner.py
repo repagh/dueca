@@ -254,6 +254,7 @@ class KeyPress:
             await asyncio.sleep(self.wait)
 
         the_keyboard.press(self.key)
+        await asyncio.sleep(self.wait)
         the_keyboard.release(self.key)
 
 
