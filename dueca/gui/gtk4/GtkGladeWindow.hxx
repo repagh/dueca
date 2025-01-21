@@ -554,7 +554,7 @@ public:
                    x. p[1] offset y, if either < 0, position hints are
                    ignored. p[2] width, p[3] height, if either <= 0,
                    size hints are ignored. Vector must have 2 or 4 elements. */
-  inline void setWindow(const std::vector<int> &p)
+  inline bool setWindow(const std::vector<int> &p)
   {
     if (p.size() == 2 || p.size() == 4) {
       offset_x = p[0];
@@ -564,6 +564,7 @@ public:
       size_x = p[2];
       size_y = p[3];
     }
+    return p.size() == 2 || p.size() == 4;
   }
 };
 
