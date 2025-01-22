@@ -35,6 +35,9 @@
 #include "debug.h"
 #include <boost/lexical_cast.hpp>
 
+#define DEBPRINTLEVEL -1
+#include <debprint.h>
+
 DUECA_NS_START
 
 bool GtkGladeWindow::initialised_glade = false;
@@ -277,6 +280,23 @@ bool GtkGladeWindow::_setValue(const char *wname, double value, bool warn)
                               svalue.c_str(), svalue.size());
     return true;
   }
+
+  // also try for a dropdown
+  if (GTK_IS_DROP_DOWN(o)) {
+    auto _model = gtk_drop_down_get_model(GTK_DROP_DOWN(o));
+    if (GTK_IS_STRING_LIST(_model)) {
+      auto model = GTK_STRING_LIST(_model);
+      for (auto n = g_list_model_get_n_items(G_LIST_MODEL(model)); n--;) {
+        DEB("Testing " << gtk_string_list_get_string(model, n));
+        if (boost::lexical_cast<double>(gtk_string_list_get_string(model, n)) ==
+            value) {
+          gtk_drop_down_set_selected(GTK_DROP_DOWN(o), n);
+          return true;
+        }
+      }
+    }
+  }
+
   if (warn) {
     /* DUECA graphics.
 
@@ -496,6 +516,7 @@ bool GtkGladeWindow::_setValue(const char *wname, bool value, bool warn)
   else if (GTK_IS_CHECK_BUTTON(o)) {
     auto t = GTK_CHECK_BUTTON(o);
     gtk_check_button_set_active(t, value ? TRUE : FALSE);
+    return true;
   }
 
   if (warn) {
@@ -603,13 +624,28 @@ bool GtkGladeWindow::__getValue(const char *wname, boost::any &b, bool warn)
     return true;
   }
 
+  if (GTK_IS_DROP_DOWN(o)) {
+    auto _model = gtk_drop_down_get_model(GTK_DROP_DOWN(o));
+    if (GTK_IS_STRING_LIST(_model)) {
+      auto model = GTK_STRING_LIST(_model);
+      auto sel = gtk_drop_down_get_selected(GTK_DROP_DOWN(o));
+      try {
+        b = boost::lexical_cast<T>(gtk_string_list_get_string(model, sel));
+        return true;
+      }
+      catch (const std::exception &e) {
+        // not readable
+      }
+    }
+  }
+
   if (warn) {
     /* DUECA graphics.
 
        Trying to get a numeric value from a widget, but getting a
        numeric value from this widget type is not supported.
     */
-    W_XTR("GtkGladeWindow::getValue: Setting double/float for gtk object \""
+    W_XTR("GtkGladeWindow::getValue: Getting double/float for gtk object \""
           << wname << "\" not implemented");
   }
   return false;

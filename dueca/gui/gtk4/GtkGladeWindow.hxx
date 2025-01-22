@@ -348,9 +348,7 @@ public:
       @param table       Table linking widget, signal, callback
                          function and optionally the pointer argument
                          to the callback function.
-      @param connect_signals Connect gobject callback signals. The user_data
-                         argument to callback functions is obtained from
-                         the "client" argument.
+      @param connect_signals Obsolete for the gtk4 version.
       @param warn        Warn when widgets in the callback table are not
                          found in the interface.
       @returns           true if all OK. */
