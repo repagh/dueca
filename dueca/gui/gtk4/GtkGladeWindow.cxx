@@ -11,6 +11,7 @@
         license         : EUPL-1.2
 */
 
+#include "gtk/gtk.h"
 #define GtkGladeWindow_cxx
 
 #include <dueca-conf.h>
@@ -492,6 +493,10 @@ bool GtkGladeWindow::_setValue(const char *wname, bool value, bool warn)
     gtk_toggle_button_set_active(t, value ? TRUE : FALSE);
     return true;
   }
+  else if (GTK_IS_CHECK_BUTTON(o)) {
+    auto t = GTK_CHECK_BUTTON(o);
+    gtk_check_button_set_active(t, value ? TRUE : FALSE);
+  }
 
   if (warn) {
     /* DUECA graphics.
@@ -514,20 +519,23 @@ bool GtkGladeWindow::_setValue(const char *wname, const char *mname,
   else if (b.type() == typeid(float)) {
     return _setValue(wname, boost::any_cast<float>(b), warn);
   }
+  else if (b.type() == typeid(int16_t)) {
+    return _setValue(wname, double(boost::any_cast<int16_t>(b)), warn);
+  }
   else if (b.type() == typeid(int32_t)) {
     return _setValue(wname, double(boost::any_cast<int32_t>(b)), warn);
   }
   else if (b.type() == typeid(int64_t)) {
-    return _setValue(wname, double(boost::any_cast<int32_t>(b)), warn);
-  }
-  else if (b.type() == typeid(int64_t)) {
     return _setValue(wname, double(boost::any_cast<int64_t>(b)), warn);
   }
-  else if (b.type() == typeid(uint64_t)) {
-    return _setValue(wname, double(boost::any_cast<int32_t>(b)), warn);
+  else if (b.type() == typeid(uint16_t)) {
+    return _setValue(wname, double(boost::any_cast<uint16_t>(b)), warn);
+  }
+  else if (b.type() == typeid(uint32_t)) {
+    return _setValue(wname, double(boost::any_cast<uint32_t>(b)), warn);
   }
   else if (b.type() == typeid(uint64_t)) {
-    return _setValue(wname, double(boost::any_cast<int64_t>(b)), warn);
+    return _setValue(wname, double(boost::any_cast<uint64_t>(b)), warn);
   }
   else if (b.type() == typeid(bool)) {
     return _setValue(wname, boost::any_cast<bool>(b), warn);
@@ -536,6 +544,7 @@ bool GtkGladeWindow::_setValue(const char *wname, const char *mname,
     return _setValue(wname, boost::any_cast<std::string>(b).c_str(), warn);
   }
   try {
+    // try this with enum's
     return _setValue(wname, boost::any_cast<std::string>(b).c_str(), warn);
   }
   catch (const std::exception &) {
@@ -544,7 +553,7 @@ bool GtkGladeWindow::_setValue(const char *wname, const char *mname,
   if (warn) {
     /* DUECA graphics.
 
-         Could not interpreting the data of a DCO member */
+       Could not interpret the data of a DCO member */
     W_XTR("GtkGladeWindow::setValue: could not interpret type of member "
           << mname);
   }
@@ -559,10 +568,10 @@ bool GtkGladeWindow::__getValue(const char *wname, boost::any &b, bool warn)
     if (warn) {
       /* DUECA graphics.
 
-           When trying to get a value from the interface, the widget name
-           corresponding to the DCO member name was not found. This may
-           be a typo in your ui definition, or incidental.
-        */
+         When trying to get a value from the interface, the widget name
+         corresponding to the DCO member name was not found. This may
+         be a typo in your ui definition, or incidental.
+      */
       W_XTR("GtkGladeWindow::getValue: Could not find gtk object with id \""
             << wname << "\"");
     }
@@ -597,9 +606,9 @@ bool GtkGladeWindow::__getValue(const char *wname, boost::any &b, bool warn)
   if (warn) {
     /* DUECA graphics.
 
-         Trying to get a numeric value from a widget, but getting a
-         numeric value from this widget type is not supported.
-       */
+       Trying to get a numeric value from a widget, but getting a
+       numeric value from this widget type is not supported.
+    */
     W_XTR("GtkGladeWindow::getValue: Setting double/float for gtk object \""
           << wname << "\" not implemented");
   }
@@ -627,6 +636,10 @@ bool GtkGladeWindow::__getValue<bool>(const char *wname, boost::any &b,
 
   if (GTK_IS_TOGGLE_BUTTON(o)) {
     b = bool(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(o)));
+    return true;
+  }
+  else if (GTK_IS_CHECK_BUTTON(o)) {
+    b = bool(gtk_check_button_get_active(GTK_CHECK_BUTTON(o)));
     return true;
   }
 
