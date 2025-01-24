@@ -38,6 +38,7 @@ DuecaGLGtk4Window::DuecaGLGtk4Window(const char *window_title,
   gdk_cursor_id(NULL),
   title(window_title),
   fullscreen(false),
+  need_init(true),
   cursortype(1)
 {
   //
@@ -91,6 +92,15 @@ void DuecaGLGtk4Window::swapBuffers()
 {
   glFlush();
   // no-op?
+}
+
+void DuecaGLGtk4Window::callDisplay()
+{
+  if (need_init) {
+    initGL();
+    need_init = false;
+  }
+  display();
 }
 
 static void changeCursor(int cursor, GtkWidget *win, GdkCursor *&gcursor,
@@ -154,33 +164,36 @@ static gboolean on_render(GtkGLArea *area, GdkGLContext *context, gpointer self)
   if (gtk_gl_area_get_error(area) != NULL)
     return FALSE;
 
-  gtk_gl_area_make_current(area);
-  reinterpret_cast<DuecaGLGtk4Window *>(self)->display();
+  // gtk_gl_area_make_current(area);
+ 
+  reinterpret_cast<DuecaGLGtk4Window*>(self)->display();
   return TRUE;
 }
 
-GdkGLContext *DUECA_GTK4GL_common_gc = NULL;
-
-static gboolean on_realize(GtkGLArea *area, gpointer self)
+static void on_realize(GtkGLArea *area, gpointer self)
 {
   gtk_gl_area_make_current(area);
   // gtk_gl_area_attach_buffers(area);
-  if (gtk_gl_area_get_error(area) != NULL) {
+  auto gerr = gtk_gl_area_get_error(area);
+  if (gerr) {
     /* DUECA extra.
 
        Unspecified error signalled by the gtk2 gl area. */
-    E_XTR("Errors with the GL area");
-    return FALSE;
+    E_XTR("Errors with the GL area " << gerr->message);
+    return;
   }
 
   reinterpret_cast<DuecaGLGtk4Window *>(self)->passShape();
   reinterpret_cast<DuecaGLGtk4Window *>(self)->initGL();
 
-  return TRUE;
+  return;
 }
 
+//GdkGLContext *DUECA_GTK4GL_common_gc = NULL;
+#if 0
 static GdkGLContext *on_context(GtkGLArea *area, gpointer self)
 {
+
   if (DUECA_GTK4GL_common_gc) {
     return DUECA_GTK4GL_common_gc;
   }
@@ -190,6 +203,7 @@ static GdkGLContext *on_context(GtkGLArea *area, gpointer self)
   }
   return ctxt;
 }
+#endif
 
 void on_window_realize(GtkWindow *win, gpointer self)
 {
@@ -250,7 +264,7 @@ void DuecaGLGtk4Window::openWindow()
 
   g_signal_connect(area, "render", G_CALLBACK(on_render), this);
   g_signal_connect(area, "realize", G_CALLBACK(on_realize), this);
-  g_signal_connect(area, "create-context", G_CALLBACK(on_context), this);
+  // g_signal_connect(area, "create-context", G_CALLBACK(on_context), this);
 
   // DuecaGtkInteraction::init(area);
   gtk_box_append(GTK_BOX(box), GTK_WIDGET(area));
