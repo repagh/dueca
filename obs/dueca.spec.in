@@ -491,7 +491,12 @@ getent group rtdueca || groupadd rtdueca
 %{_libdir}/libdueca-gtk3.so.*
 %{_libdir}/libdueca-gtkmm3.so.*
 %endif
-%{_libdir}/libdueca-ip*.so.*
+%%if 0%{?gtkfour_config}
+%{_libdir}/libdueca-extra-gtk4.so.*
+%{_libdir}/libdueca-gtk4.so.*
+%{_libdir}/libdueca-gtkmm4.so.*
+%endif
+{_libdir}/libdueca-ip*.so.*
 %{_libdir}/libdueca-shm*.so.*
 %{_libdir}/libdueca-extra.so.*
 %{_libdir}/libdueca-extra-glut.so.*
@@ -570,6 +575,14 @@ getent group rtdueca || groupadd rtdueca
 %{_libdir}/libdueca-gtk3.%{so_or_a}
 %{_libdir}/libdueca-gtk3-??.%{startsoa}
 %{_libdir}/libdueca-gtkmm3.%{so_or_a}
+%endif
+%%if 0%{?gtkfour_config}
+%{_libdir}/pkgconfig/dueca-gtk4*.pc
+%{_libdir}/pkgconfig/dueca-gtkmm4.pc
+%{_libdir}/libdueca-extra-gtk4.%{so_or_a}
+%{_libdir}/libdueca-gtk4.%{so_or_a}
+%{_libdir}/libdueca-gtk4-??.%{startsoa}
+%{_libdir}/libdueca-gtkmm4.%{so_or_a}
 %endif
 %{_libdir}/libdueca-ip.%{so_or_a}
 %{_libdir}/libdueca-ip-??.%{startsoa}
@@ -714,7 +727,10 @@ getent group rtdueca || groupadd rtdueca
 %if 0%{?gtkthree_config}
 %{_libdir}/libdueca-dusime-gtk3.so.*
 %endif
+%%if 0%{?gtkfour_config}
+%{_libdir}/libdueca-dusime-gtk4.so.*
 %endif
+endif
 
 %files dusime-devel
 %defattr(-, root, root)
@@ -725,6 +741,10 @@ getent group rtdueca || groupadd rtdueca
 %if 0%{?gtkthree_config}
 %{_libdir}/libdueca-dusime-gtk3.%{so_or_a}
 %{_libdir}/libdueca-dusime-gtk3-??.%{startsoa}
+%endif
+%if 0%{?gtkfour_config}
+%{_libdir}/libdueca-dusime-gtk4.%{so_or_a}
+%{_libdir}/libdueca-dusime-gtk4-??.%{startsoa}
 %endif
 %{_includedir}/dueca/dusime
 %{_libdir}/pkgconfig/dueca-dusime*pc
