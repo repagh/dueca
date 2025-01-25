@@ -68,6 +68,18 @@ function trimversion()
     elif [ "$3" = '22.04' ]; then
         sed -e 's/libgtkmm-4.0-dev,//
                 s/debian\.tar/debian-xUbuntu_22.04.tar/' $1 > $2
+    elif [ "$3" = '11' ]; then
+        sed -e 's/libgtk-4-dev,//
+                s/libgtkmm-4.0-dev,//
+                s/debian\.tar/debian-Debian_11.tar/' $1 > $2
+    elif [ "$3" = 'R10' ]; then
+        sed -e 's/libgtk-4-dev,//
+                s/libgtkmm-4.0-dev,//
+                s/debian\.tar/debian-Raspbian_10.tar/' $1 > $2
+    elif [ "$3" = 'R11' ]; then
+        sed -e 's/libgtk-4-dev,//
+                s/libgtkmm-4.0-dev,//
+                s/debian\.tar/debian-Raspbian_11.tar/' $1 > $2
     fi
 }
 
@@ -163,27 +175,6 @@ function create_debfiles()
     mv debian-versioned/control debian-versioned/control.bak
     popd
 
-    # now hack/adapt for xUbuntu_18.04
-    # base version
-    pushd obs
-    trim1804 debian/control.bak debian/control
-    tar cvf ../../debian-xUbuntu_18.04.tar \
-        debian
-    popd
-
-    # versioned
-    pushd build/obs
-    trim1804 debian-versioned/control.bak debian-versioned/control
-    tar cvf ../../../debian-versioned-xUbuntu_18.04.tar \
-        --transform "s/debian-versioned/debian/" \
-        debian-versioned
-
-    # and the dsc files, versioned and normal
-    trim1804 dueca-versioned.dsc ../../../dueca-versioned-xUbuntu_18.04.dsc
-    trim1804 ${NAME}.dsc ../../../${NAME}-xUbuntu_18.04.dsc ${VER}
-
-    popd
-
     # and for xUbuntu 20.04
     for VER in 18.04 20.04 22.04; do
 
@@ -202,7 +193,36 @@ function create_debfiles()
             debian-versioned
 
         trimversion dueca.dsc ../../../dueca-xUbuntu_${VER}.dsc ${VER}
+        trimversion dueca-versioned.dsc ../../../dueca-versioned-xUbuntu_${VER}.dsc ${VER}
         popd
+    done
+
+    # Debian 11
+    for VER in 11; do
+
+        # base version debian folder
+        pushd obs
+        trimversion debian/control.bak debian/control ${VER}
+        tar cvf ../../debian-Debian_${VER}.tar debian
+        popd
+        pushd build/obs
+        trimversion dueca.dsc ../../../dueca-Debian_${VER}.dsc ${VER}
+        popd
+
+    done
+
+    # Raspbian 10, 11
+    for VER in R10 R11; do
+
+        # base version debian folder
+        pushd obs
+        trimversion debian/control.bak debian/control ${VER}
+        tar cvf ../../debian-Raspbian_${VER}.tar debian
+        popd
+        pushd build/obs
+        trimversion dueca.dsc ../../../dueca-Raspbian_${VER}.dsc ${VER}
+        popd
+
     done
 
     # Portfile for mac osx builds
@@ -267,6 +287,11 @@ function create_debfiles()
             mv -f debian-xUbuntu_${VER}.tar \
                ${OSCDIR}/debian-xUbuntu_${VER}.tar
         done
+        for VER in 11; do
+            mv -f dueca-Debian_${VER}.dsc ${OSCDIR}
+            mv -f debian-Debian_${VER}.tar \
+               ${OSCDIR}/debian-Debian_${VER}.tar
+        done
         echo "Copied"
         echo $FILES
         echo "to ${OSCDIR}"
@@ -274,7 +299,8 @@ function create_debfiles()
         rm -rf $PKGDIR
     else
         popd
-        echo "Created files $FILES"
+        echo "Created files"
+        echo "$FILES"
         echo "You can find them in $PKGDIR"
     fi
 }
