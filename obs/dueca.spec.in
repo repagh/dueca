@@ -492,12 +492,12 @@ getent group rtdueca || groupadd rtdueca
 %{_libdir}/libdueca-gtk3.so.*
 %{_libdir}/libdueca-gtkmm3.so.*
 %endif
-%%if 0%{?gtkfour_config}
+%if 0%{?gtkfour_config}
 %{_libdir}/libdueca-extra-gtk4.so.*
 %{_libdir}/libdueca-gtk4.so.*
 %{_libdir}/libdueca-gtkmm4.so.*
 %endif
-{_libdir}/libdueca-ip*.so.*
+%{_libdir}/libdueca-ip*.so.*
 %{_libdir}/libdueca-shm*.so.*
 %{_libdir}/libdueca-extra.so.*
 %{_libdir}/libdueca-extra-glut.so.*
