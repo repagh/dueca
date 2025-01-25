@@ -52,6 +52,25 @@ if [ -z "$GITBRANCHORTAG" ]; then
     GITREMOTE="https://github.com/dueca/dueca/archive/v${VERSION}.tar.gz"
 fi
 
+function trimversion()
+{
+    if [ "$3" = '18.04' ]; then
+        sed -e 's/guile-2\.2-dev/guile-1\.8-dev/
+                s/python3-xlwt/python-xlwt/
+                s/libgtk-4-dev,//
+                s/libgtkmm-4.0-dev,//
+                s/debian\.tar/debian-xUbuntu_18.04.tar/' $1 > $2
+    elif [ "$3" = '20.04' ]; then
+        sed -e 's/guile-2\.2-dev/guile-2\.0-dev/
+                s/libgtk-4-dev,//
+                s/libgtkmm-4.0-dev,//
+                s/debian\.tar/debian-xUbuntu_20.04.tar/' $1 > $2
+    elif [ "$3" = '22.04' ]; then
+        sed -e 's/libgtkmm-4.0-dev,//
+                s/debian\.tar/debian-xUbuntu_22.04.tar/' $1 > $2
+    fi
+}
+
 # create a source rpm
 function create_debfiles()
 {
@@ -147,58 +166,42 @@ function create_debfiles()
     # now hack/adapt for xUbuntu_18.04
     # base version
     pushd obs
-    sed -e 's/guile-2\.2-dev/guile-1\.8-dev/
-            s/python3-xlwt/python-xlwt/' debian/control.bak > \
-            debian/control
+    trim1804 debian/control.bak debian/control
     tar cvf ../../debian-xUbuntu_18.04.tar \
         debian
     popd
 
     # versioned
     pushd build/obs
-    sed -e 's/guile-2\.2-dev/guile-1\.8-dev/
-            s/python3-xlwt/python-xlwt/' debian-versioned/control.bak > \
-            debian-versioned/control
+    trim1804 debian-versioned/control.bak debian-versioned/control
     tar cvf ../../../debian-versioned-xUbuntu_18.04.tar \
         --transform "s/debian-versioned/debian/" \
         debian-versioned
 
     # and the dsc files, versioned and normal
-    sed -e 's/guile-2\.2-dev/guile-1\.8-dev/
-            s/debian\.tar/debian-xUbuntu_18\.04.tar/
-            s/python3-xlwt/python-xlwt/' dueca-versioned.dsc > \
-                ../../../dueca-versioned-xUbuntu_18.04.dsc
-    sed -e 's/guile-2\.2-dev/guile-1\.8-dev/
-            s/debian\.tar/debian-xUbuntu_18\.04.tar/
-            s/python3-xlwt/python-xlwt/' ${NAME}.dsc > \
-                ../../../${NAME}-xUbuntu_18.04.dsc
+    trim1804 dueca-versioned.dsc ../../../dueca-versioned-xUbuntu_18.04.dsc
+    trim1804 ${NAME}.dsc ../../../${NAME}-xUbuntu_18.04.dsc ${VER}
+
     popd
 
     # and for xUbuntu 20.04
-    for VER in 20.04; do
+    for VER in 18.04 20.04 22.04; do
 
         # base version debian folder
         pushd obs
-        sed -e 's/guile-2\.2-dev/guile-2\.0-dev/' debian/control.bak > \
-            debian/control
-        tar cvf ../../debian-xUbuntu_${VER}.tar \
-            debian
+        trimversion debian/control.bak debian/control ${VER}
+        tar cvf ../../debian-xUbuntu_${VER}.tar debian
         popd
 
         # versioned version debian folder and the dsc files
         pushd build/obs
-        sed -e 's/guile-2\.2-dev/guile-2\.0-dev/' \
-            debian-versioned/control.bak > \
-            debian-versioned/control
+        trimversion debian-versioned/control.bak \
+            debian-versioned/control $VER
         tar cvf ../../../debian-versioned-xUbuntu_${VER}.tar \
             --transform "s/debian-versioned/debian/" \
             debian-versioned
-        sed -e "s/guile-2\.2-dev/guile-2\.0-dev/
-            s/debian\.tar/debian-xUbuntu_${VER}.tar/" dueca.dsc > \
-                ../../../dueca-xUbuntu_${VER}.dsc
-        sed -e "s/guile-2\.2-dev/guile-2\.0-dev/
-            s/debian\.tar/debian-xUbuntu_${VER}.tar/" dueca-versioned.dsc > \
-                ../../../dueca-versioned-xUbuntu_${VER}.dsc
+
+        trimversion dueca.dsc ../../../dueca-xUbuntu_${VER}.dsc ${VER}
         popd
     done
 
@@ -234,7 +237,7 @@ function create_debfiles()
         mv -f debian-versioned.tar ${OSCDIRV}/debian.tar
         mv -f dueca-versioned.dsc ${OSCDIRV}
         mv -f dueca-versioned.spec ${OSCDIRV}
-        for VER in 18.04 20.04; do
+        for VER in 18.04 20.04 22.04; do
             mv -f dueca-versioned-xUbuntu_${VER}.dsc ${OSCDIRV}
             mv -f debian-versioned-xUbuntu_${VER}.tar \
                ${OSCDIRV}/debian-xUbuntu_${VER}.tar
@@ -259,7 +262,7 @@ function create_debfiles()
         mv -f debian.tar ${OSCDIR}/debian.tar
         mv -f dueca.dsc ${OSCDIR}
         mv -f dueca.spec ${OSCDIR}
-        for VER in 18.04 20.04; do
+        for VER in 18.04 20.04 22.04; do
             mv -f dueca-xUbuntu_${VER}.dsc ${OSCDIR}
             mv -f debian-xUbuntu_${VER}.tar \
                ${OSCDIR}/debian-xUbuntu_${VER}.tar

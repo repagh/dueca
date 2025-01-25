@@ -730,7 +730,7 @@ getent group rtdueca || groupadd rtdueca
 %%if 0%{?gtkfour_config}
 %{_libdir}/libdueca-dusime-gtk4.so.*
 %endif
-endif
+%endif
 
 %files dusime-devel
 %defattr(-, root, root)
