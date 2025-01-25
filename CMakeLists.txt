@@ -378,6 +378,7 @@ pkg_check_modules(GTKGLEXT gtkglext-1.0)
 pkg_check_modules(GTK3 gtk+-3.0)
 pkg_check_modules(GTKMM30 gtkmm-3.0)
 pkg_check_modules(GTKMM40 gtkmm-4.0)
+pkg_check_modules(GTK4 gtk4)
 
 # rapidjson for channel data coding
 pkg_check_modules(RAPIDJSON RapidJSON)
