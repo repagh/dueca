@@ -212,7 +212,7 @@ function create_debfiles()
     done
 
     # Raspbian 10, 11
-    for VER in R10 R11; do
+    for VER in 10 11; do
 
         # base version debian folder
         pushd obs
@@ -220,7 +220,7 @@ function create_debfiles()
         tar cvf ../../debian-Raspbian_${VER}.tar debian
         popd
         pushd build/obs
-        trimversion dueca.dsc ../../../dueca-Raspbian_${VER}.dsc ${VER}
+        trimversion dueca.dsc ../../../dueca-Raspbian_${VER}.dsc R${VER}
         popd
 
     done
@@ -292,7 +292,7 @@ function create_debfiles()
             mv -f debian-Debian_${VER}.tar \
                ${OSCDIR}/debian-Debian_${VER}.tar
         done
-        for VER in 11 12; do
+        for VER in 10 11; do
             mv -f dueca-Raspbian_${VER}.dsc ${OSCDIR}
             mv -f debian-Raspbian_${VER}.tar \
                ${OSCDIR}/debian-Raspbian_${VER}.tar
