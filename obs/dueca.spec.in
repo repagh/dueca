@@ -358,6 +358,7 @@ Documentation for users of the DUSIME and DUECA API
        %{?STATICLIBS_CONFIG} \
        -DDUECA_DOC_PATH:PATH=%{_docdir} \
        %{?GLUI_CONFIG} \
+       -DBUILD_GTK2=ON \
        %{?GTKMM_CONFIG} \
        %{?GTKTHREE_CONFIG} \
        %{?GTKFOUR_CONFIG} \

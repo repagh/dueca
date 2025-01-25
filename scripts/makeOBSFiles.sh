@@ -292,6 +292,11 @@ function create_debfiles()
             mv -f debian-Debian_${VER}.tar \
                ${OSCDIR}/debian-Debian_${VER}.tar
         done
+        for VER in 11 12; do
+            mv -f dueca-Raspbian_${VER}.dsc ${OSCDIR}
+            mv -f debian-Raspbian_${VER}.tar \
+               ${OSCDIR}/debian-Raspbian_${VER}.tar
+        done
         echo "Copied"
         echo $FILES
         echo "to ${OSCDIR}"
