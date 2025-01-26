@@ -538,6 +538,10 @@ class Scenario:
             )
             return True
 
+        elif key in (Key.f3,):
+            window = findWindowUnder(self.project.windows, self.x, self.y, True)
+            print(f"press {x},{y}, window {window.x},{window.y}")
+
         elif key in (Key.esc,):
             return False
 
