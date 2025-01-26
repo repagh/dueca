@@ -478,6 +478,7 @@ class Scenario:
             self.project = None
             self.actions = []
             self.version = None
+            self.offset = None
 
             # read from file
             try:
@@ -567,8 +568,9 @@ class Scenario:
         elif key in (Key.f3,):
             window = findWindowUnder(self.project.windows, self.x, self.y, True)
             print(f"press {x},{y}, window {window.x},{window.y}")
-
-
+            if self.offset is None:
+                self.offset = Offset(xmlroot=self.xmltree, x=self.x-window.x, y=self.y-window.y)
+ 
         elif key in (Key.esc,):
             return False
 
