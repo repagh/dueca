@@ -33,6 +33,10 @@ class Translation:
         self.offset_y = offset_y
         self.extra_y = extra_y
 
+    def adjust(self, x, y):
+        self.offset_x = x
+        self.offset_y = y
+
     def inWindow(self, x, y, w):
         if x < w.x - self.offset_x:
             return False
@@ -145,6 +149,26 @@ class Execute:
             if self.platform is None or self.node is None:
                 raise ValueError("xml file incomplete")
 
+class Offset:
+
+    def __init__(self, xmlroot=None, xmlnode=None, x=0, y=0):
+
+        global translation
+        if xmlroot is not None:
+            self.xmlnode = etree.SubElement(xmlroot, "offset")
+            self.xmlnode.set("x", str(x))
+            self.xmlnode.set("y", str(y))
+        elif xmlnode is not None:
+            self.xmlnode = xmlnode
+            x = int(xmlnode.get("x", "0"))
+            y = int(xmlnode.get("y", "0"))
+
+        translation.adjust(x, y)
+
+    def adjust(self, x, y):
+        self.xmlnode.set("x", str(x))
+        self.xmlnode.set("y", str(y))
+        translation.adjust(x, y)
 
 class Click:
     buttonmap = {
@@ -466,6 +490,8 @@ class Scenario:
                             pass
                         elif XML_tag(node, "project"):
                             self.project = Project(xmlnode=node)
+                        elif XML_tag(node, "offset"):
+                            self.offset = Offset(xmlnode=node)
                         elif XML_tag(node, "repository"):
                             self.repository = node.text.strip()
                         elif XML_tag(node, "version"):
@@ -541,6 +567,7 @@ class Scenario:
         elif key in (Key.f3,):
             window = findWindowUnder(self.project.windows, self.x, self.y, True)
             print(f"press {x},{y}, window {window.x},{window.y}")
+
 
         elif key in (Key.esc,):
             return False
