@@ -7,8 +7,7 @@
 
 (Type double)
 (Type string16 "#include <dueca/stringoptions.h>")
-(Type vector6double 
-	      "
+(Type vector6double "
 #include <dueca/fixvector_withdefault.hxx>
 typedef dueca::fixvector_withdefault<6,double,-1> vector6double;")
 (Type vector3double 
