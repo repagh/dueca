@@ -191,7 +191,7 @@ if(NOT XMLSTARLET MATCHES ".*-NOTFOUND")
       --delete 'x:scenario/x:actions/x:key'
       ${SCN}.xml > ${CMAKE_BINARY_DIR}/${SCN}-clean.xml
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-      DEPENDS ${SCN})
+      DEPENDS ${SCN}.xml)
     list(APPEND CLNFILES ${CMAKE_BINARY_DIR}/${SCN}-clean.xml)
   endforeach()
 endif()

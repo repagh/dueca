@@ -17,7 +17,7 @@ typedef dueca::fixvector_withdefault<3,double,-1> vector3double;")
 #include <dueca/fixvector_withdefault.hxx>
 #include <dueca/fixvector.hxx>
 typedef dueca::fixvector_withdefault<16,double,-1> matrix44double;
-typedef dueca::fixvector<4,dueca::fixvector_withdefault<4,double. -1>>
+typedef dueca::fixvector<4,dueca::fixvector_withdefault<4,double,-1>>
         matrix44double2;")
 
 ;; Head pose data
