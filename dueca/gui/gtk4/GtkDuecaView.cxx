@@ -485,7 +485,11 @@ bool GtkDuecaView::complete()
     }
 
     // check that the other top-level widgets are there
-    if (!gw_common["really_quit"]) {
+    if (gw_common["really_quit"]) {
+      gtk_window_set_transient_for(
+        GTK_WINDOW(gw_common["really_quit"]), GTK_WINDOW(window["dueca_if"]));
+    }
+    else {
       /* DUECA UI.
 
          Could not create the "quit" dialog. Check DUECA
@@ -494,7 +498,11 @@ bool GtkDuecaView::complete()
       E_CNF(" failed to create quit dialog");
       return false;
     }
-    if (!gw_common["dont_stop_warning"]) {
+    if (gw_common["dont_stop_warning"]) {
+      gtk_window_set_transient_for(
+        GTK_WINDOW(gw_common["dont_stop_warning"]), GTK_WINDOW(window["dueca_if"]));
+    }
+    else {
       /* DUECA UI.
 
          Could not create the stop warning dialog. Check DUECA
@@ -503,22 +511,17 @@ bool GtkDuecaView::complete()
       E_CNF(" failed to create stop warning dialog");
       return false;
     }
-    if (!gw_common["dont_change_a_running"]) {
+    if (gw_common["dont_change_a_running"]) {
+      gtk_window_set_transient_for(
+        GTK_WINDOW(gw_common["dont_change_a_running"]), GTK_WINDOW(window["dueca_if"]));
+    }
+    else {
       /* DUECA UI.
 
          Could not create the "change" warning dialog. Check DUECA
          installation and paths.
       */
       E_CNF(" failed to create change warning dialog");
-      return false;
-    }
-    if (!gw_common["select_md2"]) {
-      /* DUECA UI.
-
-         Could not create the "additional model" dialog. Check DUECA
-         installation and paths.
-      */
-      E_CNF(" failed to create addition model dialog");
       return false;
     }
   }

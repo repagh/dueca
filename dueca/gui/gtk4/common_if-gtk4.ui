@@ -160,37 +160,4 @@
       </object>
     </child>
   </object>
-  <object class="GtkFileChooserDialog" id="select_md2">
-    <property name="use-header-bar"> 0 </property>
-    <property name="title" translatable="1">Select a module modification file (.md2)</property>
-    <property name="create-folders">0</property>
-    <child>
-      <object class="GtkBox" id="filechooserdialog-vbox1">
-        <property name="visible">0</property>
-        <property name="orientation">vertical</property>
-        <property name="spacing">2</property>
-        <child>
-          <object class="GtkBox" id="filechooserdialog-action_area1">
-            <property name="can-focus">False</property>
-            <child>
-              <object class="GtkButton" id="cancel_button1">
-                <property name="label">gtk-cancel</property>
-                <property name="focusable">1</property>
-                <property name="receives-default">1</property>
-                <signal name="clicked" handler="gtk_widget_hide" object="select_md2" swapped="yes" />
-              </object>
-            </child>
-            <child>
-              <object class="GtkButton" id="ok_button1">
-                <property name="label">gtk-ok</property>
-                <property name="focusable">1</property>
-                <property name="receives-default">1</property>
-                <property name="valign">0.46000000834465027</property>
-              </object>
-            </child>
-          </object>
-        </child>
-      </object>
-    </child>
-  </object>
 </interface>
