@@ -51,7 +51,7 @@ void load_dueca_buttons()
   if (!emergency_icons[0]) {
 
     // needed for tests in simulated X environment
-    if (getenv("DUECA_AVOID_SVG")) {
+    if (getenv("DUECA_GTK4_AVOID_SVG")) {
       emergency_icons[0] = loadTextureFromFile("pixmaps/abort.png");
       emergency_icons[1] = loadTextureFromFile("pixmaps/confirm-abort.png");
       button_icons[0] = loadTextureFromFile("pixmaps/inactive.png");
