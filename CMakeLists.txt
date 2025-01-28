@@ -386,9 +386,9 @@ pkg_check_modules(RAPIDJSON RapidJSON)
 # msgpack should be there for storage and packing
 find_package(msgpack-cxx)
 
-# opensuse variants have that in msgpack-cxx!
-if (NOT msgpack_FOUND)
-  find_package(msgpack-cxx REQUIRED)
+# opensuse variants and have that in msgpack-cxx!
+if (NOT msgpack_cxx_FOUND)
+  find_package(msgpack)
 endif()
 
 message(STATUS "msgpack ${MSGPACK_VERSION}")
