@@ -9,10 +9,10 @@ fi
 @NESTSERVER@ @DISPLAY@ @NESTEXTRAARGS@ &
 NESTSERVERPID=$!
 
-echo "You should now create a VNC connection to localhost:5988"
 echo "Operate the DUECA process with mouse clicks and keypresses"
 echo "- F1 button to insert a color check at the cursor"
 echo "- F2 button to inserts a snapshot in the sequence"
+echo "- F3 button calibrates the "0,0" in the display windows"
 echo "- Esc to end the recording"
 sleep 1
 
