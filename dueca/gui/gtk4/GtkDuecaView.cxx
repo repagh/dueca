@@ -470,9 +470,9 @@ bool GtkDuecaView::complete()
                                             &GtkDuecaView::cbQuit2) },
                                         { NULL, NULL, NULL, NULL } };
 
-      res = gw_common.readGladeFile(commonglade.c_str(), "about2",
-                                    reinterpret_cast<gpointer>(this), cb_links,
-                                    true);
+      res =
+        window.readGladeFile(commonglade.c_str(), NULL,
+                             reinterpret_cast<gpointer>(this), cb_links, true, true);
       if (!res) {
         /* DUECA UI.
 
@@ -485,11 +485,7 @@ bool GtkDuecaView::complete()
     }
 
     // check that the other top-level widgets are there
-    if (gw_common["really_quit"]) {
-      gtk_window_set_transient_for(
-        GTK_WINDOW(gw_common["really_quit"]), GTK_WINDOW(window["dueca_if"]));
-    }
-    else {
+    if (!window["really_quit"]) {
       /* DUECA UI.
 
          Could not create the "quit" dialog. Check DUECA
@@ -498,11 +494,7 @@ bool GtkDuecaView::complete()
       E_CNF(" failed to create quit dialog");
       return false;
     }
-    if (gw_common["dont_stop_warning"]) {
-      gtk_window_set_transient_for(
-        GTK_WINDOW(gw_common["dont_stop_warning"]), GTK_WINDOW(window["dueca_if"]));
-    }
-    else {
+    if (!window["dont_stop_warning"]) {
       /* DUECA UI.
 
          Could not create the stop warning dialog. Check DUECA
@@ -511,11 +503,7 @@ bool GtkDuecaView::complete()
       E_CNF(" failed to create stop warning dialog");
       return false;
     }
-    if (gw_common["dont_change_a_running"]) {
-      gtk_window_set_transient_for(
-        GTK_WINDOW(gw_common["dont_change_a_running"]), GTK_WINDOW(window["dueca_if"]));
-    }
-    else {
+    if (!window["dont_change_a_running"]) {
       /* DUECA UI.
 
          Could not create the "change" warning dialog. Check DUECA
@@ -534,7 +522,7 @@ bool GtkDuecaView::complete()
 
   // hack, to properly load buttons here
   const char *dusimebuttons[] = { "inactive", "holdcurrent", "calibrate",
-                                  "advance", "replay", "calibrate" };
+                                  "advance",  "replay",      "calibrate" };
   for (const auto bname : dusimebuttons) {
     if (window[bname]) {
       gtk_dueca_button_load_image(window[bname], 0);
@@ -828,23 +816,23 @@ void GtkDuecaView::updateInterface(const TimeSpec &time)
 void GtkDuecaView::cbShowAbout(GSimpleAction *action, GVariant *arg,
                                gpointer user_data)
 {
-  gtk_widget_set_visible(gw_common["about2"], TRUE);
+  gtk_widget_set_visible(window["about2"], TRUE);
 }
 
 void GtkDuecaView::cbCloseAbout(GSimpleAction *action, GVariant *arg,
                                 gpointer user_data)
 {
-  gtk_widget_set_visible(gw_common["about2"], TRUE);
+  gtk_widget_set_visible(window["about2"], TRUE);
 }
 
 void GtkDuecaView::cbShowQuit(GSimpleAction *action, GVariant *arg,
                               gpointer user_data)
 {
   if (EntityManager::single()->stopIsOK()) {
-    gtk_widget_set_visible(gw_common["really_quit"], TRUE);
+    gtk_widget_set_visible(window["really_quit"], TRUE);
   }
   else {
-    gtk_widget_set_visible(gw_common["dont_stop_warning"], TRUE);
+    gtk_widget_set_visible(window["dont_stop_warning"], TRUE);
   }
 }
 
@@ -872,17 +860,17 @@ void GtkDuecaView::cbExtraModDialog(GSimpleAction *action, GVariant *arg,
 #endif
   }
   else {
-    gtk_widget_set_visible(gw_common["dont_change_a_running"], TRUE);
+    gtk_widget_set_visible(window["dont_change_a_running"], TRUE);
   }
 }
 
 void GtkDuecaView::cbWantToQuit(GtkWidget *button, gpointer gp)
 {
   if (EntityManager::single()->stopIsOK()) {
-    gtk_widget_set_visible(gw_common["really_quit"], TRUE);
+    gtk_widget_set_visible(window["really_quit"], TRUE);
   }
   else {
-    gtk_widget_set_visible(gw_common["dont_stop_warning"], TRUE);
+    gtk_widget_set_visible(window["dont_stop_warning"], TRUE);
   }
 }
 
@@ -895,7 +883,7 @@ gboolean GtkDuecaView::deleteView(GtkWindow *window, gpointer user_data)
 void GtkDuecaView::cbQuit2(GtkWidget *button, gpointer gp)
 {
   NodeManager::single()->breakUp();
-  gtk_widget_set_visible(gw_common["really_quit"], FALSE);
+  gtk_widget_set_visible(window["really_quit"], FALSE);
 }
 
 void GtkDuecaView::updateEntityButtons(const ModuleState &confirmed_state,
