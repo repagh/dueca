@@ -85,9 +85,7 @@
           </object>
         </child>
         <child>
-
           <object class="GtkGrid">
-
             <child>
               <object class="GtkLabel">
                 <property name="label" translatable="1">Hardware</property>
@@ -109,8 +107,6 @@
               </object>
             </child>
             <child>
-
-
               <object class="GtkLabel">
                 <property name="label" translatable="1">stop</property>
                 <property name="halign">end</property>
@@ -176,8 +172,8 @@
             <child>
               <object class="GtkToggleButton" id="hw_safe">
                 <child>
-                  <object class="GtkPicture" id="hw_safe_img">> <property name="content-fit">
-                    GTK_CONTENT_FIT_CONTAIN</property>
+                  <object class="GtkPicture" id="hw_safe_img">
+                    <property name="content-fit">GTK_CONTENT_FIT_CONTAIN</property>
                   </object>
                 </child>
                 <layout>
@@ -344,10 +340,8 @@
               <property name="row">1</property>
               <property name="row-span">2</property>
             </layout>
-
           </object>
         </child>
-
         <child>
           <object class="GtkScrolledWindow">
             <property name="propagate-natural-width">True</property>
