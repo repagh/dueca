@@ -11,7 +11,7 @@ set(SVGDIRECT
 
 set(SVGIMG
 
-  ${SVGDIRECT} event-logo.svg multi-logo.svg picking-logo.svg stream-logo.svg
+  event-logo.svg multi-logo.svg picking-logo.svg stream-logo.svg
   label-logo.svg number-logo.svg sequential-logo.svg
 )
 
@@ -41,6 +41,20 @@ foreach(SVG ${SVGIMG})
     ${SVG_CONVERSION_COMMAND}
     ${SVG_PNGFILE_ARG}="${CMAKE_CURRENT_BINARY_DIR}/${PNG}"
     ${SVG_ICON_SIZE_ARG}
+    "${CMAKE_CURRENT_SOURCE_DIR}/${SVG}"
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    DEPENDS ${SVG})
+  list(APPEND PNGFILES ${CMAKE_CURRENT_BINARY_DIR}/${PNG})
+endforeach()
+
+foreach(SVG ${SVGDIRECT})
+  string(REPLACE .svg .png PNG ${SVG})
+  message(STATUS "Adding target ${PNG}, using ${SVG_CONVERSION_COMMAND}")
+  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${PNG}
+    COMMAND
+    ${SVG_CONVERSION_COMMAND}
+    ${SVG_PNGFILE_ARG}="${CMAKE_CURRENT_BINARY_DIR}/${PNG}"
+    ${SVG_ICON_SIZE2_ARG}
     "${CMAKE_CURRENT_SOURCE_DIR}/${SVG}"
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     DEPENDS ${SVG})
