@@ -10,6 +10,8 @@ from PIL import ImageGrab, ImageDraw
 import pynput
 from pynput.keyboard import Key
 from wmctrl import Window
+import pyautogui as pg
+
 import subprocess
 import os
 import asyncio
@@ -227,6 +229,19 @@ class Click:
             x, y = translation.toScreen(self.x, self.y, w)
         else:
             x, y = self.x, self.y
+
+        if self.image:
+            
+            # grab an image around the the x, y position, of n times the given
+            # image size
+            region = (max(0, x-image.width), max(0, y-image.height), 
+                min(x+image.width, screenw), min(y+image.height, screenh))
+            simg = pg.screenshot(region=region)
+            try:
+                rloc = pg.center(pg.locate(self.image, simg))
+                x, y = x - region[0] + rloc[0], y - region[1] + rloc[1]
+            except pg.ImageNotFoundException as e:
+                simg.save(f"{scenario.name}-at{x},{y}-no-img{self.imgname}.png")
 
         the_mouse.position = x, y
         if self.wait > 0.0:
