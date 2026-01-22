@@ -10,7 +10,6 @@ include(CheckSymbolExists)
 find_package(DuecaAddLibrary)
 
 pkg_check_modules(LIBSSL REQUIRED openssl)
-find_package(Boost 1.60 COMPONENTS system filesystem REQUIRED)
 
 if (${CMAKE_VERSION} VERSION_LESS "3.14.0")
   # compile checks fail for this cmake

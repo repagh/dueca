@@ -614,7 +614,6 @@ if (SCRIPT_PYTHON)
   endif()
 
   set(Boost_USE_STATIC_LIBS OFF)
-  # set(Boost_USE_MULTITHREADED ON)
   set(Boost_USE_STATIC_RUNTIME OFF)
   find_package(Boost COMPONENTS ${BPCOMP})
 
@@ -644,6 +643,15 @@ if (SCRIPT_PYTHON)
   message(STATUS "SCRIPT_PYTHON_LIBS: ${SCRIPT_PYTHON_LIBS}")
 
 endif()
+
+# Generic boost, need system and filesystem components
+find_package(Boost COMPONENTS filesystem REQUIRED)
+if (Boost_VERSION VERSION_LESS 1.89)
+
+  # boost < 1.89 also needs system
+  find_package(Boost COMPONENTS system filesystem REQUIRED)
+endif()
+
 
 # python packages to test
 # python packages needed
