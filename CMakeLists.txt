@@ -646,7 +646,7 @@ endif()
 
 # Generic boost, need system and filesystem components
 find_package(Boost REQUIRED)
-if (Boost_VERSION VERSION_LESS 1.89.0)
+if (Boost_VERSION_STRING VERSION_LESS 1.89.0)
 
   # boost < 1.89 also needs system
   message(STATUS Checking boost components system and filesystem)
