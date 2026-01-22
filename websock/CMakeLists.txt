@@ -30,7 +30,7 @@ if(${CMAKE_VERSION} VERSION_LESS "3.14.0")
 else()
 
   set(CMAKE_REQUIRED_DEFINITIONS ${CMAKE_THREAD_LIBS_INIT})
-  set(CMAKE_REQUIRED_LIBRARIES ${LIBSSL_LINK_LIBRARIES} Boost::system
+  set(CMAKE_REQUIRED_LIBRARIES ${LIBSSL_LINK_LIBRARIES} ${Boost_LIBRARIES}
     ${CMAKE_THREAD_LIBS_INIT})
 
   check_include_file_cxx(simple-websocket-server/server_ws.hpp
