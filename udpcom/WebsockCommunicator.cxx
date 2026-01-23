@@ -88,10 +88,6 @@ WebsockCommunicatorConfig::WebsockCommunicatorConfig(
     epstring = url.substr(slash);
 
     // get the address
-#if BOOST_VERSION >= 108700
-    boost::asio::io_context io_service;
-#else
-#endif
 
 #if BOOST_VERSION >= 108300
     // works on Fedora 43
