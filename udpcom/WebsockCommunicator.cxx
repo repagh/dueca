@@ -93,7 +93,11 @@ WebsockCommunicatorConfig(const std::string& url,
     epstring = url.substr(slash);
 
     // get the address
+    #if BOOST_VERSION >= 108300
+    boost::asio::io_context io_service;
+    #else
     boost::asio::io_service io_service;
+    #endif
     boost::asio::ip::tcp::resolver resolver(io_service);
     boost::asio::ip::tcp::resolver::query query(hostip, dataport);
     boost::asio::ip::tcp::resolver::iterator iter = resolver.resolve(query);
@@ -413,7 +417,7 @@ attachToMaster(std::shared_ptr<WebsockCommunicatorConfig> config)
        You are attempting to use websockets for configuration
        communication and for data communication. In that case the host
        name and port should be identical, and the only difference
-       should be the URL endpoint. Correct your config files. 
+       should be the URL endpoint. Correct your config files.
     */
     E_NET("Configuration URL and data URL should only differ in endpoint!"
           << config->url << " " << url);
