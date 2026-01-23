@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 """
 Created on Fri Mar 24 12:26:46 2023
@@ -239,5 +239,3 @@ for mod in modfiles:
         print(f"Converted to {out}")
     else:
         print(f"Not overwriting {out}")
-
-

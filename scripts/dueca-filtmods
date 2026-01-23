@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 # -*-python-*-
 
 # this reads a modules.machine list, and spits out a list of module paths
@@ -65,8 +65,3 @@ for l in lis:
 #                    sys.stderr.write('No makefile in '+m+ \
 #                                     ', assuming this directory' + \
 #                                     ' contains only data\n')
-
-
-
-
-

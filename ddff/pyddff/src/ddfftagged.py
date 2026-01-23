@@ -418,6 +418,22 @@ class DDFFTagStream:
 
         return time0, time1, result
 
+    def getMeta(self, key: int | str | None = None):
+        """ Metadata description of the data in this stream
+
+        Parameters
+        ----------
+        key : int | str | None, optional
+            access either metadata for a single member (give by key) or for the whole
+            stream, by default None
+
+        Returns
+        -------
+        dict
+            dictionary with data on the stream or member.
+        """
+        return self.base.getMeta(key)
+
     def items(self, period: int | str | None = None):
         """Return a time and object iterator on the data stream.
 

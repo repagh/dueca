@@ -1,2 +1,3 @@
 addFilter("dueca.* devel-file-in-non-devel-package")
 setBadness("invalid-license", 0)
+setBadness("lto-no-text-in-archive", 0)

@@ -5,18 +5,17 @@
 %define sosuffix @VERMAJOR@_@VERMINOR@
 
 %define gtkthree_config 1
+%if 0%{?sle_version} || 0%{?suse_version}
+%define glui_config 0
+%else
 %define glui_config 1
+%endif
 %define gtkmm_config 1
 %define hdf5_config 1
 %define udpcom_config 1
 %define python3_config 1
 %define gtkfour_config 1
-
-%if 0%{?sle_version} && 0%{?sle_version} <= 120300 && 0
-%define websock_config 0
-%else
 %define websock_config 1
-%endif
 
 %if 0%{?staticlibs_config}
 %if "%{_prefix}" != "/usr"
@@ -45,7 +44,7 @@ BuildRequires: msgpack-devel
 BuildRequires: python3-pip
 BuildRequires: python3-jinja2
 
-%if 0%{?is_opensuse} && 0%{?sle_version} >= 150500
+%if (0%{?is_opensuse} && 0%{?sle_version} >= 150500) || 0%{?suse_version} >= 1600
 BuildRequires: guile-devel
 %endif
 %if 0%{?is_opensuse} && 0%{?sle_version} < 150500
@@ -109,7 +108,7 @@ BuildRequires: python-devel
 %define SCRIPT_PYTHON_CONFIG -DSCRIPT_PYTHON=ON
 %endif
 
-%if 0%{?sle_version}
+%if 0%{?sle_version} || 0%{?suse_version} >= 1600
 BuildRequires:  openSUSE-release
 BuildRequires:  libboost_system-devel >= 1.60
 BuildRequires:  libboost_thread-devel >= 1.60
@@ -473,7 +472,7 @@ getent group rtdueca || groupadd rtdueca
 %config(noreplace) %{_sysconfdir}/udev/rules.d/90-rtdueca-cpulatency.rules
 
 # for some reason, sle 15.1+ complains about /etc/udev directory not owned
-%if 0%{?sle_version} >= 150100 && 0%{?is_opensuse}
+%if (0%{?sle_version} >= 150100 && 0%{?is_opensuse}) || 0%{?suse_version} >= 1600
 %dir %{_sysconfdir}/udev
 %dir %{_sysconfdir}/udev/rules.d
 %endif

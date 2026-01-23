@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 
 # this uses a comm-objects.lst input, and spits out an include header for
 # getting these comm-objects
@@ -53,4 +53,3 @@ for l in lis:
                 print('#include "../../'+to_include[:-4]+'.hxx"')
         else:
             print('//'+l)
-

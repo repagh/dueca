@@ -100,12 +100,12 @@ public:
   /// Destructor
   ~DuecaGLFWWindow();
 
-    /** Request full screen drawing -- or not. Can be linked to Scheme
-in a parameter table. This call is ignored for  */
+  /** Request full screen drawing -- or not. Can be linked to script in
+      parameter table. */
   bool setFullScreen(const bool &fs = true);
 
   /** Set the window position, at least if the window manager will
-      honour this. Can be linked to Scheme in a parameter table. Use
+      honour this. Can be linked to script in a parameter table. Use
       this call before opening the window with openWindow. */
   bool setWindow(const std::vector<int> &wpos);
 
