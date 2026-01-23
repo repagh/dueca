@@ -12,10 +12,26 @@
 find_package(OpenGL REQUIRED)
 find_library(GLUI_LIBRARY glui)
 check_include_file_cxx(GL/glui.h HAVE_GL_GLUI_H)
-check_include_file_cxx(glui.h HAVE_GLUI_H)
+if (NOT HAVE_GL_GLUI_H)
+  check_include_file_cxx(glui.h HAVE_GLUI_H)
+endif()
 if ( ( (NOT DEFINED HAVE_GL_GLUI_H) AND
        (NOT DEFINED HAVE_GLUI_H) ) OR (NOT GLUI_LIBRARY))
   message(FATAL_ERROR "Cannot find glui development")
+endif()
+
+include(CheckCXXSymbolExists)
+set(CMAKE_REQUIRED_LIBRARIES ${GLUI_LIBRARY} ${GLUT_LIBRARIES} ${OPENGL_LIBRARIES})
+set(CMAKE_REQUIRED_INCLUDES ${INCDIRS})
+if (HAVE_GL_GLUI_H)
+  CHECK_CXX_SYMBOL_EXISTS(glui_idle_func "GL/glui.h" HAVE_GLUI_IDLE_FUNC)
+else()
+  CHECK_CXX_SYMBOL_EXISTS(glui_idle_func "glui.h" HAVE_GLUI_IDLE_FUNC)
+endif()
+if (HAVE_GLUI_IDLE_FUNC)
+  set(GLUI_CFLAGS -DHAVE_GLUI_IDLE_FUNC=1)
+else()
+  set(GLUI_CFLAGS -DHAVE_GLUI_IDLE_FUNC=0)
 endif()
 
 #mylinker_arguments(OUTPUT dueca_glut_gui_libs LIBLIST ${GLUT_LIBRARIES})
@@ -29,7 +45,7 @@ dueca_add_library(dueca-glut-gui
   SOURCES ${SOURCES}
   LINKLIBS dueca ${GLUI_LIBRARY} ${GLUT_LIBRARIES} ${OPENGL_LIBRARIES}
   INCLUDEDIRS ${INCDIRS}
-  COMPILEOPTIONS ${GLUT_CFLAGS})
+  COMPILEOPTIONS ${GLUT_CFLAGS} ${GLUI_CFLAGS})
 configure_file(dueca-glut-gui.pc.in dueca-glut-gui.pc @ONLY)
 install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/dueca-glut-gui.pc
@@ -41,7 +57,7 @@ foreach(S ${SCRIPTLANG})
     SOURCES InitGlutGui.cxx ${STARTLIB_STATIC}
     LINKLIBS dueca-glut-gui dueca-start-${SCRIPT_${S}_SUFFIX}
     INCLUDEDIRS ${INCDIRS} ${SCRIPT_${S}_INCLUDES}
-    COMPILEOPTIONS -DSCRIPT_${S})
+    COMPILEOPTIONS -DSCRIPT_${S} ${GLUI_CFLAGS})
   set(scriptsuffix "-${SCRIPT_${S}_SUFFIX}")
   configure_file(dueca-glut-gui-ln.pc.in
     dueca-glut-gui-${SCRIPT_${S}_SUFFIX}.pc @ONLY)
