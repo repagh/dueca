@@ -85,10 +85,9 @@ void GluiProtocol::sweep()
 #if HAVE_GLUI_IDLE_FUNC
       glui_idle_func();
 #else
-      GLUI_Main::idle_func();
+      GLUI_Main::idle();
 #endif
   }
 }
 
 DUECA_NS_END
-
