@@ -77,8 +77,12 @@ struct PacketCommunicatorSpecification
 
 /** Packet oriented communication mechanism.
 
-    This communication mechanism is currently implemented over UDP,
-    point-to-point, broadcast or multicast, or using WebSocket */
+    Base class for network communication.
+
+    Through derived classes, this communication mechanism is currently
+    implemented over UDP, point-to-point, broadcast or multicast, or
+    using WebSocket
+*/
 class PacketCommunicator
 INHERIT_REFCOUNT(PacketCommunicator)
 {
