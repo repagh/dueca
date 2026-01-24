@@ -11,15 +11,6 @@ find_package(DuecaCodegen)
 # optionally for websocket over ssl
 pkg_check_modules(LIBSSL openssl REQUIRED)
 
-# boost 1.89 no longer needs system as library
-find_package(Boost 1.89 COMPONENTS filesystem)
-
-# older boost? then try and require system + filesystem
-if(NOT Boost_FOUND)
-  find_package(Boost 1.60 COMPONENTS system filesystem REQUIRED)
-endif()
-
-
 if(${CMAKE_VERSION} VERSION_LESS "3.14.0")
 
   # compile checks fail for this cmake
@@ -39,7 +30,7 @@ if(${CMAKE_VERSION} VERSION_LESS "3.14.0")
 else()
 
   set(CMAKE_REQUIRED_DEFINITIONS ${CMAKE_THREAD_LIBS_INIT})
-  set(CMAKE_REQUIRED_LIBRARIES ${LIBSSL_LINK_LIBRARIES} Boost::system
+  set(CMAKE_REQUIRED_LIBRARIES ${LIBSSL_LINK_LIBRARIES} ${Boost_LIBRARIES}
     ${CMAKE_THREAD_LIBS_INIT})
 
   check_include_file_cxx(simple-websocket-server/server_ws.hpp

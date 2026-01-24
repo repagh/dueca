@@ -6,7 +6,6 @@ check_include_file_cxx(simple-websocket-server/server_ws.hpp
 
 # optional stuff for websocket connection over ssl
 pkg_check_modules(LIBSSL REQUIRED openssl)
-find_package(Boost 1.60 COMPONENTS system filesystem REQUIRED)
 
 if (${CMAKE_VERSION} VERSION_LESS "3.14.0")
 
@@ -21,7 +20,7 @@ if (${CMAKE_VERSION} VERSION_LESS "3.14.0")
 else()
 
   set(CMAKE_REQUIRED_DEFINITIONS ${CMAKE_THREAD_LIBS_INIT})
-  set(CMAKE_REQUIRED_LIBRARIES ${LIBSSL_LIBRARIES} Boost::system
+  set(CMAKE_REQUIRED_LIBRARIES ${LIBSSL_LIBRARIES} ${Boost_LIBRARIES}
     ${CMAKE_THREAD_LIBS_INIT})
   check_include_file_cxx(simple-websocket-server/server_ws.hpp
     HAVE_SIMPLE_WEBSOCKET_SERVER_SERVER_WS_HPP)
@@ -30,8 +29,7 @@ else()
 
 endif()
 
-if (LIBSSL_FOUND AND HAVE_SIMPLE_WEBSOCKET_SERVER_SERVER_WSS_HPP AND
-    Boost_FOUND)
+if (LIBSSL_FOUND AND HAVE_SIMPLE_WEBSOCKET_SERVER_SERVER_WSS_HPP)
   set(WEBSOCK_LIBS ${LIBSSL_LIBRARIES} ${Boost_LIBRARIES})
 endif()
 

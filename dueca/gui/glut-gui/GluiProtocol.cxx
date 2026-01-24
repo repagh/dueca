@@ -82,9 +82,12 @@ void GluiProtocol::sweep()
 {
   if (glutGetWindow()) {
     glutMainLoopEvent();
-    glui_idle_func();
+#if HAVE_GLUI_IDLE_FUNC
+      glui_idle_func();
+#else
+      GLUI_Main::idle();
+#endif
   }
 }
 
 DUECA_NS_END
-

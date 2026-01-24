@@ -86,7 +86,11 @@ void GluiHandler::passControl()
     CSE.doLoop();
     if (glutGetWindow()) {
       glutMainLoopEvent();
+#if HAVE_GLUI_IDLE_FUNC
       glui_idle_func();
+#else
+      GLUI_Main::idle();
+#endif
     }
   }
 }
@@ -147,4 +151,3 @@ void GluiHandler::returnControl()
 
 
 DUECA_NS_END
-

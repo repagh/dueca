@@ -10,7 +10,6 @@ include(CheckSymbolExists)
 find_package(DuecaAddLibrary)
 
 pkg_check_modules(LIBSSL REQUIRED openssl)
-find_package(Boost 1.60 COMPONENTS system filesystem REQUIRED)
 
 if (${CMAKE_VERSION} VERSION_LESS "3.14.0")
   # compile checks fail for this cmake
@@ -22,7 +21,7 @@ if (${CMAKE_VERSION} VERSION_LESS "3.14.0")
     PATHS ${INCLUDE_DIRECTORIES})
 else()
   set(CMAKE_REQUIRED_DEFINITIONS ${CMAKE_THREAD_LIBS_INIT})
-  set(CMAKE_REQUIRED_LIBRARIES ${LIBSSL_LINK_LIBRARIES} Boost::system
+  set(CMAKE_REQUIRED_LIBRARIES ${LIBSSL_LINK_LIBRARIES} ${Boost_LIBRARIES}
     ${CMAKE_THREAD_LIBS_INIT})
   check_include_file_cxx(simple-websocket-server/server_ws.hpp
     HAVE_SIMPLE_WEBSOCKET_SERVER_SERVER_WS_HPP)
