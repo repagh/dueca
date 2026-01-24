@@ -644,19 +644,14 @@ if (SCRIPT_PYTHON)
 
 endif()
 
-# Generic boost, need system and filesystem components
-find_package(Boost REQUIRED)
+# Generic boost, filesystem components
+find_package(Boost COMPONENTS filesystem REQUIRED)
 if (Boost_VERSION_STRING VERSION_LESS 1.86.0)
 
-  # boost < 1.86 also has system, filesystem
+  # boost < 1.86 also has system
   message(STATUS "Checking boost components system and filesystem")
   find_package(Boost COMPONENTS system filesystem REQUIRED)
 
-elseif (Boost_VERSION_STRING VERSION_LESS 1.89.0)
-
-  # boost < 1.89 also has system, filesystem
-  message(STATUS "Checking boost component filesystem")
-  find_package(Boost COMPONENTS filesystem REQUIRED)
 endif()
 
 
