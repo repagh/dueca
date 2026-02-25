@@ -14,7 +14,7 @@ set(DCOSOURCES Snapshot.dco XmlSnapshot.dco IncoMode.dco
 
 set(SOURCES SimulationModule.cxx SimulationModule.hxx
   HardwareModule.cxx HardwareModule.hxx DusimeModule.cxx
-  DusimeModule.hxx RTWModule.cxx RTWModule.hxx 
+  DusimeModule.hxx RTWModule.cxx RTWModule.hxx
   IncoCalculator.cxx Interval.cxx IntervalCalculation.cxx
   IncoCollaborator.cxx TrimId.cxx TrimId.hxx TrimLink.hxx TrimLink.cxx
   TrimView.cxx TrimView.hxx TrimSummary.cxx IncoVariableWork.cxx

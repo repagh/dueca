@@ -1,15 +1,15 @@
 #!@Python_EXECUTABLE@
 # PYTHON_ARGCOMPLETE_OK
 # -*-python-*-
-"""     item            : ddff-convert
-        made by         : RvP
-        date            : 2023
-        category        : python program
-        description     : Conversion of ddff data
-        language        : python
-        changes         :
-        copyright       : 2023 Rene van Paassen
-        license         : EUPL-1.2
+"""item            : ddff-convert
+made by         : RvP
+date            : 2023
+category        : python program
+description     : Conversion of ddff data
+language        : python
+changes         :
+copyright       : 2023 Rene van Paassen
+license         : EUPL-1.2
 """
 try:
     from pyddff import DDFFTagged, DDFFInventoried, ddffbase, vprint
@@ -34,8 +34,11 @@ Conversion script for ddff files
 
 parser = argparse.ArgumentParser(description="Convert or inspect DDFF data")
 parser.add_argument(
-    "-v", "--verbose", action="count", default=0,
-    help="Verbose run with information output"
+    "-v",
+    "--verbose",
+    action="count",
+    default=0,
+    help="Verbose run with information output",
 )
 subparsers = parser.add_subparsers(help="commands", title="commands")
 
@@ -69,7 +72,7 @@ class Info:
 
         if ns.inventory and ns.period:
             print(
-                f"--inventory and --period options are not compatible", file=sys.stderr
+                "--inventory and --period options cannot be combined", file=sys.stderr
             )
             sys.exit(-1)
 
@@ -94,7 +97,12 @@ class Info:
         if not ns.streamid and not ns.period:
             try:
                 if not ns.inventory:
-                    print('Available periods:\n"', '", "'.join(f.tags().keys()), '"', sep="")
+                    print(
+                        'Available periods:\n"',
+                        '", "'.join(f.tags().keys()),
+                        '"',
+                        sep="",
+                    )
                 print(
                     'Available streams:\n"',
                     '", "'.join(f.keys()),
@@ -108,20 +116,37 @@ class Info:
 Info.args(subparsers)
 
 
-def doExclude(x: list, idxes: list):
-    for i in reversed(idxes):
-        del x[i]
-    return tuple(x)
+# def doExclude(x: list, idxes: list):
+#     for i in reversed(idxes):
+#         del x[i]
+#     return tuple(x)
 
 
 class ToHdf5:
+    """Convert a ddff file to a hdf5 format"""
 
     command = "hdf5"
 
-
     @classmethod
-    def args(cls, subparsers):
-        parser = subparsers.add_parser(cls.command, help="Convert a ddff file to hdf5")
+    def args(cls, _subparsers):
+        """Add appropriate options for the subcommand hdf5
+
+        Parameters
+        ----------
+        subparsers : List of sub parsers
+            List to add the command sub parser
+        """
+        parser = _subparsers.add_parser(
+            cls.command,
+            help="""Convert a ddff file to hdf5
+
+In principle, each stream is converted to an equivalently named group in the hdf5 file.
+This group has members "tick", an array with the timing, and "data" a group with the
+data, with each object member having a data array with its data.
+
+if the --as-event flag is used, "data" will become a data array with the data
+as a struct.""",
+        )
         parser.add_argument(
             "--period", type=str, help="Convert a specific recording period"
         )
@@ -141,6 +166,9 @@ class ToHdf5:
             "--streamids", nargs="+", default=[], help="Convert specific stream(s)"
         )
         parser.add_argument(
+            "--as-event", nargs="+", default=[], help="Write as array of objects"
+        )
+        parser.add_argument(
             "--outfile",
             type=str,
             default="",
@@ -148,13 +176,22 @@ class ToHdf5:
             "the input filename",
         )
         parser.add_argument(
-            '--expected-size', type=int, default=1000,
-            help="Expected data size, for pre-allocating numpy arrays"
+            "--expected-size",
+            type=int,
+            default=1000,
+            help="Expected data size, for pre-allocating numpy arrays",
         )
         parser.add_argument("filename", type=str, help="File name to be analysed")
         parser.set_defaults(handler=ToHdf5)
 
     def __call__(self, ns: argparse.Namespace):
+        """Perform the class action
+
+        Parameters
+        ----------
+        ns : argparse.Namespace
+            Parsed command line arguments
+        """
 
         if ns.compress:
             compressargs = {"compression": ns.compress}
@@ -191,13 +228,17 @@ class ToHdf5:
         for streamid in ns.streamids:
             vprint("Processing stream", streamid)
             gg = hf.create_group(streamid)
-            dg = gg.create_group("data")
 
-            time, dtime, values = f[streamid].getData(**pargs, icount=ns.expected_size)
+            if streamid in ns.as_event:
+                time, data = f[streamid].getEvents(**pargs, icount=ns.expected_size)
+                gg.create_dataset("data", data=data, **compressargs)
+            else:
+                dg = gg.create_group("data")
+                time, _, values = f[streamid].getData(**pargs, icount=ns.expected_size)
+                for m, v in values.items():
+                    dg.create_dataset(m, data=v, **compressargs)
             vprint(f"number of data points {time.shape[0]}")
             gg.create_dataset("tick", data=time, **compressargs)
-            for m, v in values.items():
-                dg.create_dataset(m, data=v, **compressargs)
 
         hf.close()
 

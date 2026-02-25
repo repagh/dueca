@@ -52,6 +52,38 @@ def singleType(info: dict):
             return ebasetype
 
 
+def get_single_type(info: dict):
+    if info["type"] == "primitive":
+        return _typemap.get(info["class"], None)
+    if info["type"] == "enum":
+        ebasetype = _typemap.get(info.get("enumint", ""), np.uint32)
+        if info.get("enumvalues", False):
+            return h5py.enum_dtype(info["enumvalues"], basetype=ebasetype)
+        else:
+            # old recordings, just ints
+            return ebasetype
+    if info["type"] == "object":
+        res = []
+        for m in m["members"]:
+            otype = get_object_type(m)
+            if otype:
+                res.append(otype)
+        return res
+
+def get_object_type(info: dict):
+
+    # single objects
+    if info.get("container", None) is None:
+        return (info.get("name", "data"), get_single_type(info))
+
+    # fixed-size arrays
+    if info.get("container", "") == "array" and info.get("size", 0):
+        return (info.get("name", "data"), get_single_type(info), info.get("size"))
+
+    # other objects (variable length arrays, maps), dont work for this.
+    return None
+
+
 def shapeTypeExclude(count: int, info: dict):
     """Given type information, return the array shape and numpy/hdf5 type information
 
@@ -385,7 +417,7 @@ class DDFFInventoriedStream:
             return self.structure["members"]
         return self.structure["members"][key]
 
-    def _getMappers(self, icount):
+    def _get_mappers(self, icount):
         """Helper to obtain mapping functions from msgpack object to numpy arrays
 
         Returns
@@ -457,6 +489,32 @@ class DDFFInventoriedStream:
                 mappers.append(partial(copyDefault, res=result[m], midx=midx))
         return result, mappers
 
+    def getEvents(self, icount=100):
+        """Return data as a numpy array of complex numpy type
+
+        For "event" data, this way of obtaining the data makes it suitable for conversion
+        to hdf5 format. Iterating over the stream (with __next__) returns pure-python
+        objects. This returns all data points as a labeled numpy array.
+
+        Parameters
+        ----------
+        icount : int, optional
+            size to initially reserve for the data, by default 100
+        """
+        time0 = np.empty(shape=(icount,), dtype=np.uint32)
+        atype = get_object_type(self.getMeta())
+        data = np.empty(shape=(icount,), dtype=atype)
+
+        for i, d in enumerate(self.base.reader()):
+            if i == icount:
+                icount = icount*2
+                time0.resize((icount,))
+                data.resize((icount,))
+            data[i] = d[2]
+            time0[i] = d[0]
+
+        return time0, data
+
     def getData(self, icount=100):
         """Return data from the stream as a dictionary of numpy arrays
 
@@ -479,7 +537,7 @@ class DDFFInventoriedStream:
 
         time0 = np.zeros(shape=(icount,), dtype=np.uint32)
         time1 = np.zeros(shape=(icount,), dtype=np.uint32)
-        result, mappers = self._getMappers(icount)
+        result, mappers = self._get_mappers(icount)
 
         i = -1
         for i, d in enumerate(self.base.reader()):
