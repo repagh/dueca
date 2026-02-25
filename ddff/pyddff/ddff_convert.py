@@ -19,6 +19,8 @@ except ModuleNotFoundError:
     from src.ddffinventoried import DDFFInventoried
     from src.ddfftagged import DDFFTagged
     import src.ddffbase as ddffbase
+    from src.ddffbase import vprint
+
 import numpy as np
 import h5py
 import argparse

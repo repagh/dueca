@@ -371,6 +371,29 @@ class DDFFTagStream:
                 self.base.base, self.tags[period], self.base.members[key]
             )
 
+
+    def getEvents(self, period: int | str | None = None, icount: int = 100):
+        """Assemble stream data in numpy arrays.
+
+        Parameters
+        ----------
+        period : int | str | None, optional
+            Chosen period, if None, return all data.
+        icount : int, optional
+            Default length allocation numpy arrays, by default 100.
+
+        Returns
+        -------
+        (np.array, np.array, dict(str,np.array))
+            Time arrays (start time, span), and dictionary with data arrays
+            for all decodable object members.
+        """
+        if period is None:
+            return self.base.getEvents(icount)
+
+        tag = self.tags[period]
+        # complete this again
+
     def getData(self, period: int | str | None = None, icount: int = 100):
         """Assemble stream data in numpy arrays.
 

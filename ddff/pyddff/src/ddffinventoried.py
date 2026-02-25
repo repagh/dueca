@@ -64,7 +64,7 @@ def get_single_type(info: dict):
             return ebasetype
     if info["type"] == "object":
         res = []
-        for m in m["members"]:
+        for m in info["members"]:
             otype = get_object_type(m)
             if otype:
                 res.append(otype)
@@ -76,9 +76,18 @@ def get_object_type(info: dict):
     if info.get("container", None) is None:
         return (info.get("name", "data"), get_single_type(info))
 
-    # fixed-size arrays
-    if info.get("container", "") == "array" and info.get("size", 0):
-        return (info.get("name", "data"), get_single_type(info), info.get("size"))
+    # arrays
+    if info.get("container", "") == "array":
+        if info.get("size", 0): # fixed size
+            return (info.get("name", "data"), get_single_type(info), (info.get("size"),))
+        else:                   # var length
+            return (info.get("name", "data"), h5py.vlen_dtype(get_single_type(info)))
+
+    if info.get("container", "") == "map":
+        ktype = _typemap.get(info.get("key_class", ""), None)
+        btype = get_single_type(info)
+        return (info.get("name"), h5py.vlen_dtype(np.dtype([("key", ktype), ("val", btype)])))
+
 
     # other objects (variable length arrays, maps), dont work for this.
     return None
@@ -147,6 +156,16 @@ def shapeTypeExclude(count: int, info: dict):
 
     return dict(shape=shape, dtype=dtype), excluded
 
+def struc2npstruc(tgt, struc):
+    for m, d in struc.items():
+        if isinstance(d, dict):
+            struc2npstruc(tgt[m], d)
+        elif isinstance(d, list) and len(d) and isinstance(d[0], dict):
+            tgt[m] = np.empty_like(tgt[m], shape=(len(d),))
+            for i, x in enumerate(d):
+                struc2npstruc(tgt[m][i], x)
+        else:
+            tgt[m] = d
 
 class Objecter:
     """Helper class, to create structs matching the data content description.
@@ -489,6 +508,7 @@ class DDFFInventoriedStream:
                 mappers.append(partial(copyDefault, res=result[m], midx=midx))
         return result, mappers
 
+
     def getEvents(self, icount=100):
         """Return data as a numpy array of complex numpy type
 
@@ -502,16 +522,22 @@ class DDFFInventoriedStream:
             size to initially reserve for the data, by default 100
         """
         time0 = np.empty(shape=(icount,), dtype=np.uint32)
-        atype = get_object_type(self.getMeta())
-        data = np.empty(shape=(icount,), dtype=atype)
+        atype = get_object_type(self.structure)
 
-        for i, d in enumerate(self.base.reader()):
+        data = np.empty(shape=(icount,), dtype=atype[1])
+
+        i = -1
+        for i, d in enumerate(self.items()):
             if i == icount:
                 icount = icount*2
                 time0.resize((icount,))
                 data.resize((icount,))
-            data[i] = d[2]
-            time0[i] = d[0]
+            struc2npstruc(data[i], d[1])
+            time0[i] = d[0][0]
+
+        icount = i + 1
+        time0.resize((icount,))
+        data.resize((icount,))
 
         return time0, data
 

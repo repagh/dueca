@@ -1,10 +1,10 @@
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent))
+
+
 from ddff_convert import parser
 import os
-
-# debug/test?
-from src.ddffinventoried import DDFFInventoried
-from src.ddfftagged import DDFFTagged
-
 
 import numpy as np
 
@@ -16,9 +16,12 @@ d2[0] = (1, 2, 3)
 
 #fname = f"{os.environ['HOME']}/gdapps/VarStabCitation2/VarStabCitation2/run/solo/solo/simlog-20250225_155749.ddff"
 #fname = f"{os.environ['HOME']}/tmp/recording-PHLAB-new.ddff"
-fname = f"{os.environ['HOME']}/tmp/varstab/feb17/simlog-20250217_151129.ddff"
+fname = f"{os.environ['HOME']}/tmp/varstab/260224/runlogs/2026-02-24_12:39:03/simlog-20260224_113932.ddff"
 # separate test of the readstream
 #df = DDFFTagged(fname)
+pres = parser.parse_args(
+    ("--verbose", "hdf5", "--as-event", "/data/testsignalspec", "/data/apsetting", "/data/gainsindi", "--outfile=/tmp/result2.hdf5", fname))
+pres.handler()(pres)
 
 pres = parser.parse_args(
     ("-v", "-v", "-v", "info", fname))
@@ -40,4 +43,3 @@ pres.handler()(pres)
 pres = parser.parse_args(
     ("--verbose", "info", "--streamid", "/data/pilot", fname))
 pres.handler()(pres)
-
