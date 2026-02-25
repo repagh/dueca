@@ -171,7 +171,7 @@ class Objecter:
     """Helper class, to create structs matching the data content description.
     Typically used for non-time (index) data."""
 
-    def __init__(self, info: dict):
+    def __init__(self, info: dict, enumnumeric: bool=False):
         """Create objecter
 
         Parameters
@@ -180,6 +180,7 @@ class Objecter:
             Data description
         """
         self.info = info
+        self.enumnumeric = enumnumeric
 
     def __call__(self, data):
         """Convert data object into a structure matching data type description
@@ -201,29 +202,35 @@ class Objecter:
                 if midx["type"] == "primitive":
                     res[m] = data[ix]
                 elif midx["type"] == "object":
-                    res[m] = Objecter(midx)(data[ix])
+                    res[m] = Objecter(midx, self.enumnumeric)(data[ix])
                 elif midx["type"] == "enum":
-                    try:
-                        res[m] = midx["enummapper"][data[ix]]
-                    except KeyError:
-                        midx["enummapper"] = dict(
-                            [(k, v) for v, k in midx["enumvalues"].items()]
-                        )
-                        res[m] = midx["enummapper"][data[ix]]
+                    if self.enumnumeric:
+                        res[m] = data[ix]
+                    else:
+                        try:
+                            res[m] = midx["enummapper"][data[ix]]
+                        except KeyError:
+                            midx["enummapper"] = dict(
+                                [(k, v) for v, k in midx["enumvalues"].items()]
+                            )
+                            res[m] = midx["enummapper"][data[ix]]
 
             if midx.get("container", "") == "array":
                 if midx["type"] == "primitive":
                     res[m] = data[ix]
                 elif midx["type"] == "object":
-                    res[m] = list(map(Objecter(midx), data[ix]))
+                    res[m] = list(map(Objecter(midx, self.enumnumeric), data[ix]))
                 elif midx["type"] == "enum":
-                    try:
-                        res[m] = list(map(midx["enummapper"].get, data[ix]))
-                    except KeyError:
-                        midx["enummapper"] = dict(
-                            [(k, v) for v, k in midx["enumvalues"].items()]
-                        )
-                        res[m] = list(map(midx["enummapper"].get, data[ix]))
+                    if self.enumnumeric:
+                        res[m] = data[ix]
+                    else:
+                        try:
+                            res[m] = list(map(midx["enummapper"].get, data[ix]))
+                        except KeyError:
+                            midx["enummapper"] = dict(
+                                [(k, v) for v, k in midx["enumvalues"].items()]
+                            )
+                            res[m] = list(map(midx["enummapper"].get, data[ix]))
             elif midx.get("container", "") == "map":
                 res[m] = dict()
                 if midx["type"] == "primitive":
@@ -231,17 +238,21 @@ class Objecter:
                         res[m][k] = v
                 elif midx["type"] == "object":
                     for k, v in data[ix].items():
-                        res[m][k] = Objecter(midx)(v)
+                        res[m][k] = Objecter(midx, self.enumnumeric)(v)
                 elif midx["type"] == "enum":
-                    try:
+                    if self.enumnumeric:
                         for k, v in data[ix].items():
-                            res[m][k] = midx["enummapper"][data[ix]]
-                    except KeyError:
-                        midx["enummapper"] = dict(
-                            [(k, v) for v, k in midx["enumvalues"].items()]
-                        )
-                        for k, v in data[ix].items():
-                            res[m][k] = midx["enummapper"][data[ix]]
+                            res[m][k] = v
+                    else:
+                        try:
+                            for k, v in data[ix].items():
+                                res[m][k] = midx["enummapper"][v]
+                        except KeyError:
+                            midx["enummapper"] = dict(
+                                [(k, v) for v, k in midx["enumvalues"].items()]
+                            )
+                            for k, v in data[ix].items():
+                                res[m][k] = midx["enummapper"][v]
         return res
 
 
@@ -527,7 +538,7 @@ class DDFFInventoriedStream:
         data = np.empty(shape=(icount,), dtype=atype[1])
 
         i = -1
-        for i, d in enumerate(self.items()):
+        for i, d in enumerate(self.items(True)):
             if i == icount:
                 icount = icount*2
                 time0.resize((icount,))
@@ -587,7 +598,7 @@ class DDFFInventoriedStream:
 
         return time0, time1, result
 
-    def items(self):
+    def items(self, enumnumeric=False):
         """Create an iterator on the stream objects, returns time,object tuples.
 
         Use this to read a typically limited number of items, returned as
@@ -601,7 +612,7 @@ class DDFFInventoriedStream:
             a dictionary.
         """
         return DDFFInventoriedStream.TimeAndObjectIt(
-            self.base, Objecter(self.structure)
+            self.base, Objecter(self.structure, enumnumeric)
         )
 
 
