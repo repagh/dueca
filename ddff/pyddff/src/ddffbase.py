@@ -54,9 +54,28 @@ class DDFFBuffer(io.BytesIO):
         super().write(*argc, **argv)
 
     def size(self):
+        """Return the size, in bytes of the buffer
+
+        Returns
+        -------
+        int
+            Block size
+        """
         return self.getbuffer().nbytes - self.blockcount * (self.block_size - 28)
 
     def getblock(self, flush=False):
+        """Obtain the next data block for writing
+
+        Parameters
+        ----------
+        flush : bool, optional
+            Save the current block to file, by default False
+
+        Yields
+        ------
+        Bytes array
+            Binary block to save
+        """
 
         while self.size() >= self.block_size or (flush and (self.size() > 0)):
 
@@ -116,7 +135,7 @@ class DDFFBlock:
         """
         self.offset = f.tell()
         header = f.read(28)
-        if not len(header):
+        if len(header) == 0:
             raise ValueError("File ended")
         (
             self.next_offset,
@@ -209,7 +228,7 @@ class DDFFStream(list):
             return DDFFReadStream(self.block0, self.file)
         return DDFFReadStream(block0, self.file)
 
-    def readToList(self):
+    def read_to_list(self):
         """Load any data from the file into memory.
 
         The stream object will function as a list with the loaded data
@@ -402,10 +421,10 @@ class DDFF:
         self.file = open(fname, mode + "b")
         self.streams = dict()
         self.scanpoint = 0
-        self._scanStreams(nstreams)
+        self._scan_streams(nstreams)
         self.block_size = block_size
 
-    def _scanStreams(self, neededstreams: set | None = None):
+    def _scan_streams(self, neededstreams: set | None = None):
         """Internal method to parse data and create streams
 
         Parameters
@@ -416,7 +435,7 @@ class DDFF:
         """
 
         # reset file to zero position
-        vprint(f"_scanStreams searching {neededstreams} from {self.scanpoint}")
+        vprint(f"_scan_streams searching {neededstreams} from {self.scanpoint}")
         self.file.seek(self.scanpoint)
         try:
             while self.file:
@@ -527,7 +546,7 @@ if __name__ == "__main__":
     del stuff
 
     verif = DDFF("test.ddff", mode="r")
-    verif.streams[0].readToList()
+    verif.streams[0].read_to_list()
     print(verif.streams)
 
     stuff2 = DDFF("test2.ddff", mode="w", block_size=128)
@@ -541,6 +560,6 @@ if __name__ == "__main__":
     stuff2.write()
 
     verif2 = DDFF("test2.ddff", mode="r")
-    verif2.streams[0].readToList()
+    verif2.streams[0].read_to_list()
     print(st0 == verif2.streams[0])
     print(verif2.streams[0])

@@ -232,11 +232,11 @@ as a struct.""",
             gg = hf.create_group(streamid)
 
             if streamid in ns.as_event:
-                time, data = f[streamid].getEvents(**pargs, icount=ns.expected_size)
+                time, data = f[streamid].get_events(**pargs, icount=ns.expected_size)
                 gg.create_dataset("data", data=data, **compressargs)
             else:
                 dg = gg.create_group("data")
-                time, _, values = f[streamid].getData(**pargs, icount=ns.expected_size)
+                time, _, values = f[streamid].get_data(**pargs, icount=ns.expected_size)
                 for m, v in values.items():
                     dg.create_dataset(m, data=v, **compressargs)
             vprint(f"number of data points {time.shape[0]}")

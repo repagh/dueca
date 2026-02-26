@@ -5,15 +5,15 @@ Created on Thu Apr  7 19:11:09 2022
 
 @author: repa
 """
+import os
+from functools import partial
 try:
-    from .ddffbase import DDFF, DDFFStream, dprint, vprint
-except:
-    from ddffbase import DDFF, DDFFStream, dprint, vprint
+    from .ddffbase import DDFF, DDFFStream, dprint
+except ImportError:
+    from ddffbase import DDFF, DDFFStream, dprint
 import json
 import numpy as np
 import h5py
-import os
-from functools import partial
 
 # map with common conversions
 _typemap = {
@@ -40,7 +40,7 @@ _typemap = {
 }
 
 
-def singleType(info: dict):
+def _single_type(info: dict):
     if info["type"] == "primitive":
         return _typemap.get(info["class"], None)
     if info["type"] == "enum":
@@ -52,7 +52,7 @@ def singleType(info: dict):
             return ebasetype
 
 
-def get_single_type(info: dict):
+def _get_single_type(info: dict):
     if info["type"] == "primitive":
         return _typemap.get(info["class"], None)
     if info["type"] == "enum":
@@ -65,27 +65,27 @@ def get_single_type(info: dict):
     if info["type"] == "object":
         res = []
         for m in info["members"]:
-            otype = get_object_type(m)
+            otype = _get_object_type(m)
             if otype:
                 res.append(otype)
         return res
 
-def get_object_type(info: dict):
+def _get_object_type(info: dict):
 
     # single objects
     if info.get("container", None) is None:
-        return (info.get("name", "data"), get_single_type(info))
+        return (info.get("name", "data"), _get_single_type(info))
 
     # arrays
     if info.get("container", "") == "array":
         if info.get("size", 0): # fixed size
-            return (info.get("name", "data"), get_single_type(info), (info.get("size"),))
+            return (info.get("name", "data"), _get_single_type(info), (info.get("size"),))
         else:                   # var length
-            return (info.get("name", "data"), h5py.vlen_dtype(get_single_type(info)))
+            return (info.get("name", "data"), h5py.vlen_dtype(_get_single_type(info)))
 
     if info.get("container", "") == "map":
         ktype = _typemap.get(info.get("key_class", ""), None)
-        btype = get_single_type(info)
+        btype = _get_single_type(info)
         return (info.get("name"), h5py.vlen_dtype(np.dtype([("key", ktype), ("val", btype)])))
 
 
@@ -93,7 +93,7 @@ def get_object_type(info: dict):
     return None
 
 
-def shapeTypeExclude(count: int, info: dict):
+def shape_type_exclude(count: int, info: dict):
     """Given type information, return the array shape and numpy/hdf5 type information
 
     Parameters
@@ -126,9 +126,9 @@ def shapeTypeExclude(count: int, info: dict):
         for im, m in enumerate(info["members"]):
             if m["type"] in ("primitive", "enum"):
                 if m.get("container", None) is None:
-                    mtypes.append((m["name"], singleType(m)))
+                    mtypes.append((m["name"], _single_type(m)))
                 elif m.get("container") == "array" and m.get("size", None):
-                    mtypes.append((m["name"], singleType(m), m["size"]))
+                    mtypes.append((m["name"], _single_type(m), m["size"]))
                 else:
                     excluded.append(im)
         btype = np.dtype(mtypes)
@@ -156,14 +156,14 @@ def shapeTypeExclude(count: int, info: dict):
 
     return dict(shape=shape, dtype=dtype), excluded
 
-def struc2npstruc(tgt, struc):
+def _struc2npstruc(tgt, struc):
     for m, d in struc.items():
         if isinstance(d, dict):
-            struc2npstruc(tgt[m], d)
+            _struc2npstruc(tgt[m], d)
         elif isinstance(d, list) and len(d) and isinstance(d[0], dict):
-            tgt[m] = np.empty_like(tgt[m], shape=(len(d),))
-            for i, x in enumerate(d):
-                struc2npstruc(tgt[m][i], x)
+            tgt[m] = np.empty(dtype=tgt[m].dtype, shape=(len(d),))
+            for i, _x in enumerate(d):
+                _struc2npstruc(tgt[m][i], _x)
         else:
             tgt[m] = d
 
@@ -277,16 +277,6 @@ class DDFFInventoriedStream:
 
     class TimeIt(BaseIt):
         """Iterator for time or tag values."""
-
-        def __init__(self, ddffs: DDFFStream):
-            """Create an iterator for time values on an inventoried stream
-
-            Parameters
-            ----------
-            ddffs : DDFFStream
-                Base data stream
-            """
-            super().__init__(ddffs)
 
         def __next__(self):
             """Return next time point
@@ -427,7 +417,7 @@ class DDFFInventoriedStream:
     def __str__(self):
         return f'Object(class="{self.klass}",members={", ".join(self.members.keys())})'
 
-    def getMeta(self, key: int | str | None = None):
+    def get_meta(self, key: int | str | None = None):
         """Metadata description of the data in this stream
 
         Parameters
@@ -447,7 +437,7 @@ class DDFFInventoriedStream:
             return self.structure["members"]
         return self.structure["members"][key]
 
-    def _get_mappers(self, icount):
+    def get_mappers(self, icount):
         """Helper to obtain mapping functions from msgpack object to numpy arrays
 
         Returns
@@ -459,8 +449,8 @@ class DDFFInventoriedStream:
         mappers = list()
 
         for m, midx in self.members.items():
-            meminfo = self.getMeta(midx)
-            res, excluded = shapeTypeExclude(icount, meminfo)
+            meminfo = self.get_meta(midx)
+            res, excluded = shape_type_exclude(icount, meminfo)
 
             # create empty default array
             result[m] = np.zeros(**res)
@@ -471,7 +461,7 @@ class DDFFInventoriedStream:
                     if "size" in meminfo:
                         mappers.append(
                             partial(
-                                copyObjectFixedArrayExclude,
+                                _copy_object_fixed_array_exclude,
                                 res=result[m],
                                 midx=midx,
                                 excluded=excluded,
@@ -480,7 +470,7 @@ class DDFFInventoriedStream:
                     else:
                         mappers.append(
                             partial(
-                                copyObjectArrayExclude,
+                                _copy_object_array_exclude,
                                 res=result[m],
                                 midx=midx,
                                 excluded=excluded,
@@ -489,7 +479,7 @@ class DDFFInventoriedStream:
                 else:
                     mappers.append(
                         partial(
-                            copyObjectExclude,
+                            _copy_object_exclude,
                             res=result[m],
                             midx=midx,
                             excluded=excluded,
@@ -500,27 +490,27 @@ class DDFFInventoriedStream:
                 if meminfo.get("container", "") == "array":
                     if "size" in meminfo:
                         mappers.append(
-                            partial(copyObjectFixedArray, res=result[m], midx=midx)
+                            partial(_copy_object_fixed_array, res=result[m], midx=midx)
                         )
                     else:
                         mappers.append(
-                            partial(copyObjectArray, res=result[m], midx=midx)
+                            partial(_copy_object_array, res=result[m], midx=midx)
                         )
                 else:
-                    mappers.append(partial(copyObject, res=result[m], midx=midx))
+                    mappers.append(partial(_copy_object, res=result[m], midx=midx))
             elif meminfo["type"] == "map":
                 # map object
-                mappers.append(partial(copyMap, res=result[m], midx=midx))
+                mappers.append(partial(_copy_map, res=result[m], midx=midx))
             elif "container" not in meminfo:
-                mappers.append(partial(copyDefault, res=result[m], midx=midx))
+                mappers.append(partial(_copy_default, res=result[m], midx=midx))
             elif "size" in meminfo:
-                mappers.append(partial(copyFixedArray, res=result[m], midx=midx))
+                mappers.append(partial(_copy_fixed_array, res=result[m], midx=midx))
             else:
-                mappers.append(partial(copyDefault, res=result[m], midx=midx))
+                mappers.append(partial(_copy_default, res=result[m], midx=midx))
         return result, mappers
 
 
-    def getEvents(self, icount=100):
+    def get_events(self, icount=100):
         """Return data as a numpy array of complex numpy type
 
         For "event" data, this way of obtaining the data makes it suitable for conversion
@@ -533,7 +523,7 @@ class DDFFInventoriedStream:
             size to initially reserve for the data, by default 100
         """
         time0 = np.empty(shape=(icount,), dtype=np.uint32)
-        atype = get_object_type(self.structure)
+        atype = _get_object_type(self.structure)
 
         data = np.empty(shape=(icount,), dtype=atype[1])
 
@@ -543,7 +533,7 @@ class DDFFInventoriedStream:
                 icount = icount*2
                 time0.resize((icount,))
                 data.resize((icount,))
-            struc2npstruc(data[i], d[1])
+            _struc2npstruc(data[i], d[1])
             time0[i] = d[0][0]
 
         icount = i + 1
@@ -552,7 +542,7 @@ class DDFFInventoriedStream:
 
         return time0, data
 
-    def getData(self, icount=100):
+    def get_data(self, icount=100):
         """Return data from the stream as a dictionary of numpy arrays
 
         For "numeric" data, this way of obtaining the data is often much more
@@ -574,7 +564,7 @@ class DDFFInventoriedStream:
 
         time0 = np.zeros(shape=(icount,), dtype=np.uint32)
         time1 = np.zeros(shape=(icount,), dtype=np.uint32)
-        result, mappers = self._get_mappers(icount)
+        result, mappers = self.get_mappers(icount)
 
         i = -1
         for i, d in enumerate(self.base.reader()):
@@ -603,7 +593,7 @@ class DDFFInventoriedStream:
 
         Use this to read a typically limited number of items, returned as
         python struct, and following the definition of data in the inventory.
-        This is less efficient than using the getData function.
+        This is less efficient than using the get_data function.
 
         Returns
         -------
@@ -618,45 +608,45 @@ class DDFFInventoriedStream:
 
 # support routines, extracting different types of objects from
 # data structures
-def copyObjectFixedArrayExclude(obj, i, res, midx, excluded):
+def _copy_object_fixed_array_exclude(obj, i, res, midx, excluded):
     # array of tuples
     res[i] = [(x for ix, x in enumerate(obj[midx]) if ix not in excluded)]
 
 
-def copyObjectArrayExclude(obj, i, res, midx, excluded):
+def _copy_object_array_exclude(obj, i, res, midx, excluded):
     # nested tuples
     res[i] = tuple((x for ix, x in enumerate(obj[midx]) if ix not in excluded))
 
 
-def copyObjectExclude(obj, i, res, midx, excluded):
+def _copy_object_exclude(obj, i, res, midx, excluded):
     # single tuple
     res[i] = (x for ix, x in enumerate(obj[midx]) if ix not in excluded)
 
 
-def copyObjectFixedArray(obj, i, res, midx):
+def _copy_object_fixed_array(obj, i, res, midx):
     # array of tuples
     res[i] = [tuple(x) for x in obj[midx]]
 
 
-def copyObjectArray(obj, i, res, midx):
+def _copy_object_array(obj, i, res, midx):
     # nested tuples
     res[i] = tuple(obj[midx])
 
 
-def copyObject(obj, i, res, m, midx):
+def _copy_object(obj, i, res, _m, midx):
     # single tuple
     res[i] = tuple(obj[midx])
 
 
-def copyMap(obj, i, res, midx):
+def _copy_map(obj, i, res, midx):
     res[i] = obj[midx].items()
 
 
-def copyFixedArray(obj, i, res, midx):
+def _copy_fixed_array(obj, i, res, midx):
     res[i] = obj[midx]
 
 
-def copyDefault(obj, i, res, midx):
+def _copy_default(obj, i, res, midx):
     res[i] = obj[midx]
 
 
@@ -692,12 +682,12 @@ class DDFFInventoried(DDFF):
         self.mapping = {}
 
         # read the inventory into the stream as list
-        self.streams[0].readToList()
+        self.streams[0].read_to_list()
 
         if len(nstreams) == 1:
-            self._doInitialScan()
+            self._do_initial_scan()
 
-    def _doInitialScan(self, offsets=None):
+    def _do_initial_scan(self, offsets=None):
 
         # Read how many data streams are there
         descriptions = self.streams[0]
@@ -707,7 +697,7 @@ class DDFFInventoried(DDFF):
         if offsets:
             self._initStreams(neededstreams, offsets)
         else:
-            self._scanStreams(neededstreams)
+            self._scan_streams(neededstreams)
 
         # Use the inventory to enhance the streams
         for tag, streamid, description in descriptions:
@@ -774,5 +764,5 @@ if __name__ == "__main__":
     for x in stuff["WriteUnified:first blip"]["ry"]:
         print(x)
 
-    t0, t1, data = stuff["WriteUnified:first blip"].getData()
-    print(t0, t1, data)
+    t0, t1, _data = stuff["WriteUnified:first blip"].get_data()
+    print(t0, t1, _data)
