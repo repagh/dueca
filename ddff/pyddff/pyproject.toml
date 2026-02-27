@@ -12,18 +12,18 @@ classifiers = [
     "Operating System :: OS Independent" ]
 
 license = "EUPL-1.2"
+dependencies = [
+  "msgpack>=1.0.3",
+  "crcmod>=1.7",
+  "h5py"
+]
 
 [project.scripts]
 ddff-convert = "pyddff.ddff_convert:main"
 
-[dependencies]
-msgpack-python = "^1.0.3"
-crcmod = "1.7"
-
 [build-system]
 requires = [
-    "setuptools >= 44",
-    "wheel",
-    "h5py"
+    "setuptools >= 66",
+    "wheel"
 ]
 build-backend = "setuptools.build_meta"

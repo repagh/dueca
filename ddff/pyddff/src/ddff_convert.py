@@ -127,13 +127,13 @@ class ToHdf5:
         """
         parser = _subparsers.add_parser(
             cls.command,
-            help="""Convert a ddff file to hdf5
+            help="""Convert a ddff file to hdf5.
 
 In principle, each stream is converted to an equivalently named group in the hdf5 file.
-This group has members "tick", an array with the timing, and "data" a group with the
+This group has members "tick", an array with the timing, and "data", a group with the
 data, with each object member having a data array with its data.
 
-if the --as-event flag is used, "data" will become a data array with the data
+If the --as-event flag is used, "data" will become a data array with the data
 as a struct.""",
         )
         parser.add_argument(

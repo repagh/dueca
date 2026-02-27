@@ -117,6 +117,7 @@ else()
     )
 endif()
 
+# ddff-convert should have been installed by python install?
 configure_file(ddff_convert.py ddff-convert @ONLY)
 install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/ddff-convert
   DESTINATION ${CMAKE_INSTALL_BINDIR})
