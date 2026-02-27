@@ -7,6 +7,6 @@ setup(
     author="Rene van Paassen",
     author_email="rene.vanpaassen@gmail.com",
     package_dir = { 'pyddff' : './src' },
-    url = 'https://dueca.tudelft.nl/',
+    url = 'https://github.com/dueca/dueca',
     packages=[ "pyddff" ]
 )
