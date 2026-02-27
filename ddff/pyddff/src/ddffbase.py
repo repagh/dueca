@@ -15,7 +15,7 @@ import msgpack
 # The crc function used to check the blocks
 crc16 = crcmod.predefined.mkPredefinedCrcFun("crc-ccitt-false")
 
-__verbose = 0
+__VERBOSE = 0
 
 
 def dprint(*args, **kwargs):
@@ -23,7 +23,7 @@ def dprint(*args, **kwargs):
 
     When activated, prints all kinds of debug messages
     """
-    if __verbose >= 2:
+    if __VERBOSE >= 2:
         print(*args, **kwargs)
 
 
@@ -32,9 +32,19 @@ def vprint(*args, **kwargs):
 
     When activated, prints all kinds of debug messages
     """
-    if __verbose >= 1:
+    if __VERBOSE >= 1:
         print(*args, **kwargs)
 
+def set_verbose(level: int):
+    """Set verbose print level
+
+    Parameters
+    ----------
+    level : int
+        1: verbose, 2: debug stuff
+    """
+    global __VERBOSE
+    __VERBOSE = level
 
 class DDFFBuffer(io.BytesIO):
     """Buffer back-end, reading and writing a base DDFF structured file"""

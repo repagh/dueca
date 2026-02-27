@@ -23,6 +23,7 @@ endif()
 
 set(DEPS
   ${CMAKE_CURRENT_SOURCE_DIR}/src/__init__.py
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/ddff_convert.py
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ddffbase.py
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ddffinventoried.py
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ddfftagged.py
@@ -32,7 +33,7 @@ set(DEPS
   )
 
 # add the target
-set(DDFFVERSION 0.9)
+set(DDFFVERSION 1.0.2)
 add_custom_target(
   pyddff ALL
   DEPENDS
