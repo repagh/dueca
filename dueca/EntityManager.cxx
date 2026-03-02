@@ -265,7 +265,7 @@ void EntityManager::checkEntityProgress(const TimeSpec& ts)
                        findSummary(ModuleId::find(d.data().global_id)).
                        getOrCalculateStatus());
             c.setModuleState(d.data().state, d.timeSpec().getValidityStart());
-            DEB(getId() << " updating with " << c);
+            DEB1(getId() << " updating with " << c);
             StatusKeeper<StatusT1, DuecaView>::single().getTop().updateStatus
               (ModuleId::find(d.data().global_id), c);
           }
@@ -308,7 +308,7 @@ void EntityManager::checkEntityProgress(const TimeSpec& ts)
   /* report any changes in state back to the buttons. */
   if (state_has_changed || changed) {
 
-    DEB("Confirmed state " << confirmed_state);
+    DEB1("Confirmed state " << confirmed_state);
 
     DuecaView::single()->updateEntityButtons(confirmed_state, command_state,
                                              emergency_flag);
@@ -413,7 +413,7 @@ void EntityManager::queryEntityStatus(const TimeSpec& time)
 
   if (--query_countdown == 0) {
 
-    DEB("do query");
+    DEB1("do query");
     query_countdown = 10;
     for (list<string>::const_iterator ii = entities.begin();
          ii != entities.end(); ii++) {
@@ -459,7 +459,7 @@ bool EntityManager::controlEntities(int p)
      command_interval);
   //TimeSpec ts(round_upwards
   //              (SimTime::getTimeTick() + command_lead, command_interval));
-  DEB("interface command to change state to " << try_state <<
+  DEB("EntityManager, commanded to " << try_state << " (" << p << ")"
         " at time " << last_command_time);
   // if we previously had not changed state, probably the feedback is
   // stuck
