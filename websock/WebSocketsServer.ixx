@@ -751,7 +751,7 @@ bool WebSocketsServer<Encoder, Decoder>::_complete(S &server)
         }
 
         /* DUECA websockets.
-        
+
            Information on a new preset writing connection. */
         I_XTR("New preset connection " << connection->path_match[0]);
         pre->second->setConnection(connection);
@@ -827,11 +827,11 @@ bool WebSocketsServer<Encoder, Decoder>::_complete(S &server)
       }
       catch (const std::exception &e) {
         /* DUECA websockets.
-        
-           Error in decoding the first message on a writing end. Check for matching dataclass, 
+
+           Error in decoding the first message on a writing end. Check for matching dataclass,
            and instructions for label, timing, etc.
         */
-        W_XTR("Write connection on " << connection->path_match[0] << 
+        W_XTR("Write connection on " << connection->path_match[0] <<
               " not completed, need initial message wth configuration " << e.what());
         const std::string reason(e.what());
         connection->send_close(1007, reason);
@@ -1226,7 +1226,7 @@ void WriteReadEntry::writeFromCoded(const Decoder &doc)
        string. Check the correspondence between the DCO object and the
        external program. */
     W_XTR("Websockets, cannot decode '" << w_token->getDataClassName()
-                                        << "' from 'data'");
+                                        << " :" << e.what());
     wr.failed();
   }
 }
@@ -1258,7 +1258,7 @@ template <typename Decoder> void WriteEntry::writeFromCoded(const Decoder &doc)
        string received. Check the correspondence between your
        (external) program and the DUECA object definitions. */
     W_XTR("Websockets, cannot extract '" << w_token->getDataClassName()
-                                         << "' from 'data'");
+                                         << ": " << e.what());
     wr.failed();
   }
 }

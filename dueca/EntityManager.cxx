@@ -308,7 +308,7 @@ void EntityManager::checkEntityProgress(const TimeSpec& ts)
   /* report any changes in state back to the buttons. */
   if (state_has_changed || changed) {
 
-    DEB1("Confirmed state " << confirmed_state);
+    DEB1("Confirmed state " << confirmed_state.t);
 
     DuecaView::single()->updateEntityButtons(confirmed_state, command_state,
                                              emergency_flag);
