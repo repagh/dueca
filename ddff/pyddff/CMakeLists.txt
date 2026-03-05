@@ -54,9 +54,11 @@ set(PYMOD_INSTALL_TYPE bdist_wheel)
 
 # install the python package note that "DESTDIR" and
 # "CMAKE_INSTALL_PREFIX" need to be kept intact, to allow substitution
-# at the install stage
+# at the install stage. Install is with --no-deps, to allow install in incomplete
+# folders, and uses --prefix rather than --target, to install the accompanying
+# script at the proper location
 # this code gets executed by the build system (ninja, Makefile or the like)
-install(CODE "execute_process(COMMAND bash -c \"PYTHONPATH=\$ENV{DESTDIR}${PYSITEDIR} ${Python_EXECUTABLE} -m pip install ${PIP_SYSTEM} --no-index --no-deps --find-links=${CMAKE_CURRENT_BINARY_DIR}/dist --target \$ENV{DESTDIR}${PYSITEDIR} --upgrade pyddff \")")
+install(CODE "execute_process(COMMAND bash -c \"PYTHONPATH=\$ENV{DESTDIR}${PYSITEDIR} ${Python_EXECUTABLE} -m pip install ${PIP_SYSTEM} --no-index --no-deps --prefix=\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX} --find-links=${CMAKE_CURRENT_BINARY_DIR}/dist --upgrade pyddff \")")
 
 if(PYTHON_HAVE_PYPABUILD EQUAL 0)
   # simple build with PyPA build, following PEP-517, PEP-518, using
@@ -118,10 +120,10 @@ else()
 endif()
 
 # ddff-convert should have been installed by python install?
-configure_file(ddff_convert.py ddff-convert @ONLY)
-install(
-  PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/ddff-convert
-  DESTINATION ${CMAKE_INSTALL_BINDIR})
+#configure_file(ddff_convert.py ddff-convert @ONLY)
+#install(
+#  PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/ddff-convert
+#  DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 # create folder for install
 install(DIRECTORY DESTINATION ${PYSITEDIR})
