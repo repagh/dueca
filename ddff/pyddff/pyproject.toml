@@ -13,8 +13,8 @@ classifiers = [
 
 license = "EUPL-1.2"
 dependencies = [
-  "msgpack>=1.0.3",
-  "crcmod>=1.7",
+  "msgpack >= 1.0.3",
+  "crcmod >= 1.7",
   "h5py"
 ]
 
