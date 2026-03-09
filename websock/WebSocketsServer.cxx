@@ -243,6 +243,7 @@ WebSocketsServerBase::WebSocketsServerBase(Entity *e, const char *part,
   followers(),
   monitors(),
   myclock(),
+  startclock(),
   cb1(this, &_ThisModule_::doTransfer),
   cb2(this, &_ThisModule_::doStart),
   do_transfer(getId(), "run websocket IO", &cb1, ps),
@@ -264,9 +265,9 @@ bool WebSocketsServerBase::complete()
 {
   if (immediate_start) {
     // connect and activate startup
-    do_startup.setTrigger(myclock);
-    do_startup.setTimeSpec(TimeSpec(0.0, 1.0));
+    do_startup.setTrigger(startclock);
     do_startup.switchOn(SimTime::now());
+    startclock.requestAlarm(SimTime::getTimeTick() + Ticker::single()->getIncrement(1.0));
   }
   return true;
 }
@@ -756,6 +757,10 @@ void WebSocketsServerBase::doStart(const TimeSpec& ts)
     do_startup.clearTriggers();
 
     auto_started = true;
+  }
+  else {
+    // look again a second later
+    startclock.requestAlarm(ts.getValidityStart() + Ticker::single()->getIncrement(1.0));
   }
 }
 

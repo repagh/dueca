@@ -53,7 +53,7 @@ MAKE_EXCEPT(ChannelTypeConflict);
 MAKE_EXCEPT(ChannelDistributionClash) ;
 
 // Environment
-MAKE_EXCEPT(NoLocalOutlet) ;
+// MAKE_EXCEPT(NoLocalOutlet) ;
 /* MAKE_EXCEPT(UnkownChannel) ; NOT USED AND MISSPELLED */
 /* MAKE_EXCEPT(ChannelAlreadyExists) ; NOT USED */
 /* MAKE_EXCEPT(StreamChannelAccessProblem) ; NOT USED */
@@ -85,7 +85,7 @@ MAKE_EXCEPT(CannotTransferOwnership);
 // Activity views
 MAKE_EXCEPT(WeaverKeyInvalid);
 
-MAKE_EXCEPT(NoMemAvailable);
+//MAKE_EXCEPT(NoMemAvailable);
 
 // modules throw this
 MAKE_EXCEPT(CannotHandleState);

@@ -180,9 +180,11 @@ protected: // simulation data
   writersreaders_t writersreaders;
 
 private: // activity allocation
-  /** You might also need a clock. Don't mis-use this, because it is
-      generally better to trigger on the incoming channels */
+  /** Clock based operation, checking up and collecting/sending */
   PeriodicAlarm myclock;
+
+  /** Start-up operation, if immediate start/comm needed */
+  AperiodicAlarm startclock;
 
   /** Callback objects for simulation calculation. */
   Callback<WebSocketsServerBase> cb1, cb2;
@@ -306,7 +308,7 @@ public: // coding function
       - entry id (numeric)
 
     - read. These endpoints will produce messages at the rate of channel
-      writing, or "throttled", when a time specification is given at configuration 
+      writing, or "throttled", when a time specification is given at configuration
       of the endpoint. Information in the information section includes:
 
       - endpoint name
@@ -340,7 +342,7 @@ public: // coding function
       Once bi-directional communication is established, a message is sent with
       information on both the write direction and read direction.
 
-    - granule. This defines the (floating point) value in seconds of a single 
+    - granule. This defines the (floating point) value in seconds of a single
       integer time increment.
 
     </td>
@@ -357,7 +359,7 @@ public: // coding function
     to be 0. The entry may have been explicitly configured from the
     start script, and thus its information was provided in the
     /configuration URL, or it was added by a channelwatcher, and information
-    was provided in an /info/... url (see later). 
+    was provided in an /info/... url (see later).
     </td>
     </tr>
 

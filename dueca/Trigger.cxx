@@ -14,13 +14,12 @@
 #define Trigger_cc
 #include "Trigger.hxx"
 #include "TimeSpec.hxx"
-#include "GenericPacker.hxx"
 #include "ActivityManager.hxx"
 #include "ArenaPool.hxx"
 #include "Arena.hxx"
 #include "debug.h"
 #include <algorithm>
-#include <iostream>
+#include <dueca-conf.h>
 
 #define DEBPRINTLEVEL -1
 #define DEBA(A)
@@ -104,7 +103,7 @@ bool TriggerPuller::setManager(ActivityManager *mgr, ActivityManager *oldmgr,
   for (targetlist_type::iterator ii = targets.begin(); ii != targets.end();
        ii++) {
     if (ii->target && ii->target == t) {
-      setcorrect = (ii->manager == oldmgr) ? 1 : 2;
+      setcorrect = (ii->manager == oldmgr || oldmgr == NULL) ? 1 : 2;
       ii->manager = mgr;
     }
     if (ii->manager) {
@@ -250,6 +249,25 @@ TriggerTarget::~TriggerTarget()
   }
 }
 
+#ifdef ACTIV_NOCATCH
+/** Exception to be thrown when triggerpuller reused for different activity level */
+class cannot_reuse_trigger : public std::exception
+{
+  /** Print description of exception. */
+  const char *what() const throw() final { return "cannot re-use the trigger"; }
+};
+
+/** Exception to be thrown when trying to install new triggering on a target */
+class target_already_triggered : public std::exception
+{
+  /** Print description of exception. */
+  const char *what() const throw() final
+  {
+    return "this target already has a trigger";
+  }
+};
+#endif
+
 void TriggerTarget::setTrigger(TriggerPuller &p)
 {
   if (pullers.size()) {
@@ -261,6 +279,9 @@ void TriggerTarget::setTrigger(TriggerPuller &p)
        dueca::TriggerTarget::clearTriggers(). */
     W_ACT("Target " << getTargetName()
                     << " is already triggered, ignoring new trigger");
+#ifdef ACTIV_NOCATCH
+    throw target_already_triggered();
+#endif
     return;
   }
   pullers.push_back(PullerData(&p));
@@ -276,6 +297,9 @@ void TriggerTarget::setTrigger(TriggerPuller &p)
        new trigger if needed.
      */
     E_ACT("setTrigger; this (combination) trigger cannot be re-used");
+#ifdef ACTIV_NOCATCH
+    throw cannot_reuse_trigger();
+#endif
   }
 }
 
@@ -321,6 +345,9 @@ void TriggerTarget::setTrigger(boost::intrusive_ptr<TargetAndPuller> p)
        dueca::TriggerTarget::clearTriggers(). */
     W_ACT("Target " << getTargetName()
                     << " is already triggered, ignoring new trigger");
+#ifdef ACTIV_NOCATCH
+    throw target_already_triggered();
+#endif
     return;
   }
   DEB("setting puller " << p->name << " for target "
@@ -337,6 +364,9 @@ void TriggerTarget::setTrigger(boost::intrusive_ptr<TargetAndPuller> p)
        new trigger if needed.
      */
     E_ACT("setTrigger; this (combination) trigger cannot be re-used");
+#ifdef ACTIV_NOCATCH
+    throw cannot_reuse_trigger();
+#endif
   }
 }
 
@@ -448,6 +478,9 @@ void TargetAndPuller::addTerm(TriggerPuller &p)
        new trigger if needed.
      */
     E_ACT("setTrigger; this (combination) trigger cannot be re-used");
+#ifdef ACTIV_NOCATCH
+    throw cannot_reuse_trigger();
+#endif
   }
   setTriggerName();
 }
@@ -465,6 +498,9 @@ void TargetAndPuller::addTerm(const boost::intrusive_ptr<TargetAndPuller> &p)
        new trigger if needed.
      */
     E_ACT("setTrigger; this (combination) trigger cannot be re-used");
+#ifdef ACTIV_NOCATCH
+    throw cannot_reuse_trigger();
+#endif
   }
   setTriggerName();
 }
