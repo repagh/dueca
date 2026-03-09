@@ -493,9 +493,9 @@ void WriteEntry::complete(const std::string &datatype, const std::string &label,
   }
   this->bulk = bulk;
   this->diffpack = diffpack;
-  if (DataClassRegistry::single().getConverter(this->datatype)) {
-    throw connectionparseerror();
-  }
+
+  // this would throw if the datatype is not known
+  DataClassRegistry::single().getConverter(this->datatype);
 
   identification = channelname + std::string(" type:") + datatype +
                    std::string(" label:\"") + label + std::string("\"");

@@ -41,7 +41,7 @@
 #define NO_TYPE_CREATION
 #include <dueca.h>
 
-#define DEBPRINTLEVEL -1
+#define DEBPRINTLEVEL 0
 #include <debprint.h>
 
 #ifdef BOOST1_65
@@ -386,9 +386,9 @@ bool WebSocketsServer<Encoder, Decoder>::_complete(S &server)
 
      Unexpected error in the "current" URL connection.
   */
-    W_XTR("Error in current connection " << connection.get() << ". "
-                                 << "Error: " << ec
-                                 << ", error message: " << ec.message());
+    W_XTR("Error in current connection "
+          << connection.get() << ". "
+          << "Error: " << ec << ", error message: " << ec.message());
   };
 
   current.on_close = [this](shared_ptr<typename S::Connection> connection,
@@ -496,8 +496,8 @@ bool WebSocketsServer<Encoder, Decoder>::_complete(S &server)
        Unexpected error in the "follow" URL connection.
     */
     W_XTR("Error in follow connection " << connection.get() << ". "
-                                 << "Error: " << ec
-                                 << ", error message: " << ec.message());
+                                        << "Error: " << ec
+                                        << ", error message: " << ec.message());
   };
 
   follow.on_close = [this](shared_ptr<typename S::Connection> connection,
@@ -610,9 +610,9 @@ bool WebSocketsServer<Encoder, Decoder>::_complete(S &server)
     /* DUECA websockets.
 
        Unexpected error in an "info" URL connection. */
-    W_XTR("Error in monitor connection " << connection.get() << ". "
-                                 << "Error: " << ec
-                                 << ", error message: " << ec.message());
+    W_XTR("Error in monitor connection "
+          << connection.get() << ". "
+          << "Error: " << ec << ", error message: " << ec.message());
   };
 
   monitor.on_close = [this](shared_ptr<typename S::Connection> connection,
@@ -678,8 +678,8 @@ bool WebSocketsServer<Encoder, Decoder>::_complete(S &server)
 
        Unexpected error in a "write" URL connection. */
     W_XTR("Error in writer connection " << connection->path_match[0] << ". "
-                                 << "Error: " << ec
-                                 << ", error message: " << ec.message());
+                                        << "Error: " << ec
+                                        << ", error message: " << ec.message());
   };
 
   writer.on_open = [this](shared_ptr<typename S::Connection> connection) {
@@ -822,6 +822,9 @@ bool WebSocketsServer<Encoder, Decoder>::_complete(S &server)
         dec.findMember("diffpack", diffpack);
         std::string dataclass;
         dec.findMember("dataclass", dataclass);
+        DEB("Write entry definition dataclass="
+            << dataclass << " label=" << label << " ctiming=" << ctiming
+            << " event=" << event << " bulk=" << bulk << " diffpack=" << diffpack);
         // WriteEntry
         ww->second->complete(dataclass, label, !event, ctiming, bulk, diffpack);
       }
@@ -831,8 +834,10 @@ bool WebSocketsServer<Encoder, Decoder>::_complete(S &server)
            Error in decoding the first message on a writing end. Check for matching dataclass,
            and instructions for label, timing, etc.
         */
-        W_XTR("Write connection on " << connection->path_match[0] <<
-              " not completed, need initial message wth configuration " << e.what());
+        W_XTR("Write connection on "
+              << connection->path_match[0]
+              << " not completed, need initial message with configuration "
+              << e.what());
         const std::string reason(e.what());
         connection->send_close(1007, reason);
         return;
@@ -878,9 +883,9 @@ bool WebSocketsServer<Encoder, Decoder>::_complete(S &server)
     /* DUECA websockets.
 
        Unexpected error in a "write-and-read" URL connection. */
-    W_XTR("Error in writerreader connection " << connection->path_match[0] << ". "
-                                 << "Error: " << ec
-                                 << ", error message: " << ec.message());
+    W_XTR("Error in writerreader connection "
+          << connection->path_match[0] << ". "
+          << "Error: " << ec << ", error message: " << ec.message());
   };
 
   writerreader.on_open = [this](shared_ptr<typename S::Connection> connection) {
@@ -1225,8 +1230,8 @@ void WriteReadEntry::writeFromCoded(const Decoder &doc)
        Failed to decode a DCO object from the received JSON
        string. Check the correspondence between the DCO object and the
        external program. */
-    W_XTR("Websockets, cannot decode '" << w_token->getDataClassName()
-                                        << " :" << e.what());
+    W_XTR("Websockets, cannot decode '" << w_token->getDataClassName() << " :"
+                                        << e.what());
     wr.failed();
   }
 }
@@ -1257,8 +1262,8 @@ template <typename Decoder> void WriteEntry::writeFromCoded(const Decoder &doc)
        Failed to decode an object of the given dataclass from the JSON
        string received. Check the correspondence between your
        (external) program and the DUECA object definitions. */
-    W_XTR("Websockets, cannot extract '" << w_token->getDataClassName()
-                                         << ": " << e.what());
+    W_XTR("Websockets, cannot extract '" << w_token->getDataClassName() << ": "
+                                         << e.what());
     wr.failed();
   }
 }
