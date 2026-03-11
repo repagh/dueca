@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
 
     - name: Install dependencies
       run: |
@@ -44,14 +44,16 @@ jobs:
         pip3 install build
 
     - name: Configure CMake
-      # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
-      # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
+      # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is
+      # only required if you are using a single-configuration generator
+      # such as make. See
+      # https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html
       run: source ./dpyenv/bin/activate &&
          cmake -B ${{github.workspace}}/build
         -DCMAKE_CXX_FLAGS="-DGLIB_VERSION_MIN_REQUIRED=GLIB_VERSION_2_30"
         -DCMAKE_INSTALL_PREFIX=${{env.PREFIX}}
         -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
-        -DBUILD_DOC=ON \
+        -DBUILD_DOC=ON
         -DDUECA_BUILD_SHARED=ON
         -DDUECA_BUILD_STATIC=OFF
         -DBUILD_UDP=ON
@@ -74,9 +76,9 @@ jobs:
         -DBUILD_HDF5=ON
         -DBUILD_DDFF=ON
         -DFORCE_PYTHON_MALLOC=ON
-        -DPYSITEDIR:PATH=${{env.PREFIX}}/lib/python${{env.PYVERSION}}/site-packages
         -DDUECA_INSTALL_ENVIRONMENT=ON
         -DFILLPACKER_SEND_ID=ON
+      #  -DPYSITEDIR:PATH=${{env.PREFIX}}/lib/python${{env.PYVERSION}}/site-packages
 
     - name: Build
       # Build your program with the given configuration
@@ -102,7 +104,7 @@ jobs:
 
     - name: Upload log
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: TestResult
         path: |
