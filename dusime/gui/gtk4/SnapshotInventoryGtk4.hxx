@@ -60,6 +60,9 @@ private:
   /** File for any new additions/extensions */
   std::string store_file;
 
+  /** Path for storing snapshots/initials */
+  std::string                        store_path;
+
 public: // class name and trim/parameter tables
   /** Name of the module. */
   static const char *const classname;

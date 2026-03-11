@@ -31,10 +31,10 @@
 	   SnapCoding coding=UnSpecified);
 
   /** Constructor from a toml-parsed object */
-  Snapshot(const toml::value& coded);
+  Snapshot(const toml::value& coded, const std::string& path);
 
   /** Create a toml object */
-  toml::value tomlCode(const std::string& fname=std::string()) const;
+  toml::value tomlCode(const std::string& fname, const std::string& path) const;
 
   /** return true if the snapshot is to be saved in an external file */
   bool saveExternal() const;
@@ -66,5 +66,3 @@
 
   /** For convenience, additional data_size member */
   size_t data_size;
-
-

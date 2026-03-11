@@ -141,6 +141,10 @@ const ParameterTable *SnapshotInventoryGtk4::getParameterTable()
       "strings. Default \"\", suggestion\n"
       "initial-[entity name]-%Y%m%d_%H%M%S.toml" },
 
+    { "path",
+      new VarProbe<_ThisModule_, std::string>(&_ThisModule_::store_path),
+      "Path for storing and retrieving initial state files." },
+
     { NULL, NULL, "Manage loading of initial states (snapshots). " }
   };
 
@@ -198,7 +202,8 @@ bool SnapshotInventoryGtk4::complete()
   // if applicable, open the files
   inventory->setFiles(
     reference_file,
-    formatTime(boost::posix_time::second_clock::local_time(), store_file));
+    formatTime(boost::posix_time::second_clock::local_time(), store_file),
+    store_path);
 
   // table with callbacks to be connected to widget actions
   static GladeCallbackTable cb_table[] = {

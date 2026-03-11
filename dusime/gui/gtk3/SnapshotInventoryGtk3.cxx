@@ -16,7 +16,6 @@
         license         : EUPL-1.2
 */
 
-
 #define SnapshotInventoryGtk3_cxx
 
 // include the definition of the module class
@@ -43,47 +42,49 @@
 DUECA_NS_START;
 
 // class/module name
-const char* const SnapshotInventoryGtk3::classname = "initials-inventory";
+const char *const SnapshotInventoryGtk3::classname = "initials-inventory";
 
 // Parameters to be inserted
-const ParameterTable* SnapshotInventoryGtk3::getParameterTable()
+const ParameterTable *SnapshotInventoryGtk3::getParameterTable()
 {
   static const ParameterTable parameter_table[] = {
 
     { "glade-file",
-      new VarProbe<_ThisModule_,std::string>
-      (&_ThisModule_::gladefile),
+      new VarProbe<_ThisModule_, std::string>(&_ThisModule_::gladefile),
       "Interface description (glade, gtkbuilder) for the channel view window" },
 
-    { "position-size", new MemberCall<_ThisModule_, std::vector<int> >
-      (&_ThisModule_::setPositionAndSize),
+    { "position-size",
+      new MemberCall<_ThisModule_, std::vector<int>>(
+        &_ThisModule_::setPositionAndSize),
       "Specify the position, and optionally also the size of the interface\n"
       "window." },
 
     { "reference-file",
-      new VarProbe<_ThisModule_,std::string>
-        (&_ThisModule_::reference_file),
+      new VarProbe<_ThisModule_, std::string>(&_ThisModule_::reference_file),
       "File with existing initial states (snapshots). Will be read and\n"
       "used to populate the initial set" },
 
     { "store-file",
-      new VarProbe<_ThisModule_,std::string>
-        (&_ThisModule_::store_file),
+      new VarProbe<_ThisModule_, std::string>(&_ThisModule_::store_file),
       "When additional snapshots are taken in this simulation, these will\n"
       "be written in this file, together with the existing initial state\n"
       "sets. Uses a template, check check boost time_facet for format\n"
       "strings. Default \"\", suggestion\n"
       "initial-[entity name]-%Y%m%d_%H%M%S.toml" },
 
-    { NULL, NULL,
-      "Manage loading of initial states (snapshots). "} };
+    { "path",
+      new VarProbe<_ThisModule_, std::string>(&_ThisModule_::store_path),
+      "Path for storing and retrieving initial state files." },
+
+    { NULL, NULL, "Manage loading of initial states (snapshots). " }
+  };
 
   return parameter_table;
 }
 
 // constructor
-SnapshotInventoryGtk3::SnapshotInventoryGtk3(Entity* e, const char* part, const
-                   PrioritySpec& ps) :
+SnapshotInventoryGtk3::SnapshotInventoryGtk3(Entity *e, const char *part,
+                                             const PrioritySpec &ps) :
   /* The following line initialises the SimulationModule base class.
      You always pass the pointer to the entity, give the classname and the
      part arguments. */
@@ -103,12 +104,11 @@ SnapshotInventoryGtk3::SnapshotInventoryGtk3(Entity* e, const char* part, const
   //                      or enter the clock here */);
 }
 
-static std::string formatTime(const boost::posix_time::ptime& now,
-                              const std::string& lft)
+static std::string formatTime(const boost::posix_time::ptime &now,
+                              const std::string &lft)
 {
   using namespace boost::posix_time;
-  std::locale loc(std::cout.getloc(),
-                  new time_facet(lft.c_str()));
+  std::locale loc(std::cout.getloc(), new time_facet(lft.c_str()));
 
   std::basic_stringstream<char> wss;
   wss.imbue(loc);
@@ -119,22 +119,24 @@ static std::string formatTime(const boost::posix_time::ptime& now,
 // organize construction of the tree model
 namespace {
   // attributes, name, and attachment to column in the model
-  struct attributedata {
-    const char* name;
-    const gint column;
-  };
+struct attributedata
+{
+  const char *name;
+  const gint column;
+};
 
   // column data. Columns are created in glade, this attaches the proper
   // renderer, indicate if expanded, and gives attributes
-  struct columndata {
+struct columndata
+{
     // cell renderer
-    GtkCellRenderer *renderer;
+  GtkCellRenderer *renderer;
     // expand/extra space
-    gboolean expand;
+  gboolean expand;
     // list of attributes
-    const attributedata attribs[4];
-  };
+  const attributedata attribs[4];
 };
+}; // namespace
 
 bool SnapshotInventoryGtk3::complete()
 {
@@ -152,29 +154,26 @@ bool SnapshotInventoryGtk3::complete()
   inventory = SnapshotInventory::findSnapshotInventory(getPart());
 
   // if applicable, open the files
-  inventory->setFiles
-    (reference_file,
-     formatTime(boost::posix_time::second_clock::local_time(), store_file));
+  inventory->setFiles(
+    reference_file,
+    formatTime(boost::posix_time::second_clock::local_time(), store_file),
+    store_path);
 
   // table with callbacks to be connected to widget actions
   static GladeCallbackTable cb_table[] = {
-    { "initials_close", "clicked",
-      gtk_callback(&_ThisModule_::cbClose) },
+    { "initials_close", "clicked", gtk_callback(&_ThisModule_::cbClose) },
     { "initials_newentryname", "changed",
       gtk_callback(&_ThisModule_::cbSetName) },
-    { "initials_send", "clicked",
-      gtk_callback(&_ThisModule_::cbSendInitial) },
+    { "initials_send", "clicked", gtk_callback(&_ThisModule_::cbSendInitial) },
     { "initials_listselection", "changed",
       gtk_callback(&_ThisModule_::cbSelection) },
-    { "initials_view", "delete_event",
-      gtk_callback(&_ThisModule_::cbDelete) },
+    { "initials_view", "delete_event", gtk_callback(&_ThisModule_::cbDelete) },
     { NULL }
   };
 
   // create the window
-  bool res = window.readGladeFile
-    (gladefile.c_str(), "initials_view",
-     reinterpret_cast<gpointer>(this), cb_table);
+  bool res = window.readGladeFile(gladefile.c_str(), "initials_view",
+                                  reinterpret_cast<gpointer>(this), cb_table);
   if (!res) {
     /* DUECA UI.
 
@@ -192,104 +191,92 @@ bool SnapshotInventoryGtk3::complete()
   // it is a tree structure, base element for each snapshot set, with
   // leafs for the different snapshots
   GtkTreeIter itset, itsnap;
-  gtk_tree_model_get_iter_first
-    (GTK_TREE_MODEL(snaps_store), &itsnap);
+  gtk_tree_model_get_iter_first(GTK_TREE_MODEL(snaps_store), &itsnap);
 
   // get the toggle for viewing the snapshot details
   static GtkCellRenderer *txtrenderer = gtk_cell_renderer_text_new();
 
   // create the connections between the tree view and the data table
   static columndata cdata[] = {
-    { txtrenderer, FALSE,
-      { { "text", S_name }, { "visible", S_isset }, { NULL, 0} } },
-    { txtrenderer, FALSE,
-      { { "text", S_time }, { "visible", S_isset }, { NULL, 0} } },
-    { txtrenderer, FALSE,
-      { { "text", S_origin }, { "visible", S_isinitial }, {NULL, 0 } } },
-    { txtrenderer, FALSE,
-      { { "text", S_coding }, { "visible", S_isinitial }, {NULL, 0 } } },
-    { txtrenderer, TRUE,
-      { { "text", S_example }, { "visible", S_isinitial }, {NULL, 0 } } },
+    { txtrenderer,
+      FALSE,
+      { { "text", S_name }, { "visible", S_isset }, { NULL, 0 } } },
+    { txtrenderer,
+      FALSE,
+      { { "text", S_time }, { "visible", S_isset }, { NULL, 0 } } },
+    { txtrenderer,
+      FALSE,
+      { { "text", S_origin }, { "visible", S_isinitial }, { NULL, 0 } } },
+    { txtrenderer,
+      FALSE,
+      { { "text", S_coding }, { "visible", S_isinitial }, { NULL, 0 } } },
+    { txtrenderer,
+      TRUE,
+      { { "text", S_example }, { "visible", S_isinitial }, { NULL, 0 } } },
     { NULL, FALSE, { { NULL, 0 } } }
   };
 
   // this sets the renderer(s) on the columns
   int icol = 0;
-  for (const struct columndata* cd = cdata; cd->renderer != NULL; cd++) {
+  for (const struct columndata *cd = cdata; cd->renderer != NULL; cd++) {
     GtkTreeViewColumn *col = gtk_tree_view_get_column(treeview, icol++);
     gtk_tree_view_column_pack_start(col, cd->renderer, cd->expand);
-    for (const struct attributedata* at = cd->attribs; at->name != NULL; at++) {
-      gtk_tree_view_column_add_attribute
-        (col, cd->renderer, at->name, at->column);
+    for (const struct attributedata *at = cd->attribs; at->name != NULL; at++) {
+      gtk_tree_view_column_add_attribute(col, cd->renderer, at->name,
+                                         at->column);
     }
   }
 
   // load the tree with the currently present data
-  for (const auto &snapset: inventory->getSnapshotData()) {
+  for (const auto &snapset : inventory->getSnapshotData()) {
     gtk_tree_store_append(snaps_store, &itset, NULL);
-    gtk_tree_store_set
-      (snaps_store, &itset,
-       S_name, snapset.first.c_str(),
-       S_time, snapset.second.getTimeLocal().c_str(),
-       S_isset, TRUE,
-       -1);
-    for (const auto &snap: snapset.second.snaps) {
+    gtk_tree_store_set(snaps_store, &itset, S_name, snapset.first.c_str(),
+                       S_time, snapset.second.getTimeLocal().c_str(), S_isset,
+                       TRUE, -1);
+    for (const auto &snap : snapset.second.snaps) {
       gint snap_position = 0;
       gtk_tree_store_insert(snaps_store, &itsnap, &itset, snap_position++);
-      gtk_tree_store_set
-        (snaps_store, &itsnap,
-         S_origin, snap.originator.name.c_str(),
-         S_coding, getString(snap.coding),
-         S_example, snap.getSample(30).c_str(),
-         S_isinitial, TRUE,
-         -1);
+      gtk_tree_store_set(snaps_store, &itsnap, S_origin,
+                         snap.originator.name.c_str(), S_coding,
+                         getString(snap.coding), S_example,
+                         snap.getSample(30).c_str(), S_isinitial, TRUE, -1);
     }
   }
 
   // create a callback for getting any new incoming snapshot sets
-  inventory->informOnNewSet
-    ([this](const std::string& name,
-            const SnapshotInventory::SnapshotData& snapset) {
+  inventory->informOnNewSet(
+    [this](const std::string &name,
+           const SnapshotInventory::SnapshotData &snapset) {
       gtk_tree_store_append(this->snaps_store, &(this->set_iterator), NULL);
-      gtk_tree_store_set
-        (this->snaps_store, &(this->set_iterator),
-         S_name, name.c_str(),
-         S_time, snapset.getTimeLocal().c_str(),
-         S_isset, TRUE,
-         -1);
+      gtk_tree_store_set(this->snaps_store, &(this->set_iterator), S_name,
+                         name.c_str(), S_time, snapset.getTimeLocal().c_str(),
+                         S_isset, TRUE, -1);
     });
 
-  inventory->informOnNewSnap
-    ([this](const Snapshot& snap) {
-
+  inventory->informOnNewSnap([this](const Snapshot &snap) {
       // insert a new row/iterator
-      GtkTreeIter snapit;
-      gtk_tree_store_append(this->snaps_store, &snapit, &(this->set_iterator));
-      gtk_tree_store_set
-        (this->snaps_store, &snapit,
-         S_origin, snap.originator.name.c_str(),
-         S_coding, getString(snap.coding),
-         S_example, snap.getSample(30).c_str(),
-         S_isinitial, TRUE,
-         -1);
+    GtkTreeIter snapit;
+    gtk_tree_store_append(this->snaps_store, &snapit, &(this->set_iterator));
+    gtk_tree_store_set(this->snaps_store, &snapit, S_origin,
+                       snap.originator.name.c_str(), S_coding,
+                       getString(snap.coding), S_example,
+                       snap.getSample(30).c_str(), S_isinitial, TRUE, -1);
 
       // deselect from list
-      gtk_label_set_text(GTK_LABEL(window["initials_status"]),
-                         "snapshot taken");
-      gtk_tree_selection_unselect_all
-        (GTK_TREE_SELECTION(window["initials_listselection"]));
-    });
+    gtk_label_set_text(GTK_LABEL(window["initials_status"]), "snapshot taken");
+    gtk_tree_selection_unselect_all(
+      GTK_TREE_SELECTION(window["initials_listselection"]));
+  });
 
   // set a title
-  gtk_window_set_title
-    (GTK_WINDOW(window["initials_view"]),
-     (std::string("Initials control - ") + getPart()).c_str());
+  gtk_window_set_title(
+    GTK_WINDOW(window["initials_view"]),
+    (std::string("Initials control - ") + getPart()).c_str());
 
   // insert in DUECA's menu
-  menuitem = GTK_WIDGET
-    (GtkDuecaView::single()->requestViewEntry
-     ((std::string("Initial state - ") + getPart()).c_str(),
-      G_OBJECT(window["initials_view"])));
+  menuitem = GTK_WIDGET(GtkDuecaView::single()->requestViewEntry(
+    (std::string("Initial state - ") + getPart()).c_str(),
+    G_OBJECT(window["initials_view"])));
 
   return res;
 }
@@ -322,17 +309,17 @@ void SnapshotInventoryGtk3::stopModule(const TimeSpec &time)
 }
 
 // callbacks to link to the gui
-void SnapshotInventoryGtk3::cbClose(GtkWidget* button, gpointer gp)
+void SnapshotInventoryGtk3::cbClose(GtkWidget *button, gpointer gp)
 {
   g_signal_emit_by_name(G_OBJECT(menuitem), "activate", NULL);
 }
 
-void SnapshotInventoryGtk3::cbSetName(GtkWidget* text, gpointer gp)
+void SnapshotInventoryGtk3::cbSetName(GtkWidget *text, gpointer gp)
 {
   inventory->setSnapName(gtk_editable_get_chars(GTK_EDITABLE(text), 0, -1));
 }
 
-void SnapshotInventoryGtk3::cbSendInitial(GtkWidget* btn, gpointer gp)
+void SnapshotInventoryGtk3::cbSendInitial(GtkWidget *btn, gpointer gp)
 {
   if (inventory->sendSelected()) {
     gtk_label_set_text(GTK_LABEL(window["initials_status"]), "sent");
@@ -343,7 +330,6 @@ void SnapshotInventoryGtk3::cbSendInitial(GtkWidget* btn, gpointer gp)
   else {
     gtk_label_set_text(GTK_LABEL(window["initials_status"]), "send failed");
   }
-
 }
 
 void SnapshotInventoryGtk3::cbSelection(GtkTreeSelection *sel, gpointer gp)
@@ -352,8 +338,7 @@ void SnapshotInventoryGtk3::cbSelection(GtkTreeSelection *sel, gpointer gp)
   GtkTreeIter iter;
   gchararray name = NULL;
   GtkTreeModel *treemodel = GTK_TREE_MODEL(snaps_store);
-  if (gtk_tree_selection_get_selected
-      (sel, &treemodel, &iter)) {
+  if (gtk_tree_selection_get_selected(sel, &treemodel, &iter)) {
     // retrieve the name of the initials:
     gtk_tree_model_get(treemodel, &iter, S_name, &name, -1);
   }
@@ -371,8 +356,8 @@ void SnapshotInventoryGtk3::cbSelection(GtkTreeSelection *sel, gpointer gp)
   }
 }
 
-gboolean SnapshotInventoryGtk3::
-cbDelete(GtkWidget *window, GdkEvent *event, gpointer user_data)
+gboolean SnapshotInventoryGtk3::cbDelete(GtkWidget *window, GdkEvent *event,
+                                         gpointer user_data)
 {
   // fixes the menu check, and closes the window
   g_signal_emit_by_name(G_OBJECT(menuitem), "activate", NULL);
@@ -381,7 +366,7 @@ cbDelete(GtkWidget *window, GdkEvent *event, gpointer user_data)
   return TRUE;
 }
 
-bool SnapshotInventoryGtk3::setPositionAndSize(const std::vector<int>& p)
+bool SnapshotInventoryGtk3::setPositionAndSize(const std::vector<int> &p)
 {
   if (p.size() == 2 || p.size() == 4) {
     window.setWindow(p);
@@ -391,11 +376,10 @@ bool SnapshotInventoryGtk3::setPositionAndSize(const std::vector<int>& p)
 
        Window setting needs 2 (for size) or 4 (also location)
        arguments. */
-    E_CNF(getId() <<  '/' << classname << " need 2 or 4 arguments");
+    E_CNF(getId() << '/' << classname << " need 2 or 4 arguments");
     return false;
   }
   return true;
 }
-
 
 DUECA_NS_END;
