@@ -45,6 +45,20 @@ public:
   double_snapshot_origin(const char* originator);
 };
 
+/** thrown when snapshots cannot be reconciled */
+class cannot_find_snapshot_file: public std::exception
+{
+  /** Error string */
+  char str[128];
+
+public:
+  /** Re-implementation of std:exception what. */
+  const char* what() const throw() {return str; }
+
+  /** Constructor */
+  cannot_find_snapshot_file(const char* fname);
+};
+
 /** Problem in the initial condition file */
 class initial_file_mismatch: public std::exception
 {

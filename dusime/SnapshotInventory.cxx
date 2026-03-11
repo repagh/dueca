@@ -266,14 +266,14 @@ std::string SnapshotInventory::SnapshotData::getTimeLocal() const
 
 void SnapshotInventory::setFiles(const std::string &bfile,
                                  const std::string &sfile,
-                                 const std::string &path)
+                                 const std::string &_path)
 {
   resultfile = sfile;
-  if (path.size() == 0 || path.substr(path.size() - 1) == std::string("/")) {
-    this->path = path;
+  if (_path.size() == 0 || _path.substr(_path.size() - 1) == std::string("/")) {
+    path = _path;
   }
   else {
-    this->path = path + '/';
+    path = _path + '/';
   }
 
   if (bfile.size()) {
