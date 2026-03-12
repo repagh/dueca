@@ -117,13 +117,17 @@ else()
 
     DEPENDS ${DEPS} ${CMAKE_CURRENT_BINARY_DIR}/setup.py
   )
+
+  # in this case ddff_convert is not installed by pip
+  # need manual version
+  configure_file(ddff_convert.py ddff-convert @ONLY)
+  install(
+    PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/ddff-convert
+    DESTINATION ${CMAKE_INSTALL_BINDIR})
+
 endif()
 
 # ddff-convert should have been installed by python install?
-#configure_file(ddff_convert.py ddff-convert @ONLY)
-#install(
-#  PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/ddff-convert
-#  DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 # create folder for install
 install(DIRECTORY DESTINATION ${PYSITEDIR})
