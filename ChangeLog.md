@@ -2,15 +2,19 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
-## [4.2.6] - 2026-03-11
+## [4.2.6] - 2026-03-12
 
 ### Changed
 
 - Follow python conventions on DDFF class functions (snake-case).
 - Tweak pyddff install to create the ddff-convert script automatically.
-- Better report on hogging activities in prio 0, name the activity.
-- Correct the initials save and restore, fixes snapshot.
+- Better report on hogging activities in prio 0, naming the activity.
+- Correct the initial state save and restore, fixes snapshot.
 - Fix/cleanup this ChangeLog
+- Also tweak intall for duecautils; using prefix instead of pysite dir
+- Remove double setting of the trigger in inter ChannelReplicatorPeer
+- Correct the writing of dueca-env.sh
+- Tweaks to the github actions, to match nektos/act running
 
 ### Added
 

@@ -88,7 +88,7 @@ set(PYMOD_INSTALL_TYPE bdist_wheel)
 # "CMAKE_INSTALL_PREFIX" need to be kept intact, to allow substitution
 # at the install stage
 # this code gets executed by the build system (ninja, Makefile or the like)
-install(CODE "execute_process(COMMAND bash -c \"PYTHONPATH=\$ENV{DESTDIR}${PYSITEDIR} ${Python_EXECUTABLE} -m pip install ${PIP_SYSTEM} --no-index --find-links=${CMAKE_CURRENT_BINARY_DIR}/dist --target \$ENV{DESTDIR}${PYSITEDIR} --upgrade duecautils\")" )
+install(CODE "execute_process(COMMAND bash -c \"PYTHONPATH=\$ENV{DESTDIR}${PYSITEDIR} ${Python_EXECUTABLE} -m pip install ${PIP_SYSTEM} --no-index --no-deps --prefix=\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX} --find-links=${CMAKE_CURRENT_BINARY_DIR}/dist --upgrade duecautils\")" )
 
 
 if (PYTHON_HAVE_PYPABUILD EQUAL 0)

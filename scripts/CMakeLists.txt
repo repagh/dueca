@@ -62,6 +62,13 @@ if (NOT CMAKE_BUILD_TYPE STREQUAL "Debug" AND
 endif()
 
 if (DUECA_INSTALL_ENVIRONMENT)
+  if(NOT PYSITEDIR)
+    execute_process(
+      COMMAND ${Python_EXECUTABLE} -c
+      "from distutils.sysconfig import get_python_lib; print(get_python_lib())"
+      OUTPUT_VARIABLE PYSITEDIR
+      OUTPUT_STRIP_TRAILING_WHITESPACE)
+  endif()
   configure_file(dueca-env.sh.in dueca-env.sh @ONLY)
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/dueca-env.sh
     DESTINATION ${CMAKE_INSTALL_PREFIX})
