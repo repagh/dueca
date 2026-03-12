@@ -87,7 +87,7 @@ if(PYTHON_HAVE_PYPABUILD EQUAL 0)
     ${CMAKE_CURRENT_BINARY_DIR}/src
 
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/dist
-    COMMAND ${Python_EXECUTABLE} -m build
+    COMMAND ${Python_EXECUTABLE} -m build --no-isolation
     COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/timestamp
     DEPENDS ${DEPS}
   )
