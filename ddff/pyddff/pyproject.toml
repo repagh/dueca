@@ -8,10 +8,13 @@ authors = [
   { name = 'René van Paassen', email = 'rene.vanpaassen@gmail.com' }
   ]
 classifiers = [
+    "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent" ]
 
-license = "EUPL-1.2"
+[license]
+text = "EUPL-1.2"
+
 dependencies = [
   "msgpack >= 1.0.3",
   "crcmod >= 1.7",
