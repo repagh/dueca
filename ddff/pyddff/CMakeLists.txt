@@ -48,6 +48,7 @@ if(NOT PYSITEDIR)
     "from distutils.sysconfig import get_python_lib; print(get_python_lib())"
     OUTPUT_VARIABLE PYSITEDIR
     OUTPUT_STRIP_TRAILING_WHITESPACE)
+  message(STATUS "Calculated python package install as ${PYSITEDIR}")
 endif()
 
 set(PYMOD_INSTALL_TYPE bdist_wheel)
