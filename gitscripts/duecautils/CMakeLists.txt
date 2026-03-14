@@ -85,6 +85,12 @@ endif()
 
 set(PYMOD_INSTALL_TYPE bdist_wheel)
 
+# install the python package note that "DESTDIR" and
+# "CMAKE_INSTALL_PREFIX" need to be kept intact, to allow substitution
+# at the install stage
+# this code gets executed by the build system (ninja, Makefile or the like)
+install(CODE "execute_process(COMMAND bash -c \"${Python_EXECUTABLE} -m pip install --isolated --no-index --no-deps --target \$ENV{DESTDIR}/${PYSITEDIR} --find-links=${CMAKE_CURRENT_BINARY_DIR}/dist --upgrade duecautils\")")
+
 
 if(PYTHON_HAVE_PYPABUILD EQUAL 0)
   # simple build with PyPA build, following PEP-517, PEP-518, using
@@ -106,12 +112,6 @@ if(PYTHON_HAVE_PYPABUILD EQUAL 0)
     COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/timestamp
     DEPENDS ${DEPS}
   )
-
-  # install the python package note that "DESTDIR" and
-  # "CMAKE_INSTALL_PREFIX" need to be kept intact, to allow substitution
-  # at the install stage
-  # this code gets executed by the build system (ninja, Makefile or the like)
-  install(CODE "execute_process(COMMAND bash -c \"${Python_EXECUTABLE} -m pip install --isolated --no-index --no-deps --target \$ENV{DESTDIR}/${PYSITEDIR} --find-links=${CMAKE_CURRENT_BINARY_DIR}/dist --upgrade duecautils\")")
 
 else()
   configure_file(setup.py.in setup.py @ONLY)
