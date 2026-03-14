@@ -392,6 +392,9 @@ elif [ -d build ]; then
 fi
 %make_install
 
+# remove these autogen files
+rm -rf %{buildroot}%{python3_sitelib}/bin
+
 %if 0%{?suse_version}
 %fdupes -s %{buildroot}%{_docdir}
 %endif
