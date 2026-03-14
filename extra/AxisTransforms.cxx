@@ -11,6 +11,7 @@
 
 #include "AxisTransforms.hxx"
 #include <cmath>
+#include <cassert>
 
 DUECA_NS_START;
 
