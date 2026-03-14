@@ -111,7 +111,7 @@ if(PYTHON_HAVE_PYPABUILD EQUAL 0)
   # "CMAKE_INSTALL_PREFIX" need to be kept intact, to allow substitution
   # at the install stage
   # this code gets executed by the build system (ninja, Makefile or the like)
-  install(CODE "execute_process(COMMAND bash -c \"${Python_EXECUTABLE} -m pip install --isolated --no-index --no-deps --root=\$ENV{DESTDIR} --prefix=${CMAKE_INSTALL_PREFIX} --find-links=${CMAKE_CURRENT_BINARY_DIR}/dist --upgrade duecautils\")")
+  install(CODE "execute_process(COMMAND bash -c \"${Python_EXECUTABLE} -m pip install --isolated --no-index --no-deps --target \$ENV{DESTDIR}/${PYSITEDIR} --find-links=${CMAKE_CURRENT_BINARY_DIR}/dist --upgrade duecautils\")")
 
 else()
   configure_file(setup.py.in setup.py @ONLY)

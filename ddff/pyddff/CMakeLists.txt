@@ -53,13 +53,25 @@ endif()
 
 set(PYMOD_INSTALL_TYPE bdist_wheel)
 
-# install the python package note that "DESTDIR" and
-# "CMAKE_INSTALL_PREFIX" need to be kept intact, to allow substitution
-# at the install stage. Install is with --no-deps, to allow install in incomplete
-# folders, and uses --prefix rather than --target, to install the accompanying
-# script at the proper location
+# install the python package, note that "DESTDIR" needs to be kept intact
+# for modification at install stage. The flags are:
+# --isolated prevents downloads
+# --no-deps, dependencies should be in dueca packages
+#
 # this code gets executed by the build system (ninja, Makefile or the like)
-install(CODE "execute_process(COMMAND bash -c \"PYTHONPATH=\$ENV{DESTDIR}${PYSITEDIR} ${Python_EXECUTABLE} -m pip install ${PIP_SYSTEM} --no-index --no-deps --prefix=\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX} --find-links=${CMAKE_CURRENT_BINARY_DIR}/dist --upgrade pyddff \")")
+#
+# alternative to --target would be
+# --root=\$ENV{DESTDIR} --prefix=${CMAKE_INSTALL_PREFIX}
+# This does not work on debian-based (install will be in /usr/local)
+# but would add any executable scripts
+install(CODE "execute_process(COMMAND bash -c \"${Python_EXECUTABLE} -m pip install --isolated --no-index --no-deps --target=\$ENV{DESTDIR}${PYSITEDIR} --find-links=${CMAKE_CURRENT_BINARY_DIR}/dist --upgrade pyddff \")")
+
+# because we use --target, and not --root and --prefix, the script configured
+# in pyproject.toml is not automatically installed. need manual version.
+configure_file(ddff_convert.py ddff-convert @ONLY)
+install(
+  PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/ddff-convert
+  DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 if(PYTHON_HAVE_PYPABUILD EQUAL 0)
   # simple build with PyPA build, following PEP-517, PEP-518, using
@@ -123,12 +135,6 @@ else()
     DEPENDS ${DEPS} ${CMAKE_CURRENT_BINARY_DIR}/setup.py
   )
 
-  # in this case ddff_convert is not installed by pip
-  # need manual version
-  configure_file(ddff_convert.py ddff-convert @ONLY)
-  install(
-    PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/ddff-convert
-    DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 endif()
 
