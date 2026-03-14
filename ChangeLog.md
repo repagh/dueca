@@ -2,7 +2,7 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
-## [4.2.6] - 2026-03-12
+## [4.2.6] - 2026-03-14
 
 ### Changed
 
@@ -15,11 +15,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 - Remove double setting of the trigger in inter ChannelReplicatorPeer
 - Correct the writing of dueca-env.sh
 - Tweaks to the github actions, to match nektos/act running
+- Cleanups table interpolation in extra
 
 ### Added
 
 - Update ddff to hdf5 conversion, option to write hdf5 structs rather than arrays.
 - Prepare pyddff for pip install, upload current version to pypi.
+- Test case for tabular interpolation
 
 ## [4.2.5] - 2026-01-22
 
