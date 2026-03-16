@@ -18,6 +18,8 @@
 #include <boost/archive/iterators/base64_from_binary.hpp>
 #include <boost/archive/iterators/transform_width.hpp>
 #include <boost/algorithm/string.hpp>
+#include "DUSIMEExceptions.hxx"
+#include <exception>
 #include <fstream>
 #include <iomanip>
 
@@ -76,7 +78,7 @@ Snapshot::Snapshot(size_t data_size, SnapCoding coding):
   DOBS("default constructor Snapshot");
 }
 
-Snapshot::Snapshot(const toml::value& coded)
+Snapshot::Snapshot(const toml::value& coded, const std::string& path)
 {
   originator.name = toml::find<std::string>(coded, "origin");
   readFromString(coding, toml::find<std::string>(coded, "coding"));
@@ -109,7 +111,9 @@ Snapshot::Snapshot(const toml::value& coded)
   case XMLFile:
   case BinaryFile: {
     std::ifstream snfile
-      (toml::find<std::string>(coded, "file").c_str(), ios::binary | ios::ate);
+      ((path + toml::find<std::string>(coded, "file")).c_str(), ios::binary | ios::ate);
+    if (!snfile.good())
+      throw cannot_find_snapshot_file(toml::find<std::string>(coded, "file").c_str());
     data_size = snfile.tellg();
     snfile.seekg(0);
     data.resize(data_size, '\0');
@@ -118,7 +122,9 @@ Snapshot::Snapshot(const toml::value& coded)
     break;
   case Base64File: {
     std::ifstream snfile
-      (toml::find<std::string>(coded, "file").c_str(), ios::ate);
+      ((path + toml::find<std::string>(coded, "file")).c_str(), ios::ate);
+    if (!snfile.good())
+      throw cannot_find_snapshot_file(toml::find<std::string>(coded, "file").c_str());
     size_t size = snfile.tellg();
     snfile.seekg(0);
     std::string tmp; tmp.resize(size, '\0');
@@ -127,10 +133,14 @@ Snapshot::Snapshot(const toml::value& coded)
   }
     break;
   case FloatFile: {
-    std::ifstream snfile(toml::find<std::string>(coded, "file").c_str());
+    std::ifstream snfile((path + toml::find<std::string>(coded, "file")).c_str());
+    if (!snfile.good())
+      throw cannot_find_snapshot_file(toml::find<std::string>(coded, "file").c_str());
     std::vector<float> result;
-    while (!snfile.eof() && snfile.good()) {
-      float tmp; snfile >> tmp; result.push_back(tmp);
+    float tmp; snfile >> tmp;
+    while (!snfile.eof()) {
+      result.push_back(tmp);
+      snfile >> tmp;
     }
     data.resize(result.size() * sizeof(float));
     AmorphStore store(accessData(), getDataSize());
@@ -138,10 +148,14 @@ Snapshot::Snapshot(const toml::value& coded)
   }
     break;
   case DoubleFile: {
-    std::ifstream snfile(toml::find<std::string>(coded, "file").c_str());
+    std::ifstream snfile((path + toml::find<std::string>(coded, "file")).c_str());
+    if (!snfile.good())
+      throw cannot_find_snapshot_file(toml::find<std::string>(coded, "file").c_str());
     std::vector<double> result;
-    while (!snfile.eof() && snfile.good()) {
-      double tmp; snfile >> tmp; result.push_back(tmp);
+    double tmp; snfile >> tmp;
+    while (!snfile.eof()) {
+      result.push_back(tmp);
+      snfile >> tmp;
     }
     data.resize(result.size() * sizeof(double));
     AmorphStore store(accessData(), getDataSize());
@@ -152,7 +166,7 @@ Snapshot::Snapshot(const toml::value& coded)
   data_size = data.size();
 }
 
-toml::value Snapshot::tomlCode(const std::string& fname) const
+toml::value Snapshot::tomlCode(const std::string& fname, const std::string& path) const
 {
   toml::table result {
       {"coding", getString(coding)},
@@ -189,14 +203,14 @@ toml::value Snapshot::tomlCode(const std::string& fname) const
   }
     break;
   case BinaryFile: {
-    ofstream ofile(fname.c_str(), ios::binary);
+    ofstream ofile((path + fname).c_str(), ios::binary);
     ofile.write(data.c_str(), data.size());
   }
     result["file"] = fname;
     break;
   case FloatFile: {
     AmorphReStore store(accessData(), getDataSize());
-    ofstream ofile(fname.c_str());
+    ofstream ofile((path + fname).c_str());
     while (!store.isExhausted()) {
       float tmp(store);
       ofile << std::setprecision(8) << tmp << std::endl;
@@ -206,7 +220,7 @@ toml::value Snapshot::tomlCode(const std::string& fname) const
     break;
   case DoubleFile: {
     AmorphReStore store(accessData(), getDataSize());
-    ofstream ofile(fname.c_str());
+    ofstream ofile((path + fname).c_str());
     while (!store.isExhausted()) {
       double tmp(store);
       ofile << std::setprecision(15) << tmp << std::endl;
@@ -216,13 +230,13 @@ toml::value Snapshot::tomlCode(const std::string& fname) const
     break;
   case JSONFile:
   case XMLFile: {
-    ofstream ofile(fname.c_str());
+    ofstream ofile((path + fname).c_str());
     ofile << data;
     result["file"] = fname;
   }
     break;
   case Base64File: {
-    ofstream ofile(fname.c_str());
+    ofstream ofile((path + fname).c_str());
     ofile << encode64(data);
     result["file"] = fname;
   }
@@ -323,6 +337,7 @@ std::string Snapshot::getSample(unsigned size) const
 Snapshot::Snapshot(const Snapshot& other):
     data(other.data),
     originator(other.originator),
+    coding(other.coding),
     data_size(data.size())
 {
   DOBS("copy constructor Snapshot");
@@ -332,10 +347,11 @@ Snapshot::Snapshot(const Snapshot& other):
 Snapshot::Snapshot(AmorphReStore& s):
   data(s),
   originator(s),
-  coding(SnapCoding(uint8_t(s)))
+  coding(SnapCoding(uint8_t(s))),
+  data_size(data.size())
 {
   // unpackiterable(s, this->data, pack_traits<varvector<char> >());
-  data_size = data.size();
+  // data_size = data.size();
   DOBS("amorph constructor Snapshot");
 }
 

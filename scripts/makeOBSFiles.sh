@@ -57,12 +57,14 @@ function trimversion()
     if [ "$3" = '18.04' ]; then
         sed -e 's/guile-2\.2-dev/guile-1\.8-dev/
                 s/python3-xlwt/python-xlwt/
+                s/python3-build,//
                 s/libgtk-4-dev,//
                 s/libgtkmm-4.0-dev,//
                 s/debian\.tar/debian-xUbuntu_18.04.tar/' $1 > $2
     elif [ "$3" = '20.04' ]; then
         sed -e 's/guile-2\.2-dev/guile-2\.0-dev/
                 s/libgtk-4-dev,//
+                s/python3-build,//
                 s/libgtkmm-4.0-dev,//
                 s/debian\.tar/debian-xUbuntu_20.04.tar/' $1 > $2
     elif [ "$3" = '22.04' ]; then
@@ -70,6 +72,7 @@ function trimversion()
                 s/debian\.tar/debian-xUbuntu_22.04.tar/' $1 > $2
     elif [ "$3" = '11' ]; then
         sed -e 's/libgtk-4-dev,//
+                s/python3-build,//
                 s/libgtkmm-4.0-dev,//
                 s/debian\.tar/debian-Debian_11.tar/' $1 > $2
     elif [ "$3" = '13' ]; then

@@ -76,6 +76,9 @@ private:
   /** File for any new additions/extensions */
   std::string                        store_file;
 
+  /** Path for storing snapshots/initials */
+  std::string                        store_path;
+
 public: // class name and trim/parameter tables
   /** Name of the module. */
   static const char* const           classname;
@@ -84,7 +87,7 @@ public: // class name and trim/parameter tables
   static const ParameterTable*       getParameterTable();
 
 public: // construction and further specification
-  /** Constructor. Is normally called from scheme/the creation script. 
+  /** Constructor. Is normally called from scheme/the creation script.
 
       The owning entity of an inventory will be "dueca", the part name
       indicates the managed entity of the inventory.

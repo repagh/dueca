@@ -43,6 +43,8 @@ BuildRequires: lsb-release
 BuildRequires: msgpack-devel
 BuildRequires: python3-pip
 BuildRequires: python3-jinja2
+BuildRequires: python3-build
+BuildRequires: python3-wheel
 
 %if (0%{?is_opensuse} && 0%{?sle_version} >= 150500) || 0%{?suse_version} >= 1600
 BuildRequires: guile-devel
@@ -389,6 +391,9 @@ elif [ -d build ]; then
     cd build
 fi
 %make_install
+
+# remove these autogen files
+rm -rf %{buildroot}%{python3_sitelib}/bin
 
 %if 0%{?suse_version}
 %fdupes -s %{buildroot}%{_docdir}

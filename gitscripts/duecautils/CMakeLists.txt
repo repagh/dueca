@@ -2,7 +2,7 @@
 execute_process(COMMAND ${Python_EXECUTABLE} -c "import build"
   RESULT_VARIABLE PYTHON_HAVE_PYPABUILD)
 
-if (NOT PYTHON_HAVE_PYPABUILD EQUAL 0)
+if(NOT PYTHON_HAVE_PYPABUILD EQUAL 0)
   message(WARNING
     "Prefer python module PyPA build; run python -m pip install build")
 endif()
@@ -17,7 +17,7 @@ execute_process(COMMAND ${Python_EXECUTABLE} -c
 execute_process(COMMAND bash "-c"
   "${Python_EXECUTABLE} -m pip help install | grep '[-]-system'"
   RESULT_VARIABLE PYTHON_PIP_WITHSYSTEM)
-if (PYTHON_PIP_WITHSYSTEM EQUAL 0)
+if(PYTHON_PIP_WITHSYSTEM EQUAL 0)
   message(STATUS "pip accepts --system")
   set(PIP_SYSTEM "--system")
 else()
@@ -61,7 +61,7 @@ set(DEPS
   ${CMAKE_CURRENT_SOURCE_DIR}/README.md
   ${CMAKE_CURRENT_SOURCE_DIR}/setup.cfg
   ${CMAKE_CURRENT_SOURCE_DIR}/pyproject.toml
-  )
+)
 
 # add the target
 set(DUVERSION 0.9)
@@ -70,16 +70,17 @@ add_custom_target(
   DEPENDS
   dist/duecautils-${DUVERSION}.tar.gz
   dist/duecautils-${DUVERSION}-py${PYTHON_MAJOR}-none-any.whl
-  )
+)
 
 # find an installation folder for the Python packages; we know
 # pyparsing is installed, since we need it for dco objects
-if (NOT PYSITEDIR)
+if(NOT PYSITEDIR)
   execute_process(
     COMMAND ${Python_EXECUTABLE} -c
     "from distutils.sysconfig import get_python_lib; print(get_python_lib())"
     OUTPUT_VARIABLE PYSITEDIR
     OUTPUT_STRIP_TRAILING_WHITESPACE)
+  message(STATUS "Calculated python package install as ${PYSITEDIR}")
 endif()
 
 set(PYMOD_INSTALL_TYPE bdist_wheel)
@@ -88,40 +89,30 @@ set(PYMOD_INSTALL_TYPE bdist_wheel)
 # "CMAKE_INSTALL_PREFIX" need to be kept intact, to allow substitution
 # at the install stage
 # this code gets executed by the build system (ninja, Makefile or the like)
-install(CODE "execute_process(COMMAND bash -c \"PYTHONPATH=\$ENV{DESTDIR}${PYSITEDIR} ${Python_EXECUTABLE} -m pip install ${PIP_SYSTEM} --no-index --find-links=${CMAKE_CURRENT_BINARY_DIR}/dist --target \$ENV{DESTDIR}${PYSITEDIR} --upgrade duecautils\")" )
+install(CODE "execute_process(COMMAND bash -c \"${Python_EXECUTABLE} -m pip install --isolated --no-index --no-deps --target \$ENV{DESTDIR}/${PYSITEDIR} --find-links=${CMAKE_CURRENT_BINARY_DIR}/dist --upgrade duecautils\")")
 
 
-if (PYTHON_HAVE_PYPABUILD EQUAL 0)
+if(PYTHON_HAVE_PYPABUILD EQUAL 0)
   # simple build with PyPA build, following PEP-517, PEP-518, using
   # setup.cfg, pyproject.toml
+
+  # apparently works on Fedora, but totally fails on Ubuntu/debian,
+  # because the vendor adaptations to pip insist on appending "local"
+  # after the prefix.
   add_custom_command(
     OUTPUT
     dist/duecautils-${DUVERSION}.tar.gz
     dist/duecautils-${DUVERSION}-py${PYTHON_MAJOR}-none-any.whl
 
     BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/timestamp
-
-    COMMAND ${CMAKE_COMMAND} -E create_symlink
-    ${CMAKE_CURRENT_SOURCE_DIR}/setup.cfg
-    ${CMAKE_CURRENT_BINARY_DIR}/setup.cfg
-
-    COMMAND ${CMAKE_COMMAND} -E create_symlink
-    ${CMAKE_CURRENT_SOURCE_DIR}/README.md
-    ${CMAKE_CURRENT_BINARY_DIR}/README.md
-
-    COMMAND ${CMAKE_COMMAND} -E create_symlink
-    ${CMAKE_CURRENT_SOURCE_DIR}/pyproject.toml
-    ${CMAKE_CURRENT_BINARY_DIR}/pyproject.toml
-
-    COMMAND ${CMAKE_COMMAND} -E create_symlink
-    ${CMAKE_CURRENT_SOURCE_DIR}/duecautils
-    ${CMAKE_CURRENT_BINARY_DIR}/duecautils
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/dist
-    COMMAND ${Python_EXECUTABLE} -m build
+    COMMAND ${Python_EXECUTABLE} -m build --no-isolation --outdir ${CMAKE_CURRENT_BINARY_DIR}/dist
     COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/timestamp
     DEPENDS ${DEPS}
-    )
+  )
+
 else()
   configure_file(setup.py.in setup.py @ONLY)
 
@@ -144,7 +135,9 @@ else()
     COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/timestamp
 
     DEPENDS ${DEPS} ${CMAKE_CURRENT_BINARY_DIR}/setup.py
-    )
+
+    # Hack install the python package, does not do
+  )
 
 endif()
 

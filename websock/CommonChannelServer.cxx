@@ -167,7 +167,7 @@ SingleEntryFollow::SingleEntryFollow(const std::string &channelname,
           Channel::AnyTimeAspect, Channel::OneOrMoreEntries,
           Channel::ReadAllData, 0.0, &do_valid),
   cb(this, &SingleEntryFollow::passData),
-  do_calc(master->getId(), "read for server", &cb, ps),
+  do_calc(master->getId(), (std::string("follow ") + channelname).c_str(), &cb, ps),
   datatype(datatype),
   inactive(true),
   firstwrite(true)
@@ -493,9 +493,9 @@ void WriteEntry::complete(const std::string &datatype, const std::string &label,
   }
   this->bulk = bulk;
   this->diffpack = diffpack;
-  if (DataClassRegistry::single().getConverter(this->datatype)) {
-    throw connectionparseerror();
-  }
+
+  // this would throw if the datatype is not known
+  DataClassRegistry::single().getConverter(this->datatype);
 
   identification = channelname + std::string(" type:") + datatype +
                    std::string(" label:\"") + label + std::string("\"");
@@ -776,7 +776,7 @@ WriteReadEntry::WriteReadEntry(std::shared_ptr<WriteReadSetup> setup,
   diffpack(setup->diffpack),
   extended(extended),
   cb(this, &WriteReadEntry::passData),
-  do_calc(master->getId(), "read for server", &cb, ps)
+  do_calc(master->getId(), ("serve " + r_channelname).c_str(), &cb, ps)
 {
   do_valid.switchOn();
   DEB("New writereadEntry " << label);
@@ -877,7 +877,7 @@ void WriteReadEntry::tokenValid(const TimeSpec &ts)
     sendOne(buf.str(), "WriterReader info");
     state = Linked;
     do_calc.setTrigger(*r_token);
-    do_calc.switchOn();
+    do_calc.switchOn(0);
   }
 }
 

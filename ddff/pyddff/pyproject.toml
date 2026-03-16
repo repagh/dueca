@@ -1,6 +1,6 @@
 [project]
 name = "pyddff"
-version = "0.9"
+version = "1.0.2"
 description = "Pure python interface to reading ddff files"
 readme = "README.md"
 requires-python = ">=3.6"
@@ -8,18 +8,25 @@ authors = [
   { name = 'René van Paassen', email = 'rene.vanpaassen@gmail.com' }
   ]
 classifiers = [
+    "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent" ]
 
-license = "EUPL-1.2"
+[license]
+text = "EUPL-1.2"
 
-[dependencies]
-msgpack-python = "^1.0.3"
-crcmod = "1.7"
+dependencies = [
+  "msgpack >= 1.0.3",
+  "crcmod >= 1.7",
+  "h5py"
+]
+
+[project.scripts]
+ddff-convert = "pyddff.ddff_convert:main"
 
 [build-system]
 requires = [
-    "setuptools >= 44",
+    "setuptools >= 41",
     "wheel"
 ]
 build-backend = "setuptools.build_meta"

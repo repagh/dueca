@@ -28,6 +28,7 @@
 #endif
 #endif
 #include <cstdio>
+#include <cassert>
 
 #ifdef HAVE_EIGEN3_UNSUPPORTED_EIGEN_MATRIXFUNCTIONS
 #include <unsupported/Eigen/MatrixFunctions>

@@ -31,4 +31,13 @@ initial_file_mismatch(const char* originator)
   snprintf(str, sizeof(str), "Problem parsing initial file : %s", originator);
 }
 
+cannot_find_snapshot_file::
+cannot_find_snapshot_file(const char* originator)
+{
+  snprintf(str, sizeof(str), "Missing snapshot file : %s", originator);
+}
+
+
+
+
 DUECA_NS_END

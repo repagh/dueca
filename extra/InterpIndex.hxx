@@ -12,21 +12,15 @@
         documentation   : DUECA_API
 */
 
-#ifndef InterpIndex_hxx
-#define InterpIndex_hxx
+#pragma once
 
-#ifdef InterpIndex_cxx
-#endif
-
-#include <iostream>
 #include <dueca_ns.h>
 
 DUECA_NS_START
 
 /** This implements a single index (axis) for an interpolation into a
     table. */
-template<class T>
-class InterpIndex
+template <class T> class InterpIndex
 {
   /** number of elements in the index. */
   const int n;
@@ -38,62 +32,37 @@ class InterpIndex
   const int n_m2;
 
   /** Index with points. */
-  const T* ipts;
+  const T *ipts;
 
 public:
   /** Constructor from static data. */
-  InterpIndex(int n, const T* ipts);
-
-  /** Constructor, reading from file. */
-  /* InterpIndex(std::istream& is); */
+  InterpIndex(int n, const T *ipts) :
+    n(n),
+    n_m1(n - 1),
+    n_m2(n - 2),
+    ipts(ipts)
+  {}
 
 public:
   /** return the maximum allowed value for an index */
-  inline int maxDim() const {return n_m1;}
+  inline int maxDim() const { return n_m1; }
 
   /** return the number of indexes. */
-  inline int nDim() const {return n;}
+  inline int nDim() const { return n; }
 
   /** update an index, and fraction, return whether within the table. */
-  inline bool updateIndex(int& index, double& frac, const T& value) const
+  inline bool updateIndex(int &index, double &frac, const T &value) const
   {
-    if (index < 0) index = 0; if (index > n_m2) index = n_m2;
-    while (index > 0 && value < ipts[index]) index--;
-    while (index < n_m2 && value > ipts[index + 1]) index++;
+    if (index < 0)
+      index = 0;
+    if (index > n_m2)
+      index = n_m2;
+    while (index > 0 && value < ipts[index])
+      index--;
+    while (index < n_m2 && value > ipts[index + 1])
+      index++;
     frac = (value - ipts[index]) / (ipts[index + 1] - ipts[index]);
     return (frac >= 0.0 && frac <= 1.0);
   }
 };
 DUECA_NS_END
-#endif
-
-#ifndef INCLUDE_TEMPLATE_SOURCE
-#define INCLUDE_TEMPLATE_SOURCE
-#endif
-
-#if (defined(InterpIndex_cxx) && !defined(INCLUDE_TEMPLATE_SOURCE)) \
-   || (defined(DO_INSTANTIATE) && defined(INCLUDE_TEMPLATE_SOURCE))
-#ifndef InterpIndex_ii
-#define InterpIndex_ii
-#include <dueca_ns.h>
-DUECA_NS_START
-template<class T>
-InterpIndex<T>::InterpIndex(int n, const T* ipts) :
-  n(n),
-  n_m1(n-1),
-  n_m2(n-2),
-  ipts(ipts)
-{
-  //
-}
-
-/*
-template<class T>
-InterpIndex<T>::InterpIndex(std::istream& is)
-{
-
-}
-*/
-DUECA_NS_END
-#endif
-#endif

@@ -6,15 +6,17 @@ Created on Fri Apr  8 17:16:10 2022
 @author: repa
 """
 try:
-    from .ddffinventoried import DDFFInventoried, DDFFInventoriedStream, Objecter
+    from .ddffinventoried import DDFFInventoried, DDFFInventoriedStream, Objecter, _struc2npstruc, _get_object_type
     from .ddffbase import vprint, DDFFStream, DDFFBlock
 except ImportError:
-    from ddffinventoried import DDFFInventoried, DDFFInventoriedStream, Objecter
+    from ddffinventoried import DDFFInventoried, DDFFInventoriedStream, Objecter, _struc2npstruc, _get_object_type
     from ddffbase import vprint, DDFFStream, DDFFBlock
 import numpy as np
 
 
 class DDFFTag:
+    """Time period tag in datafile
+    """
 
     def __init__(self, *args):
         """Decoded tag information
@@ -56,7 +58,7 @@ class DDFFTag:
 class DDFFTagIndex:
     """Index dictionary of the tags."""
 
-    def __init__(self, ddffs, *args, **kwargs):
+    def __init__(self, ddffs, *_args, **_kwargs):
         """Converts stream 1 to time period information dictionary
 
         Arguments:
@@ -152,6 +154,15 @@ class DDFFTagStream:
         """Base iterator for tagged streams"""
 
         def __init__(self, ddffs: DDFFStream, tag: DDFFTag):
+            """Create a basic iterator
+
+            Parameters
+            ----------
+            ddffs : DDFFStream
+                Data stream to iterate over.
+            tag : DDFFTag
+                Tag/section to iterate on.
+            """
             ids = ddffs.stream_id
             ddffs.file.seek(tag.offset[ids - 2])
             block = DDFFBlock(ddffs.file)
@@ -167,18 +178,8 @@ class DDFFTagStream:
             raise StopIteration
 
     class TimeIt(BaseIt):
-
-        def __init__(self, ddffs: DDFFStream, tag: DDFFTag):
-            """Create iterator to return time points
-
-            Parameters
-            ----------
-            ddffs : DDFFStream
-                Basic stream data
-            tag : DDFFTag
-                Time tag/period to iterate through
-            """
-            super().__init__(ddffs, tag)
+        """Iterator type that returns successive time points in the data
+        """
 
         def __next__(self):
             """Return next time point
@@ -243,18 +244,6 @@ class DDFFTagStream:
 
     class ObjectIt(BaseIt):
         """Iterator for complete time and object msgpack decoded data"""
-
-        def __init__(self, ddffs: DDFFStream, tag: DDFFTag):
-            """Create time and object data iteration
-
-            Parameters
-            ----------
-            ddffs : DDFFStream
-                DDFF data stream with msgpack data.
-            tag : DDFFTag
-                Period to decode.
-            """
-            super().__init__(ddffs, tag)
 
         def __next__(self):
             """Return complete time + data object
@@ -371,7 +360,8 @@ class DDFFTagStream:
                 self.base.base, self.tags[period], self.base.members[key]
             )
 
-    def getData(self, period: int | str | None = None, icount: int = 100):
+
+    def get_events(self, period: int | str | None = None, icount: int = 100):
         """Assemble stream data in numpy arrays.
 
         Parameters
@@ -388,13 +378,54 @@ class DDFFTagStream:
             for all decodable object members.
         """
         if period is None:
-            return self.base.getData(icount)
+            return self.base.get_events(icount)
+
+        tag = self.tags[period]
+        # complete this again
+        time0 = np.empty(shape=(icount,), dtype=np.uint32)
+        atype = _get_object_type(self.base.structure)
+
+        data = np.empty(shape=(icount,), dtype=atype[1])
+
+        i = -1
+        for i, d in enumerate(self.items(tag, True)):
+            if i == icount:
+                icount = icount*2
+                time0.resize((icount,))
+                data.resize((icount,))
+            _struc2npstruc(data[i], d[1])
+            time0[i] = d[0][0]
+
+        icount = i + 1
+        time0.resize((icount,))
+        data.resize((icount,))
+
+        return time0, data
+
+    def get_data(self, period: int | str | None = None, icount: int = 100):
+        """Assemble stream data in numpy arrays.
+
+        Parameters
+        ----------
+        period : int | str | None, optional
+            Chosen period, if None, return all data.
+        icount : int, optional
+            Default length allocation numpy arrays, by default 100.
+
+        Returns
+        -------
+        (np.array, np.array, dict(str,np.array))
+            Time arrays (start time, span), and dictionary with data arrays
+            for all decodable object members.
+        """
+        if period is None:
+            return self.base.get_data(icount)
 
         tag = self.tags[period]
 
         time0 = np.zeros(shape=(icount,), dtype=np.uint32)
         time1 = np.zeros(shape=(icount,), dtype=np.uint32)
-        result, mappers = self.base._getMappers(icount)
+        result, mappers = self.base.get_mappers(icount)
 
         i = -1
         for i, d in enumerate(DDFFTagStream.ObjectIt(self.base.base, tag)):
@@ -418,7 +449,7 @@ class DDFFTagStream:
 
         return time0, time1, result
 
-    def getMeta(self, key: int | str | None = None):
+    def get_meta(self, key: int | str | None = None):
         """ Metadata description of the data in this stream
 
         Parameters
@@ -432,9 +463,9 @@ class DDFFTagStream:
         dict
             dictionary with data on the stream or member.
         """
-        return self.base.getMeta(key)
+        return self.base.get_meta(key)
 
-    def items(self, period: int | str | None = None):
+    def items(self, period: int | str | None = None, enumnumeric=False):
         """Return a time and object iterator on the data stream.
 
         Parameters
@@ -449,10 +480,10 @@ class DDFFTagStream:
         """
 
         if period is None:
-            return self.base.items()
+            return self.base.items(enumnumeric)
         tag = self.tags[period]
         return DDFFTagStream.TimeAndObjectIt(
-            self.base.base, tag, Objecter(self.base.structure)
+            self.base.base, tag, Objecter(self.base.structure, enumnumeric)
         )
 
 
@@ -466,7 +497,7 @@ class DDFFTagged(DDFFInventoried):
     """
 
     def __init__(
-        self, name: str, mode="r", nstreams=frozenset((0, 1)), *args, **kwargs
+        self, name: str, mode="r", nstreams=frozenset((0, 1)), **kwargs
     ):
         """Open a tagged stream datafile
 
@@ -478,17 +509,17 @@ class DDFFTagged(DDFFInventoried):
         """
 
         # analyse with base DDFF read
-        super().__init__(name, *args, mode=mode, nstreams=nstreams, **kwargs)
+        super().__init__(name, mode=mode, nstreams=nstreams, **kwargs)
 
         # load all data from the tags stream
-        self.streams[1].readToList()
+        self.streams[1].read_to_list()
 
         # compatibility with the one or two old datafiles lying around
-        if not len(self.streams[1]):
+        if len(self.streams[1]) == 0:
             vprint("No tag data, creating default tag")
 
             # to be sure, re-scan all streams
-            self._scanStreams()
+            self._scan_streams()
 
             # from the found offsets, create a default tag
             offset = [
@@ -509,12 +540,12 @@ class DDFFTagged(DDFFInventoried):
         self.streams[1] = DDFFTagIndex(self.streams[1])
 
         # Scan initial blocks for the inventory streams
-        self._doInitialScan(self.streams[1].offsets())
+        self._do_initial_scan(self.streams[1].offsets())
 
         # replace further streams
         # Use the inventory to enhance the streams
         self.tagmapping = dict()
-        for tag, streamid, description in self.streams[0]:
+        for tag, streamid, _description in self.streams[0]:
             self.streams[streamid] = DDFFTagStream(
                 self.streams[streamid], self.streams[1]
             )
@@ -559,7 +590,7 @@ if __name__ == "__main__":
     import os
 
     df = DDFFTagged(
-        f"/home/repa/tmp/varstab/250701/runlogs/2025-07-01_12:57:42/simlog-20250701_111742.ddff",
+        "/home/repa/tmp/varstab/250701/runlogs/2025-07-01_12:57:42/simlog-20250701_111742.ddff",
         "r",
     )
     k = "/data/testsignalspec"
@@ -591,5 +622,5 @@ if __name__ == "__main__":
             alld = [z for z in f2[key][n]]
     print(alld)
 
-    t0, t1, data = f2["WriteUnified:first blip"].getData(0)
+    t0, t1, data = f2["WriteUnified:first blip"].get_data(0)
     print(t0, t1, data)

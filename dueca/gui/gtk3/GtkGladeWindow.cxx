@@ -355,6 +355,12 @@ bool GtkGladeWindow::_setValue(const char *wname, const char *value, bool warn)
       return true;
     }
     gtk_combo_box_set_active_id(GTK_COMBO_BOX(o), NULL);
+    /* DUECA graphics.
+
+       You are trying to set the selected element of a combobox, but the string
+       value supplied (maybe implicitly from converting an enum) is not in the
+       combo box list. Have you correctly loaded the options?
+    */
     W_XTR("GtkGladeWindow::setValue: No matching item for gtk combo \""
           << wname << "\", missing \"" << value << '"');
 

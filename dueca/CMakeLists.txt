@@ -35,7 +35,7 @@ set(DUECASOURCES
   AmorphStore.hxx Arena.cxx Arena.hxx ArenaPool.cxx ArenaPool.hxx
   ChannelIdList.cxx ChannelManager.cxx ChannelOrganiser.cxx
   ClockTime.cxx Condition.cxx DataSetConverter.cxx
-  DataSetSubsidiary.hxx Dstring.cxx EntityManager.cxx 
+  DataSetSubsidiary.hxx Dstring.cxx EntityManager.cxx
   Environment.cxx Event.hxx EventAccessToken.hxx Exception.cxx
   GenericCallback.cxx GenericEvent.cxx GenericPacker.cxx
   GenericToken.cxx GuileStart.hxx CyclicInt.cxx MemberCall.hxx
@@ -265,7 +265,7 @@ foreach(S ${SCRIPTLANG})
 
   if (BUILD_IP)
     dueca_add_library(dueca-ip-${SCRIPT_${S}_SUFFIX} ${STARTLIB_STATIC}
-      SOURCES InitIp.cxx ${DCO_OUTPUT_HEADERS} 
+      SOURCES InitIp.cxx ${DCO_OUTPUT_HEADERS}
       LINKLIBS dueca-start-${SCRIPT_${S}_SUFFIX} dueca-ip
       INCLUDEDIRS ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR}
       ${SCRIPT_${S}_INCLUDES}

@@ -40,7 +40,9 @@ It is implemented as:
   graphical interfaces.
 
 - The `extra` folder contains a hodge-podge of helper stuff that may
-  be useful in implementing simulations; integration routines, helper classes for IO conversions and implementing calibration and the like.
+  be useful in implementing simulations; integration routines, and rigid
+  body dynamics simulation, and helper classes for IO conversions and
+  implementing calibration and the like.
 
 - `dusime` contains the code supporting simulations.
 
@@ -49,11 +51,17 @@ It is implemented as:
 - The folder `udpcom` contains the code that links DUECA executables
   over a network.
 
-- The folder `inter` can (loosely or tightly) connect multiple DUECA processes, similar to how HLA or DIS work. You choose which channels need to be replicated across the DUECA simulations, and optionally whether timing should be synchronized.
+- The folder `inter` can (loosely or tightly) connect multiple DUECA processes,
+  offering a similar functionality to distributed simulation frameworks like HLA or DIS.
+  You choose which channels need to be replicated across the DUECA simulations, and
+  optionally whether timing should be synchronized.
 
 - The code generator for communicatable objects is in `pycodegen`.
 
-- With the `websock` addition DUECA can offer websocket communication, typically for connecting DUECA to external programs in python or running in a browser. In addition the websocket communication modules can provide a minimal web server, so you can fetch webpages and (javascript) code.
+- With the `websock` addition DUECA can offer websocket communication,
+  typically for connecting DUECA to external programs in python or running
+  in a browser. In addition the websocket communication modules can provide
+  a minimal web server, so you can fetch webpages and (javascript) code.
 
 - The `obs` folder contains build files for rpm-based or deb-based
   distributions. Currently building for Debian, Ubuntu, Fedora and
@@ -62,7 +70,11 @@ It is implemented as:
 - the `ddff` folder contains the code for yet another logging format,
   custom-created for efficiently saving and re-loading streaming
   data. This logging format is used by the `dusime` modules to
-  implement record and replay within simulations. This logger can be used stand-alone, and python code to convert the files to hdf5 or directly read the files is also available.
+  implement record and replay within simulations. This logger can be
+  used stand-alone, for any project able to save in msgpack format.
+  Python code to convert the files to hdf5 or directly read these files
+  is available in the `pyddff` sub-folder. From March 2026 onwards, this
+  python code is also available from [PyPi](https://pypi.org/search/?q=pyddff).
 
 ## Building and running
 
@@ -93,13 +105,17 @@ simulation over multiple executables, simulation state snapshots;
 input recording, resetting a snapshot and replay, and multi-player
 connection.
 
-The [WorldView](https://github.com/dueca/WorldView) and [FlexiStick](https://github.com/dueca/FlexiStick) projects offer various visualization back-ends and interaction with joystick devices respectively. You can "borrow" modules from these project to integrate these in your own simulation projects.
+The [WorldView](https://github.com/dueca/WorldView) and
+[FlexiStick](https://github.com/dueca/FlexiStick) projects offer various
+visualization back-ends and interaction with joystick devices
+respectively. You can "borrow" modules from these project to integrate
+these in your own simulation projects.
 
 In the build actions leading up to new releases, the DuecaTestCommunication and
 SimpleSimulation projects are used to check DUECA's code by running
-various more-or-less real-time simulations operated by a test script. 
+various more-or-less real-time simulations operated by a test script.
 After having installed DUECA (through compilation or from packages),
-you can start to use it in development of simulation projects. 
+you can start to use it in development of simulation projects.
 
 Please check the documentation for the `dueca-gproject` script. You will need
 an "upstream" git repository for your code.
@@ -119,10 +135,3 @@ Jerome, for entertaining the initial ideas
 Colleagues and students, for feedback on bugs and features
 
 Conchi, Daniel and Alexandra, for sharing their time.
-
-
-
-
-
-
-
