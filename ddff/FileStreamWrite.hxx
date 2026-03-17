@@ -36,9 +36,15 @@ class ControlBlockRead;
     can produce an iterator that can be used to add data to this
     stream.
 
-    If multiple streams are to be written in a file, the very first
-    stream functions as a repository of index data, indicating where
-    other streams start and how they are labelled.
+    The produced iterator can be used with msgpack packing, to create a
+    msgpack encoded data stream, or with any other byte-encoding scheme.
+
+    With a basic file handler (FileHandler), all streams are managed
+    by the application itself.
+
+    When using FileWithInventory or FileWithSegments, the first stream
+    is used as inventory (which can also speed up reading), and
+    optionally the second stream is used to record segment start and end.
 */
 class FileStreamWrite:
   public boost::intrusive_ref_counter<FileStreamWrite>
@@ -184,7 +190,7 @@ private:
   /** read the data for the last buffer on a file */
   DDFFMessageBuffer::value_type *accessBuffer(pos_type offset,
 					      const ControlBlockRead& info);
-  
+
 private:
   /// for the iterator
   friend struct Iterator;

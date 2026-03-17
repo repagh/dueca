@@ -2,6 +2,15 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
+## [4.2.7] - 2026-04-??
+
+### Changed
+
+### Added
+
+- Enable batch conversion with `ddff-convert`
+- Test case for ddff-convert multiple file conversion
+
 ## [4.2.6] - 2026-03-14
 
 ### Changed

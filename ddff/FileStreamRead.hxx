@@ -31,13 +31,14 @@ class FileHandler;
 
     A "stream" is a series of linked blocks in a data file with the
     DelftDataFormat file format. This class reads such a stream, and can
-    can produce an iterator that can be used to read data from this
-    stream.
+    can produce an iterator that can be used to read data (bytes) from
+    this stream.
 
-    The FileStreamRead objects (actually, ref-counted pointers) can
-    only be obtained from a FileHandler or class derived from
-    FileHandler. Depending on how you access the file, the
-    FileStreamRead objects become usable:
+    Typically, the iterator is used with the msgpack protocol.
+
+    The FileStreamRead objects can only be obtained from a FileHandler
+    or class derived from FileHandler. Depending on how you access the
+    file, the FileStreamRead objects become usable:
 
     - After a FileHandler or FileWithInventory with an existing file
       has run its checkIndices method, the FileStreamRead object is
@@ -46,12 +47,12 @@ class FileHandler;
     - With a FileWithSegments handler, with existing file a replay
       segment needs to be selected with its spoolForReplay method.
 
-    - With a new file, the FileStreamRead only becomes usable after 
+    - With a new file, the FileStreamRead only becomes usable after
       a corresponding FileStreamWrite object has written data.
 
     @todo Make this more robust for interleaving with writing; when
     a corresponding write stream has been updated, the (partial) buffers
-    loaded here may no longer represent the data. 
+    loaded here may no longer represent the data.
 */
 class FileStreamRead:
   public boost::intrusive_ref_counter<FileStreamRead>
