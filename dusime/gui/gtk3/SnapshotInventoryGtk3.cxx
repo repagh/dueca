@@ -21,10 +21,12 @@
 // include the definition of the module class
 #include "SnapshotInventoryGtk3.hxx"
 #include <dueca/DuecaPath.hxx>
-#define DEBPRINTLEVEL -2
+#define DEBPRINTLEVEL 0
 #include <debprint.h>
 #include <dueca/gui/gtk3/GtkDuecaView.hxx>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <iterator>
+#include <cassert>
 
 // include the debug writing header, by default, write warning and
 // error messages
@@ -91,13 +93,19 @@ SnapshotInventoryGtk3::SnapshotInventoryGtk3(Entity *e, const char *part,
   Module(e, classname, part),
 
   // initialize the data you need in your simulation or process
+  inventory(nullptr),
   gladefile(DuecaPath::prepend("initials_inventory_gtk3.ui")),
   window(),
+  editwin(NULL),
   snaps_store(NULL),
   menuitem(NULL),
   set_iterator(),
   reference_file(),
-  store_file()
+  store_file(),
+  store_path(),
+  editmap(),
+  sel_origin(editmap.end()),
+  editing_snap()
 {
   // connect the triggers for simulation
   //do_calc.setTrigger(/* fill in your triggering channels,
@@ -165,9 +173,15 @@ bool SnapshotInventoryGtk3::complete()
     { "initials_newentryname", "changed",
       gtk_callback(&_ThisModule_::cbSetName) },
     { "initials_send", "clicked", gtk_callback(&_ThisModule_::cbSendInitial) },
+    { "initials_edit", "clicked", gtk_callback(&_ThisModule_::cbEditInitial) },
+    { "editwin_revert", "clicked", gtk_callback(&_ThisModule_::cbEditRevert) },
+    { "editwin_update", "clicked", gtk_callback(&_ThisModule_::cbEditUpdate) },
+    { "editwin_module_selection", "changed",
+      gtk_callback(&_ThisModule_::cbEditSelection) },
     { "initials_listselection", "changed",
       gtk_callback(&_ThisModule_::cbSelection) },
     { "initials_view", "delete_event", gtk_callback(&_ThisModule_::cbDelete) },
+    { "editwin", "delete_event", gtk_callback(&_ThisModule_::cbEditDelete) },
     { NULL }
   };
 
@@ -183,6 +197,9 @@ bool SnapshotInventoryGtk3::complete()
     E_CNF("failed to open initials overview " << gladefile);
     return res;
   }
+
+  // figure out the edit window
+  editwin = window["editwin"];
 
   // find the store for the snapshot data, and fill
   GtkTreeView *treeview = GTK_TREE_VIEW(window["initials_initiallist"]);
@@ -332,6 +349,183 @@ void SnapshotInventoryGtk3::cbSendInitial(GtkWidget *btn, gpointer gp)
   }
 }
 
+static void cbBufferChanged(GtkTextBuffer *buf, gpointer gp)
+{
+  reinterpret_cast<SnapshotInventoryGtk3 *>(gp)->cbEditChange(buf);
+}
+
+void SnapshotInventoryGtk3::prepareEditingMap(bool init)
+{
+  if (init) {
+    editing_snap = inventory->getSelected();
+  }
+
+  assert(inventory->haveIncoSet(editing_snap));
+
+  // list of tabs/labels
+  std::list<std::string> origin_list;
+
+  // has the list been expanded or changed
+  bool changes = false;
+
+  auto snapset = inventory->editSnapshot(editing_snap);
+  for (auto &ed : editmap) {
+    ed.second.todelete = true;
+  }
+
+  for (const auto &sn : snapset.snaps) {
+
+    // add an edit page if the snapshot is of the editable type
+    if (sn.coding != Snapshot::UnSpecified && sn.coding != Snapshot::Base64 &&
+        sn.coding != Snapshot::Base64File &&
+        sn.coding != Snapshot::BinaryFile) {
+
+      auto edit = editmap.find(sn.originator.name);
+      origin_list.push_back(sn.originator.name);
+
+      if (edit == editmap.end()) {
+
+        changes = true;
+        auto ne = editmap.emplace(
+          std::piecewise_construct, std::forward_as_tuple(sn.originator.name),
+          std::forward_as_tuple(gtk_text_buffer_new(NULL),
+                                gtk_text_buffer_new(NULL)));
+        g_signal_connect(G_OBJECT(ne.first->second.edit_text), "changed",
+                         G_CALLBACK(cbBufferChanged), this);
+
+        std::string etext(sn.getEdit());
+        gtk_text_buffer_set_text(ne.first->second.edit_text, etext.c_str(),
+                                 etext.size());
+        // labels?
+        std::ifstream f(store_path + sn.originator.getClass() +
+                        std::string("-labels.txt"));
+        if (f.good()) {
+          std::string labels(std::istreambuf_iterator<char>{ f }, {});
+          gtk_text_buffer_set_text(ne.first->second.edit_labels, labels.c_str(),
+                                   labels.size());
+        }
+        else {
+          std::stringstream labels;
+          for (auto n = 0U; n < std::count(etext.begin(), etext.end(), '\n');
+               n++) {
+            labels << (n + 1) << std::endl;
+          }
+          gtk_text_buffer_set_text(ne.first->second.edit_labels,
+                                   labels.str().c_str(), labels.str().size());
+        }
+      }
+      else {
+        // re-use, refresh this text buffer
+        edit->second.todelete = false;
+        if (init || edit->second.dirty) {
+          edit->second.dirty = false;
+          std::string etext(sn.getEdit());
+          gtk_text_buffer_set_text(edit->second.edit_text, etext.c_str(),
+                                   etext.size());
+        }
+      }
+    }
+  }
+
+  // check if any buffers need deleting
+  for (auto emit = editmap.begin(); emit != editmap.end();) {
+    if (emit->second.todelete) {
+      g_object_unref(emit->second.edit_labels);
+      g_object_unref(emit->second.edit_text);
+      emit = editmap.erase(emit);
+      changes = true;
+    }
+    else {
+      emit++;
+    }
+  }
+
+  // when the buffer list changed, or a new inco set loaded, reload the combo,
+  // and select the first set
+  if (init || changes) {
+    // reload the combobox options
+    window.loadComboText("editwin_module_selection", origin_list);
+    window.setValue(origin_list.front(), "editwin_module_selection");
+  }
+}
+
+void SnapshotInventoryGtk3::readEditingMap()
+{
+  auto snapset = inventory->editSnapshot(editing_snap);
+
+  for (auto &sn : snapset.snaps) {
+
+    auto mapit = editmap.find(sn.originator.name);
+    if (mapit != editmap.end() && mapit->second.dirty) {
+      GtkTextIter tstart, tend;
+      gtk_text_buffer_get_start_iter(mapit->second.edit_text, &tstart);
+      gtk_text_buffer_get_end_iter(mapit->second.edit_text, &tend);
+      sn.setEdit(gtk_text_buffer_get_text(mapit->second.edit_text, &tstart,
+                                          &tend, FALSE));
+      mapit->second.dirty = false;
+    }
+  }
+}
+
+void SnapshotInventoryGtk3::cbEditInitial(GtkWidget *btn, gpointer gp)
+{
+  prepareEditingMap(true);
+  gtk_widget_show(editwin);
+}
+
+void SnapshotInventoryGtk3::cbEditRevert(GtkWidget *btn, gpointer gp)
+{
+  // reload all original text buffers
+  prepareEditingMap(false);
+}
+
+void SnapshotInventoryGtk3::cbEditUpdate(GtkWidget *btn, gpointer gp)
+{
+  readEditingMap();
+}
+
+void SnapshotInventoryGtk3::cbEditChange(GtkTextBuffer *tb)
+{
+  if (sel_origin != editmap.end()) {
+    sel_origin->second.dirty = true;
+  }
+}
+
+SnapshotInventoryGtk3::EditData::EditData(GtkTextBuffer *edit_text,
+                                          GtkTextBuffer *edit_labels) :
+  edit_text(edit_text),
+  edit_labels(edit_labels),
+  dirty(false),
+  todelete(false)
+{
+  //
+}
+
+void SnapshotInventoryGtk3::cbEditSelection(GtkComboBoxText *box, gpointer gp)
+{
+  std::string selorigin;
+  window.getValue(selorigin, "editwin_module_selection");
+  sel_origin = editmap.find(selorigin);
+  if (sel_origin == editmap.end()) {
+    W_XTR("Somehow cannot find edit selection");
+    return;
+  }
+  gtk_text_view_set_buffer(GTK_TEXT_VIEW(window["editwin_inco"]),
+                           sel_origin->second.edit_text);
+  gtk_text_view_set_buffer(GTK_TEXT_VIEW(window["editwin_linenumbers"]),
+                           sel_origin->second.edit_labels);
+}
+
+gboolean SnapshotInventoryGtk3::cbEditDelete(GtkWidget *window, GdkEvent *event,
+                                             gpointer user_data)
+{
+  // fixes the menu check, and closes the window
+  gtk_widget_set_visible(editwin, FALSE);
+
+  // indicate that the event is handled
+  return TRUE;
+}
+
 void SnapshotInventoryGtk3::cbSelection(GtkTreeSelection *sel, gpointer gp)
 {
   // figure out which row is selected
@@ -346,13 +540,16 @@ void SnapshotInventoryGtk3::cbSelection(GtkTreeSelection *sel, gpointer gp)
   if (name != NULL && inventory->changeSelection(name)) {
     gtk_label_set_text(GTK_LABEL(window["initials_selected"]), name);
     gtk_widget_set_sensitive(GTK_WIDGET(window["initials_send"]), TRUE);
+    gtk_widget_set_sensitive(GTK_WIDGET(window["initials_edit"]), TRUE);
     gtk_label_set_text(GTK_LABEL(window["initials_status"]), "selected");
   }
   else {
     gtk_label_set_text(GTK_LABEL(window["initials_selected"]),
                        "<< none selected >>");
     gtk_widget_set_sensitive(GTK_WIDGET(window["initials_send"]), FALSE);
+    gtk_widget_set_sensitive(GTK_WIDGET(window["initials_edit"]), FALSE);
     gtk_label_set_text(GTK_LABEL(window["initials_status"]), "");
+    gtk_widget_set_visible(editwin, FALSE);
   }
 }
 

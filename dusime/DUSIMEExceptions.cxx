@@ -37,7 +37,16 @@ cannot_find_snapshot_file(const char* originator)
   snprintf(str, sizeof(str), "Missing snapshot file : %s", originator);
 }
 
+cannot_find_snapshot::
+cannot_find_snapshot(const char* originator)
+{
+  snprintf(str, sizeof(str), "Missing snapshot : %s", originator);
+}
 
-
+cannot_convert_snap_coding::
+cannot_convert_snap_coding(const char* originator, const char* coding)
+{
+  snprintf(str, sizeof(str), "Cannot read/write coding %s for : %s", coding, originator);
+}
 
 DUECA_NS_END

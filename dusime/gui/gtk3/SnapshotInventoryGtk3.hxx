@@ -21,6 +21,7 @@
 #include <dueca.h>
 #include <dusime/SnapshotInventory.hxx>
 #include <dueca/gui/gtk3/GtkGladeWindow.hxx>
+#include <list>
 
 DUECA_NS_START;
 
@@ -33,30 +34,32 @@ DUECA_NS_START;
 
     \verbinclude initials-inventory.scm
  */
-class SnapshotInventoryGtk3: public Module
+class SnapshotInventoryGtk3 : public Module
 {
   /** self-define the module type, to ease writing the parameter table */
   typedef SnapshotInventoryGtk3 _ThisModule_;
 
 private:
-
   /** Underlying inventory object */
-  SnapshotInventory::pointer         inventory;
+  SnapshotInventory::pointer inventory;
 
   /** glade file */
-  std::string                        gladefile;
+  std::string gladefile;
 
   /** gtk window */
-  GtkGladeWindow                     window;
+  GtkGladeWindow window;
+
+  /** secondary window */
+  GtkWidget *editwin;
 
   /** Gtk collection of the snapshot information. */
-  GtkTreeStore                      *snaps_store;
+  GtkTreeStore *snaps_store;
 
   /** Widget in the main DUECA menu */
-  GtkWidget                         *menuitem;
+  GtkWidget *menuitem;
 
   /** Current iterator for the snapshot set */
-  GtkTreeIter                        set_iterator;
+  GtkTreeIter set_iterator;
 
   /** Organisation of the snaphot information */
   enum StoreFields {
@@ -71,20 +74,53 @@ private:
   };
 
   /** File with existing initials */
-  std::string                        reference_file;
+  std::string reference_file;
 
   /** File for any new additions/extensions */
-  std::string                        store_file;
+  std::string store_file;
 
   /** Path for storing snapshots/initials */
-  std::string                        store_path;
+  std::string store_path;
+
+  /** Collection of data needed to edit a set of incos */
+  struct EditData
+  {
+
+    /// Buffer for the text
+    GtkTextBuffer *edit_text;
+
+    /// Buffer for the labels
+    GtkTextBuffer *edit_labels;
+
+    /// flag to remember status
+    bool dirty;
+
+    /// flag to remember obsolete
+    bool todelete;
+
+    /// Default status
+    EditData(GtkTextBuffer *edit_text = NULL,
+             GtkTextBuffer *edit_labels = NULL);
+  };
+
+  /** Indexed by the originator name */
+  typedef std::map<std::string, EditData> editing_map_t;
+
+  /** Place for the data */
+  editing_map_t editmap;
+
+  /** Currently active entry in the editing  */
+  editing_map_t::iterator sel_origin;
+
+  /** Current snapshot being edited */
+  std::string editing_snap;
 
 public: // class name and trim/parameter tables
   /** Name of the module. */
-  static const char* const           classname;
+  static const char *const classname;
 
   /** Return the parameter table. */
-  static const ParameterTable*       getParameterTable();
+  static const ParameterTable *getParameterTable();
 
 public: // construction and further specification
   /** Constructor. Is normally called from scheme/the creation script.
@@ -92,7 +128,7 @@ public: // construction and further specification
       The owning entity of an inventory will be "dueca", the part name
       indicates the managed entity of the inventory.
   */
-  SnapshotInventoryGtk3(Entity* e, const char* part, const PrioritySpec& ts);
+  SnapshotInventoryGtk3(Entity *e, const char *part, const PrioritySpec &ts);
 
   /** Continued construction. */
   bool complete();
@@ -101,7 +137,7 @@ public: // construction and further specification
   ~SnapshotInventoryGtk3();
 
   /** Window position */
-  bool setPositionAndSize(const std::vector<int>& p);
+  bool setPositionAndSize(const std::vector<int> &p);
 
 public: // member functions for cooperation with DUECA
   /** indicate that everything is ready. */
@@ -115,23 +151,48 @@ public: // member functions for cooperation with DUECA
 
 public: // the member functions that are called for activities
   /** the method that implements the main calculation. */
-  void doCalculation(const TimeSpec& ts);
+  void doCalculation(const TimeSpec &ts);
 
 private:
   /** Close the associated window */
-  void cbClose(GtkWidget* btn, gpointer gp);
+  void cbClose(GtkWidget *btn, gpointer gp);
 
   /** Set a name for an upcoming snapshot */
-  void cbSetName(GtkWidget* text, gpointer gp);
+  void cbSetName(GtkWidget *text, gpointer gp);
 
   /** Send a selected initial state */
-  void cbSendInitial(GtkWidget* btn, gpointer gp);
+  void cbSendInitial(GtkWidget *btn, gpointer gp);
+
+  /** Edit the initial states before sending */
+  void cbEditInitial(GtkWidget *btn, gpointer gp);
 
   /** Select a different initial state */
   void cbSelection(GtkTreeSelection *sel, gpointer gp);
 
   /** Closing via the window manager */
   gboolean cbDelete(GtkWidget *window, GdkEvent *event, gpointer user_data);
+
+  /** Load editing data */
+  void prepareEditingMap(bool init);
+
+  /** Read edited stuff back in snapshots */
+  void readEditingMap();
+
+  /** Revert editing actions */
+  void cbEditRevert(GtkWidget *btn, gpointer gp);
+
+  /** Modify editing actions */
+  void cbEditUpdate(GtkWidget *btn, gpointer gp);
+
+  /** Switching to another editing field */
+  void cbEditSelection(GtkComboBoxText *box, gpointer gp);
+
+  /** Closing via the window manager */
+  gboolean cbEditDelete(GtkWidget *window, GdkEvent *event, gpointer user_data);
+
+public:
+  /** Modify editing actions */
+  void cbEditChange(GtkTextBuffer *tb);
 };
 
 DUECA_NS_END;

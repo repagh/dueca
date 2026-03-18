@@ -38,8 +38,8 @@ DUECA_NS_START;
     facilitating writing of user interfaces for experiments.
 
     It subscribes to all applicable or configured Snapshot channels,
-    can store snapshots supplied in different format, and resend these
-    into entities for replay.
+    can read and store snapshots supplied in different formats, and
+    resend these into entities for replay.
 
     The format of the file conforms to:
 
@@ -65,7 +65,7 @@ DUECA_NS_START;
     }"""
 
     [[initial_set."my name for the set".initial]]
-    coding = "Binary"
+    coding = "BinaryFile"
     origin = "WeatherModel://PHLAB"
     file = "somefile.dat"
 
@@ -113,7 +113,7 @@ protected:
   /** map of all available inventories here, indexed by entity */
   static std::map<std::string, pointer> inventories;
 
-  /** Entity being handled */
+  /** Entity being handled by this inventory */
   std::string entity;
 
 public:
@@ -245,6 +245,9 @@ public:
 
   /** Read access to all snapshots */
   const snapmap_t &getSnapshotData() { return snapmap; }
+
+  /** Edit access to a selected snapshot set */
+  snapmap_t::mapped_type &editSnapshot(const std::string& snapname);
 
   /** Change the next snapshot's name */
   inline void setSnapName(const char *newname) { snapname = newname; }

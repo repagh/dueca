@@ -33,6 +33,9 @@
   /** Constructor from a toml-parsed object */
   Snapshot(const toml::value& coded, const std::string& path);
 
+  /** Modify data string after editing */
+  void setEdit(const char* data);
+
   /** Create a toml object */
   toml::value tomlCode(const std::string& fname, const std::string& path) const;
 
@@ -63,6 +66,9 @@
 
   /** Return the complete snapshot, or a sample. */
   std::string getSample(unsigned size=20) const;
+
+  /** Return a string with the snapshot for editing */
+  const std::string getEdit() const;
 
   /** For convenience, additional data_size member */
   size_t data_size;

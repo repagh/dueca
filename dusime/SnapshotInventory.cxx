@@ -147,8 +147,8 @@ SnapshotInventory::snapshotFileName(std::string base,
   // search until the file does not exist
   while (true) {
     std::stringstream trynew;
-    trynew << base << "-" << std::setfill('0') << std::setw(6)
-           << std::hex << (rand() % 0x1000000UL) << ext;
+    trynew << base << "-" << std::setfill('0') << std::setw(6) << std::hex
+           << (rand() % 0x1000000UL) << ext;
 
     if (access((path + trynew.str()).c_str(), F_OK) == -1) {
       // should add more tests, but maybe simply no file there
@@ -423,6 +423,17 @@ void SnapshotInventory::setMode(IncoInventoryMode mode)
       fn(mode, empty);
     }
   }
+}
+
+/** Edit access to a selected snapshot set */
+SnapshotInventory::snapmap_t::mapped_type &
+SnapshotInventory::editSnapshot(const std::string &snapname)
+{
+  auto res = snapmap.find(snapname);
+  if (res != snapmap.end()) {
+    return res->second;
+  }
+  throw cannot_find_snapshot(snapname.c_str());
 }
 
 DUECA_NS_END;
