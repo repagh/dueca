@@ -21,7 +21,6 @@
 #include <dueca.h>
 #include <dusime/SnapshotInventory.hxx>
 #include <dueca/gui/gtk3/GtkGladeWindow.hxx>
-#include <list>
 
 DUECA_NS_START;
 
@@ -101,6 +100,9 @@ private:
     /// Default status
     EditData(GtkTextBuffer *edit_text = NULL,
              GtkTextBuffer *edit_labels = NULL);
+
+    /// Destructor
+    ~EditData();
   };
 
   /** Indexed by the originator name */
@@ -183,6 +185,9 @@ private:
 
   /** Modify editing actions */
   void cbEditUpdate(GtkWidget *btn, gpointer gp);
+
+  /** Modify editing actions */
+  void cbEditClose(GtkWidget *btn, gpointer gp);
 
   /** Switching to another editing field */
   void cbEditSelection(GtkComboBoxText *box, gpointer gp);

@@ -182,6 +182,7 @@ bool SnapshotInventoryGtk3::complete()
       gtk_callback(&_ThisModule_::cbSelection) },
     { "initials_view", "delete_event", gtk_callback(&_ThisModule_::cbDelete) },
     { "editwin", "delete_event", gtk_callback(&_ThisModule_::cbEditDelete) },
+    { "editwin_close", "clicked", gtk_callback(&_ThisModule_::cbEditClose) },
     { NULL }
   };
 
@@ -368,7 +369,7 @@ void SnapshotInventoryGtk3::prepareEditingMap(bool init)
   // has the list been expanded or changed
   bool changes = false;
 
-  auto snapset = inventory->editSnapshot(editing_snap);
+  auto & snapset = inventory->editSnapshot(editing_snap);
   for (auto &ed : editmap) {
     ed.second.todelete = true;
   }
@@ -392,13 +393,15 @@ void SnapshotInventoryGtk3::prepareEditingMap(bool init)
                                 gtk_text_buffer_new(NULL)));
         g_signal_connect(G_OBJECT(ne.first->second.edit_text), "changed",
                          G_CALLBACK(cbBufferChanged), this);
+        DEB("New buf snapshot " << reinterpret_cast<const void *>(&sn) << " "
+                                << sn.originator.name);
 
         std::string etext(sn.getEdit());
         gtk_text_buffer_set_text(ne.first->second.edit_text, etext.c_str(),
                                  etext.size());
         // labels?
-        std::ifstream f(store_path + sn.originator.getClass() +
-                        std::string("-labels.txt"));
+        std::ifstream f(store_path + std::string("/") +
+                        sn.originator.getClass() + std::string("-labels.txt"));
         if (f.good()) {
           std::string labels(std::istreambuf_iterator<char>{ f }, {});
           gtk_text_buffer_set_text(ne.first->second.edit_labels, labels.c_str(),
@@ -419,6 +422,9 @@ void SnapshotInventoryGtk3::prepareEditingMap(bool init)
         edit->second.todelete = false;
         if (init || edit->second.dirty) {
           edit->second.dirty = false;
+          DEB("Update snapshot " << reinterpret_cast<const void *>(&sn) << " "
+                                 << sn.originator.name);
+
           std::string etext(sn.getEdit());
           gtk_text_buffer_set_text(edit->second.edit_text, etext.c_str(),
                                    etext.size());
@@ -430,8 +436,6 @@ void SnapshotInventoryGtk3::prepareEditingMap(bool init)
   // check if any buffers need deleting
   for (auto emit = editmap.begin(); emit != editmap.end();) {
     if (emit->second.todelete) {
-      g_object_unref(emit->second.edit_labels);
-      g_object_unref(emit->second.edit_text);
       emit = editmap.erase(emit);
       changes = true;
     }
@@ -451,12 +455,14 @@ void SnapshotInventoryGtk3::prepareEditingMap(bool init)
 
 void SnapshotInventoryGtk3::readEditingMap()
 {
-  auto snapset = inventory->editSnapshot(editing_snap);
+  auto &snapset = inventory->editSnapshot(editing_snap);
 
   for (auto &sn : snapset.snaps) {
 
     auto mapit = editmap.find(sn.originator.name);
     if (mapit != editmap.end() && mapit->second.dirty) {
+      DEB("Data snapshot " << reinterpret_cast<void *>(&sn) << " "
+                           << sn.originator.name);
       GtkTextIter tstart, tend;
       gtk_text_buffer_get_start_iter(mapit->second.edit_text, &tstart);
       gtk_text_buffer_get_end_iter(mapit->second.edit_text, &tend);
@@ -498,7 +504,18 @@ SnapshotInventoryGtk3::EditData::EditData(GtkTextBuffer *edit_text,
   dirty(false),
   todelete(false)
 {
-  //
+  if (edit_text)
+    g_object_ref(edit_text);
+  if (edit_labels)
+    g_object_ref(edit_labels);
+}
+
+SnapshotInventoryGtk3::EditData::~EditData()
+{
+  if (edit_text)
+    g_object_unref(edit_text);
+  if (edit_labels)
+    g_object_unref(edit_labels);
 }
 
 void SnapshotInventoryGtk3::cbEditSelection(GtkComboBoxText *box, gpointer gp)
@@ -524,6 +541,11 @@ gboolean SnapshotInventoryGtk3::cbEditDelete(GtkWidget *window, GdkEvent *event,
 
   // indicate that the event is handled
   return TRUE;
+}
+
+void SnapshotInventoryGtk3::cbEditClose(GtkWidget *button, gpointer gp)
+{
+  gtk_widget_set_visible(editwin, FALSE);
 }
 
 void SnapshotInventoryGtk3::cbSelection(GtkTreeSelection *sel, gpointer gp)
