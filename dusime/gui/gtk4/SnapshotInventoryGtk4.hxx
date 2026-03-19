@@ -48,6 +48,9 @@ private:
   /** gtk window */
   GtkGladeWindow window;
 
+  /** Editing window */
+  GtkWidget *editwin;
+
   /** Gtk collection of the snapshot information. */
   GListStore *snaps_store;
 
@@ -61,7 +64,43 @@ private:
   std::string store_file;
 
   /** Path for storing snapshots/initials */
-  std::string                        store_path;
+  std::string store_path;
+
+  /** Collection of data needed to edit a set of incos */
+  struct EditData
+  {
+
+    /// Buffer for the text
+    GtkTextBuffer *edit_text;
+
+    /// Buffer for the labels
+    GtkTextBuffer *edit_labels;
+
+    /// flag to remember status
+    bool dirty;
+
+    /// flag to remember obsolete
+    bool todelete;
+
+    /// Default status
+    EditData(GtkTextBuffer *edit_text = NULL,
+             GtkTextBuffer *edit_labels = NULL);
+
+    /// Destructor
+    ~EditData();
+  };
+
+  /** Indexed by the originator name */
+  typedef std::map<std::string, EditData> editing_map_t;
+
+  /** Place for the data */
+  editing_map_t editmap;
+
+  /** Currently active entry in the editing  */
+  editing_map_t::iterator sel_origin;
+
+  /** Current snapshot being edited */
+  std::string editing_snap;
 
 public: // class name and trim/parameter tables
   /** Name of the module. */
@@ -108,8 +147,12 @@ private:
   /** Send a selected initial state */
   void cbSendInitial(GtkWidget *btn, gpointer gp);
 
+  /** Send a selected initial state */
+  void cbEditInitial(GtkWidget *btn, gpointer gp);
+
   /** Select a different initial state */
-  void cbSelection(GtkSelectionModel *sel, guint position, guint n_items, gpointer gp);
+  void cbSelection(GtkSelectionModel *sel, guint position, guint n_items,
+                   gpointer gp);
 
   /** Closing via the window manager */
   gboolean cbDelete(GtkWidget *window, gpointer user_data);
@@ -144,6 +187,31 @@ private:
   /** bind replay table field */
   void cbBindSample(GtkSignalListItemFactory *fact, GtkListItem *object,
                     gpointer user_data);
+
+  /** Load editing data */
+  void prepareEditingMap(bool init);
+
+  /** Read edited stuff back in snapshots */
+  void readEditingMap();
+
+  /** Revert editing actions */
+  void cbEditRevert(GtkWidget *btn, gpointer gp);
+
+  /** Modify editing actions */
+  void cbEditUpdate(GtkWidget *btn, gpointer gp);
+
+  /** Modify editing actions */
+  void cbEditClose(GtkWidget *btn, gpointer gp);
+
+  /** Switching to another editing field */
+  void cbEditSelection(GObject *box, GParamSpec* pspec, gpointer gp);
+
+  /** Closing via the window manager */
+  gboolean cbEditDelete(GtkWidget *window, GdkEvent *event, gpointer user_data);
+
+public:
+  /** Modify editing actions */
+  void cbEditChange(GtkTextBuffer *tb);
 };
 
 DUECA_NS_END;

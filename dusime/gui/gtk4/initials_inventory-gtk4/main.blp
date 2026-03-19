@@ -1,0 +1,167 @@
+using Gtk 4.0;
+
+Window initials_view {
+  name: "Initial states";
+
+  child: Box {
+    orientation: vertical;
+
+    Box {
+      can-focus: false;
+
+      css-classes: [
+        "toolbar",
+      ];
+
+      Button initials_close {
+        can-focus: false;
+        icon-name: "window-close";
+        label: _("close");
+        use-underline: true;
+      }
+
+      Separator {
+        can-focus: false;
+        orientation: vertical;
+      }
+
+      Button initials_send {
+        can-focus: false;
+        icon-name: "go-up";
+        label: _("send");
+        sensitive: false;
+        tooltip-text: _("Send the currently selected initial state");
+        use-underline: true;
+      }
+
+      Button initials_edit {
+        icon-name: "";
+        label: _("edit");
+        sensitive: false;
+        tooltip-text: _("Edit the currently selected initial state");
+      }
+
+      Label initials_selected {
+        label: _("<< none selected >>");
+        tooltip-text: _("Name of the last selected or sent initial state.");
+      }
+
+      Separator {
+        can-focus: false;
+        orientation: vertical;
+      }
+
+      Label initials_status {}
+    }
+
+    Entry initials_newentryname {
+      focusable: true;
+      primary-icon-tooltip-text: _("Name for the next new\n              initial states (snapshot) captured.");
+      text: _("anonymous");
+    }
+
+    ScrolledWindow {
+      propagate-natural-width: true;
+      vexpand: true;
+
+      ColumnView initials_initiallist {
+        vscroll-policy: natural;
+
+        ColumnViewColumn {
+          factory: SignalListItemFactory initials_name_fact {};
+
+          title: _("name");
+        }
+
+        ColumnViewColumn {
+          factory: SignalListItemFactory initials_datetime_fact {};
+
+          title: _("date/time");
+        }
+
+        ColumnViewColumn {
+          factory: SignalListItemFactory initials_origin_fact {};
+
+          title: _("origin");
+        }
+
+        ColumnViewColumn {
+          factory: SignalListItemFactory initials_coding_fact {};
+
+          title: _("coding");
+        }
+
+        ColumnViewColumn {
+          factory: SignalListItemFactory initials_sample_fact {};
+
+          title: _("sample");
+        }
+      }
+    }
+  };
+}
+
+Window editwin {
+  name: "Edit initial state";
+
+  Box {
+    orientation: vertical;
+
+    Box {
+      can-focus: false;
+
+      css-classes: [
+        "toolbar",
+      ];
+
+      Button editwin_close {
+        label: "close";
+      }
+
+      Button editwin_revert {
+        icon-name: "edit-undo";
+        label: "revert";
+      }
+
+      Button editwin_update {
+        icon-name: "edit-paste";
+        label: "update";
+      }
+
+      DropDown editwin_module_selection {
+        tooltip-text: _("Select the module to edit");
+      }
+    }
+
+    ScrolledWindow {
+      Viewport {
+        Box {
+          TextView editwin_linenumbers {
+            editable: false;
+            opacity: 0.5;
+            justification: right;
+            right-margin: 5;
+            cursor-visible: false;
+            monospace: true;
+
+            layout {
+              expand: "false";
+              fill: "false";
+            }
+          }
+
+
+          TextView editwin_inco {
+            can-focus: true;
+            hexpand: true;
+            monospace: true;
+            layout {
+              expand: "false";
+              fill: "true";
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <object class="GtkWindow" id="initials_view">
+    <property name="name">Initial states</property>
+    <property name="child">
+      <object class="GtkBox">
+        <property name="orientation">1</property>
+        <child>
+          <object class="GtkBox">
+            <property name="can-focus">false</property>
+            <property name="css-classes">toolbar</property>
+            <child>
+              <object class="GtkButton" id="initials_close">
+                <property name="can-focus">false</property>
+                <property name="icon-name">window-close</property>
+                <property name="label" translatable="yes">close</property>
+                <property name="use-underline">true</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkSeparator">
+                <property name="can-focus">false</property>
+                <property name="orientation">1</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="initials_send">
+                <property name="can-focus">false</property>
+                <property name="icon-name">go-up</property>
+                <property name="label" translatable="yes">send</property>
+                <property name="sensitive">false</property>
+                <property name="tooltip-text" translatable="yes">Send the currently selected initial state</property>
+                <property name="use-underline">true</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="initials_edit">
+                <property name="icon-name"></property>
+                <property name="label" translatable="yes">edit</property>
+                <property name="sensitive">false</property>
+                <property name="tooltip-text" translatable="yes">Edit the currently selected initial state</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="initials_selected">
+                <property name="label" translatable="yes">&lt;&lt; none selected &gt;&gt;</property>
+                <property name="tooltip-text" translatable="yes">Name of the last selected or sent initial state.</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkSeparator">
+                <property name="can-focus">false</property>
+                <property name="orientation">1</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="initials_status"></object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkEntry" id="initials_newentryname">
+            <property name="focusable">true</property>
+            <property name="primary-icon-tooltip-text" translatable="yes">Name for the next new
+              initial states (snapshot) captured.</property>
+            <property name="text" translatable="yes">anonymous</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkScrolledWindow">
+            <property name="propagate-natural-width">true</property>
+            <property name="vexpand">true</property>
+            <child>
+              <object class="GtkColumnView" id="initials_initiallist">
+                <property name="vscroll-policy">1</property>
+                <child>
+                  <object class="GtkColumnViewColumn">
+                    <property name="factory">
+                      <object class="GtkSignalListItemFactory" id="initials_name_fact"></object>
+                    </property>
+                    <property name="title" translatable="yes">name</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkColumnViewColumn">
+                    <property name="factory">
+                      <object class="GtkSignalListItemFactory" id="initials_datetime_fact"></object>
+                    </property>
+                    <property name="title" translatable="yes">date/time</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkColumnViewColumn">
+                    <property name="factory">
+                      <object class="GtkSignalListItemFactory" id="initials_origin_fact"></object>
+                    </property>
+                    <property name="title" translatable="yes">origin</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkColumnViewColumn">
+                    <property name="factory">
+                      <object class="GtkSignalListItemFactory" id="initials_coding_fact"></object>
+                    </property>
+                    <property name="title" translatable="yes">coding</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkColumnViewColumn">
+                    <property name="factory">
+                      <object class="GtkSignalListItemFactory" id="initials_sample_fact"></object>
+                    </property>
+                    <property name="title" translatable="yes">sample</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </property>
+  </object>
+  <object class="GtkWindow" id="editwin">
+    <property name="name">Edit initial state</property>
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">1</property>
+        <child>
+          <object class="GtkBox">
+            <property name="can-focus">false</property>
+            <property name="css-classes">toolbar</property>
+            <child>
+              <object class="GtkButton" id="editwin_close">
+                <property name="label">close</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="editwin_revert">
+                <property name="icon-name">edit-undo</property>
+                <property name="label">revert</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="editwin_update">
+                <property name="icon-name">edit-paste</property>
+                <property name="label">update</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkDropDown" id="editwin_module_selection">
+                <property name="tooltip-text" translatable="yes">Select the module to edit</property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkScrolledWindow">
+            <child>
+              <object class="GtkViewport">
+                <child>
+                  <object class="GtkBox">
+                    <child>
+                      <object class="GtkTextView" id="editwin_linenumbers">
+                        <property name="editable">false</property>
+                        <property name="opacity">0.5</property>
+                        <property name="justification">1</property>
+                        <property name="right-margin">5</property>
+                        <property name="cursor-visible">false</property>
+                        <property name="monospace">true</property>
+                      </object>
+                    </child>
+                    <layout>
+                      <property name="expand">false</property>
+                      <property name="fill">false</property>
+                    </layout>
+                    <child>
+                      <object class="GtkTextView" id="editwin_inco">
+                        <property name="can-focus">true</property>
+                        <property name="hexpand">true</property>
+                        <property name="monospace">true</property>
+                      </object>
+                    </child>
+                    <layout>
+                      <property name="expand">false</property>
+                      <property name="fill">true</property>
+                    </layout>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

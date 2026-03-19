@@ -107,9 +107,7 @@ SnapshotInventoryGtk3::SnapshotInventoryGtk3(Entity *e, const char *part,
   sel_origin(editmap.end()),
   editing_snap()
 {
-  // connect the triggers for simulation
-  //do_calc.setTrigger(/* fill in your triggering channels,
-  //                      or enter the clock here */);
+  //
 }
 
 static std::string formatTime(const boost::posix_time::ptime &now,
@@ -291,6 +289,11 @@ bool SnapshotInventoryGtk3::complete()
     GTK_WINDOW(window["initials_view"]),
     (std::string("Initials control - ") + getPart()).c_str());
 
+  gtk_window_set_title(
+    GTK_WINDOW(window["editwin"]),
+    (std::string("Initials edit - ") + getPart()).c_str());
+
+
   // insert in DUECA's menu
   menuitem = GTK_WIDGET(GtkDuecaView::single()->requestViewEntry(
     (std::string("Initial state - ") + getPart()).c_str(),
@@ -341,7 +344,7 @@ void SnapshotInventoryGtk3::cbSendInitial(GtkWidget *btn, gpointer gp)
 {
   if (inventory->sendSelected()) {
     gtk_label_set_text(GTK_LABEL(window["initials_status"]), "sent");
-    gtk_widget_set_sensitive(GTK_WIDGET(window["initials_send"]), FALSE);
+    // gtk_widget_set_sensitive(GTK_WIDGET(window["initials_send"]), FALSE);
     // gtk_tree_selection_unselect_all(GTK_TREE_SELECTION
     //  (window["initials_listselection"]));
   }
@@ -399,7 +402,9 @@ void SnapshotInventoryGtk3::prepareEditingMap(bool init)
         std::string etext(sn.getEdit());
         gtk_text_buffer_set_text(ne.first->second.edit_text, etext.c_str(),
                                  etext.size());
-        // labels?
+        edit->second.dirty = false;
+
+          // labels?
         std::ifstream f(store_path + std::string("/") +
                         sn.originator.getClass() + std::string("-labels.txt"));
         if (f.good()) {
@@ -421,13 +426,13 @@ void SnapshotInventoryGtk3::prepareEditingMap(bool init)
         // re-use, refresh this text buffer
         edit->second.todelete = false;
         if (init || edit->second.dirty) {
-          edit->second.dirty = false;
           DEB("Update snapshot " << reinterpret_cast<const void *>(&sn) << " "
                                  << sn.originator.name);
 
           std::string etext(sn.getEdit());
           gtk_text_buffer_set_text(edit->second.edit_text, etext.c_str(),
                                    etext.size());
+          edit->second.dirty = false;
         }
       }
     }
@@ -443,6 +448,10 @@ void SnapshotInventoryGtk3::prepareEditingMap(bool init)
       emit++;
     }
   }
+
+  // update and revert no longer sensitive
+  gtk_widget_set_sensitive(GTK_WIDGET(window["editwin_update"]), FALSE);
+  gtk_widget_set_sensitive(GTK_WIDGET(window["editwin_revert"]), FALSE);
 
   // when the buffer list changed, or a new inco set loaded, reload the combo,
   // and select the first set
@@ -471,6 +480,10 @@ void SnapshotInventoryGtk3::readEditingMap()
       mapit->second.dirty = false;
     }
   }
+
+  // update and revert no longer sensitive
+  gtk_widget_set_sensitive(GTK_WIDGET(window["editwin_update"]), FALSE);
+  gtk_widget_set_sensitive(GTK_WIDGET(window["editwin_revert"]), FALSE);
 }
 
 void SnapshotInventoryGtk3::cbEditInitial(GtkWidget *btn, gpointer gp)
@@ -493,7 +506,12 @@ void SnapshotInventoryGtk3::cbEditUpdate(GtkWidget *btn, gpointer gp)
 void SnapshotInventoryGtk3::cbEditChange(GtkTextBuffer *tb)
 {
   if (sel_origin != editmap.end()) {
-    sel_origin->second.dirty = true;
+    if (!sel_origin->second.dirty) {
+      gtk_widget_set_sensitive(GTK_WIDGET(window["editwin_update"]), TRUE);
+      gtk_widget_set_sensitive(GTK_WIDGET(window["editwin_revert"]), TRUE);
+
+      sel_origin->second.dirty = true;
+    }
   }
 }
 

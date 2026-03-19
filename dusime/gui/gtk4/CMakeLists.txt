@@ -7,7 +7,7 @@
 
 pkg_check_modules(GTK4 REQUIRED gtk4)
 
-set(SOURCES 
+set(SOURCES
   DusimeControllerGtk.cxx DusimeControllerGtk.hxx
   ReplayMasterGtk4.cxx ReplayMasterGtk4.hxx
   SnapshotInventoryGtk4.cxx SnapshotInventoryGtk4.hxx)
@@ -21,8 +21,10 @@ else()
   set(DUSIMEUI ${CMAKE_CURRENT_SOURCE_DIR}/dusime-gtk4.ui)
 endif()
 
+configure_file(initials_inventory-gtk4/main.ui initials_inventory-gtk4.ui @ONLY)
+
 set(GLADEFILES ${DUSIMEUI} trimcalc_window-gtk4.ui
-  replay_master-gtk4.ui initials_inventory-gtk4.ui)
+  replay_master-gtk4.ui ${CMAKE_CURRENT_BINARY_DIR}/initials_inventory-gtk4.ui)
 
 configure_file(dueca-dusime-gtk4.pc.in dueca-dusime-gtk4.pc @ONLY)
 
