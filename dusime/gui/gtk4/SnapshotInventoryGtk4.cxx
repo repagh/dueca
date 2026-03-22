@@ -162,6 +162,7 @@ SnapshotInventoryGtk4::SnapshotInventoryGtk4(Entity *e, const char *part,
   // initialize the data you need in your simulation or process
   gladefile(DuecaPath::prepend("initials_inventory-gtk4.ui")),
   window(),
+  editwin(NULL),
   snaps_store(NULL),
   menuaction(NULL),
   reference_file(),
@@ -238,8 +239,8 @@ bool SnapshotInventoryGtk4::complete()
     { "editwin_update", "clicked", gtk_callback(&_ThisModule_::cbEditUpdate) },
     { "editwin_module_selection", "notify::selected-item",
       gtk_callback(&_ThisModule_::cbEditSelection) },
-    { "initials_view", "delete_event", gtk_callback(&_ThisModule_::cbDelete) },
-    { "editwin", "delete_event", gtk_callback(&_ThisModule_::cbEditDelete) },
+    { "initials_view", "close-request", gtk_callback(&_ThisModule_::cbDelete) },
+    { "editwin", "close-request", gtk_callback(&_ThisModule_::cbEditDelete) },
     { "editwin_close", "clicked", gtk_callback(&_ThisModule_::cbEditClose) },
 
     { NULL }
@@ -305,7 +306,8 @@ bool SnapshotInventoryGtk4::complete()
     GTK_WINDOW(window["initials_view"]),
     (std::string("Initials control - ") + getPart()).c_str());
 
-  gtk_window_set_title(GTK_WINDOW(window["editwin"]),
+  editwin = window["editwin"];
+  gtk_window_set_title(GTK_WINDOW(editwin),
                        (std::string("Initials edit - ") + getPart()).c_str());
 
   // insert in DUECA's menu

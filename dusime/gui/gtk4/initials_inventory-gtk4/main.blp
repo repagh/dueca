@@ -143,6 +143,7 @@ Window editwin {
             right-margin: 5;
             cursor-visible: false;
             monospace: true;
+            width-request: 35;
 
             layout {
               expand: "false";
@@ -150,17 +151,21 @@ Window editwin {
             }
           }
 
-
           TextView editwin_inco {
             can-focus: true;
             hexpand: true;
             monospace: true;
+
             layout {
               expand: "false";
               fill: "true";
             }
           }
         }
+      }
+      layout {
+        expand: "true";
+        fill: "true";
       }
     }
   }

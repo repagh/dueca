@@ -168,27 +168,32 @@
                         <property name="right-margin">5</property>
                         <property name="cursor-visible">false</property>
                         <property name="monospace">true</property>
+                        <property name="width-request">35</property>
+                        <layout>
+                          <property name="expand">false</property>
+                          <property name="fill">false</property>
+                        </layout>
                       </object>
                     </child>
-                    <layout>
-                      <property name="expand">false</property>
-                      <property name="fill">false</property>
-                    </layout>
                     <child>
                       <object class="GtkTextView" id="editwin_inco">
                         <property name="can-focus">true</property>
                         <property name="hexpand">true</property>
                         <property name="monospace">true</property>
+                        <layout>
+                          <property name="expand">false</property>
+                          <property name="fill">true</property>
+                        </layout>
                       </object>
                     </child>
-                    <layout>
-                      <property name="expand">false</property>
-                      <property name="fill">true</property>
-                    </layout>
                   </object>
                 </child>
               </object>
             </child>
+            <layout>
+              <property name="expand">true</property>
+              <property name="fill">true</property>
+            </layout>
           </object>
         </child>
       </object>
