@@ -135,6 +135,8 @@ Window editwin {
 
     ScrolledWindow {
       Viewport {
+        vexpand: true;
+
         Box {
           TextView editwin_linenumbers {
             editable: false;
@@ -144,29 +146,30 @@ Window editwin {
             cursor-visible: false;
             monospace: true;
             width-request: 35;
+          }
 
-            layout {
-              expand: "false";
-              fill: "false";
-            }
+          layout {
+            expand: "false";
+            fill: "false";
           }
 
           TextView editwin_inco {
             can-focus: true;
             hexpand: true;
             monospace: true;
+          }
 
-            layout {
-              expand: "false";
-              fill: "true";
-            }
+          layout {
+            expand: "false";
+            fill: "true";
           }
         }
       }
-      layout {
-        expand: "true";
-        fill: "true";
-      }
+    }
+
+    layout {
+      expand: "true";
+      fill: "true";
     }
   }
 }
