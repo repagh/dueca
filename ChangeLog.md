@@ -10,7 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 - Enable batch conversion with `ddff-convert`
 - Test case for ddff-convert multiple file conversion
-- Possibility to edit a snapshot / initial state set
+- Possibility to edit an initial state set (gtk3+4)
+- Documentation on editing initial state
 
 ## [4.2.6] - 2026-03-14
 
