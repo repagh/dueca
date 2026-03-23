@@ -269,12 +269,7 @@ void SnapshotInventory::setFiles(const std::string &bfile,
                                  const std::string &_path)
 {
   resultfile = sfile;
-  if (_path.size() == 0 || _path.substr(_path.size() - 1) == std::string("/")) {
-    path = _path;
-  }
-  else {
-    path = _path + '/';
-  }
+  path = _path;
 
   if (bfile.size()) {
     try {

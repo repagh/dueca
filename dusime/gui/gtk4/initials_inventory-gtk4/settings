@@ -3,3 +3,5 @@ show-console=true
 user-interface-language='blueprint'
 edited=true
 show-preview=true
+window-width=1920
+window-height=1219

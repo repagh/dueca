@@ -169,11 +169,11 @@
                         <property name="right-margin">5</property>
                         <property name="cursor-visible">false</property>
                         <property name="monospace">true</property>
-                        <property name="width-request">35</property>
+                        <property name="width-request">55</property>
                       </object>
                     </child>
                     <layout>
-                      <property name="expand">false</property>
+                      <property name="expand">true</property>
                       <property name="fill">false</property>
                     </layout>
                     <child>
@@ -184,7 +184,7 @@
                       </object>
                     </child>
                     <layout>
-                      <property name="expand">false</property>
+                      <property name="expand">true</property>
                       <property name="fill">true</property>
                     </layout>
                   </object>

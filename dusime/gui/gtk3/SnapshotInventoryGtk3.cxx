@@ -159,6 +159,11 @@ bool SnapshotInventoryGtk3::complete()
   // find the underlying inventory
   inventory = SnapshotInventory::findSnapshotInventory(getPart());
 
+  // check and if needed correct the name of store_path
+  if (store_path.size() && store_path.back() != '/') {
+    store_path = store_path + std::string("/");
+  }
+
   // if applicable, open the files
   inventory->setFiles(
     reference_file,
@@ -289,10 +294,8 @@ bool SnapshotInventoryGtk3::complete()
     GTK_WINDOW(window["initials_view"]),
     (std::string("Initials control - ") + getPart()).c_str());
 
-  gtk_window_set_title(
-    GTK_WINDOW(window["editwin"]),
-    (std::string("Initials edit - ") + getPart()).c_str());
-
+  gtk_window_set_title(GTK_WINDOW(window["editwin"]),
+                       (std::string("Initials edit - ") + getPart()).c_str());
 
   // insert in DUECA's menu
   menuitem = GTK_WIDGET(GtkDuecaView::single()->requestViewEntry(
@@ -372,7 +375,7 @@ void SnapshotInventoryGtk3::prepareEditingMap(bool init)
   // has the list been expanded or changed
   bool changes = false;
 
-  auto & snapset = inventory->editSnapshot(editing_snap);
+  auto &snapset = inventory->editSnapshot(editing_snap);
   for (auto &ed : editmap) {
     ed.second.todelete = true;
   }
@@ -404,9 +407,9 @@ void SnapshotInventoryGtk3::prepareEditingMap(bool init)
                                  etext.size());
         edit->second.dirty = false;
 
-          // labels?
-        std::ifstream f(store_path + std::string("/") +
-                        sn.originator.getClass() + std::string("-labels.txt"));
+        // labels?
+        std::ifstream f(store_path + sn.originator.getClass() +
+                        std::string("-labels.txt"));
         if (f.good()) {
           std::string labels(std::istreambuf_iterator<char>{ f }, {});
           gtk_text_buffer_set_text(ne.first->second.edit_labels, labels.c_str(),
