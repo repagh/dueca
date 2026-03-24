@@ -104,14 +104,15 @@ def findWindowUnder(wlist, x: int, y: int, recording=False, margin=0):
             and "focused" in w.wm_state
             and translation.inWindow(x, y, w, margin)
         ):
-            # print(f"focus window {w.wm_name} at {w.x},{w.y} size {w.w}x{w.h}")
+            print(f"focus window {w.wm_name} at {w.x},{w.y} size {w.w}x{w.h}")
             foundwin = w
     if foundwin is not None:
         return w
 
+    # now without focus
     for w in Window.list():
         if translation.inWindow(x, y, w, margin):
-            # print(f"found window {w.wm_name} at {w.x},{w.y} size {w.w}x{w.h}")
+            print(f"found window {w.wm_name} at {w.x},{w.y} size {w.w}x{w.h}")
             foundwin = w
     return foundwin
 
@@ -563,7 +564,7 @@ class Scenario:
 
     def pass_click(self, x, y, button, pressed):
 
-        window = findWindowUnder(self.project.windows, x, y, True)
+        window = findWindowUnder(self.project.windows, x, y, True, margin=10)
         self.actions.append(
             Click(
                 xmlroot=self.actionnode,
@@ -584,7 +585,7 @@ class Scenario:
         if key in (Key.f1,):
 
             # get color spot here
-            window = findWindowUnder(self.project.windows, self.x, self.y, True)
+            window = findWindowUnder(self.project.windows, self.x, self.y, True, margin=10)
             self.actions.append(
                 Check(xmlroot=self.actionnode, x=self.x, y=self.y, window=window)
             )
@@ -609,7 +610,7 @@ class Scenario:
             return False
 
         else:
-            window = findWindowUnder(self.project.windows, self.x, self.y, True)
+            window = findWindowUnder(self.project.windows, self.x, self.y, True, margin=10)
             self.actions.append(
                 KeyPress(
                     xmlroot=self.actionnode, key=key, x=self.x, y=self.y, window=window
