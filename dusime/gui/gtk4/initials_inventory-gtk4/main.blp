@@ -15,9 +15,8 @@ Window initials_view {
 
       Button initials_close {
         can-focus: false;
-        icon-name: "window-close";
         label: _("close");
-        use-underline: true;
+        icon-name: "window-close";
       }
 
       Separator {
@@ -26,17 +25,15 @@ Window initials_view {
       }
 
       Button initials_send {
-        can-focus: false;
-        icon-name: "go-up";
         label: _("send");
+        icon-name: "go-up";
         sensitive: false;
         tooltip-text: _("Send the currently selected initial state");
-        use-underline: true;
       }
 
       Button initials_edit {
-        icon-name: "";
         label: _("edit");
+        icon-name: "accessories-text-editor";
         sensitive: false;
         tooltip-text: _("Edit the currently selected initial state");
       }
@@ -115,17 +112,21 @@ Window editwin {
       ];
 
       Button editwin_close {
-        label: "close";
+        label: _("close");
+        icon-name: "window-close";
+        tooltip-text: _("Close the initial state edit window.");
       }
 
       Button editwin_revert {
+        label: _("revert");
         icon-name: "edit-undo";
-        label: "revert";
+        tooltip-text: _("Revert edits.");
       }
 
       Button editwin_update {
-        icon-name: "edit-paste";
-        label: "update";
+        label: _("update");
+        icon-name: "document-save";
+        tooltip-text: _("Save edits to currently selected initial state set.");
       }
 
       DropDown editwin_module_selection {
