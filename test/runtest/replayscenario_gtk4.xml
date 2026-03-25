@@ -167,7 +167,7 @@
       wait="0.2" />
     <check window="DUECA/DUSIME control panel" x="491" y="60" r="59" g="255" b="10" timeout="10.0"
       wait="0.5" />
-    <check window="DUECA/DUSIME control panel" x="27" y="15" r="135" g="174" b="223" timeout="10.0"
+    <check window="DUECA/DUSIME control panel" x="30" y="15" r="246" g="245" b="244" timeout="10.0"
       wait="0.5" />
     <click window="DUECA/DUSIME control panel" x="27" y="15" button="Button.left" pressed="true"
       wait="0.2" />
