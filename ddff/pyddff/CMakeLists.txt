@@ -14,13 +14,8 @@ execute_process(COMMAND ${Python_EXECUTABLE} -c
 execute_process(COMMAND ${Python_EXECUTABLE} -c
   "import sys; print(sys.version_info[0],end='')"
   OUTPUT_VARIABLE PYTHON_MAJOR)
-execute_process(COMMAND bash "-c"
-  "${Python_EXECUTABLE} -m pip help install | grep '[-]-system'"
-  RESULT_VARIABLE PYTHON_PIP_WITHSYSTEM)
-if(PYTHON_PIP_WITHSYSTEM EQUAL 0)
-  set(PIP_SYSTEM "--system")
-endif()
 
+# list all python modules and files that create the package
 set(DEPS
   ${CMAKE_CURRENT_SOURCE_DIR}/src/__init__.py
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ddff_convert.py
@@ -52,6 +47,9 @@ endif()
 
 set(PYMOD_INSTALL_TYPE bdist_wheel)
 
+# create folder for install if needed
+install(DIRECTORY DESTINATION ${PYSITEDIR})
+
 # install the python package, note that "DESTDIR" needs to be kept intact
 # for modification at install stage. The flags are:
 # --isolated prevents downloads
@@ -63,7 +61,7 @@ set(PYMOD_INSTALL_TYPE bdist_wheel)
 # --root=\$ENV{DESTDIR} --prefix=${CMAKE_INSTALL_PREFIX}
 # This does not work on debian-based (install will be in /usr/local)
 # but would add any executable scripts
-install(CODE "execute_process(COMMAND bash -c \"${Python_EXECUTABLE} -m pip install --isolated --no-index --no-deps --target=\$ENV{DESTDIR}${PYSITEDIR} --find-links=${CMAKE_CURRENT_BINARY_DIR}/dist --upgrade pyddff \")")
+install(CODE "execute_process(COMMAND bash -c \"${Python_EXECUTABLE} -m pip install --isolated --no-index --no-deps --target=\$ENV{DESTDIR}${PYSITEDIR} --find-links=${CMAKE_CURRENT_BINARY_DIR}/dist --upgrade pyddff\")")
 
 # because we use --target, and not --root and --prefix, the script configured
 # in pyproject.toml is not automatically installed. need manual version.
@@ -119,6 +117,3 @@ else()
 endif()
 
 # ddff-convert should have been installed by python install?
-
-# create folder for install
-install(DIRECTORY DESTINATION ${PYSITEDIR})

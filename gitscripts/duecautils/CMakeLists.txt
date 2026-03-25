@@ -75,6 +75,9 @@ endif()
 
 set(PYMOD_INSTALL_TYPE bdist_wheel)
 
+# create folder for install
+install(DIRECTORY DESTINATION ${PYSITEDIR})
+
 # install the python package note that "DESTDIR" and
 # "CMAKE_INSTALL_PREFIX" need to be kept intact, to allow substitution
 # at the install stage
@@ -129,6 +132,3 @@ else()
   )
 
 endif()
-
-# create folder for install
-install(DIRECTORY DESTINATION ${PYSITEDIR})
