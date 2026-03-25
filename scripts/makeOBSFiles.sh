@@ -69,6 +69,7 @@ function trimversion()
                 s/debian\.tar/debian-xUbuntu_20.04.tar/' $1 > $2
     elif [ "$3" = '22.04' ]; then
         sed -e 's/libgtkmm-4.0-dev,//
+                s/python3-build,//
                 s/debian\.tar/debian-xUbuntu_22.04.tar/' $1 > $2
     elif [ "$3" = '11' ]; then
         sed -e 's/libgtk-4-dev,//
@@ -83,10 +84,12 @@ function trimversion()
                 s/debian\.tar/debian-Debian_13.tar/' $1 > $2
     elif [ "$3" = 'R10' ]; then
         sed -e 's/libgtk-4-dev,//
+                s/python3-build,//
                 s/libgtkmm-4.0-dev,//
                 s/debian\.tar/debian-Raspbian_10.tar/' $1 > $2
     elif [ "$3" = 'R11' ]; then
         sed -e 's/libgtk-4-dev,//
+                s/python3-build,//
                 s/libgtkmm-4.0-dev,//
                 s/debian\.tar/debian-Raspbian_11.tar/' $1 > $2
     fi

@@ -2,9 +2,13 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
-## [4.2.7] - 2026-04-??
+## [4.2.7] - 2026-03-25
 
 ### Changed
+
+- Fix test case for replay with gtk4
+- Correct offset calculation for runtest generation
+- Build python packages on ubuntu 22.04 with old setup.py
 
 ### Added
 
