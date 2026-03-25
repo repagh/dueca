@@ -14,15 +14,6 @@ execute_process(COMMAND ${Python_EXECUTABLE} -c
 execute_process(COMMAND ${Python_EXECUTABLE} -c
   "import sys; print(sys.version_info[0],end='')"
   OUTPUT_VARIABLE PYTHON_MAJOR)
-execute_process(COMMAND bash "-c"
-  "${Python_EXECUTABLE} -m pip help install | grep '[-]-system'"
-  RESULT_VARIABLE PYTHON_PIP_WITHSYSTEM)
-if(PYTHON_PIP_WITHSYSTEM EQUAL 0)
-  message(STATUS "pip accepts --system")
-  set(PIP_SYSTEM "--system")
-else()
-  message(STATUS "pip does not accept --system")
-endif()
 
 # list all python modules and files that create the package
 set(DEPS
@@ -59,7 +50,6 @@ set(DEPS
   ${CMAKE_CURRENT_SOURCE_DIR}/duecautils/codegen/MemberSummary.py
   ${CMAKE_CURRENT_SOURCE_DIR}/duecautils/codegen/__init__.py
   ${CMAKE_CURRENT_SOURCE_DIR}/README.md
-  ${CMAKE_CURRENT_SOURCE_DIR}/setup.cfg
   ${CMAKE_CURRENT_SOURCE_DIR}/pyproject.toml
 )
 
@@ -95,6 +85,7 @@ install(CODE "execute_process(COMMAND bash -c \"${Python_EXECUTABLE} -m pip inst
 if(PYTHON_HAVE_PYPABUILD EQUAL 0)
   # simple build with PyPA build, following PEP-517, PEP-518, using
   # setup.cfg, pyproject.toml
+  message(NOTICE "Creating distutils package from pyproject.toml")
 
   # apparently works on Fedora, but totally fails on Ubuntu/debian,
   # because the vendor adaptations to pip insist on appending "local"
@@ -114,8 +105,8 @@ if(PYTHON_HAVE_PYPABUILD EQUAL 0)
   )
 
 else()
+  message(NOTICE "Creating distutils package with setup.py")
   configure_file(setup.py.in setup.py @ONLY)
-
   add_custom_command(
     OUTPUT
     dist/duecautils-${DUVERSION}.tar.gz
@@ -135,8 +126,6 @@ else()
     COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/timestamp
 
     DEPENDS ${DEPS} ${CMAKE_CURRENT_BINARY_DIR}/setup.py
-
-    # Hack install the python package, does not do
   )
 
 endif()
