@@ -13,9 +13,8 @@
             <child>
               <object class="GtkButton" id="initials_close">
                 <property name="can-focus">false</property>
-                <property name="icon-name">window-close</property>
                 <property name="label" translatable="yes">close</property>
-                <property name="use-underline">true</property>
+                <property name="icon-name">window-close</property>
               </object>
             </child>
             <child>
@@ -26,18 +25,16 @@
             </child>
             <child>
               <object class="GtkButton" id="initials_send">
-                <property name="can-focus">false</property>
-                <property name="icon-name">go-up</property>
                 <property name="label" translatable="yes">send</property>
+                <property name="icon-name">go-up</property>
                 <property name="sensitive">false</property>
                 <property name="tooltip-text" translatable="yes">Send the currently selected initial state</property>
-                <property name="use-underline">true</property>
               </object>
             </child>
             <child>
               <object class="GtkButton" id="initials_edit">
-                <property name="icon-name"></property>
                 <property name="label" translatable="yes">edit</property>
+                <property name="icon-name">accessories-text-editor</property>
                 <property name="sensitive">false</property>
                 <property name="tooltip-text" translatable="yes">Edit the currently selected initial state</property>
               </object>
@@ -132,19 +129,23 @@
             <property name="css-classes">toolbar</property>
             <child>
               <object class="GtkButton" id="editwin_close">
-                <property name="label">close</property>
+                <property name="label" translatable="yes">close</property>
+                <property name="icon-name">window-close</property>
+                <property name="tooltip-text" translatable="yes">Close the initial state edit window.</property>
               </object>
             </child>
             <child>
               <object class="GtkButton" id="editwin_revert">
+                <property name="label" translatable="yes">revert</property>
                 <property name="icon-name">edit-undo</property>
-                <property name="label">revert</property>
+                <property name="tooltip-text" translatable="yes">Revert edits.</property>
               </object>
             </child>
             <child>
               <object class="GtkButton" id="editwin_update">
-                <property name="icon-name">edit-paste</property>
-                <property name="label">update</property>
+                <property name="label" translatable="yes">update</property>
+                <property name="icon-name">document-save</property>
+                <property name="tooltip-text" translatable="yes">Save edits to currently selected initial state set.</property>
               </object>
             </child>
             <child>

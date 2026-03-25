@@ -192,6 +192,7 @@ if(NOT XMLSTARLET MATCHES ".*-NOTFOUND")
       --delete 'x:scenario/x:actions/x:click'
       --delete 'x:scenario/x:actions/x:check'
       --delete 'x:scenario/x:actions/x:key'
+      --delete 'x:scenario/x:offset'
       ${SCN}.xml > ${CMAKE_BINARY_DIR}/${SCN}-clean.xml
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
       DEPENDS ${SCN}.xml)
