@@ -79,7 +79,6 @@ def findWindow(name: str):
 
 
 def findWindowUnder(wlist, x: int, y: int, recording=False, margin=0):
-    global translation
     foundwin = None
     print(f"...Looking for the window under {x}, {y}")
 
@@ -114,6 +113,10 @@ def findWindowUnder(wlist, x: int, y: int, recording=False, margin=0):
         if translation.inWindow(x, y, w, margin):
             print(f"found window {w.wm_name} at {w.x},{w.y} size {w.w}x{w.h}")
             foundwin = w
+    if foundwin is None:
+        print(f'no window found at {x},{y}')
+        for w in Window.list():
+            print(f"Tested {w.x},{w.y} size {w.w}x{w.h}, '{w.wm_name}'")
     return foundwin
 
 
@@ -185,6 +188,9 @@ class Offset:
         self.xmlnode.set("x", str(x))
         self.xmlnode.set("y", str(y))
         translation.adjust(x, y)
+
+    def __repr__(self):
+        return f"Offset({self.xmlnode.get('x'), self.xmlnode.get('y')})"
 
 class Click:
     buttonmap = {
@@ -600,10 +606,10 @@ class Scenario:
             return True
 
         elif key in (Key.f3,):
-            window = findWindowUnder(self.project.windows, self.x, self.y, True, margin=40)
+            window = findWindowUnder(self.project.windows, self.x, self.y, True, margin=80)
             print(f"press {self.x},{self.y}, window {window.x},{window.y}")
-            if self.offset is None:
-                self.offset = Offset(xmlroot=self.xmltree, x=self.x-window.x, y=self.y-window.y)
+            self.offset = Offset(xmlroot=self.xmltree, x=window.x-self.x, y=window.y-self.y)
+            print(f"new offset {self.offset}")
             return True
 
         elif key in (Key.esc,):
