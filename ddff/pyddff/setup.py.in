@@ -6,7 +6,7 @@ setup(
     description='Modules for reading/writing the ddff file format',
     author="Rene van Paassen",
     author_email="rene.vanpaassen@gmail.com",
-    package_dir = { 'pyddff' : './src' },
+    package_dir = { 'pyddff' : './pyddff' },
     url = 'https://github.com/dueca/dueca',
     packages=[ "pyddff" ]
 )

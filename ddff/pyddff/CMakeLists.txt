@@ -103,8 +103,8 @@ else()
     ${CMAKE_CURRENT_BINARY_DIR}/README.md
 
     COMMAND ${CMAKE_COMMAND} -E create_symlink
-    ${CMAKE_CURRENT_SOURCE_DIR}/src
-    ${CMAKE_CURRENT_BINARY_DIR}/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/pyddff
+    ${CMAKE_CURRENT_BINARY_DIR}/pyddff
 
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/dist
     COMMAND ${Python_EXECUTABLE} setup.py bdist_wheel
