@@ -17,11 +17,11 @@ execute_process(COMMAND ${Python_EXECUTABLE} -c
 
 # list all python modules and files that create the package
 set(DEPS
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/__init__.py
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/ddff_convert.py
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/ddffbase.py
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/ddffinventoried.py
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/ddfftagged.py
+  ${CMAKE_CURRENT_SOURCE_DIR}/pyddff/__init__.py
+  ${CMAKE_CURRENT_SOURCE_DIR}/pyddff/ddff_convert.py
+  ${CMAKE_CURRENT_SOURCE_DIR}/pyddff/ddffbase.py
+  ${CMAKE_CURRENT_SOURCE_DIR}/pyddff/ddffinventoried.py
+  ${CMAKE_CURRENT_SOURCE_DIR}/pyddff/ddfftagged.py
   ${CMAKE_CURRENT_SOURCE_DIR}/README.md
   ${CMAKE_CURRENT_SOURCE_DIR}/pyproject.toml
 )
