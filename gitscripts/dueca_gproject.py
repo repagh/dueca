@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 # PYTHON_ARGCOMPLETE_OK
 # -*-python-*-
-"""     item            : dueca-gproject
-        made by         : RvP
-        date            : 2021
-        category        : python program
-        description     : DUECA project management with git
-        language        : python
-        changes         :
-        copyright       : 2021 TUDelft-AE-C&S
-        copyright       : 2022 Rene van Paassen
-        license         : EUPL-1.2
+"""item            : dueca-gproject
+made by         : RvP
+date            : 2021
+category        : python program
+description     : DUECA project management with git
+language        : python
+changes         :
+copyright       : 2021 TUDelft-AE-C&S
+copyright       : 2022 Rene van Paassen
+license         : EUPL-1.2
 """
 
 
@@ -30,8 +30,7 @@ import socket
 from datetime import date
 from lxml import etree
 import duecautils
-from duecautils.modules import Modules, projectSplit, \
-    checkGitUrl, RootMap, MainOrMaster
+from duecautils.modules import Modules, projectSplit, checkGitUrl, RootMap, MainOrMaster
 from duecautils.machinemapping import NodeMachineMapping
 from duecautils.githandler import GitHandler
 from duecautils.verboseprint import dprint
@@ -48,8 +47,7 @@ remote repository for the current project, and can accept different
 repositories for borrowed modules.
 """
 
-helptext = \
-"""
+helptext = """
 Project script for adapting a DUECA project.
 
 This new project structure uses cmake for configuration and git for
@@ -127,48 +125,77 @@ Environment variables:
        git@myserver:mygroup/CommonProject.git
 """
 
-parser = argparse.ArgumentParser(description="control your dueca project")
-parser.add_argument(
-    '--verbose', action='store_true',
-    help="Verbose run with information output")
-subparsers = parser.add_subparsers(help='commands', title='commands')
+mainparser = argparse.ArgumentParser(description="control your dueca project")
+mainparser.add_argument(
+    "--verbose", action="store_true", help="Verbose run with information output"
+)
+subparsers = mainparser.add_subparsers(help="commands", title="commands")
+
 
 def get_dueca_version():
+    """Detect current dueca version
+
+    Returns
+    -------
+    str
+        DUECA version string
+    """
     dc = subprocess.run(("dueca-config", "--version"), stdout=subprocess.PIPE)
     return dc.stdout.strip().decode("UTF-8")
 
+
 _dueca_cnf_defaults = {
-    'this-node-id': 0,
-    'no-of-nodes': 1,
-    'send-order': 0,
-    'highest-manager': 4,
-    'run-in-multiple-threads?': True,
-    'rt-sync-mode': 2,
-    'graphic-interface': 'gtk3',
-    'tick-base-increment': 100,
-    'tick-compatible-increment': 100,
-    'tick-time-step': 0.01,
-    'communication-interval': 50,
-    'if-address': "127.0.0.1",
-    'mc-address': "224.0.0.1",
-    'mc-port': 7500,
-    'master-host': 'correct this value',
-    'packet-size': 4096,
-    'bulk-max-size': 128*1024,
-    'comm-prio-level': 3,
-    'unpack-prio-level': 2,
-    'bulk-unpack-prio-level': 1,
-    'dueca-version': get_dueca_version(),
-    'date': date.today().strftime("%d-%b-%Y"),
-    }
+    "this-node-id": 0,
+    "no-of-nodes": 1,
+    "send-order": 0,
+    "highest-manager": 4,
+    "run-in-multiple-threads?": True,
+    "rt-sync-mode": 2,
+    "graphic-interface": "gtk3",
+    "tick-base-increment": 100,
+    "tick-compatible-increment": 100,
+    "tick-time-step": 0.01,
+    "communication-interval": 50,
+    "if-address": "127.0.0.1",
+    "mc-address": "224.0.0.1",
+    "mc-port": 7500,
+    "master-host": "correct this value",
+    "packet-size": 4096,
+    "bulk-max-size": 128 * 1024,
+    "comm-prio-level": 3,
+    "unpack-prio-level": 2,
+    "bulk-unpack-prio-level": 1,
+    "dueca-version": get_dueca_version(),
+    "date": date.today().strftime("%d-%b-%Y"),
+}
+
 
 def _gui_choices():
-    return ('none', 'gtk4', 'gtk3', 'gtk2', 'glut', 'glut-gui')
+    return ("none", "gtk4", "gtk3", "gtk2", "glut", "glut-gui")
 
 
-def read_transform_and_write(f0, f1, subst, insert=None):
+def read_transform_and_write(f0: str, f1: str, subst: dict, insert: dict | None = None):
+    """Read a template file, and write to output file with substitutions
 
-    with open(f0, 'r') as fr:
+    Parameters
+    ----------
+    f0 : str
+        Template file to read
+    f1 : str
+        Output file to write
+    subst : dict
+        Key/value strings, which will be used to replace @key@ text
+    insert : dict | None, optional
+        Key/line strings, which will be used to insert lines when key
+        is found in a line of the template file
+
+    Returns
+    -------
+    str
+        Name of the resulting file
+    """
+
+    with open(f0, "r", encoding="UTF-8") as fr:
         if insert:
             lines = []
             for l in fr.readlines():
@@ -176,20 +203,56 @@ def read_transform_and_write(f0, f1, subst, insert=None):
                 for k, txt in insert.items():
                     if k in l:
                         lines.append(txt)
-                        lines.append('\n')
-            fdata = ''.join(lines)
+                        lines.append("\n")
+            fdata = "".join(lines)
         else:
-            fdata = ''.join(fr.readlines())
+            fdata = "".join(fr.readlines())
 
     for k, v in subst.items():
-        if f'@{k}@' in fdata:
-            fdata = str(v).join(fdata.split(f'@{k}@'))
-    with open(f1, 'w') as fw:
+        if f"@{k}@" in fdata:
+            fdata = str(v).join(fdata.split(f"@{k}@"))
+    with open(f1, "w", encoding="UTF-8") as fw:
         fw.write(fdata)
     return f1
 
 
-def create_and_copy(dirs, files, subst, keepcurrent=False, inform=False, insert=None):
+def create_and_copy(
+    dirs: list[str],
+    files: list[str],
+    subst: dict,
+    keepcurrent: bool = False,
+    inform: bool = False,
+    insert: dict | None = None,
+):
+    """Create folders and copy files
+
+    Parameters
+    ----------
+    dirs : list[str]
+        List of folders to create
+    files : list[str]
+        List of files to create from templates
+    subst : dict
+        Substitution to modify files
+    keepcurrent : bool, optional
+        If true, does not overwrite, by default False
+    inform : bool, optional
+        Flag for feedback, by default False
+    insert : dict | None, optional
+        Additional lines to insert in files, by default None
+
+    Returns
+    -------
+    list[str]
+        List of created files
+
+    Raises
+    ------
+    Exception
+        If folder cannot be created
+    ve
+        If folder names are incorrect
+    """
     for _d in dirs:
         try:
             d = _d.format(**subst)
@@ -205,10 +268,15 @@ def create_and_copy(dirs, files, subst, keepcurrent=False, inform=False, insert=
             print(f"Problem formatting '{_d}'", file=sys.stderr)
             raise ve
 
-    dc = subprocess.run(("dueca-config", "--path-datafiles"),
-                        stdout=subprocess.PIPE)
-    duecabase = dc.stdout.strip().decode('UTF-8') + \
-        os.sep + "data" + os.sep + "default" + os.sep
+    dc = subprocess.run(("dueca-config", "--path-datafiles"), stdout=subprocess.PIPE)
+    duecabase = (
+        dc.stdout.strip().decode("UTF-8")
+        + os.sep
+        + "data"
+        + os.sep
+        + "default"
+        + os.sep
+    )
 
     fnew = []
     for f in files:
@@ -220,208 +288,297 @@ def create_and_copy(dirs, files, subst, keepcurrent=False, inform=False, insert=
         if inform:
             print(f"Created '{f1}'")
         dprint("writing", f1)
-        fnew.append(
-            read_transform_and_write(
-                duecabase + f[0], f1, subst, insert))
+        fnew.append(read_transform_and_write(duecabase + f[0], f1, subst, insert))
     return fnew
 
+
 def get_dueca_prefix():
+    """Obtain the DUECA install prefix
+
+    Returns
+    -------
+    str
+        Install prefix for DUECA
+    """
     dc = subprocess.run(("dueca-config", "--prefix"), stdout=subprocess.PIPE)
     return dc.stdout.strip().decode("UTF-8")
 
 
 def git_lsremote(url):
+    """List all git remote refs
+
+    Parameters
+    ----------
+    url : str
+        GIT URL
+
+    Returns
+    -------
+    dict
+        remote GIT refs
+    """
     remote_refs = {}
     g = git.cmd.Git()
-    for ref in g.ls_remote(url).split('\n'):
-        hash_ref_list = ref.split('\t')
+    for ref in g.ls_remote(url).split("\n"):
+        hash_ref_list = ref.split("\t")
         remote_refs[hash_ref_list[1]] = hash_ref_list[0]
     return remote_refs
 
+
 _mcdecode = re.compile(r'set\s*\(\s*GUI\_COMPONENT\s+"([a-zA-Z0-9-]+)"\s*\)')
 
+
 def get_machineclass_gui(mclass):
+    """Determine the gui library used in this project
+
+    Parameters
+    ----------
+    mclass : str
+        Machine class
+
+    Returns
+    -------
+    str|None
+        Name of the GUI library (typically 'gtk3', 'gtk4' or 'none')
+    """
     global _mcdecode
-    with open(f'.config/class/{mclass}/config.cmake') as f:
+    with open(f".config/class/{mclass}/config.cmake") as f:
         for l in f:
             res = _mcdecode.match(l)
             if res:
                 return res.group(1)
-    return 'none'
+    return "none"
+
 
 def git_remote_url(base: str, project: str):
-        return base + f'/{project}.git'
+    """Get remote GIT url
+
+    Parameters
+    ----------
+    base : str
+        Base path for repository group
+    project : str
+        Project name
+
+    Returns
+    -------
+    str
+        Complete git url
+    """
+    return base + f"/{project}.git"
+
 
 def git_ensure_remote_clean(remote: str, project: str):
+    """If using a remote git for new projects, ensure it has not been used
 
+    Parameters
+    ----------
+    remote : str
+        URL for remote git
+    project : str
+        project name
+
+    Raises
+    ------
+    Exception
+        Remote already has a dueca project
+    Exception
+        Remote name is not correct
+    """
     # ensure the remote is clean
     with tempfile.TemporaryDirectory() as tmpdir:
-        git.Repo.clone_from(
-            remote, tmpdir, depth=1, shallow_submodules=True)
+        git.Repo.clone_from(remote, tmpdir, depth=1, shallow_submodules=True)
         files = os.listdir(tmpdir)
-        if 'run' in files or '.config' in files or \
-            'CMakeLists.txt' in files or len(files) > 3:
+        if (
+            "run" in files
+            or ".config" in files
+            or "CMakeLists.txt" in files
+            or len(files) > 3
+        ):
             raise Exception(f"Remote copy at {remote} is not clean")
 
     # ensure the remote and project name match
-    if remote[-4:] != '.git' or (not project) or \
-        remote[-len(project)-4:-4] != project:
-        raise Exception(
+    if (
+        remote[-4:] != ".git"
+        or (not project)
+        or remote[-len(project) - 4 : -4] != project
+    ):
+        raise AttributeError(
             f"Last component of remote name '{remote}'"
-            f" should end with .git and match project name '{project}'")
+            f" should end with .git and match project name '{project}'"
+        )
 
-def trim_lines(text):
-    lines = [l.replace('\t', '        ')
-             for l in text.splitlines()]
+
+def trim_lines(text: str):
+    """Clean up text read from XML
+
+    Parameters
+    ----------
+    text : str
+        Input text
+
+    Returns
+    -------
+    str
+        Text with empty leading and trailing empty lines removed,
+        and trailing whitespace stripped
+    """
+    lines = [l.replace("\t", "        ") for l in text.splitlines()]
     if lines and not lines[0].strip():
         del lines[0]
     if lines and not lines[-1].strip():
         del lines[-1]
 
     nspace = len(lines[0]) - len(lines[0].lstrip())
-    return '\n'.join(
-        [ (len(l) - len(l.lstrip()) >= nspace
-           and l[nspace:].rstrip()) or l.strip() for l in lines])
+    return "\n".join(
+        [
+            (len(l) - len(l.lstrip()) >= nspace and l[nspace:].rstrip()) or l.strip()
+            for l in lines
+        ]
+    )
+
 
 def project_name_from_url(remote: str):
-    return remote[:-4].split('/')[-1]
+    """Decode project name from url
 
+    Parameters
+    ----------
+    remote : str
+        Project url
 
-def guess_ifaddress(nodename=None):
-    ipaddress = '127.0.0.1'
-    try:
-        hname = nodename or socket.gethostname()
-        try:
-            ipaddress = socket.gethostbyname(hname)
-        except:
-            print('Cannot determine IP address', file=sys.stderr)
-    except:
-        print('Cannot determine host name', file=sys.stderr)
-    print("Assuming machine IP address", ipaddress)
-    return ipaddress
+    Returns
+    -------
+    str
+        Just the project name
+    """
+    return remote[:-4].split("/")[-1]
 
-'''
-def XML_tag(elt, tag):
-    return isinstance(elt.tag, str) and elt.tag.split('}')[-1] == tag
-
-def XML_comment(elt):
-    return isinstance(elt, etree._Comment)
-'''
-
-
-# checked
 class NewProject:
-    """ Create a new project. """
+    """Create a new project."""
 
     @classmethod
-    def args(cls, subparsers):
-        parser = subparsers.add_parser(
-            'new',
-            help='Create a new project')
+    def args(cls, xtrsub):
+        """Add subcommand to a command line parser
+
+        Parameters
+        ----------
+        xtrsub :
+            Current list of subparsers
+        """
+        parser = xtrsub.add_parser("new", help="Create a new project")
         parser.add_argument(
-            '--name', type=str, required=True,
-            help="A name for the new project")
+            "--name", type=str, required=True, help="A name for the new project"
+        )
         parser.add_argument(
-            '--script', type=str, default='python',
-            choices=('scheme', 'python'),
-            help="Specify scripting language, 'scheme' or 'python'")
+            "--script",
+            type=str,
+            default="python",
+            choices=("scheme", "python"),
+            help="Specify scripting language, 'scheme' or 'python'",
+        )
         parser.add_argument(
-            '--gui', type=str, default='gtk3',
+            "--gui",
+            type=str,
+            default="gtk3",
             choices=_gui_choices(),
-            help="GUI system for the default solo class")
+            help="GUI system for the default solo class",
+        )
         parser.add_argument(
-            '--remote', type=str,
+            "--remote",
+            type=str,
             help="URL of a remote repository, if not supplied, your new"
-                " project will only be local.")
+            " project will only be local.",
+        )
         parser.set_defaults(handler=NewProject)
 
-    dirs = ("{project}",
-            "{project}/{project}",
-            "{project}/{project}/build",
-            "{project}/{project}/comm-objects",
-            "{project}/{project}/.config",
-            "{project}/{project}/.config/class",
-            "{project}/{project}/.config/class/solo",
-            "{project}/{project}/run",
-            "{project}/{project}/run/run-data",
-            "{project}/{project}/run/solo",
-            "{project}/{project}/run/solo/solo")
+    dirs = (
+        "{project}",
+        "{project}/{project}",
+        "{project}/{project}/build",
+        "{project}/{project}/comm-objects",
+        "{project}/{project}/.config",
+        "{project}/{project}/.config/class",
+        "{project}/{project}/.config/class/solo",
+        "{project}/{project}/run",
+        "{project}/{project}/run/run-data",
+        "{project}/{project}/run/solo",
+        "{project}/{project}/run/solo/solo",
+    )
 
-    files = (("CMakeLists.txt.app",
-              "{project}/{project}/CMakeLists.txt"),
-             ("CMakeLists.txt.com",
-              "{project}/{project}/comm-objects/CMakeLists.txt"),
-             ("machine",
-              "{project}/{project}/.config/machine"),
-             ("machinemapping.xml",
-              "{project}/{project}/.config/machinemapping.xml"),
-             ("modules.xml",
-              "{project}/{project}/.config/class/solo/modules.xml"),
-             ("config.cmake",
-              "{project}/{project}/.config/class/solo/config.cmake"),
-             ('links.script',
-              "{project}/{project}/run/solo/solo/links.script"),
-             ('clean.script',
-              "{project}/{project}/run/solo/solo/clean.script"),
-             ('comm-objects.lst',
-              "{project}/{project}/comm-objects/comm-objects.lst"),
-             ('policylist.xml',
-              "{project}/{project}/.config/policylist.xml"),
-             ('build.gitignore',
-              "{project}/{project}/build/.gitignore"),
-             ('project.gitignore',
-              "{project}/{project}/.gitignore"),
-             ('run-data-README.md',
-              "{project}/{project}/run/run-data/README.md"),
-             ('project-README.md',
-              "{project}/{project}/README.md")
-             )
+    files = (
+        ("CMakeLists.txt.app", "{project}/{project}/CMakeLists.txt"),
+        ("CMakeLists.txt.com", "{project}/{project}/comm-objects/CMakeLists.txt"),
+        ("machine", "{project}/{project}/.config/machine"),
+        ("machinemapping.xml", "{project}/{project}/.config/machinemapping.xml"),
+        ("modules.xml", "{project}/{project}/.config/class/solo/modules.xml"),
+        ("config.cmake", "{project}/{project}/.config/class/solo/config.cmake"),
+        ("links.script", "{project}/{project}/run/solo/solo/links.script"),
+        ("clean.script", "{project}/{project}/run/solo/solo/clean.script"),
+        ("comm-objects.lst", "{project}/{project}/comm-objects/comm-objects.lst"),
+        ("policylist.xml", "{project}/{project}/.config/policylist.xml"),
+        ("build.gitignore", "{project}/{project}/build/.gitignore"),
+        ("project.gitignore", "{project}/{project}/.gitignore"),
+        ("run-data-README.md", "{project}/{project}/run/run-data/README.md"),
+        ("project-README.md", "{project}/{project}/README.md"),
+    )
 
-    sfile = (('dueca.cnf.in',
-              "{project}/{project}/run/solo/solo/dueca.cnf"),
-             ('dueca.mod.in',
-              "{project}/{project}/run/solo/solo/dueca.mod"),
-             )
-    pfile = (('dueca_cnf.py.in',
-              "{project}/{project}/run/solo/solo/dueca_cnf.py"),
-             ('dueca_mod.py.in',
-              "{project}/{project}/run/solo/solo/dueca_mod.py"),
-             )
+    sfile = (
+        ("dueca.cnf.in", "{project}/{project}/run/solo/solo/dueca.cnf"),
+        ("dueca.mod.in", "{project}/{project}/run/solo/solo/dueca.mod"),
+    )
+    pfile = (
+        ("dueca_cnf.py.in", "{project}/{project}/run/solo/solo/dueca_cnf.py"),
+        ("dueca_mod.py.in", "{project}/{project}/run/solo/solo/dueca_mod.py"),
+    )
 
     def __call__(self, ns):
+        """Performs the actual work
 
+        Parameters
+        ----------
+        ns : dict
+            Parsed command line options
+
+        Raises
+        ------
+        FileExistsError
+            Files/folders already created.
+        """
         # check that the local disk is free
         if os.path.exists(ns.name):
             raise FileExistsError(
-                f"Folder {ns.name} already exists, cannot create project")
+                f"Folder {ns.name} already exists, cannot create project"
+            )
 
         # check that the remote project is clean/has not code
         if ns.remote:
             RootMap().addProjectRemote(ns.remote)
-            git_ensure_remote_clean(
-                RootMap().urlToAbsolute(ns.remote), ns.name)
+            git_ensure_remote_clean(RootMap().urlToAbsolute(ns.remote), ns.name)
             remoteurl = RootMap().urlToRelative(ns.remote, ns.name)
         else:
-            remoteurl = ''
+            remoteurl = ""
 
-        create_and_copy(NewProject.dirs, NewProject.files,
-                        {'project': ns.name,
-                         'url': remoteurl,
-                         'gui': ns.gui,
-                         'scriptlang': ns.script,
-                         'class': 'solo'})
+        create_and_copy(
+            NewProject.dirs,
+            NewProject.files,
+            {
+                "project": ns.name,
+                "url": remoteurl,
+                "gui": ns.gui,
+                "scriptlang": ns.script,
+                "class": "solo",
+            },
+        )
 
         # initialize git repository
-        repo = git.Repo.init(
-            '{project}/{project}'.format(project=ns.name))
+        repo = git.Repo.init("{project}/{project}".format(project=ns.name))
         repo.active_branch.rename("main")
 
         # add the default config files
         cnfdef = ChainMap(
-            { 'graphic-interface': ns.gui,
-              'project': ns.name},
-            _dueca_cnf_defaults)
-        if ns.script == 'python':
+            {"graphic-interface": ns.gui, "project": ns.name}, _dueca_cnf_defaults
+        )
+        if ns.script == "python":
             create_and_copy([], NewProject.pfile, cnfdef)
         else:
             create_and_copy([], NewProject.sfile, cnfdef)
@@ -434,38 +591,61 @@ class NewProject:
 
         # add the remote and push results
         if ns.remote:
-            repo.create_remote('origin', RootMap().urlToAbsolute(ns.remote))
-            repo.git.push('--set-upstream', 'origin', 'main')
+            repo.create_remote("origin", RootMap().urlToAbsolute(ns.remote))
+            repo.git.push("--set-upstream", "origin", "main")
 
         print(f"Created new DUECA project {ns.name}")
 
+
 NewProject.args(subparsers)
+
 
 class CloneProject:
     """Clone an existing project from a remote repo"""
 
-    command = 'clone'
+    command = "clone"
 
     @classmethod
-    def args(cls, subparsers):
-        parser = subparsers.add_parser(
-            CloneProject.command,
-            help='Clone/check out an existing project')
+    def args(cls, xtrsub):
+        """Add subcommand to a command line parser
+
+        Parameters
+        ----------
+        xtrsub :
+            Current list of subparsers
+        """
+        parser = xtrsub.add_parser(
+            CloneProject.command, help="Clone/check out an existing project"
+        )
         parser.add_argument(
-            '--remote', type=str, required=True,
-            help="The URL of the project repository")
+            "--remote",
+            type=str,
+            required=True,
+            help="The URL of the project repository",
+        )
         parser.add_argument(
-            '--node', type=str, default='solo',
-            help="Node for which the project is cloned")
+            "--node",
+            type=str,
+            default="solo",
+            help="Node for which the project is cloned",
+        )
         parser.add_argument(
-            '--version', type=str, default='master',
-            help="git version, branch, etc., default master")
+            "--version",
+            type=str,
+            default="master",
+            help="git version, branch, etc., default master",
+        )
         parser.add_argument(
-            '--no-refresh', action='store_true', default=False,
-            help="Do not refresh or check out borrowed modules/dco")
+            "--no-refresh",
+            action="store_true",
+            default=False,
+            help="Do not refresh or check out borrowed modules/dco",
+        )
         parser.add_argument(
-            '--full', action='store_true',
-            help="Always do a full checkout, also when node is not \"solo\"")
+            "--full",
+            action="store_true",
+            help='Always do a full checkout, also when node is not "solo"',
+        )
         parser.set_defaults(handler=CloneProject)
 
     def __call__(self, ns):
@@ -475,39 +655,44 @@ class CloneProject:
         # check that the local disk is free
         if os.path.exists(name):
             raise FileExistsError(
-                f"Folder {name} already exists, cannot clone project there.")
+                f"Folder {name} already exists, cannot clone project there."
+            )
 
         os.mkdir(name)
 
-        repo = git.Repo.init(f'{name}/{name}')
-        orig = repo.create_remote('origin', RootMap().urlToAbsolute(ns.remote))
-        os.chdir(f'{name}/{name}')     # now in new project dir
+        repo = git.Repo.init(f"{name}/{name}")
+        orig = repo.create_remote("origin", RootMap().urlToAbsolute(ns.remote))
+        os.chdir(f"{name}/{name}")  # now in new project dir
 
         # force full checkout for solo/development
-        if ns.node == 'solo':
+        if ns.node == "solo":
             ns.full = True
 
         # sparse checkout, only the essential as specified in modules.xml
         if not ns.full:
-            repo.git.config('core.sparseCheckout', 'true')
+            repo.git.config("core.sparseCheckout", "true")
 
             # init the sparse checkout file with default files and folders
-            with open('.git/info/sparse-checkout', 'w') as ms:
-                ms.write('run/*\n.config/*\ncomm-objects/*\n'
-                         'CMakeLists.txt\nREADME.md\n.gitignore\nbuild/*\n')
+            with open(".git/info/sparse-checkout", "w") as ms:
+                ms.write(
+                    "run/*\n.config/*\ncomm-objects/*\n"
+                    "CMakeLists.txt\nREADME.md\n.gitignore\nbuild/*\n"
+                )
 
         # pull the existing code, and create master/selected branches
         try:
             orig.fetch()
         except git.GitCommandError as e:
-            print(f"Cannot fetch from {RootMap().urlToAbsolute(ns.remote)}: {e}\n"
-                  "Clone failed, check url and access rights")
+            print(
+                f"Cannot fetch from {RootMap().urlToAbsolute(ns.remote)}: {e}\n"
+                "Clone failed, check url and access rights"
+            )
             sys.exit(-1)
         dprint("check out on branch", ns.version)
         remotemain = MainOrMaster(orig)
-        if ns.version == 'master':
+        if ns.version == "master":
             ns.version = str(remotemain)
-        if ns.version not in ('master', 'main'):
+        if ns.version not in ("master", "main"):
             branch = repo.create_head(ns.version, orig.refs[ns.version])
             branch.set_tracking_branch(orig.refs[ns.version])
 
@@ -522,8 +707,8 @@ class CloneProject:
         mclass = nmm.getClass(ns.node)
 
         # write the machine file with the machine class
-        with open('.config/machine', 'w') as f:
-            f.write(mclass+'\n')
+        with open(".config/machine", "w") as f:
+            f.write(mclass + "\n")
 
         # get the current modules list
         mod = Modules()
@@ -533,10 +718,10 @@ class CloneProject:
         if not ns.full:
             dprint("Sparse checkout, own modules", mod.getOwnModules())
             # add the module folders to the sparse checkout
-            with open('.git/info/sparse-checkout', 'a') as ms:
+            with open(".git/info/sparse-checkout", "a") as ms:
                 for m in mod.getOwnModules():
                     dprint(f"adding module {m} to sparse")
-                    ms.write(f'{m}/*\n')
+                    ms.write(f"{m}/*\n")
 
             # update the fetch
             repo.git.pull()
@@ -545,493 +730,669 @@ class CloneProject:
         if not ns.no_refresh:
             mod.refreshBorrowed()
 
-        os.chdir('../..')
+        os.chdir("../..")
 
         print(f"Cloned project to {here} for machine class {machine}")
-        if ns.version in ('master', 'main'):
-            print("\nYou checked out a master or main branch. When starting\n"
-                  "developing, use git to switch to a development branch")
+        if ns.version in ("master", "main"):
+            print(
+                "\nYou checked out a master or main branch. When starting\n"
+                "developing, use git to switch to a development branch"
+            )
+
 
 CloneProject.args(subparsers)
 
 
-class OnExistingProject():
-    def __init__(self, command, *args, **kwargs):
+class OnExistingProject:
+    """Base class for actions that are performed on an existing project"""
+
+    def __init__(self, _command: str, *args, **kwargs):
+        """Base class for actions
+
+        Parameters
+        ----------
+        _command : str
+            Current command
+
+        Raises
+        ------
+        FileNotFoundError
+            When the current path, or none of its ancestors, look like
+            a main project folder
+        """
 
         # to remember push and pops
         self.dirpath = []
+        self.scriptlang = None
 
         # figure out the projectdir and project name
         curpath = os.getcwd().split(os.sep)
         self.inprojectdir = True
         while len(curpath):
-            projectdir = '/'.join(curpath)
-            if os.path.exists(f'{projectdir}/.config/machine') and \
-                os.path.exists(f'{projectdir}/CMakeLists.txt') and \
-                os.path.isdir(f'{projectdir}/run') and \
-                os.path.isdir(f'{projectdir}/.git'):
-                    break
+            projectdir = "/".join(curpath)
+            if (
+                os.path.exists(f"{projectdir}/.config/machine")
+                and os.path.exists(f"{projectdir}/CMakeLists.txt")
+                and os.path.isdir(f"{projectdir}/run")
+                and os.path.isdir(f"{projectdir}/.git")
+            ):
+                break
             del curpath[-1]
             self.inprojectdir = False
 
         if len(curpath) < 2 or curpath[-1] != curpath[-2]:
-            print(f"Could not find project folder in {os.getcwd()}",
-                  file=sys.stderr)
+            print(
+                f"Could not find project folder in {os.getcwd()} or parents\n"
+                f"(checked for .config/machine, CMakeLists.txt, .git/ and run/ folders)",
+                file=sys.stderr,
+            )
             raise FileNotFoundError("Cannot find a project directory here")
 
         self.project = curpath[-1]
         self.projectdir = projectdir
 
-    def pushDir(self, pdir=None):
+    def push_dir(self, pdir=None):
+        """Enter given folder
+
+        Parameters
+        ----------
+        pdir : str, optional
+            Change dir, by default None to enter project dir
+        """
         self.dirpath.append(os.getcwd())
         os.chdir(pdir or self.projectdir)
 
-    def popDir(self):
+    def pop_dir(self):
+        """Return to old folder"""
         os.chdir(self.dirpath[-1])
         del self.dirpath[-1]
 
-    def checkScriptlang(self):
+    def check_scriptlang(self):
+        """Verify and return which script language is being used in the project
 
-        try:
-            return self.scriptlang
-        except AttributeError:
-            pass
+        Returns
+        -------
+        str
+            Script language, currently 'scheme' or 'python'
+        """
 
-        self.scriptlang = None
-        self.pushDir()
-        try:
-            cm = subprocess.run(
-                ['cmake', '--build', 'build', '--', 'scriptlang'],
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
-            self.scriptlang = cm.stdout.strip().decode('UTF-8').split()[0]
-        except Exception as e:
-            print(f"Could not determine script language, {e}\n"
-                  "failed command: cmake --build build -- scriptlang",
-                  file=sys.stderr)
-        self.popDir()
+        if self.scriptlang is None:
+            self.push_dir()
+            try:
+                cm = subprocess.run(
+                    ["cmake", "--build", "build", "--", "scriptlang"],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    check=True,
+                )
+                self.scriptlang = cm.stdout.strip().decode("UTF-8").split()[0]
+            except Exception as e:
+                print(
+                    f"Could not determine script language, {e}\n"
+                    "failed command: cmake --build build -- scriptlang",
+                    file=sys.stderr,
+                )
+            self.pop_dir()
         return self.scriptlang
 
 
 # checked
 class NewModule(OnExistingProject):
-
-    command = 'new-module'
+    """Create a new module in this project
+    """
+    command = "new-module"
 
     def __init__(self, *args, **kwargs):
         super().__init__(NewModule.command, *args, **kwargs)
 
     @classmethod
-    def args(cls, subparsers):
-        parser = subparsers.add_parser(
-            NewModule.command,
-            help='Add a new module to the project')
+    def args(cls, xtrsub):
+        """Add subcommand to a command line parser
+
+        Parameters
+        ----------
+        xtrsub :
+            Current list of subparsers
+        """
+        parser = xtrsub.add_parser(
+            NewModule.command, help="Add a new module to the project"
+        )
         parser.add_argument(
-            '--name', type=str, required=True,
-            help="A name for the new module")
+            "--name", type=str, required=True, help="A name for the new module"
+        )
         parser.add_argument(
-            '--pseudo', action='store_true',
-            help="Make this a pseudo module without any source code (data only)")
+            "--pseudo",
+            action="store_true",
+            help="Make this a pseudo module without any source code (data only)",
+        )
         parser.add_argument(
-            '--inactive', action='store_true',
+            "--inactive",
+            action="store_true",
             help="Create the module, but do not include (on this node's)"
-            " compilation/simulation")
+            " compilation/simulation",
+        )
         parser.set_defaults(handler=NewModule)
 
     dirs = ("{module}",)
 
-    files = (("CMakeLists.txt.mod",
-              "{module}/CMakeLists.txt"),
-             ("comm-objects.lst",
-              "{module}/comm-objects.lst"),)
-    filesalt = (("README-pseudomodule.md",
-                 "{module}/README.md"),)
+    files = (
+        ("CMakeLists.txt.mod", "{module}/CMakeLists.txt"),
+        ("comm-objects.lst", "{module}/comm-objects.lst"),
+    )
+    filesalt = (("README-pseudomodule.md", "{module}/README.md"),)
 
     def __call__(self, ns):
 
         # check that the module name is available
         try:
-            self.pushDir()
+            self.push_dir()
             m = Modules()
             if not m.isNewModule(self.project, ns.name):
-                raise Exception(
-                    f"The module {self.project}{ns.name} already exists, "
-                    f"use an editor to adjust .config/{self.mclass}/modules\n"
-                    "and run 'dueca-gproject sync'")
+                raise ValueError(
+                    f"The module {self.project}/{ns.name} already exists, "
+                    "use an editor to adjust .config/<<mclass>>/modules\n"
+                    "and run 'dueca-gproject sync'"
+                )
 
             # create the new files
             create_and_copy(
                 NewModule.dirs,
-                (not ns.pseudo and NewModule.files) or
-                NewModule.filesalt, {'module': ns.name,
-                                     'project': self.project})
+                (not ns.pseudo and NewModule.files) or NewModule.filesalt,
+                {"module": ns.name, "project": self.project},
+            )
 
             # add to the module configuration
             g = GitHandler()
-            m.addModule(self.project, ns.name, None,
-                        None, pseudo=ns.pseudo, inactive=ns.inactive)
+            m.addModule(
+                self.project,
+                ns.name,
+                None,
+                None,
+                pseudo=ns.pseudo,
+                inactive=ns.inactive,
+            )
 
             # add the files to git
             g.addFolder(ns.name)
         finally:
-            self.popDir()
+            self.pop_dir()
 
         print(f"Created new DUECA module {ns.name} in project {self.project}")
 
+
 NewModule.args(subparsers)
+
 
 # checked
 class BorrowModule(OnExistingProject):
-
-    command = 'borrow-module'
+    """Borrow a module from another project
+    """
+    command = "borrow-module"
 
     def __init__(self, *args, **kwargs):
         super().__init__(BorrowModule.command, *args, **kwargs)
 
     @classmethod
-    def args(cls, subparsers):
-        parser = subparsers.add_parser(
-            BorrowModule.command,
-            help='Borrow a module from another project.')
+    def args(cls, xtrsub):
+        """Add subcommand to a command line parser
+
+        Parameters
+        ----------
+        xtrsub :
+            Current list of subparsers
+        """
+        parser = xtrsub.add_parser(
+            BorrowModule.command, help="Borrow a module from another project."
+        )
         parser.add_argument(
-            '--name', type=str, required=True,
-            help="The name of the module")
+            "--name", type=str, required=True, help="The name of the module"
+        )
         parser.add_argument(
-            '--remote', type=str, required=True,
-            help="Remote URL for the project from which the module is borrowed")
+            "--remote",
+            type=str,
+            required=True,
+            help="Remote URL for the project from which the module is borrowed",
+        )
         parser.add_argument(
-            '--pseudo', action='store_true',
-            help="This is a pseudo (no code, data only) module")
+            "--pseudo",
+            action="store_true",
+            help="This is a pseudo (no code, data only) module",
+        )
         parser.add_argument(
-            '--version', type=str,
+            "--version",
+            type=str,
             help="Version, branch, commit revision to borrow. If empty,"
-                 "the main branch is used.")
+            "the main branch is used.",
+        )
         parser.set_defaults(handler=BorrowModule)
 
     def __call__(self, ns):
 
         try:
-            self.pushDir()
+            self.push_dir()
 
             m = Modules()
             project = project_name_from_url(ns.remote)
 
             if not m.isNewModule(project, ns.name):
-                raise Exception(f"Module {project}/{ns.name} already borrowed,"
-                                " try a 'dueca-gproject refresh'")
+                raise Exception(
+                    f"Module {project}/{ns.name} already borrowed,"
+                    " try a 'dueca-gproject refresh'"
+                )
 
             m.addModule(project, ns.name, ns.version, ns.remote, ns.pseudo)
             m.refreshBorrowed()
 
         finally:
-            self.popDir()
+            self.pop_dir()
 
         print(f"Borrowing DUECA module {ns.name} from project {project}")
+
 
 BorrowModule.args(subparsers)
 
 
 class BorrowProject(OnExistingProject):
-
-    command = 'borrow-project'
+    """Specify a project location for borrowing DCO files
+    """
+    command = "borrow-project"
 
     def __init__(self, *args, **kwargs):
         super().__init__(BorrowProject.command, *args, **kwargs)
 
     @classmethod
-    def args(cls, subparsers):
-        parser = subparsers.add_parser(
-            BorrowProject.command,
-            help='Add a reference to another project.')
+    def args(cls, xtrsub):
+        """Add subcommand to a command line parser
+
+        Parameters
+        ----------
+        xtrsub :
+            Current list of subparsers
+        """
+        parser = xtrsub.add_parser(
+            BorrowProject.command, help="Add a reference to another project."
+        )
         parser.add_argument(
-            '--remote', type=str, required=True,
-            help="Remote URL for the project")
+            "--remote", type=str, required=True, help="Remote URL for the project"
+        )
         parser.add_argument(
-            '--version', type=str,
+            "--version",
+            type=str,
             help="Version, branch, commit revision to borrow. If empty,"
-                 "the main branch is used.")
+            "the main branch is used.",
+        )
         parser.set_defaults(handler=BorrowProject)
 
     def __call__(self, ns):
 
         try:
-            self.pushDir()
+            self.push_dir()
 
             m = Modules()
             project = project_name_from_url(ns.remote)
 
             if not m.isNewProject(project):
-                raise Exception(f"Project {project} already borrowed,"
-                                " try a 'dueca-gproject refresh'")
+                raise Exception(
+                    f"Project {project} already borrowed,"
+                    " try a 'dueca-gproject refresh'"
+                )
 
             m.addModule(project, None, ns.version, ns.remote)
             m.refreshBorrowed()
 
         finally:
-            self.popDir()
+            self.pop_dir()
 
         print(f"Borrowing DUECA project {project}")
 
+
 BorrowProject.args(subparsers)
 
-class CopyModule(OnExistingProject):
 
-    command = 'copy-module'
+class CopyModule(OnExistingProject):
+    """Copy a module from another project
+    """
+
+    command = "copy-module"
 
     def __init__(self, *args, **kwargs):
         super().__init__(CopyModule.command, *args, **kwargs)
 
     @classmethod
-    def args(cls, subparsers):
-        parser = subparsers.add_parser(
-            CopyModule.command,
-            help='Copy a module from another project.')
+    def args(cls, xtrsub):
+        """Add subcommand to a command line parser
+
+        Parameters
+        ----------
+        xtrsub :
+            Current list of subparsers
+        """
+        parser = xtrsub.add_parser(
+            CopyModule.command, help="Copy a module from another project."
+        )
         parser.add_argument(
-            '--name', type=str, required=True,
-            help="The name of the copied module.")
+            "--name", type=str, required=True, help="The name of the copied module."
+        )
         parser.add_argument(
-            '--remote', type=str, required=True,
-            help="Remote URL from where the module is copied.")
+            "--remote",
+            type=str,
+            required=True,
+            help="Remote URL from where the module is copied.",
+        )
         parser.add_argument(
-            '--version', type=str, default='main',
+            "--version",
+            type=str,
+            default="main",
             help="Version, branch, export revision to copy. If empty,"
-                 "the main branch is used.")
+            "the main branch is used.",
+        )
         parser.add_argument(
-            '--newname', type=str, default='',
-            help="New name of the copied module, if specified")
+            "--newname",
+            type=str,
+            default="",
+            help="New name of the copied module, if specified",
+        )
         parser.set_defaults(handler=CopyModule)
 
     def __call__(self, ns):
 
         try:
-            self.pushDir()
+            self.push_dir()
 
             m = Modules()
             project = project_name_from_url(ns.remote)
 
             newname = ns.newname or ns.name
             if not m.isNewModule(project, newname):
-                raise Exception(
-                    "Cannot copy, there already is a module of this name")
+                raise Exception("Cannot copy, there already is a module of this name")
 
             g = GitHandler(self.project)
-            g.copyModule(project, ns.name, newname, ns.version,
-                         RootMap().urlToAbsolute(ns.remote))
+            g.copyModule(
+                project,
+                ns.name,
+                newname,
+                ns.version,
+                RootMap().urlToAbsolute(ns.remote),
+            )
             m.addModule(self.project, newname, ns.version, g.getUrl())
 
         finally:
-            self.popDir()
+            self.pop_dir()
 
-        print(f"Copied DUECA module {ns.name} from project {project}"
-              f" as {newname}")
+        print(f"Copied DUECA module {ns.name} from project {project}" f" as {newname}")
 
 
 CopyModule.args(subparsers)
 
 
 class Refresh(OnExistingProject):
-
-    command = 'refresh'
+    """Refresh/git pull all borrowed projects and modules
+    """
+    command = "refresh"
 
     def __init__(self, *args, **kwargs):
         super().__init__(Refresh.command, *args, **kwargs)
 
     @classmethod
-    def args(cls, subparsers):
-        parser = subparsers.add_parser(
-            Refresh.command,
-            help='Refresh borrowed modules and comm-objects.')
+    def args(cls, xtrsub):
+        """Add subcommand to a command line parser
+
+        Parameters
+        ----------
+        xtrsub :
+            Current list of subparsers
+        """
+        parser = xtrsub.add_parser(
+            Refresh.command, help="Refresh borrowed modules and comm-objects."
+        )
         parser.add_argument(
-            '--force', action='store_true', default=False,
-            help="Force refresh, even if no changes detected")
+            "--force",
+            action="store_true",
+            default=False,
+            help="Force refresh, even if no changes detected",
+        )
         parser.add_argument(
-            '--auto-borrow-for-dco', action='store_true', default=False,
+            "--auto-borrow-for-dco",
+            action="store_true",
+            default=False,
             help="Try to automatically borrow projects based on DCO entries\n"
-            "Careful. This requires that the donating url matches the project url")
+            "Careful. This requires that the donating url matches the project url",
+        )
         parser.add_argument(
-            '--auto-find-url', action='store_true', default=False,
+            "--auto-find-url",
+            action="store_true",
+            default=False,
             help="Verify the presence of a URL before using it, and if\n"
-            "needed, search/adapt the url by checking defined roots")
+            "needed, search/adapt the url by checking defined roots",
+        )
         parser.add_argument(
-            '--machineclass', type=str, default='', nargs='?',
-            help="Switch to a different machine class before the refresh")
+            "--machineclass",
+            type=str,
+            default="",
+            nargs="?",
+            help="Switch to a different machine class before the refresh",
+        )
         parser.set_defaults(handler=Refresh)
 
     def __call__(self, ns):
 
         try:
-            self.pushDir()
+            self.push_dir()
             if ns.machineclass:
-                mclasses = os.listdir('.config/class')
+                mclasses = os.listdir(".config/class")
                 if ns.machineclass not in mclasses:
                     raise ValueError(f"Machine class {ns.machineclass} does not exist")
 
-                with open(f'{self.projectdir}/.config/machine', 'w') as m:
-                    m.write(str(ns.machineclass)+'\n')
+                with open(f"{self.projectdir}/.config/machine", "w") as m:
+                    m.write(str(ns.machineclass) + "\n")
 
             else:
-                with open(f'{self.projectdir}/.config/machine', 'r') as m:
+                with open(f"{self.projectdir}/.config/machine", "r") as m:
                     ns.machineclass = m.read().strip()
 
             m = Modules()
-            m.refreshBorrowed(auto_dco=ns.auto_borrow_for_dco,
-                              auto_url=ns.auto_find_url)
+            m.refreshBorrowed(
+                auto_dco=ns.auto_borrow_for_dco, auto_url=ns.auto_find_url
+            )
 
         finally:
-            self.popDir()
+            self.pop_dir()
 
         print("Refreshed code for borrowed modules, machine", ns.machineclass)
+
 
 Refresh.args(subparsers)
 
 
 class NewPlatform(OnExistingProject):
+    """Create files and folders for a new platform
+    """
+    command = "new-platform"
 
-    command = 'new-platform'
-
-    startfile = (('RunProject',
-                  '{projectdir}/run/{platform}/{project}' ), )
+    startfile = (("RunProject", "{projectdir}/run/{platform}/{project}"),)
 
     def __init__(self, *args, **kwargs):
         super().__init__(NewPlatform.command, *args, **kwargs)
 
     @classmethod
-    def args(cls, subparsers):
-        parser = subparsers.add_parser(
-            NewPlatform.command,
-            help='Create a new platform for deployment')
+    def args(cls, xtrsub):
+        """Add subcommand to a command line parser
+
+        Parameters
+        ----------
+        xtrsub :
+            Current list of subparsers
+        """
+        parser = xtrsub.add_parser(
+            NewPlatform.command, help="Create a new platform for deployment"
+        )
         parser.add_argument(
-            '--name', required=True, type=str,
-            help='Name for the new deployment platform')
+            "--name",
+            required=True,
+            type=str,
+            help="Name for the new deployment platform",
+        )
         parser.add_argument(
-            '--masternode', type=str, default='',
-            help='Name for the timing master node')
+            "--masternode", type=str, default="", help="Name for the timing master node"
+        )
         parser.add_argument(
-            '--zeronode', type=str, default='',
-            help='Name of the no 0 node')
+            "--zeronode", type=str, default="", help="Name of the no 0 node"
+        )
         parser.add_argument(
-            '--othernodes', type=str, nargs='+', default=[],
-            help='Names of other nodes in the platform')
+            "--othernodes",
+            type=str,
+            nargs="+",
+            default=[],
+            help="Names of other nodes in the platform",
+        )
         parser.set_defaults(handler=NewPlatform)
 
     def __call__(self, ns):
 
         try:
-            self.pushDir()
+            self.push_dir()
 
             if os.path.exists(f"{self.projectdir}/run/{ns.name}"):
                 raise FileExistsError(f"Platform {ns.name} already exists")
-            os.mkdir(f'{self.projectdir}/run/{ns.name}')
+            os.mkdir(f"{self.projectdir}/run/{ns.name}")
             g = GitHandler(self.project)
-            g.addFolder(f'{self.projectdir}/run/{ns.name}')
+            g.addFolder(f"{self.projectdir}/run/{ns.name}")
 
             if (ns.masternode and ns.zeronode) or len(ns.othernodes):
                 tofill = {
-                    'project': self.project,
-                    'projectdir': self.projectdir,
-                    'platform': ns.name,
-                    'othernodes': ' '.join(ns.othernodes),
-                    'zeronode': ns.zeronode,
-                    'masternode': ns.masternode,
-                    'xnodes': '',
-                    'lnodes': '|'.join(ns.othernodes +
-                                       [ns.zeronode,ns.masternode])}
+                    "project": self.project,
+                    "projectdir": self.projectdir,
+                    "platform": ns.name,
+                    "othernodes": " ".join(ns.othernodes),
+                    "zeronode": ns.zeronode,
+                    "masternode": ns.masternode,
+                    "xnodes": "",
+                    "lnodes": "|".join(ns.othernodes + [ns.zeronode, ns.masternode]),
+                }
                 create_and_copy([], NewPlatform.startfile, tofill)
 
         finally:
-            self.popDir()
-
+            self.pop_dir()
 
         print(f"Added platform {ns.name}")
+
 
 NewPlatform.args(subparsers)
 
 
 class NewNode(OnExistingProject):
-    """Create a new node.
-    """
+    """Create a new node."""
 
-    command = 'new-node'
+    command = "new-node"
 
     def __init__(self, *args, **kwargs):
         super().__init__(NewNode.command, *args, **kwargs)
 
-    dirs =  ("{projectdir}/run/{platform}/{node}",)
+    dirs = ("{projectdir}/run/{platform}/{node}",)
 
-    files = (('links.script',
-              "{projectdir}/run/{platform}/{node}/links.script"),
-             ('clean.script',
-              "{projectdir}/run/{platform}/{node}/clean.script"),
-             )
+    files = (
+        ("links.script", "{projectdir}/run/{platform}/{node}/links.script"),
+        ("clean.script", "{projectdir}/run/{platform}/{node}/clean.script"),
+    )
 
-    sfile = (('dueca.cnf.in',
-              "{projectdir}/run/{platform}/{node}/dueca.cnf"),
-             ('dueca.mod.in',
-              "{projectdir}/run/{platform}/{node}/dueca.mod"),
-             )
-    pfile = (('dueca_cnf.py.in',
-              "{projectdir}/run/{platform}/{node}/dueca_cnf.py"),
-             ('dueca_mod.py.in',
-              "{projectdir}/run/{platform}/{node}/dueca_mod.py"),
-             )
+    sfile = (
+        ("dueca.cnf.in", "{projectdir}/run/{platform}/{node}/dueca.cnf"),
+        ("dueca.mod.in", "{projectdir}/run/{platform}/{node}/dueca.mod"),
+    )
+    pfile = (
+        ("dueca_cnf.py.in", "{projectdir}/run/{platform}/{node}/dueca_cnf.py"),
+        ("dueca_mod.py.in", "{projectdir}/run/{platform}/{node}/dueca_mod.py"),
+    )
 
     @classmethod
-    def args(cls, subparsers):
-        parser = subparsers.add_parser(
-            NewNode.command,
-            help='Create a new node for deployment')
-        parser.add_argument(
-            '--name', required=True, type=str,
-            help='Name for the new node/computer')
-        parser.add_argument(
-            '--platform', required=True, type=str,
-            help='Platform where the node should be created')
-        parser.add_argument(
-            '--num-nodes', required=True, type=int,
-            help='Number of nodes participating on the platform')
-        parser.add_argument(
-            '--node-number', required=True, type=int,
-            help='Unique number for this node (0 <= number < num-nodes)')
-        parser.add_argument(
-            '--if-address', default='0.0.0.0', type=str,
-            help='Address of the own interface')
-        parser.add_argument(
-            '--highest-priority', default=4, type=int,
-            help='Priority of the highest priority manager')
-        parser.add_argument(
-            '--cmaster', type=str,
-            help='IP address or hostname of communication master')
-        parser.add_argument(
-            '--gui', type=str, default='gtk3',
-            choices=_gui_choices(),
-            help="GUI system for the node")
-        parser.add_argument(
-            '--machine-class', type=str, default="solo",
-            help="Machine class mapping for this node")
-        parser.add_argument(
-            '--script', type=str, default=None,
-            choices=('scheme', 'python', None),
-            help="Script language for configuration (only needed if\n"
-            "script cannot be automatically detected)")
-        parser.set_defaults(handler=NewNode)
+    def args(cls, xtrsub):
+        """Add subcommand to a command line parser
 
+        Parameters
+        ----------
+        xtrsub :
+            Current list of subparsers
+        """
+        parser = xtrsub.add_parser(
+            NewNode.command, help="Create a new node for deployment"
+        )
+        parser.add_argument(
+            "--name", required=True, type=str, help="Name for the new node/computer"
+        )
+        parser.add_argument(
+            "--platform",
+            required=True,
+            type=str,
+            help="Platform where the node should be created",
+        )
+        parser.add_argument(
+            "--num-nodes",
+            required=True,
+            type=int,
+            help="Number of nodes participating on the platform",
+        )
+        parser.add_argument(
+            "--node-number",
+            required=True,
+            type=int,
+            help="Unique number for this node (0 <= number < num-nodes)",
+        )
+        parser.add_argument(
+            "--if-address",
+            default="0.0.0.0",
+            type=str,
+            help="Address of the own interface",
+        )
+        parser.add_argument(
+            "--highest-priority",
+            default=4,
+            type=int,
+            help="Priority of the highest priority manager",
+        )
+        parser.add_argument(
+            "--cmaster", type=str, help="IP address or hostname of communication master"
+        )
+        parser.add_argument(
+            "--gui",
+            type=str,
+            default="gtk3",
+            choices=_gui_choices(),
+            help="GUI system for the node",
+        )
+        parser.add_argument(
+            "--machine-class",
+            type=str,
+            default="solo",
+            help="Machine class mapping for this node",
+        )
+        parser.add_argument(
+            "--script",
+            type=str,
+            default=None,
+            choices=("scheme", "python", None),
+            help="Script language for configuration (only needed if\n"
+            "script cannot be automatically detected)",
+        )
+        parser.set_defaults(handler=NewNode)
 
     def __call__(self, ns, scriptlets=None):
 
         try:
-            self.pushDir()
+            self.push_dir()
 
-            if os.path.exists(f'{self.projectdir}/run/{ns.platform}/{ns.name}'):
+            if os.path.exists(f"{self.projectdir}/run/{ns.platform}/{ns.name}"):
                 raise FileExistsError(f"Node {ns.name} already exists in {ns.platform}")
             if ns.node_number < 0 or ns.node_number >= ns.num_nodes:
-                raise ValueError(
-                    'Node number must be smaller than number of nodes')
+                raise ValueError("Node number must be smaller than number of nodes")
 
-            scriptlang = self.checkScriptlang()
+            scriptlang = self.check_scriptlang()
 
             if ns.script and ns.script != scriptlang:
-                print("Warning, you seem to have selected a script language"
-                      " that does not match the one in the code",
-                      file=sys.stderr)
+                print(
+                    "Warning, you seem to have selected a script language"
+                    " that does not match the one in the code",
+                    file=sys.stderr,
+                )
                 scriptlang = ns.script
             elif scriptlang:
                 pass
@@ -1040,25 +1401,28 @@ class NewNode(OnExistingProject):
             else:
                 raise ValueError(
                     "Cannot determine script language, please run cmake"
-                    " configuration or specify the script language")
-
+                    " configuration or specify the script language"
+                )
 
             tofill = ChainMap(
-                {'projectdir': self.projectdir,
-                 'platform': ns.platform,
-                 'node': ns.name,
-                 'no-of-nodes': ns.num_nodes,
-                 'this-node-id': ns.node_number,
-                 'send-order': (ns.cmaster and 1) or 0,
-                 'highest-manager': ns.highest_priority,
-                 'graphic-interface': ns.gui,
-                 'if-address': ns.if_address,
-                 'master-host': ns.cmaster or ns.if_address },
-                _dueca_cnf_defaults)
+                {
+                    "projectdir": self.projectdir,
+                    "platform": ns.platform,
+                    "node": ns.name,
+                    "no-of-nodes": ns.num_nodes,
+                    "this-node-id": ns.node_number,
+                    "send-order": (ns.cmaster and 1) or 0,
+                    "highest-manager": ns.highest_priority,
+                    "graphic-interface": ns.gui,
+                    "if-address": ns.if_address,
+                    "master-host": ns.cmaster or ns.if_address,
+                },
+                _dueca_cnf_defaults,
+            )
 
             create_and_copy(NewNode.dirs, NewNode.files, tofill)
             nfiles = (ns.node_number and 1) or 2
-            if scriptlang == 'python':
+            if scriptlang == "python":
                 create_and_copy([], NewNode.pfile[:nfiles], tofill, insert=scriptlets)
             else:
                 create_and_copy([], NewNode.sfile[:nfiles], tofill)
@@ -1068,70 +1432,88 @@ class NewNode(OnExistingProject):
             nm.newMapping(ns.name, ns.machine_class, True)
 
             g = GitHandler()
-            g.addFolder(f'{self.projectdir}/run/{ns.platform}/{ns.name}')
+            g.addFolder(f"{self.projectdir}/run/{ns.platform}/{ns.name}")
 
         finally:
-            self.popDir()
+            self.pop_dir()
 
-        print(f"Added node {ns.name} in {ns.platform}, script {scriptlang}\n"
-              f"graphics {ns.gui}, no {ns.node_number}/{ns.num_nodes}"
-              f" connecting {ns.cmaster}")
+        print(
+            f"Added node {ns.name} in {ns.platform}, script {scriptlang}\n"
+            f"graphics {ns.gui}, no {ns.node_number}/{ns.num_nodes}"
+            f" connecting {ns.cmaster}"
+        )
+
 
 NewNode.args(subparsers)
 
 
 class NewMachineClass(OnExistingProject):
-
-    command = 'new-machine-class'
+    """Create files and folders to define a new machine class
+    """
+    command = "new-machine-class"
 
     def __init__(self, *args, **kwargs):
         super().__init__(NewMachineClass.command, *args, **kwargs)
 
     dirs = ("{projectdir}/.config/class/{mclass}",)
-    files = (("config.cmake",
-              "{projectdir}/.config/class/{mclass}/config.cmake"),
-             ("modules.xml",
-              "{projectdir}/.config/class/{mclass}/modules.xml"))
+    files = (
+        ("config.cmake", "{projectdir}/.config/class/{mclass}/config.cmake"),
+        ("modules.xml", "{projectdir}/.config/class/{mclass}/modules.xml"),
+    )
 
     @classmethod
-    def args(cls, subparsers):
-        parser = subparsers.add_parser(
-            NewMachineClass.command,
-            help='Create a new machine class')
+    def args(cls, xtrsub):
+        """Add subcommand to a command line parser
+
+        Parameters
+        ----------
+        xtrsub :
+            Current list of subparsers
+        """
+        parser = xtrsub.add_parser(
+            NewMachineClass.command, help="Create a new machine class"
+        )
         parser.add_argument(
-            '--name', required=True, type=str,
-            help='Name for the new class')
+            "--name", required=True, type=str, help="Name for the new class"
+        )
         parser.add_argument(
-            '--gui', type=str, default='none',
+            "--gui",
+            type=str,
+            default="none",
             choices=_gui_choices(),
-            help="GUI system to include in the class")
+            help="GUI system to include in the class",
+        )
         parser.add_argument(
-            '--switch', action='store_true', default=False,
-            help="Switch over to the new class")
+            "--switch",
+            action="store_true",
+            default=False,
+            help="Switch over to the new class",
+        )
         parser.set_defaults(handler=NewMachineClass)
 
     def __call__(self, ns):
 
         try:
-            self.pushDir()
+            self.push_dir()
 
-            if os.path.exists(f'{self.projectdir}/.config/class/{ns.name}'):
-                raise FileExistsError(f'Machine class {ns.name} already present')
+            if os.path.exists(f"{self.projectdir}/.config/class/{ns.name}"):
+                raise FileExistsError(f"Machine class {ns.name} already present")
 
             g = GitHandler()
-            tofill = {'projectdir': self.projectdir,
-                      'mclass': ns.name,
-                      'project': self.project,
-                      'url': g.getUrl(),
-                      'gui': (ns.gui != 'none' and ns.gui) or ''}
+            tofill = {
+                "projectdir": self.projectdir,
+                "mclass": ns.name,
+                "project": self.project,
+                "url": g.getUrl(),
+                "gui": (ns.gui != "none" and ns.gui) or "",
+            }
 
-            create_and_copy(
-                NewMachineClass.dirs, NewMachineClass.files, tofill)
-            g.addFolder(f'{self.projectdir}/.config/class/{ns.name}')
+            create_and_copy(NewMachineClass.dirs, NewMachineClass.files, tofill)
+            g.addFolder(f"{self.projectdir}/.config/class/{ns.name}")
 
             if ns.switch:
-                with open(f'{self.projectdir}/.config/machine', 'w') as m:
-                    m.write(ns.name+'\n')
+                with open(f"{self.projectdir}/.config/machine", "w") as m:
+                    m.write(ns.name + "\n")
 
             # when created from a config, more information is available
             try:
@@ -1146,48 +1528,75 @@ class NewMachineClass(OnExistingProject):
                 pass
             try:
                 if ns.config:
-                    with open(f'{self.projectdir}/.config/class/{ns.name}/'
-                              'config.cmake', 'a') as f:
+                    with open(
+                        f"{self.projectdir}/.config/class/{ns.name}/" "config.cmake",
+                        "a",
+                    ) as f:
                         f.write(ns.config)
             except AttributeError:
                 pass
 
         finally:
-            self.popDir()
+            self.pop_dir()
 
-        print(f'Added new machine class {ns.name}')
+        print(f"Added new machine class {ns.name}")
 
 
 NewMachineClass.args(subparsers)
 
 
 class PreparePlatform(OnExistingProject):
+    """Prepare a platform based on an xml definition
+    """
 
-    command = 'prepare-platform'
+    command = "prepare-platform"
 
     def __init__(self, *args, **kwargs):
         super().__init__(PreparePlatform.command, *args, **kwargs)
 
     @classmethod
-    def args(cls, subparsers):
-        parser = subparsers.add_parser(
+    def args(cls, xtrsub):
+        """Add subcommand to a command line parser
+
+        Parameters
+        ----------
+        xtrsub :
+            Current list of subparsers
+        """
+        parser = xtrsub.add_parser(
             PreparePlatform.command,
-            help='Prepare a platform deployment according to template')
+            help="Prepare a platform deployment according to template",
+        )
+        parser.add_argument("--name", type=str, help="Name for the new platform")
         parser.add_argument(
-            '--name', type=str,
-            help='Name for the new platform')
+            "--template",
+            type=str,
+            help="Platform name, or file with the platform template",
+        )
         parser.add_argument(
-            '--template', type=str,
-            help='Platform name, or file with the platform template')
-        parser.add_argument(
-            '--nodes', type=str, nargs='+',
-            help='Selection of nodes, if not all nodes used')
+            "--nodes",
+            type=str,
+            nargs="+",
+            help="Selection of nodes, if not all nodes used",
+        )
         parser.set_defaults(handler=PreparePlatform)
 
     def __call__(self, ns):
+        """Use the parameters passed in the ns object to create a
+        platform configuration.
 
-        if ns.template and ns.template[-4:] == '.xml' and \
-           os.path.exists(ns.template):
+        Parameters
+        ----------
+        ns : argparse struct
+            Entered or default parameters
+
+        Raises
+        ------
+        e
+            _description_
+        """
+
+        if ns.template and ns.template[-4:] == ".xml" and os.path.exists(ns.template):
             template = ns.template
 
         else:
@@ -1195,31 +1604,30 @@ class PreparePlatform(OnExistingProject):
             if ns.template:
                 _tmpl = ns.template
             else:
-                _tmpl = f'platform-{ns.name}.xml'
+                _tmpl = f"platform-{ns.name}.xml"
 
             # find the file in one of the dirs
             prefix = get_dueca_prefix()
 
-            template = ''
-            for d in (f'{prefix}/share/dueca/data/default', '/etc/dueca'):
-                if os.path.exists(f'{d}/{_tmpl}'):
-                    template = f'{d}/{_tmpl}'
+            template = ""
+            for d in (f"{prefix}/share/dueca/data/default", "/etc/dueca"):
+                if os.path.exists(f"{d}/{_tmpl}"):
+                    template = f"{d}/{_tmpl}"
                     break
-
 
         nmc = NewMachineClass()
         npc = NewPlatform()
         nnc = NewNode()
 
-        with open(template, 'r') as f:
+        with open(template, "r") as f:
             tree = etree.XML(f.read())
 
             # find and add all machine classes
             for elt in tree:
                 if XML_comment(elt):
-                     continue
+                    continue
 
-                if XML_tag(elt, 'machineclasses'):
+                if XML_tag(elt, "machineclasses"):
 
                     for mclass in elt:
 
@@ -1227,69 +1635,78 @@ class PreparePlatform(OnExistingProject):
                             continue
 
                         # print(mclass)
-                        mname = mclass.get('name')
-                        gui = mclass.get('gui', 'none')
-                        config = ''
+                        mname = mclass.get("name")
+                        gui = mclass.get("gui", "none")
+                        config = ""
                         modules = []
                         for c in mclass:
                             if XML_comment(c):
                                 pass
-                            if XML_tag(c, 'config'):
+                            if XML_tag(c, "config"):
                                 config = trim_lines(c.text)
-                            elif XML_tag(c, 'modules'):
+                            elif XML_tag(c, "modules"):
                                 for m in c:
                                     url, modname, version = None, None, None
                                     pseudo = XML_interpret_bool(m.get("pseudo", False))
-                                    inactive = XML_interpret_bool(m.get("inactive", False))
+                                    inactive = XML_interpret_bool(
+                                        m.get("inactive", False)
+                                    )
                                     for t in m:
                                         if XML_comment(t):
                                             pass
-                                        elif XML_tag(t, 'url'):
+                                        elif XML_tag(t, "url"):
                                             url = t.text
-                                        elif XML_tag(t, 'name'):
+                                        elif XML_tag(t, "name"):
                                             modname = t.text
-                                        elif XML_tag(t, 'version'):
+                                        elif XML_tag(t, "version"):
                                             version = t.text
 
                                     # gather result
                                     if mname and url:
                                         modules.append(
-                                            (url, modname, version, pseudo, inactive))
+                                            (url, modname, version, pseudo, inactive)
+                                        )
                             else:
-                                print(f"Unexpected xml tag {c.tag}",
-                                      file=sys.stderr)
+                                print(f"Unexpected xml tag {c.tag}", file=sys.stderr)
 
                         # add the machine class if applicable
                         try:
-                            n = Namespace(name=mname, gui=gui, switch=False,
-                                          config=config, modules=modules)
-                            #print("nmc with", n)
+                            n = Namespace(
+                                name=mname,
+                                gui=gui,
+                                switch=False,
+                                config=config,
+                                modules=modules,
+                            )
+                            # print("nmc with", n)
                             nmc(n)
                         except Exception as e:
                             print(e, file=sys.stderr)
 
-                elif XML_tag(elt, 'platform'):
-                    pname = ns.name or elt.get('name')
-                    pcomm_master = elt.get('comm-master')
-
+                elif XML_tag(elt, "platform"):
+                    pname = ns.name or elt.get("name")
+                    pcomm_master = elt.get("comm-master")
 
                     # get list of nodes
                     nodes = []
                     scriptlets = {}
                     for e in elt:
-                        if XML_tag(e, 'scriptlet'):
-                            place = e.get('place')
+                        if XML_tag(e, "scriptlet"):
+                            place = e.get("place")
                             scriptlets[place] = trim_lines(e.text)
 
-                        elif XML_tag(e, 'node'):
-                            nodes.append(Namespace(
-                                highest_priority=e.get('highest-priority', 4),
-                                name=e.get('name'),
-                                script=self.checkScriptlang(),
-                                machine_class=e.get('machineclass'),
-                                node_number=e.get('node-number', None),
-                                if_address=e.get('if-address', '0.0.0.0'),
-                                ismaster=e.get('comm-master', False)))
+                        elif XML_tag(e, "node"):
+                            nodes.append(
+                                Namespace(
+                                    highest_priority=e.get("highest-priority", 4),
+                                    name=e.get("name"),
+                                    script=self.check_scriptlang(),
+                                    machine_class=e.get("machineclass"),
+                                    node_number=e.get("node-number", None),
+                                    if_address=e.get("if-address", "0.0.0.0"),
+                                    ismaster=e.get("comm-master", False),
+                                )
+                            )
 
                     # assert node numbers
                     nums = set(range(len(nodes)))
@@ -1302,15 +1719,18 @@ class PreparePlatform(OnExistingProject):
                             n.node_number = nno
                         except KeyError as e:
                             if nno >= len(nodes):
-                                print("Node number too high"
-                                      f" {nno} >= {len(nodes)}",
-                                      file=sys.stderr)
+                                print(
+                                    "Node number too high" f" {nno} >= {len(nodes)}",
+                                    file=sys.stderr,
+                                )
                             else:
-                                print(f"Number {nno} not available,"
-                                      " specified multiple times?",
-                                      file=sys.stderr)
+                                print(
+                                    f"Number {nno} not available,"
+                                    " specified multiple times?",
+                                    file=sys.stderr,
+                                )
                             raise e
-                        except:
+                        except Exception as e:
                             pass
 
                     #  assign remaining numbers from the set
@@ -1325,119 +1745,158 @@ class PreparePlatform(OnExistingProject):
                         n.num_nodes = len(nodes)
 
                     # make the platform
-                    npc(Namespace(
-                        name=pname,
-                        masternode=pcomm_master,
-                        zeronode=[n.name for n in nodes
-                                  if n.node_number == 0][0],
-                        othernodes=[n.name for n in nodes
-                                    if n.node_number != 0 and not n.ismaster],
-                        lnodes=[n.name for n in nodes]))
+                    npc(
+                        Namespace(
+                            name=pname,
+                            masternode=pcomm_master,
+                            zeronode=[n.name for n in nodes if n.node_number == 0][0],
+                            othernodes=[
+                                n.name
+                                for n in nodes
+                                if n.node_number != 0 and not n.ismaster
+                            ],
+                            lnodes=[n.name for n in nodes],
+                        )
+                    )
                     ns.name = None
 
                     for n in nodes:
                         # create the node
                         nnc(n, scriptlets)
 
-        print("Created platform, machine classes and nodes, based on"
-              f" {template}")
+        print("Created platform, machine classes and nodes, based on" f" {template}")
+
 
 PreparePlatform.args(subparsers)
 
 
 class RunPolicies(OnExistingProject):
+    """Apply available policies to the project
+    """
 
-    command = 'policies'
+    command = "policies"
 
     def __init__(self, *args, **kwargs):
         super().__init__(RunPolicies.command, *args, **kwargs)
 
     @classmethod
-    def args(cls, subparsers):
-        parser = subparsers.add_parser(
-            RunPolicies.command,
-            help='Check and optionally implement coding policies')
-        parser.add_argument(
-            '--policiesurl', type=str, nargs='+',
-            help='Location of applicable policies')
-        parser.add_argument(
-            '--explain', action='store_true', default=False,
-            help='Explain condition testing')
-        parser.add_argument(
-            '--apply', type=str, nargs='+',
-            help='Labels for all the policies to apply')
-        parser.add_argument(
-            '--apply-all', action='store_true', default=False,
-            help='Automatically apply all found policies')
-        parser.add_argument(
-            '--skip', type=str, nargs='+',
-            help='Skip the listed policies')
-        parser.add_argument(
-            '--include-default', action='store_true', default=False,
-            help='Also test default policy locations when given a url')
-        parser.add_argument(
-            '--force', action='store_true', default=False,
-            help='Force application, even is the policy is considered '
-                 'to have already been applied')
-        parser.set_defaults(handler=RunPolicies)
+    def args(cls, xtrsub):
+        """Add subcommand to a command line parser
 
+        Parameters
+        ----------
+        xtrsub :
+            Current list of subparsers
+        """
+        parser = xtrsub.add_parser(
+            RunPolicies.command, help="Check and optionally implement coding policies"
+        )
+        parser.add_argument(
+            "--policiesurl", type=str, nargs="+", help="Location of applicable policies"
+        )
+        parser.add_argument(
+            "--explain",
+            action="store_true",
+            default=False,
+            help="Explain condition testing",
+        )
+        parser.add_argument(
+            "--apply", type=str, nargs="+", help="Labels for all the policies to apply"
+        )
+        parser.add_argument(
+            "--apply-all",
+            action="store_true",
+            default=False,
+            help="Automatically apply all found policies",
+        )
+        parser.add_argument(
+            "--skip", type=str, nargs="+", help="Skip the listed policies"
+        )
+        parser.add_argument(
+            "--include-default",
+            action="store_true",
+            default=False,
+            help="Also test default policy locations when given a url",
+        )
+        parser.add_argument(
+            "--force",
+            action="store_true",
+            default=False,
+            help="Force application, even is the policy is considered "
+            "to have already been applied",
+        )
+        parser.set_defaults(handler=RunPolicies)
 
     def __call__(self, ns):
 
-        self.pushDir()
+        self.push_dir()
         # dprint(f"considering folder {self.projectdir}")
-        policies = Policies(self.projectdir,
-                            ns.include_default, ns.policiesurl,
-                            explain=ns.explain)
+        policies = Policies(
+            self.projectdir, ns.include_default, ns.policiesurl, explain=ns.explain
+        )
 
         # dprint(ns, ns.apply_all)
         if ns.apply:
             report = policies.apply(policylist=ns.apply, force=ns.force)
-            #print(report)
+            # print(report)
             if len(report):
-                print('Applied given policies:\n', '\n'.join(report))
+                print("Applied given policies:\n", "\n".join(report))
             else:
-                print('The given policy cannot be applied')
+                print("The given policy cannot be applied")
         elif ns.apply_all:
             report = policies.apply(policylist=None)
             if len(report):
-                print('Applied the following policies:\n', '\n'.join(report))
+                print("Applied the following policies:\n", "\n".join(report))
             else:
-                print('There are no policies that can be applied')
+                print("There are no policies that can be applied")
         elif ns.skip:
             report = policies.skip(policylist=ns.skip)
             if len(report):
-                print('Ignoring given policies:\n', '\n'.join(report))
+                print("Ignoring given policies:\n", "\n".join(report))
             else:
                 print("Not applicable, cannot ignore given policies")
         else:
             report = policies.inventory()
             if len(report):
-                print('Applicable policies:\n ', '\n'.join(report))
+                print("Applicable policies:\n ", "\n".join(report))
             else:
-                print('No applicable policies.')
+                print("No applicable policies.")
 
-        self.popDir()
+        self.pop_dir()
+
 
 RunPolicies.args(subparsers)
 
+
 class SearchProject:
-    command = 'search'
+    """Search for a project in configured git locations
+    """
+    command = "search"
 
     @classmethod
-    def args(cls, subparsers):
-        parser = subparsers.add_parser(
+    def args(cls, xtrsub):
+        """Add subcommand to a command line parser
+
+        Parameters
+        ----------
+        xtrsub :
+            Current list of subparsers
+        """
+        parser = xtrsub.add_parser(
             SearchProject.command,
-            help='Search for a project in currently configured git roots')
+            help="Search for a project in currently configured git roots",
+        )
         parser.add_argument(
-            '--name', type=str,
-            help='Name of the project to search for')
+            "--name", type=str, help="Name of the project to search for"
+        )
         parser.set_defaults(handler=SearchProject)
 
     def __call__(self, ns):
-        tryurl = f'dgr:///{ns.name}.git'
+        tryurl = f"dgr:///{ns.name}.git"
+
         def noprint(*args, **kwargs):
             pass
+
         newurl, result = checkGitUrl(url=tryurl, print=noprint)
         if result:
             print(f"Found {ns.name} at the following URL")
@@ -1447,120 +1906,153 @@ class SearchProject:
             for u in RootMap().values():
                 print(f"  {u}{ns.name}.git")
 
+
 SearchProject.args(subparsers)
 
 
 class BuildProject(OnExistingProject):
-    command = 'build'
+    """Configure and/or build the current project
+    """
+    command = "build"
 
     vsdirs = (".vscode",)
-    vsfiles = (('project.vscode.launch.json', ".vscode/launch.json"),
-               ('project.vscode.tasks.json', ".vscode/tasks.json"),
-               ('project.vscode.settings.json', ".vscode/settings.json"),
-               ('project.clang-format', ".clang-format"))
+    vsfiles = (
+        ("project.vscode.launch.json", ".vscode/launch.json"),
+        ("project.vscode.tasks.json", ".vscode/tasks.json"),
+        ("project.vscode.settings.json", ".vscode/settings.json"),
+        ("project.clang-format", ".clang-format"),
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(BuildProject.command, *args, **kwargs)
 
     @classmethod
-    def args(cls, subparsers):
-        parser = subparsers.add_parser(
+    def args(cls, xtrsub):
+        """Add subcommand to a command line parser
+
+        Parameters
+        ----------
+        xtrsub :
+            Current list of subparsers
+        """
+        parser = xtrsub.add_parser(
             BuildProject.command,
-            help='Configures a project (if not configured yet) and builds'
-            ' the code')
+            help="Configures a project (if not configured yet) and builds" " the code",
+        )
         parser.add_argument(
-            '--clean', dest='clean', action='store_true', default=False,
-            help="Clean all code from the build folder, don't configure")
-        parser.add_argument(
-            '--rebuild', action='store_true', default=False,
-            help="Clean, then reconfigure and rebuild")
-        parser.add_argument(
-            '-D', '--option', type=str, nargs='*', default=[],
-            help='Provide additional options for the configure stage')
-        parser.add_argument(
-            '--debug', dest='debug', action='store_true', default=False,
-            help='Configure with debug mode')
-        parser.add_argument(
-            '--vscode', action='store_true',
+            "--clean",
+            dest="clean",
+            action="store_true",
             default=False,
-            help="Prepare or augment a vscode folder with build and debug instructions")
+            help="Clean all code from the build folder, don't configure",
+        )
         parser.add_argument(
-            '--verbose', dest='buildverbose', action='store_true',
-            default=False, help='Do a verbose build')
+            "--rebuild",
+            action="store_true",
+            default=False,
+            help="Clean, then reconfigure and rebuild",
+        )
+        parser.add_argument(
+            "-D",
+            "--option",
+            type=str,
+            nargs="*",
+            default=[],
+            help="Provide additional options for the configure stage",
+        )
+        parser.add_argument(
+            "--debug",
+            dest="debug",
+            action="store_true",
+            default=False,
+            help="Configure with debug mode",
+        )
+        parser.add_argument(
+            "--vscode",
+            action="store_true",
+            default=False,
+            help="Prepare or augment a vscode folder with build and debug instructions",
+        )
+        parser.add_argument(
+            "--verbose",
+            dest="buildverbose",
+            action="store_true",
+            default=False,
+            help="Do a verbose build",
+        )
         parser.set_defaults(handler=BuildProject)
 
     def __call__(self, ns):
 
-        self.pushDir(f'{self.projectdir}/build')
+        self.push_dir(f"{self.projectdir}/build")
         dprint(f"Build, arguments {ns}")
         if ns.clean or ns.rebuild:
             try:
-                files = [ str(f) for f in os.listdir('.') if f != '.gitignore' ]
+                files = [str(f) for f in os.listdir(".") if f != ".gitignore"]
                 # dprint([ 'rm', '-rf'] + files)
                 cm = subprocess.run(
-                    [ 'rm', '-rf'] + files,
-                    stdout=subprocess.PIPE, check=True)
+                    ["rm", "-rf"] + files, stdout=subprocess.PIPE, check=True
+                )
                 for line in cm.stdout:
                     print(line.decode())
                 dprint(f"Clean result {cm}")
-                if os.path.islink('../compile_commands.json'):
-                    os.remove('../compile_commands.json')
+                if os.path.islink("../compile_commands.json"):
+                    os.remove("../compile_commands.json")
             except Exception as e:
-                print(f"Could not clean out the build folder, {e}",
-                      file=sys.stderr)
+                print(f"Could not clean out the build folder, {e}", file=sys.stderr)
 
         if not (ns.vscode or ns.clean):
             try:
-                if not os.path.isfile('./Makefile'):
-                    options = [ (o[0] == '-' and o) or f'-D{o}' for
-                                 o in ns.option ]
+                if not os.path.isfile("./Makefile"):
+                    options = [(o[0] == "-" and o) or f"-D{o}" for o in ns.option]
                     if ns.debug:
-                        options.append('-DCMAKE_BUILD_TYPE=Debug')
-                    options.append('-DCMAKE_EXPORT_COMPILE_COMMANDS=ON')
-                    print("Configuring the build dir with options\n  ",
-                          ' '.join(options))
-                    cm = subprocess.run([ 'cmake', '..' ] + options, check=True)
+                        options.append("-DCMAKE_BUILD_TYPE=Debug")
+                    options.append("-DCMAKE_EXPORT_COMPILE_COMMANDS=ON")
+                    print(
+                        "Configuring the build dir with options\n  ", " ".join(options)
+                    )
+                    cm = subprocess.run(["cmake", ".."] + options, check=True)
                     dprint(f"CMake result {cm}")
 
                     # symlink the compile_commands.json file if present
-                    if os.path.isfile("compile_commands.json") and \
-                       not os.path.exists("../compile_commands.json"):
-                        self.pushDir(f'{self.projectdir}')
-                        os.symlink("build/compile_commands.json",
-                                   "compile_commands.json")
-                        self.popDir()
+                    if os.path.isfile("compile_commands.json") and not os.path.exists(
+                        "../compile_commands.json"
+                    ):
+                        self.push_dir(f"{self.projectdir}")
+                        os.symlink(
+                            "build/compile_commands.json", "compile_commands.json"
+                        )
+                        self.pop_dir()
 
                 print("Running the build")
                 import multiprocessing
-                command = ['make', f'-j{multiprocessing.cpu_count()}']
+
+                command = ["make", f"-j{multiprocessing.cpu_count()}"]
                 if ns.buildverbose:
                     command.append("VERBOSE=1")
                 cm = subprocess.run(command, check=True)
                 dprint(f"Build result {cm}")
             except Exception as e:
-                print(f"Failed to run configure or build, {e}",
-                      file=sys.stderr)
-        self.popDir()
+                print(f"Failed to run configure or build, {e}", file=sys.stderr)
+        self.pop_dir()
 
         if ns.vscode:
-            self.pushDir(self.projectdir)
-            create_and_copy(BuildProject.vsdirs, BuildProject.vsfiles, {},
-                            True, True)
-            self.popDir()
+            self.push_dir(self.projectdir)
+            create_and_copy(BuildProject.vsdirs, BuildProject.vsfiles, {}, True, True)
+            self.pop_dir()
+
 
 BuildProject.args(subparsers)
 
 # parse arguments
-#testargs = [
+# testargs = [
 #    'policies',
 #    '--policiesurl=file:///home/repa/dueca/test/gitscript/example-policies.xml']
 
-if __name__ == '__main__':
-    argcomplete.autocomplete(parser)
+if __name__ == "__main__":
+    argcomplete.autocomplete(mainparser)
 
-
-    pres = parser.parse_args(sys.argv[1:])
-    #pres = parser.parse_args(testargs)
+    pres = mainparser.parse_args(sys.argv[1:])
 
     if pres.verbose:
         duecautils.verboseprint._verbose_print = True
@@ -1569,7 +2061,7 @@ if __name__ == '__main__':
     try:
         hclass = pres.handler
     except AttributeError:
-        parser.print_usage()
+        mainparser.print_usage()
         sys.exit(-1)
 
     # run the handler
