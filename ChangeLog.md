@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 - Correct offset calculation for runtest generation
 - Build python packages on ubuntu 22.04 with old setup.py
 - Clean up and add comments to dueca-gproject script
+- Use {fmt} instead of boost::format
 
 ### Added
 

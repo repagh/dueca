@@ -29,7 +29,6 @@
 #include <time.h>
 #include "dueca.h"
 #include <DataWriter.hxx>
-#include <boost/format.hpp>
 
 #define W_STS
 #define E_STS

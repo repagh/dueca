@@ -22,7 +22,7 @@
 #include <dueca-conf.h>
 #include <ActivityDescriptions.hxx>
 #include "GtkDuecaView.hxx"
-#include <boost/format.hpp>
+#include <fmt/format.h>
 #include <debug.h>
 
 DUECA_NS_START
@@ -245,7 +245,7 @@ bool LogViewGui::open(unsigned int nrows)
 
     // column
     auto column = gtk_column_view_column_new(
-      boost::str(boost::format("node %d") % node).c_str(), fact);
+      fmt::format("node {:d}", node).c_str(), fact);
     gtk_column_view_append_column(GTK_COLUMN_VIEW(gui.controltable), column);
 
     // release
@@ -330,7 +330,7 @@ void LogViewGui::cbBindLogNumber(GtkSignalListItemFactory *fact,
   auto label = GTK_LABEL(gtk_list_item_get_child(item));
   auto entry = D_LOG_ENTRY(gtk_list_item_get_item(item));
   gtk_label_set_text(
-    label, boost::str(boost::format("%5d") % entry->msg.count).c_str());
+    label, fmt::format("{:5d}", entry->msg.count).c_str());
 }
 
 void LogViewGui::cbBindLogClass(GtkSignalListItemFactory *fact,
@@ -368,7 +368,7 @@ void LogViewGui::cbBindLogNode(GtkSignalListItemFactory *fact,
   auto label = GTK_LABEL(gtk_list_item_get_child(item));
   auto entry = D_LOG_ENTRY(gtk_list_item_get_item(item));
   gtk_label_set_text(
-    label, boost::str(boost::format("%2d") % int(entry->msg.context.parts.node))
+    label, fmt::format("{:2d}", int(entry->msg.context.parts.node))
              .c_str());
 }
 
@@ -377,7 +377,7 @@ void LogViewGui::cbBindLogActivityLevel(GtkSignalListItemFactory *fact,
 {
   auto label = GTK_LABEL(gtk_list_item_get_child(item));
   auto entry = D_LOG_ENTRY(gtk_list_item_get_item(item));
-  gtk_label_set_text(label, boost::str(boost::format("%2d") %
+  gtk_label_set_text(label, fmt::format("{:2d}",
                                        int(entry->msg.context.parts.manager))
                               .c_str());
 }

@@ -654,6 +654,8 @@ if (Boost_VERSION_STRING VERSION_LESS 1.86.0)
 
 endif()
 
+# fmt format library, replacing boost, stringstream, printf now
+find_package(fmt REQUIRED)
 
 # python packages to test
 # python packages needed

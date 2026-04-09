@@ -15,8 +15,6 @@
 #include "FileWithSegments.hxx"
 #include "DDFFExceptions.hxx"
 #include <limits>
-#include <sstream>
-#include <iomanip>
 #include <msgpack.hpp>
 #include <dueca/msgpack-unstream-iter.hxx>
 #include <dueca/msgpack-unstream-iter.ixx>
@@ -26,7 +24,7 @@
 #include <dueca/ChronoTimePoint.hxx>
 #include <dassert.h>
 #include <dueca/debug.h>
-#include <boost/format.hpp>
+#include <fmt/format.h>
 
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
@@ -255,7 +253,7 @@ ddff::FileHandler::pos_type FileWithSegments::findBlockStart(unsigned cycle,
     return tags[cycle].offset[stream_id - 2U];
   }
   throw cannot_find_segment(
-    boost::str(boost::format("stream%d") % stream_id).c_str(), cycle);
+    fmt::format("stream{:d}", stream_id).c_str(), cycle);
   return ddff::FileHandler::pos_type(-1);
 }
 
@@ -430,9 +428,11 @@ void FileWithSegments::nameRecording(const std::string &label,
   next_tag.inco_name = aux;
   unsigned suffix = 0u;
   while (tag_lookup.count(next_tag.label)) {
-    stringstream modlabel;
-    modlabel << label << "_" << std::setw(6) << std::setfill('0') << ++suffix;
-    next_tag.label = modlabel.str();
+    next_tag.label = fmt::format("{}_{:06d}", label, ++suffix);
+
+    //stringstream modlabel;
+    //modlabel << label << "_" << std::setw(6) << std::setfill('0') << ++suffix;
+    //next_tag.label = modlabel.str();
   }
 }
 

@@ -44,6 +44,7 @@ Requires: guile1
 BuildRequires: libguile1-devel
 BuildRequires: guile1
 BuildRequires: msgpack-devel
+BuildRequires: fmt-devel
 
 %if 0%{?python3_config}
 BuildRequires: python3-devel

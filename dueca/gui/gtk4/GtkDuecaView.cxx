@@ -32,7 +32,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <StatusT1.hxx>
-#include <boost/format.hpp>
+#include <fmt/format.h>
 #include "GtkHandler.hxx"
 
 #define W_CNF
@@ -614,7 +614,7 @@ GAction *GtkDuecaView::requestViewEntry(const char *name, const char *label,
   auto viewmenu = G_MENU(window.getObject("view_menu"));
 
   // code the action name with the pointer of the object/view to toggle
-  auto actionname = boost::str(boost::format("app.toggle_view_%s") % name);
+  auto actionname = fmt::format("app.toggle_view_{}", name);
 
   // create and install the action, for a checkbox, action should have boolean
   // state and no parameter
@@ -1243,7 +1243,7 @@ void GtkDuecaView::bindModuleNode(GtkSignalListItemFactory *fact,
   auto obj =
     D_ENTITY_STATUS(gtk_tree_list_row_get_item(GTK_TREE_LIST_ROW(row)));
   gtk_label_set_label(GTK_LABEL(label),
-                      boost::str(boost::format("%d") % obj->s->nodeno).c_str());
+                      fmt::format("{:d}", obj->s->nodeno).c_str());
 }
 
 void GtkDuecaView::bindNodeNumber(GtkSignalListItemFactory *fact,
@@ -1252,7 +1252,7 @@ void GtkDuecaView::bindNodeNumber(GtkSignalListItemFactory *fact,
   auto label = gtk_list_item_get_child(item);
   auto obj = D_NODE_STATUS(gtk_list_item_get_item(item));
   gtk_label_set_label(GTK_LABEL(label),
-                      boost::str(boost::format("%d") % obj->nodeno).c_str());
+                      fmt::format("{:d}", obj->nodeno).c_str());
 }
 
 void GtkDuecaView::bindNodeState(GtkSignalListItemFactory *fact,

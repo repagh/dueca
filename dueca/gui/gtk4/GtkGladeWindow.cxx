@@ -34,7 +34,7 @@
 #define W_CNF
 #include "debug.h"
 #include <boost/lexical_cast.hpp>
-#include <boost/format.hpp>
+#include <fmt/format.h>
 #include <regex>
 
 #define DEBPRINTLEVEL -1
@@ -1017,7 +1017,7 @@ bool GtkGladeWindow::_getEnumFromRadios(const char *gtkid,
   do {
     std::string value;
     eltreader.peek(value);
-    auto wname = boost::str(boost::format("%s-%s") % gtkid % value);
+    auto wname = fmt::format("{}-{}", gtkid, value);
     auto w = getObject(wname.c_str());
     if (w && GTK_IS_CHECK_BUTTON(w) &&
         gtk_check_button_get_active(GTK_CHECK_BUTTON(w))) {
@@ -1056,7 +1056,7 @@ bool GtkGladeWindow::_setRadiosFromEnum(const char *gtkid,
   do {
     std::string value;
     eltreader.peek(value);
-    auto wname = boost::str(boost::format("%s-%s") % gtkid % value);
+    auto wname = fmt::format("{}-{}", gtkid, value);
     auto w = getObject(wname.c_str());
     if (w && GTK_IS_CHECK_BUTTON(w) &&
         boost::any_cast<std::string>(b) == value) {

@@ -27,7 +27,7 @@
 #include <debprint.h>
 #include <dueca/DuecaPath.hxx>
 #include "GtkDuecaView.hxx"
-#include <boost/format.hpp>
+#include <fmt/format.h>
 #define DO_INSTANTIATE
 #define NO_TYPE_CREATION
 #include <dueca/dueca.h>
@@ -548,7 +548,7 @@ void ReplayMasterGtk4::cbBindReplayDuration(GtkSignalListItemFactory *fact,
   auto entry = D_REPLAY_RUN(gtk_list_item_get_item(item));
   gtk_label_set_text(
     label,
-    boost::str(boost::format("%4d s") % entry->rr->getSpanInSeconds()).c_str());
+    fmt::format("{:4d} s", int(entry->rr->getSpanInSeconds())).c_str());
 }
 
 void ReplayMasterGtk4::cbBindReplayInitial(GtkSignalListItemFactory *fact,

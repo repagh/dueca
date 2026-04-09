@@ -46,7 +46,7 @@ set(INCDIRS ${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR}
 
 dueca_add_library(dueca-ddff
   SOURCES ${SOURCES} ${DCO_OUTPUT_SOURCE} ${DCO_OUTPUT_HEADERS}
-  LINKLIBS dueca dueca-udp
+  LINKLIBS dueca dueca-udp fmt::fmt
   INCLUDEDIRS ${INCDIRS})
 
 install(FILES ${DCO_OUTPUT_HEADERS} ${HEADERS}
@@ -57,4 +57,3 @@ configure_file(dueca-ddff.pc.in dueca-ddff.pc @ONLY)
 install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/dueca-ddff.pc
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
-

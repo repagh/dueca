@@ -15,7 +15,7 @@
 #define ChannelDataMonitor_csxx
 #include "ChannelDataMonitorGtk4.hxx"
 #include <debug.h>
-#include <boost/format.hpp>
+#include <fmt/format.h>
 #include <sstream>
 #include <iomanip>
 #define DEBPRINTLEVEL -2
@@ -232,20 +232,20 @@ void ChannelDataMonitorGtk4::insertJsonValue(std::string &field,
     break;
   case json::kNumberType:
     if (value.IsInt()) {
-      field = boost::str(boost::format("%5d") % value.GetInt());
+      field = fmt::format("{:5d}", value.GetInt());
     }
     else if (value.IsInt64()) {
-      field = boost::str(boost::format("%5d") % value.GetInt64());
+      field = fmt::format("{:5d}", value.GetInt64());
     }
     else if (value.IsUint64()) {
-      field = boost::str(boost::format("%5d") % value.GetUint64());
+      field = fmt::format("{:5d}", value.GetUint64());
     }
     else if (value.IsDouble()) {
       double v = value.GetDouble();
       if (abs(v) < 10000.0 && abs(v) >= 1.0)
-        field = boost::str(boost::format("%11.5f") % value.GetDouble());
+        field = fmt::format("{:11.5f}", value.GetDouble());
       else {
-        field = boost::str(boost::format("%15.5e") % value.GetDouble());
+        field = fmt::format("{:15.5e}", value.GetDouble());
       }
     }
     else {

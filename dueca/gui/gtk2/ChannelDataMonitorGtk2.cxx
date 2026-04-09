@@ -15,7 +15,7 @@
 #include "ChannelDataMonitorGtk2.hxx"
 #include <debug.h>
 #include <boost/lexical_cast.hpp>
-#include <boost/format.hpp>
+#include <fmt/format.h>
 #include <sstream>
 #include <iomanip>
 #define DEBPRINTLEVEL -1
@@ -155,21 +155,21 @@ insertJsonValue(GtkTreeIter* itname, const JValue &value)
       gtk_tree_store_set
         (store, itname,
          S_memberdata,
-         boost::str(boost::format("%5d") % value.GetInt()).c_str(),
+         fmt::format("{:5d}", value.GetInt()).c_str(),
          S_isleaf, TRUE, -1);
     }
     else if (value.IsInt64()) {
       gtk_tree_store_set
         (store, itname,
          S_memberdata,
-         boost::str(boost::format("%5d") % value.GetInt64()).c_str(),
+         fmt::format("{:5d}", value.GetInt64()).c_str(),
          S_isleaf, TRUE, -1);
     }
     else if (value.IsUint64()) {
       gtk_tree_store_set
         (store, itname,
          S_memberdata,
-         boost::str(boost::format("%5d") % value.GetUint64()).c_str(),
+         fmt::format("{:5d}", value.GetUint64()).c_str(),
          S_isleaf, TRUE, -1);
     }
     else if (value.IsDouble()) {
@@ -178,13 +178,13 @@ insertJsonValue(GtkTreeIter* itname, const JValue &value)
         gtk_tree_store_set
           (store, itname,
            S_memberdata,
-           boost::str(boost::format("%11.5f") % value.GetDouble()).c_str(),
+           fmt::format("{:11.5f}", value.GetDouble()).c_str(),
            S_isleaf, TRUE, -1);
       else {
         gtk_tree_store_set
           (store, itname,
            S_memberdata,
-           boost::str(boost::format("%15.5e") % value.GetDouble()).c_str(),
+           fmt::format("{:15.5e}", value.GetDouble()).c_str(),
            S_isleaf, TRUE, -1);
       }
     }
