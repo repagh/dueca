@@ -263,12 +263,14 @@ def create_and_copy(
                 if keepcurrent:
                     pass
                 else:
-                    raise Exception(f"Failed to create directory {d}")
+                    raise FileExistsError(f"Failed to create directory {d}")
         except ValueError as ve:
             print(f"Problem formatting '{_d}'", file=sys.stderr)
             raise ve
 
-    dc = subprocess.run(("dueca-config", "--path-datafiles"), stdout=subprocess.PIPE)
+    dc = subprocess.run(
+        ("dueca-config", "--path-datafiles"), stdout=subprocess.PIPE, check=True
+    )
     duecabase = (
         dc.stdout.strip().decode("UTF-8")
         + os.sep
@@ -300,7 +302,9 @@ def get_dueca_prefix():
     str
         Install prefix for DUECA
     """
-    dc = subprocess.run(("dueca-config", "--prefix"), stdout=subprocess.PIPE)
+    dc = subprocess.run(
+        ("dueca-config", "--prefix"), stdout=subprocess.PIPE, check=True
+    )
     return dc.stdout.strip().decode("UTF-8")
 
 
@@ -341,8 +345,7 @@ def get_machineclass_gui(mclass):
     str|None
         Name of the GUI library (typically 'gtk3', 'gtk4' or 'none')
     """
-    global _mcdecode
-    with open(f".config/class/{mclass}/config.cmake") as f:
+    with open(f".config/class/{mclass}/config.cmake", encoding="UTF-8") as f:
         for l in f:
             res = _mcdecode.match(l)
             if res:
@@ -393,9 +396,9 @@ def git_ensure_remote_clean(remote: str, project: str):
             "run" in files
             or ".config" in files
             or "CMakeLists.txt" in files
-            or len(files) > 3
+            or len(files)
         ):
-            raise Exception(f"Remote copy at {remote} is not clean")
+            raise FileExistsError(f"Remote copy at {remote} is not clean")
 
     # ensure the remote and project name match
     if (
@@ -452,6 +455,7 @@ def project_name_from_url(remote: str):
         Just the project name
     """
     return remote[:-4].split("/")[-1]
+
 
 class NewProject:
     """Create a new project."""
@@ -673,7 +677,7 @@ class CloneProject:
             repo.git.config("core.sparseCheckout", "true")
 
             # init the sparse checkout file with default files and folders
-            with open(".git/info/sparse-checkout", "w") as ms:
+            with open(".git/info/sparse-checkout", "w", encoding='UTF-8') as ms:
                 ms.write(
                     "run/*\n.config/*\ncomm-objects/*\n"
                     "CMakeLists.txt\nREADME.md\n.gitignore\nbuild/*\n"
@@ -707,7 +711,7 @@ class CloneProject:
         mclass = nmm.getClass(ns.node)
 
         # write the machine file with the machine class
-        with open(".config/machine", "w") as f:
+        with open(".config/machine", "w", encoding="UTF-8") as f:
             f.write(mclass + "\n")
 
         # get the current modules list
@@ -718,7 +722,7 @@ class CloneProject:
         if not ns.full:
             dprint("Sparse checkout, own modules", mod.getOwnModules())
             # add the module folders to the sparse checkout
-            with open(".git/info/sparse-checkout", "a") as ms:
+            with open(".git/info/sparse-checkout", "a", encoding="UTF-8") as ms:
                 for m in mod.getOwnModules():
                     dprint(f"adding module {m} to sparse")
                     ms.write(f"{m}/*\n")
@@ -746,7 +750,7 @@ CloneProject.args(subparsers)
 class OnExistingProject:
     """Base class for actions that are performed on an existing project"""
 
-    def __init__(self, _command: str, *args, **kwargs):
+    def __init__(self, _command: str, *_args, **_kwargs):
         """Base class for actions
 
         Parameters
@@ -838,8 +842,8 @@ class OnExistingProject:
 
 # checked
 class NewModule(OnExistingProject):
-    """Create a new module in this project
-    """
+    """Create a new module in this project"""
+
     command = "new-module"
 
     def __init__(self, *args, **kwargs):
@@ -925,8 +929,8 @@ NewModule.args(subparsers)
 
 # checked
 class BorrowModule(OnExistingProject):
-    """Borrow a module from another project
-    """
+    """Borrow a module from another project"""
+
     command = "borrow-module"
 
     def __init__(self, *args, **kwargs):
@@ -975,7 +979,7 @@ class BorrowModule(OnExistingProject):
             project = project_name_from_url(ns.remote)
 
             if not m.isNewModule(project, ns.name):
-                raise Exception(
+                raise FileExistsError(
                     f"Module {project}/{ns.name} already borrowed,"
                     " try a 'dueca-gproject refresh'"
                 )
@@ -993,8 +997,8 @@ BorrowModule.args(subparsers)
 
 
 class BorrowProject(OnExistingProject):
-    """Specify a project location for borrowing DCO files
-    """
+    """Specify a project location for borrowing DCO files"""
+
     command = "borrow-project"
 
     def __init__(self, *args, **kwargs):
@@ -1032,7 +1036,7 @@ class BorrowProject(OnExistingProject):
             project = project_name_from_url(ns.remote)
 
             if not m.isNewProject(project):
-                raise Exception(
+                raise FileExistsError(
                     f"Project {project} already borrowed,"
                     " try a 'dueca-gproject refresh'"
                 )
@@ -1050,8 +1054,7 @@ BorrowProject.args(subparsers)
 
 
 class CopyModule(OnExistingProject):
-    """Copy a module from another project
-    """
+    """Copy a module from another project"""
 
     command = "copy-module"
 
@@ -1104,7 +1107,9 @@ class CopyModule(OnExistingProject):
 
             newname = ns.newname or ns.name
             if not m.isNewModule(project, newname):
-                raise Exception("Cannot copy, there already is a module of this name")
+                raise FileExistsError(
+                    "Cannot copy, there already is a module of this name"
+                )
 
             g = GitHandler(self.project)
             g.copyModule(
@@ -1126,8 +1131,8 @@ CopyModule.args(subparsers)
 
 
 class Refresh(OnExistingProject):
-    """Refresh/git pull all borrowed projects and modules
-    """
+    """Refresh/git pull all borrowed projects and modules"""
+
     command = "refresh"
 
     def __init__(self, *args, **kwargs):
@@ -1183,11 +1188,11 @@ class Refresh(OnExistingProject):
                 if ns.machineclass not in mclasses:
                     raise ValueError(f"Machine class {ns.machineclass} does not exist")
 
-                with open(f"{self.projectdir}/.config/machine", "w") as m:
+                with open(f"{self.projectdir}/.config/machine", "w", encoding='UTF-8') as m:
                     m.write(str(ns.machineclass) + "\n")
 
             else:
-                with open(f"{self.projectdir}/.config/machine", "r") as m:
+                with open(f"{self.projectdir}/.config/machine", "r", encoding='UTF-8') as m:
                     ns.machineclass = m.read().strip()
 
             m = Modules()
@@ -1205,8 +1210,8 @@ Refresh.args(subparsers)
 
 
 class NewPlatform(OnExistingProject):
-    """Create files and folders for a new platform
-    """
+    """Create files and folders for a new platform"""
+
     command = "new-platform"
 
     startfile = (("RunProject", "{projectdir}/run/{platform}/{project}"),)
@@ -1448,8 +1453,8 @@ NewNode.args(subparsers)
 
 
 class NewMachineClass(OnExistingProject):
-    """Create files and folders to define a new machine class
-    """
+    """Create files and folders to define a new machine class"""
+
     command = "new-machine-class"
 
     def __init__(self, *args, **kwargs):
@@ -1512,7 +1517,7 @@ class NewMachineClass(OnExistingProject):
             g.addFolder(f"{self.projectdir}/.config/class/{ns.name}")
 
             if ns.switch:
-                with open(f"{self.projectdir}/.config/machine", "w") as m:
+                with open(f"{self.projectdir}/.config/machine", "w", encoding='UTF-8') as m:
                     m.write(ns.name + "\n")
 
             # when created from a config, more information is available
@@ -1530,7 +1535,7 @@ class NewMachineClass(OnExistingProject):
                 if ns.config:
                     with open(
                         f"{self.projectdir}/.config/class/{ns.name}/" "config.cmake",
-                        "a",
+                        "a", encoding='UTF-8'
                     ) as f:
                         f.write(ns.config)
             except AttributeError:
@@ -1546,8 +1551,7 @@ NewMachineClass.args(subparsers)
 
 
 class PreparePlatform(OnExistingProject):
-    """Prepare a platform based on an xml definition
-    """
+    """Prepare a platform based on an xml definition"""
 
     command = "prepare-platform"
 
@@ -1771,8 +1775,7 @@ PreparePlatform.args(subparsers)
 
 
 class RunPolicies(OnExistingProject):
-    """Apply available policies to the project
-    """
+    """Apply available policies to the project"""
 
     command = "policies"
 
@@ -1839,25 +1842,25 @@ class RunPolicies(OnExistingProject):
         if ns.apply:
             report = policies.apply(policylist=ns.apply, force=ns.force)
             # print(report)
-            if len(report):
+            if report:
                 print("Applied given policies:\n", "\n".join(report))
             else:
                 print("The given policy cannot be applied")
         elif ns.apply_all:
             report = policies.apply(policylist=None)
-            if len(report):
+            if report:
                 print("Applied the following policies:\n", "\n".join(report))
             else:
                 print("There are no policies that can be applied")
         elif ns.skip:
             report = policies.skip(policylist=ns.skip)
-            if len(report):
+            if report:
                 print("Ignoring given policies:\n", "\n".join(report))
             else:
                 print("Not applicable, cannot ignore given policies")
         else:
             report = policies.inventory()
-            if len(report):
+            if report:
                 print("Applicable policies:\n ", "\n".join(report))
             else:
                 print("No applicable policies.")
@@ -1869,8 +1872,8 @@ RunPolicies.args(subparsers)
 
 
 class SearchProject:
-    """Search for a project in configured git locations
-    """
+    """Search for a project in configured git locations"""
+
     command = "search"
 
     @classmethod
@@ -1911,8 +1914,8 @@ SearchProject.args(subparsers)
 
 
 class BuildProject(OnExistingProject):
-    """Configure and/or build the current project
-    """
+    """Configure and/or build the current project"""
+
     command = "build"
 
     vsdirs = (".vscode",)
