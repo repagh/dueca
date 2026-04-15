@@ -117,7 +117,7 @@ DDFF_NS_START
       if (getCurrentState() == SimulationState::Advance) {
         my_recorder.record(ts, dw.data());
       }
-    } 
+    }
     else if getCurrentState() == SimulationState::Advance) {
       my_recorder.markRecord(ts);
     }
@@ -156,7 +156,7 @@ private:
 
   /** Metafunctor, for getting the above functors from the channel token */
   const ChannelWriteToken                      *w_token_ptr;
-  
+
   /** Pointer to the replay filer. */
   FileWithSegments::pointer                     filer;
 
@@ -367,7 +367,7 @@ public:
                      complete.
       @param writer  Communication object writer.
  */
-  void channelRecord(const DataTimeSpec& ts, CommObjectWriter& writer);
+  void channelRecord(const DataTimeSpec& ts, const CommObjectWriter& writer);
 
   /** Replay previously recorded data into a write channel. The replay
       considers the requested replay time, in combination with the
@@ -376,7 +376,7 @@ public:
 
       @param ts      Time for which data is to be replayed.
       @param w_token Channel write token.
-      
+
       @returns       Number of replayed data points; the replay looks at the
                      given time specification and replays all data
                      corresponding to this specification. In case of

@@ -209,7 +209,7 @@ bool DDFFDataRecorder::isValid()
 }
 
 void DDFFDataRecorder::channelRecord(const DataTimeSpec& ts,
-                                     CommObjectWriter& writer)
+                                     const CommObjectWriter& writer)
 {
   if (!record_functor) { throw channel_access_not_available(); }
 

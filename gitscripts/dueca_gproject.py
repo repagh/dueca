@@ -396,7 +396,7 @@ def git_ensure_remote_clean(remote: str, project: str):
             "run" in files
             or ".config" in files
             or "CMakeLists.txt" in files
-            or len(files)
+            or len(files) > 1
         ):
             raise FileExistsError(f"Remote copy at {remote} is not clean")
 
