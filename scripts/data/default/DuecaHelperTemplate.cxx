@@ -1,7 +1,7 @@
 /* ------------------------------------------------------------------   */
 /*      item            : @Module@.cxx
         made by         : @author@
-        from template   : DuecaHelperTemplate.cxx (2022.06)
+        from template   : DuecaHelperTemplate.cxx (2026.04)
         date            : @date@
         category        : body file
         description     :
@@ -18,19 +18,18 @@
 // include additional files needed for your calculation here
 
 #define DO_INSTANTIATE
-#include <VarProbe.hxx>
-#include <MemberCall.hxx>
-#include <MemberCall2Way.hxx>
-#include <CoreCreator.hxx>
+#include <dueca/VarProbe.hxx>
+#include <dueca/MemberCall.hxx>
+#include <dueca/MemberCall2Way.hxx>
+#include <dueca/CoreCreator.hxx>
+using namespace dueca;
 
 // include the debug writing header. Warning and error messages
 // are on by default, debug and info can be selected by
 // uncommenting the respective defines
 //#define D_MOD
 //#define I_MOD
-#include <debug.h>
-
-USING_DUECA_NS;
+#include <dueca/debug.h>
 
 // Parameters to be inserted
 const ParameterTable* @Module@::getParameterTable()
@@ -76,4 +75,3 @@ SCM_FEATURES_NOIMPINH(@Module@, ScriptCreatable, "@smodule@");
 // will check in with the scheme-interpreting code, and enable the
 // creation of objects of this type
 static CoreCreator<@Module@> a(@Module@::getParameterTable());
-

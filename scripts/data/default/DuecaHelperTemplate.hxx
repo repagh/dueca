@@ -1,7 +1,7 @@
 /* ------------------------------------------------------------------   */
 /*      item            : @Module@.hxx
         made by         : @author@
-        from template   : DuecaHelperTemplate.hxx (2022.06)
+        from template   : DuecaHelperTemplate.hxx (2026.04)
         date            : @date@
         category        : header file
         description     :
@@ -10,16 +10,13 @@
         copyright       : (c)
 */
 
-#ifndef @Module@_hxx
-#define @Module@_hxx
+#pragma once
 
 // include the dueca header
-#include <ScriptCreatable.hxx>
-#include <stringoptions.h>
-#include <ParameterTable.hxx>
-#include <dueca_ns.h>
-
-USING_DUECA_NS;
+#include <dueca/ScriptCreatable.hxx>
+#include <dueca/stringoptions.h>
+#include <dueca/ParameterTable.hxx>
+#include <dueca/dueca_ns.h>
 
 /** A class definition for a DUECA helper class
 
@@ -32,7 +29,7 @@ USING_DUECA_NS;
 
     \verbinclude @smodule@.scm
  */
-class @Module@: public ScriptCreatable
+class @Module@: public dueca::ScriptCreatable
 {
 private: // simulation data
 
@@ -49,12 +46,8 @@ public: // construction and further specification
   ~@Module@();
 
   /** Obtain a pointer to the parameter table. */
-  static const ParameterTable* getParameterTable();
+  static const dueca::ParameterTable* getParameterTable();
 
 public:
-  /** Default script linkage. */
-  SCM_FEATURES_DEF;
 
 };
-
-#endif

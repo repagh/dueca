@@ -1,7 +1,7 @@
 /* ------------------------------------------------------------------   */
 /*      item            : @Module@.hxx
         made by         : @author@
-        from template   : DuecaModuleTemplate.hxx (2022.06)
+        from template   : DuecaModuleTemplate.hxx (2026.04)
         date            : @date@
         category        : header file
         description     :
@@ -10,15 +10,13 @@
         copyright       : (c)
 */
 
-#ifndef @Module@_hxx
-#define @Module@_hxx
-
-// include the dusime header
-#include <dueca.h>
-USING_DUECA_NS;
+#pragma once
 
 // This includes headers for the objects that are sent over the channels
 #include "comm-objects.h"
+
+// include the dueca common classes header
+#include <dueca/dueca.h>
 
 // include headers for functions/classes you need in the module
 
@@ -30,7 +28,7 @@ USING_DUECA_NS;
 
     \verbinclude @smodule@.scm
  */
-class @Module@: public Module
+class @Module@: public dueca::Module
 {
   /** self-define the module type, to ease writing the parameter table */
   typedef @Module@ _ThisModule_;
@@ -50,21 +48,21 @@ private: // activity allocation
   //PeriodicAlarm        myclock;
 
   /** Callback object for simulation calculation. */
-  Callback<@Module@>  cb1;
+  dueca::Callback<@Module@>  cb1;
 
   /** Activity for simulation calculation. */
-  ActivityCallback      do_calc;
+  dueca::ActivityCallback      do_calc;
 
 public: // class name and trim/parameter tables
   /** Name of the module. */
   static const char* const           classname;
 
   /** Return the parameter table. */
-  static const ParameterTable*       getMyParameterTable();
+  static const dueca::ParameterTable*       getMyParameterTable();
 
 public: // construction and further specification
   /** Constructor. Is normally called from scheme/the creation script. */
-  @Module@(Entity* e, const char* part, const PrioritySpec& ts);
+  @Module@(dueca::Entity* e, const char* part, const dueca::PrioritySpec& ts);
 
   /** Continued construction. This is called after all script
       parameters have been read and filled in, according to the
@@ -84,7 +82,7 @@ public: // construction and further specification
   // Delete if not needed!
 
   /** Specify a time specification for the simulation activity. */
-  bool setTimeSpec(const TimeSpec& ts);
+  bool setTimeSpec(const dueca::TimeSpec& ts);
 
   /** Request check on the timing. */
   bool checkTiming(const std::vector<int>& i);
@@ -94,14 +92,12 @@ public: // member functions for cooperation with DUECA
   bool isPrepared();
 
   /** start responsiveness to input data. */
-  void startModule(const TimeSpec &time);
+  void startModule(const dueca::TimeSpec &time);
 
   /** stop responsiveness to input data. */
-  void stopModule(const TimeSpec &time);
+  void stopModule(const dueca::TimeSpec &time);
 
 public: // the member functions that are called for activities
   /** the method that implements the main calculation. */
-  void doCalculation(const TimeSpec& ts);
+  void doCalculation(const dueca::TimeSpec& ts);
 };
-
-#endif
