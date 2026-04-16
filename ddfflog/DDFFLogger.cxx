@@ -514,11 +514,11 @@ bool DDFFLogger::isPrepared()
 {
   if (immediate_start)
     return true;
-  prepared = internalIsPrepared();
+  prepared = internalIsPrepared(true);
   return prepared;
 }
 
-bool DDFFLogger::internalIsPrepared()
+bool DDFFLogger::internalIsPrepared(bool notify)
 {
   bool res = true;
   bool allfunctors = true;
@@ -526,13 +526,18 @@ bool DDFFLogger::internalIsPrepared()
 
   for (targeted_list_t::iterator ii = targeted.begin(); ii != targeted.end();
        ii++) {
-    /* DUECA ddff.
 
-       Checking the validity of a configured channel entry for logging.
-     */
-    I_XTR("Checking " << (*ii)->channelname
-                      << " res=" << (*ii)->r_token.isValid());
-    CHECK_TOKEN((*ii)->r_token);
+    if (!(*ii)->r_token.isValid()) {
+      res = false;
+      if (notify) {
+        /* DUECA ddff.
+
+           Waiting for the validity of a configured channel for logging.
+        */
+        W_XTR(getId() << "/ddff-logger, token for " << (*ii)->channelname
+                      << " not yet valid");
+      }
+    }
 
     // for valid tokens, and file opened, create the functor
     if (hfile) {
@@ -560,6 +565,18 @@ bool DDFFLogger::internalIsPrepared()
   }
 
   if (r_config) {
+    if (!r_config->isValid()) {
+      res = false;
+      if (notify) {
+        /** DUECA ddff.
+
+            Configuration channel not yet valid. May happen if you don't
+            configure the replay-master.
+        */
+        W_XTR(getId() << "/ddff-logger, config token (" << r_config->getName()
+                      << ") not yet valid");
+      }
+    }
     CHECK_TOKEN(*r_config);
   }
 
@@ -592,7 +609,8 @@ void DDFFLogger::stopModule(const TimeSpec &time)
 void DDFFLogger::doCalculation(const TimeSpec &ts)
 {
   if (!prepared) {
-    prepared = internalIsPrepared();
+    prepared = internalIsPrepared(
+      ts.getValidityStart() % Ticker::single()->getIncrement(1.0) == 0);
     if (!prepared) {
       return;
     }
@@ -750,7 +768,8 @@ void DDFFLogger::doCalculation(const TimeSpec &ts)
       // status updates if configured
       if (reporting && reporting->advance(ts.getValidityEnd())) {
 
-        sendStatus(std::string("logging to file ") + current_filename, false, ts.getValidityStart());
+        sendStatus(std::string("logging to file ") + current_filename, false,
+                   ts.getValidityStart());
       }
     }
   }

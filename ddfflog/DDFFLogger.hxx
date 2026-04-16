@@ -256,7 +256,7 @@ private: // member functions for cooperation with DUECA
   bool isPrepared();
 
   /** indicate everything is ready */
-  bool internalIsPrepared();
+  bool internalIsPrepared(bool notify);
 
   /** start responsiveness to input data. */
   void startModule(const TimeSpec &time);
