@@ -67,7 +67,7 @@
 
 #define CHECK_RECORDER(A) \
   if (! (A) .isValid() ) {                               \
-    W_MOD(getId() << '/' << classname                    \
+    W_MOD(getId() << '/' << getclassname(*this)          \
           << " recorder " #A << " not (yet) valid");     \
     res = false; \
   }
@@ -77,5 +77,3 @@
 #else
 USING_DUECA_NS;
 #endif
-
-

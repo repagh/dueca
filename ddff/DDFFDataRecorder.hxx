@@ -101,30 +101,72 @@ DDFF_NS_START
     or directly when writing (note, do not record in HoldCurrent:
     @code
       DataWriter<MyObject> dw(w_mytoken, ts);
-      // write the data to dw.data() ...
+      // write the data to dw.data() as normal ...
+
+      // only when in advance, use the written data for the recording
       if (getCurrentState() == SimulationState::Advance) {
         my_recorder.record(ts, dw.data());
       }
     @endcode
 
-    If you need to record the data from an event (and you only now and then write),
-    use the markRecord() function to indicate that you passed the given time:
+    If you need to record the data from an event (which you will normally only
+    now and then write, or even repeatedly in a single time span), make sure
+    that the time span you specify when recording is 0, and use the
+    markRecord() function in each cycle to indicate that you passed the
+    given time:
 
     @code
-    if (writing_my_event) {
+    while (writing_my_event) {
       DataWriter<MyObject> dw(w_mytoken, ts);
-      // write the data to dw.data() ...
+      // write the data to dw.data(), etc. ...
       if (getCurrentState() == SimulationState::Advance) {
-        my_recorder.record(ts, dw.data());
+        my_recorder.record(ts.getValidityStart(), dw.data());
       }
     }
-    else if getCurrentState() == SimulationState::Advance) {
+
+    // make sure that the recording is marked as complete for this
+    // update
+    if (getCurrentState() == SimulationState::Advance) {
       my_recorder.markRecord(ts);
     }
     @endcode
 
     When in the "Replay" mode, the recorder's "replay" method can be used to
-    retrieve the previously stored data.
+    explicitly retrieve the previously stored data. In the following example,
+    we assume an event object, when there is an event for the given time span,
+    the replay call returns true.
+
+    @code
+    if (getCurrentState() == SimulationState::Replay) {
+      MyObject obj;
+      DataTimeSpec ts2;
+      while (my_recorder.replay(ts, obj, ts2)) {
+
+        // an event was sent in the recording, resend it in the replay
+        DataWriter<MyObject> dw(w_mytoken, ts2);
+        dw.data() = obj;
+
+        // and do whatever else you want with obj, flashing lights
+        // auditory feedback, or whatever you did during the recording
+        ....
+      }
+    }
+    @endcode
+
+    Of course, if you wrote and recorded a stream channel, you may assume that
+    the data is there during replay, ignore the returned boolean, and call
+    replay only once.
+
+    If you only want to write the data to the channel again, and you don't
+    need to access the data in the module, you can use the channelReplay
+    method. This handles event or stream channels in the proper fashion, and
+    simplifies your work:
+
+    @code
+    if (getCurrentState() == SimulationState::Replay) {
+      my_recorder.channelReplay(ts, w_mytoken);
+    }
+    @endcode
 */
 class DDFFDataRecorder: public SegmentedRecorderBase //: public boost::intrusive_ref_counter<DataRecorder>
 {
@@ -322,7 +364,9 @@ public:
       @tparam DCO    A packable (with msgpack) object.
       @param ts      Time for which data is recorded; the end of the
                      period is also used to mark until when recording is
-                     complete.
+                     complete. If you are recording event data, and want that
+                     read back as event data, use a span of 0, and call
+                     markRecord in each cycle.
       @param object  DCO object to save.
    */
   template <typename DCO>

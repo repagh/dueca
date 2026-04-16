@@ -11,7 +11,7 @@
         license         : EUPL-1.2
 */
 
-/** Copy constructor, DataTimeSpec objects are often created from
+  /** Copy constructor, DataTimeSpec objects are often created from
       a PeriodicTimeSpec or TimeSpec object. */
   DataTimeSpec(const TimeSpec& time_spec);
 
