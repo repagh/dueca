@@ -334,10 +334,12 @@ public:
     }
     catch (const std::exception& e) {
       if (replay_tick == MAX_TIMETICK) {
+        // end of data event
         DEB("Error in replay, could not decode new tick after " <<
             ts.getValidityStart() - replay_start_tick);
         return false;
       }
+      throw(e);
     }
     return true;
   }
