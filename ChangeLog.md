@@ -2,6 +2,24 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
+## [4.2.8] - 2023-04-17
+
+### Changed
+
+- Clean up and better comments dueca-gproject
+- New dependency on fmt-devel, instead of boost/format.hpp
+- Fix a dueca-gconfig behaviour on new projects, checking clean remote
+- Fix new module templates, first include comm-objects.h
+- Limit the messages on DDFFLogger, when started with immediate-start
+- Fix the timing on snapshot collection
+- Correct the replay in the state machine for HardwareModule
+- Change DDFF/msgpack packing and unpacking, to unpack/pack DCO's as either
+  object or array.
+
+### Added
+
+- Some more documentation on replay recorder
+
 ## [4.2.7] - 2026-03-25
 
 ### Changed

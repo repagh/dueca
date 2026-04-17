@@ -52,6 +52,13 @@ namespace messagepack {
     msg = mxs.str();
   }
 
+  msgpack_object_changed_size::msgpack_object_changed_size(const char* dconame)
+  {
+    std::stringstream mxs;
+    mxs << "DCO object changed size, old recording invalid " << dconame;
+    msg = mxs.str();
+  }
+
   const char *msgpack_obj_mode_mismatch::what() const noexcept
   {
     return msg.c_str();
@@ -61,6 +68,10 @@ namespace messagepack {
     return "DCO member name too long";
   }
   const char *msgpack_excess_array_members::what() const noexcept
+  {
+    return msg.c_str();
+  }
+  const char *msgpack_object_changed_size::what() const noexcept
   {
     return msg.c_str();
   }

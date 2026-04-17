@@ -55,24 +55,75 @@ MSGPACK_API_VERSION_NAMESPACE(v1) {
 /// @endcond
 namespace adaptor {
 
-/// msgpack pack specialization
+/// member size for this type of object, including parent members
+struct {{ name }}_membersize
+{
+  /// return number of elements in object
+  static constexpr unsigned n_members() {
+  {%- if parent %}
+  return {{ members|length }}U + pack<{{ parent }}>::n_members();
+  {%- else %}
+  return {{ members|length }}U;
+  {%- endif %}
+  }
+};
+
+/// msgpack pack specialization with array coding
 template <>
-struct pack<{{ nsprefix }}{{ name }}> {
+struct pack<msgpack_dco_array<{{ nsprefix }}{{ name }}>>:
+  public {{ name }}_membersize
+{
+  // main operator, packs data
+  template <typename Stream>
+  msgpack::packer<Stream>& operator()(
+    msgpack::packer<Stream>& o,
+    const msgpack_dco_array<{{ nsprefix }}{{ name }}>& v) const
+  {
+    o.pack_array(this->n_members());
+    this->pack_members<Stream>(o, v);
+  }
+
+  template <typename Stream>
+  static void pack_members(msgpack::packer<Stream>& o,
+                           const {{ nsprefix }}{{ name }}& v)
+  {
+    {%- if parent %}
+    pack<msgpack_dco_array<{{ parent }}>>::pack_members<Stream>(o, v);
+    {%- endif %}
+    {%- for m in members %}
+    o.pack(v.{{ m.getName() }});
+    {%- endfor %}
+  }
+
+  template<typename S>
+  static void unpack_members(S& i0, const S& iend,
+                             {{ nsprefix }}{{ name }}& v)
+  {
+    {%- if parent %}
+    pack<msgpack_dco_array<{{ parent }}>>::
+      unpack_members<S>(i0, iend, v);
+    {%- endif %}
+    {%- for m in members %}
+    msgunpack::msg_unpack(i0, iend, v.{{ m.getName() }});
+    {%- endfor %}
+   }
+};
+
+/// msgpack pack specialization with object coding
+template <>
+struct pack<{{ nsprefix }}{{ name }}>:
+  public {{ name }}_membersize
+{
+  /// main operator, packs DCO as object
   template <typename Stream>
   msgpack::packer<Stream>& operator()(msgpack::packer<Stream>& o,
                                       const {{ nsprefix }}{{ name }}& v) const
   {
-    MSGPACK_DCO_OBJECT(this->n_members());
+    o.pack_map(this->n_members());
     this->pack_members<Stream>(o, v);
     return o;
   }
-  static constexpr unsigned n_members() {
-    {%- if parent %}
-    return {{ members|length }}U + pack<{{ parent }}>::n_members();
-    {%- else %}
-    return {{ members|length }}U;
-    {%- endif %}
-  }
+
   template <typename Stream>
   static void pack_members(msgpack::packer<Stream>& o,
                            const {{ nsprefix }}{{ name }}& v)
@@ -81,7 +132,9 @@ struct pack<{{ nsprefix }}{{ name }}> {
     pack<{{ parent }}>::pack_members<Stream>(o, v);
     {%- endif %}
     {%- for m in members %}
-    MSGPACK_DCO_MEMBER({{ m.getName() }});
+    o.pack_str({{ m.getName()|length }});
+    o.pack_str_body("{{ m.getName() }}", {{ m.getName()|length }});
+    o.pack(v.{{ m.getName()}});
     {%- endfor %}
   }
 };
@@ -199,14 +252,12 @@ namespace msgunpack {
 template<typename S>
 void msg_unpack(S& i0, const S& iend, {{ nsprefix }}{{ name }}&i)
 {
-  {%- if parent %}
-  msg_unpack<S>(i0, iend, *reinterpret_cast<{{ parent }}*>(&i));
-  {%- else %}
-  MSGPACK_CHECK_DCO_SIZE(0);
-  {%- endif %}
-  {%- for m in members %}
-  MSGPACK_UNPACK_MEMBER(i.{{ m.getName() }});
-  {%- endfor %}
+  unsigned s = unstream<S>::unpack_arraysize(i0, iend);
+  if (s != msgpack::v1::adaptor::{{ name }}_membersize::n_members()) {
+    throw(dueca::messagepack::msgpack_object_changed_size("{{ name }}"));
+  }
+  msgpack::v1::adaptor::pack<msgpack_dco_array<{{ nsprefix }}{{ name }}>>::
+    unpack_members(i0, iend, i);
 };
 } // namespace msgunpack
 # endif

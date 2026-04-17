@@ -294,12 +294,17 @@ MSGPACK_API_VERSION_NAMESPACE(v1) {
 #include "Dstring.hxx"
 #include <list>
 #include <map>
-#include <sstream>
 #include <string>
 #include <vector>
 
 #define DEBPRINTLEVEL -2
 #include <debprint.h>
+
+/** Flagging class, used to indicate treating packing aund
+unpacking of a DCO object with arrays, rather than as an object */
+template<class DCO>
+struct msgpack_dco_array: public DCO
+{};
 
 /** @group Utilities for generated code */
 template <typename O> inline void pack_member_id_inmap(O &o, const char *mid) {
@@ -490,6 +495,14 @@ struct msgpack_excess_array_members : public std::exception
   std::string msg;
   msgpack_excess_array_members(const char *dconame);
   const char *what() const noexcept;
+};
+
+/** Reading streamed data, but object size is now different */
+struct msgpack_object_changed_size: public std::exception
+{
+  std::string msg;
+  msgpack_object_changed_size(const char* dconame);
+  const char* what() const noexcept;
 };
 
 /** Trait struct indicating undefined objects for msgpack */

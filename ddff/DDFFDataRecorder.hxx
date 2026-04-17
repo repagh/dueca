@@ -390,7 +390,7 @@ public:
       pk.pack_array(3);
       pk.pack(ts.getValidityStart() - record_start_tick);
       pk.pack(ts.getValiditySpan());
-      pk.pack(object);
+      pk.pack(*reinterpret_cast<const msgpack_dco_array<DCO>*>(&object));
 
       // record end tick, for later determining whether a recording is
       // complete

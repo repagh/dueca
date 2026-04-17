@@ -23,6 +23,7 @@
 #include <vector>
 #include <exception>
 #include <boost/endian/conversion.hpp>
+#include <exception>
 
 //#define DEBPRINTLEVEL -1
 //#include <debprint.h>
@@ -736,4 +737,3 @@ MSGPACKUS_NS_END;
 //#include <undebprint.h>
 
 #endif
-
