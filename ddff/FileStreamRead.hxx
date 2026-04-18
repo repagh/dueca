@@ -181,6 +181,11 @@ public:
     { auto tmp = *this; m_ptr = stream->increment(m_ptr); return tmp; }
   private:
     friend class FileStreamRead;
+    friend class FileWithSegments;
+    friend class DDFFDataRecorder;
+
+    /// set the startpoint of the iterator
+    void setStart(unsigned b_offset);
 
     /// remember the stream provider
     FileStreamRead::pointer stream;
@@ -238,7 +243,7 @@ private:
   Iterator::const_pointer increment(Iterator::const_pointer m_ptr);
 
   /// get first element of a buffer
-  Iterator::const_pointer current();
+  Iterator::const_pointer current(unsigned custom_offset = 0U);
 
 public:
 
@@ -283,6 +288,7 @@ private:
   // debugging set-up for the iterator, check how many levels deep
   // iterators are copied
   friend struct Iterator;
+  friend class FileWithSegments;
 
   /** Claim access to the buffers */
   void claim();

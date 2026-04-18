@@ -15,6 +15,8 @@
 #include <ddff/FileStreamWrite.hxx>
 #include <ddff/FileHandler.hxx>
 #include <boost/intrusive_ptr.hpp>
+#define DEBPRINTLEVEL 2
+#include <debprint.h>
 #ifdef HAVE_BOOST_SMART_PTR_INTRUSIVE_REF_COUNTER_HPP
 #include <boost/smart_ptr/intrusive_ref_counter.hpp>
 #endif
@@ -40,7 +42,7 @@ protected:
 
 public:
   /** Define pointer */
-  typedef SegmentedRecorderBase* pointer;
+  typedef SegmentedRecorderBase *pointer;
 
   /** Constructor */
   SegmentedRecorderBase();
@@ -52,6 +54,7 @@ public:
   stretch (if any) for callback with the offset of that data */
   inline void startStretch(TimeTickType tick)
   {
+    DEB("S" << w_stream->getStreamId() << " " << " record_start to " << tick);
     record_start_tick = tick;
   }
 
@@ -71,10 +74,7 @@ public:
       @param  tick   End time for which writing should be complete.
       @returns       "true", if written until tick.
    */
-  inline bool checkWriteTick(TimeTickType tick)
-  {
-    return tick <= marked_tick;
-  }
+  inline bool checkWriteTick(TimeTickType tick) { return tick <= marked_tick; }
 
   /** Control spooling replay position.
 
@@ -82,10 +82,14 @@ public:
       @param end_offset Location in file where data ends.
    */
   virtual void spoolReplay(ddff::FileHandler::pos_type offset,
-                           ddff::FileHandler::pos_type end_offset);
+                           ddff::FileHandler::pos_type end_offset,
+                           TimeTickType replay_record_tick,
+                           unsigned inblock_offset);
 
     /** Starting a new replay; provide offset for the replayed data */
   virtual void startReplay(TimeTickType tick);
 };
 
 DDFF_NS_END
+
+#include <undebprint.h>

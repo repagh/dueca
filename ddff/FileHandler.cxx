@@ -24,7 +24,7 @@
 
 DDFF_NS_START
 
-FileHandler::FileHandler(const std::string& fname, Mode mode,
+FileHandler::FileHandler(const std::string &fname, Mode mode,
                          unsigned blocksize) :
   blocksize(0U),
   streams(),
@@ -51,32 +51,39 @@ FileHandler::FileHandler() :
   //
 }
 
-void FileHandler::open(const std::string& fname, Mode mode,
-                       unsigned blocksize)
+void FileHandler::open(const std::string &fname, Mode mode, unsigned blocksize)
 {
   filename = fname;
-  if (this->blocksize) { throw file_already_opened(); }
+  if (this->blocksize) {
+    throw file_already_opened();
+  }
   this->open_mode = mode;
   this->file_existing = boost::filesystem::exists(fname);
   this->blocksize = blocksize;
 
   if (file_existing) {
-    if (mode == Mode::New) { throw file_exists(); }
+    if (mode == Mode::New) {
+      throw file_exists();
+    }
   }
   else {
-    if (mode == Mode::Read || mode == Mode::Append) { throw file_missing(); }
+    if (mode == Mode::Read || mode == Mode::Append) {
+      throw file_missing();
+    }
   }
   std::ios::openmode omode = std::ios::in | std::ios::binary;
-  if (mode != Mode::Read) omode = omode | std::ios::out;
-  if (mode == Mode::Truncate || !file_existing) omode = omode | std::ios::trunc;
+  if (mode != Mode::Read)
+    omode = omode | std::ios::out;
+  if (mode == Mode::Truncate || !file_existing)
+    omode = omode | std::ios::trunc;
   file.open(fname.c_str(), omode);
 
   if (file_existing && mode != Mode::Truncate) {
     checkIndices();
   }
-  
-  DEB("Opened file " << fname << " existing" << this->file_existing <<
-      " good" << file.good());
+
+  DEB("Opened file " << fname << " existing" << this->file_existing << " good"
+                     << file.good());
 }
 
 FileHandler::~FileHandler()
@@ -87,17 +94,14 @@ FileHandler::~FileHandler()
   file.close();
 }
 
-bool FileHandler::isComplete() const
-{
-  return filename.size() > 0;
-}
+bool FileHandler::isComplete() const { return filename.size() > 0; }
 
 void FileHandler::syncToFile(bool intermediate)
 {
   DEB("FileHandler, syncing, im=" << intermediate);
 
   // collect all remaining buffers
-  for (auto w: streams) {
+  for (auto w : streams) {
     if (w.writer.get() != NULL) {
       w.writer->closeOff(intermediate);
     }
@@ -112,9 +116,8 @@ FileStreamWrite::pointer FileHandler::createWrite(size_t bufsize)
   if (open_mode == Mode::Read) {
     throw(file_readonly_no_write());
   }
-  FileStreamWrite::pointer write
-    (new FileStreamWrite
-     (this, streams.size(), bufsize ? bufsize : blocksize));
+  FileStreamWrite::pointer write(
+    new FileStreamWrite(this, streams.size(), bufsize ? bufsize : blocksize));
 
   // new writer, auto-mark the first object offset
   write->markItemStart();
@@ -133,9 +136,8 @@ FileStreamWrite::pointer FileHandler::attachWrite(unsigned sid, size_t bufsize)
   }
 
   if (sid == streams.size()) {
-    streams.emplace_back
-      (new FileStreamWrite
-       (this, streams.size(), bufsize ? bufsize : blocksize));
+    streams.emplace_back(
+      new FileStreamWrite(this, streams.size(), bufsize ? bufsize : blocksize));
   }
   else {
     streams[sid].setWriter(this, sid, bufsize, file);
@@ -145,16 +147,15 @@ FileStreamWrite::pointer FileHandler::attachWrite(unsigned sid, size_t bufsize)
   return streams[sid].writer;
 }
 
-
 FileStreamRead::pointer FileHandler::createRead(unsigned stream_id,
                                                 unsigned num_cache,
-						bool slice_indexed)
+                                                bool slice_indexed)
 {
-  FileStreamRead::pointer rstream
-    (new FileStreamRead(this, stream_id, num_cache, slice_indexed));
+  FileStreamRead::pointer rstream(
+    new FileStreamRead(this, stream_id, num_cache, slice_indexed));
 
-  if (stream_id+1 > streams.size()) {
-    streams.resize(stream_id+1);
+  if (stream_id + 1 > streams.size()) {
+    streams.resize(stream_id + 1);
   }
   if (streams[stream_id].reader.get() != NULL) {
     throw duplicate_filestreamread();
@@ -165,7 +166,6 @@ FileStreamRead::pointer FileHandler::createRead(unsigned stream_id,
 
   return rstream;
 }
-
 
 void FileHandler::checkIndices(pos_type offset)
 {
@@ -181,9 +181,9 @@ void FileHandler::checkIndices(pos_type offset)
     // decode the control block
     ControlBlockRead hdata(header);
 
-    DEB("FileHandler, find block offset 0x" <<
-        std::hex << offset << std::dec << " stream=" << hdata.stream_id <<
-        " size=" << hdata.block_fill);
+    DEB("FileHandler, find block offset 0x" << std::hex << offset << std::dec
+                                            << " stream=" << hdata.stream_id
+                                            << " size=" << hdata.block_fill);
 
     // extend the streams vector if needed
     if (hdata.stream_id >= streams.size()) {
@@ -212,13 +212,11 @@ void FileHandler::checkIndices(pos_type offset)
   file.seekg(0, std::ios::beg);
 }
 
-
 void FileHandler::requestWrite(FileStreamWrite::pointer fsw)
 {
   // schedule a write with this stream
   write_jobs.push_back(fsw.get());
 }
-
 
 void FileHandler::bufferWriteInformation(pos_type offset,
                                          DDFFMessageBuffer::ptr_type buffer)
@@ -244,13 +242,11 @@ unsigned FileHandler::processWrites()
 
 #if DEBPRINTLEVEL >= 0
       ControlBlockRead head(*buffer, tmpoffset);
-      DEB("FileHandler, re-writing at 0x" <<
-          std::hex << tmpoffset <<
-          " chk=0x" << head.checksum << std::dec <<
-          " stream=" << buffer->stream_id <<
-          " offset=" << buffer->object_offset <<
-          " size=" << buffer->fill <<
-          " blockno=" << head.block_num);
+      DEB("FileHandler, re-writing at 0x"
+          << std::hex << tmpoffset << " chk=0x" << head.checksum << std::dec
+          << " stream=" << buffer->stream_id
+          << " offset=" << buffer->object_offset << " size=" << buffer->fill
+          << " blockno=" << head.block_num);
 #endif
 
       // write the data at the new offset
@@ -272,13 +268,11 @@ unsigned FileHandler::processWrites()
 
 #if DEBPRINTLEVEL >= 1
       ControlBlockRead head(*buffer, offset);
-      DEB1("FileHandler, writing at 0x" <<
-           std::hex << offset <<
-           " chk=0x" << head.checksum << std::dec <<
-           " stream=" << buffer->stream_id <<
-           " offset=" << buffer->object_offset <<
-           " size=" << buffer->fill <<
-           " blockno=" << head.block_num);
+      DEB1("FileHandler, writing at 0x"
+           << std::hex << offset << " chk=0x" << head.checksum << std::dec
+           << " stream=" << buffer->stream_id
+           << " offset=" << buffer->object_offset << " size=" << buffer->fill
+           << " blockno=" << head.block_num);
 #endif
 
       // simply write at the end of the file
@@ -314,30 +308,30 @@ unsigned FileHandler::processWrites()
 }
 
 void FileHandler::requestLoad(FileStreamRead::pointer fsr, pos_type offset,
-			      unsigned cycle)
+                              unsigned cycle)
 {
   AsyncListWriter<read_job> w(read_jobs);
   w.data().reader = fsr.get();
   w.data().offset = offset;
   w.data().cycle = cycle;
-  DEB("Load requested for stream " << fsr->getStreamId() << " at 0x" <<
-      std::hex << offset << std::dec << " cycle=" << cycle);
+  DEB("Load requested for stream " << fsr->getStreamId() << " at 0x" << std::hex
+                                   << offset << std::dec << " cycle=" << cycle);
 }
 
 void FileHandler::runLoads()
 {
   // try to clear the errors
   file.clear();
-  
+
   while (read_jobs.notEmpty() && file.good()) {
 
     AsyncQueueReader<read_job> job(read_jobs);
-    
+
     // spool to the defined offset
     uint64_t offset = job.data().offset;
-    
-    DEB("Loading for stream " << job.data().reader->getStreamId()
-        << " at 0x" <<   std::hex << offset << std::dec);
+
+    DEB("Loading for stream " << job.data().reader->getStreamId() << " at 0x"
+                              << std::hex << offset << std::dec);
 
     file.seekg(offset, std::ios::beg);
 
@@ -350,26 +344,23 @@ void FileHandler::runLoads()
     // decode the control block, throws if checksum wrong, sets the buffer
     ControlBlockRead hdata(buffer->data, job.data().offset);
 
-    DEB1("FileHandler, read from 0x" <<
-         std::hex << offset <<
-         " nexto=0x" << hdata.next_offset <<
-         " chk=0x" << hdata.checksum << std::dec <<
-         " stream=" << buffer->data.stream_id <<
-         " offset=" << buffer->data.object_offset <<
-         " size=" << buffer->data.fill <<
-         " blockno=" << hdata.block_num);
+    DEB1("FileHandler, read from 0x"
+         << std::hex << offset << " nexto=0x" << hdata.next_offset << " chk=0x"
+         << hdata.checksum << std::dec << " stream=" << buffer->data.stream_id
+         << " offset=" << buffer->data.object_offset
+         << " size=" << buffer->data.fill << " blockno=" << hdata.block_num);
 
     // check the stream id matches the FileStreamRead object
     if (hdata.stream_id != job.data().reader->stream_id) {
-      DEB("FileHandler, data stream=" << hdata.stream_id <<
-          " reader stream=" << job.data().reader->stream_id);
+      DEB("FileHandler, data stream=" << hdata.stream_id << " reader stream="
+                                      << job.data().reader->stream_id);
       read_jobs.pop();
       throw file_wrong_streamid();
     }
 
     // return the results
-    job.data().reader->appendBuffer
-      (buffer, offset, hdata.next_offset, hdata.block_num, job.data().cycle);
+    job.data().reader->appendBuffer(buffer, offset, hdata.next_offset,
+                                    hdata.block_num, job.data().cycle);
 
     // next job
     //read_jobs.pop();
@@ -378,14 +369,14 @@ void FileHandler::runLoads()
   file.clear();
 }
 
-void FileHandler::requestFileStreamReadRelease(FileStreamRead::pointer& ptr)
+void FileHandler::requestFileStreamReadRelease(FileStreamRead::pointer &ptr)
 {
   if (streams[ptr->getStreamId()].reader.get() == NULL) {
     /* DUSIME replay&initial
 
        Logic error in the program, a read file handler is released twice. */
-    W_XTR("Double release from file handler, read stream " <<
-          ptr->getStreamId());
+    W_XTR("Double release from file handler, read stream "
+          << ptr->getStreamId());
   }
   streams[ptr->getStreamId()].reader.reset();
 }
@@ -423,20 +414,21 @@ FileHandler::StreamSetInfo::StreamSetInfo(FileStreamRead::pointer reader) :
 void FileHandler::StreamSetInfo::setReader(FileStreamRead::pointer reader)
 {
   this->reader = reader;
-  if (block_size) { reader->initBuffer(block_size); }
+  if (block_size) {
+    reader->initBuffer(block_size);
+  }
   if (firstblock_location != pos_type(-1)) {
     reader->informOffset(firstblock_location);
   }
 }
 
-void FileHandler::StreamSetInfo::setWriter(FileHandler* handler,
-                                           unsigned sid,
-                                           size_t bufsize,
-                                           fstream& file)
+void FileHandler::StreamSetInfo::setWriter(FileHandler *handler, unsigned sid,
+                                           size_t bufsize, fstream &file)
 {
   if (bufsize != 0 && block_size == 0) {
     block_size = bufsize;
-    if (reader.get() != NULL) reader->initBuffer(block_size);
+    if (reader.get() != NULL)
+      reader->initBuffer(block_size);
   }
   else if (bufsize == 0) {
     DEB("Keeping original block size " << block_size);
@@ -469,8 +461,8 @@ void FileHandler::StreamSetInfo::setWriter(FileHandler* handler,
 }
 
 void FileHandler::StreamSetInfo::checkBlock(pos_type offset,
-                                            const ControlBlockRead& hdata,
-                                            std::fstream& file)
+                                            const ControlBlockRead &hdata,
+                                            std::fstream &file)
 {
   // is this a first block?
   if (firstblock_location == pos_type(-1)) {
@@ -501,7 +493,7 @@ void FileHandler::StreamSetInfo::checkBlock(pos_type offset,
   }
 
   // if this block has no block following it, and lastblock not set
-  // then this block must be 
+  // then this block must be
   if (hdata.next_offset == std::numeric_limits<pos_type>::max() &&
       lastblock_location == pos_type(-1)) {
     if (writer.get() != NULL && !writer->linkedToFile()) {

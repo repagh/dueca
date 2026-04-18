@@ -81,6 +81,7 @@ struct pack<msgpack_dco_array<{{ nsprefix }}{{ name }}>>:
   {
     o.pack_array(this->n_members());
     this->pack_members<Stream>(o, v);
+    return o;
   }
 
   template <typename Stream>

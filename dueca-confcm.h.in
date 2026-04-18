@@ -255,6 +255,10 @@
    hdf5 modules. Useful for debugging only. */
 #cmakedefine HDF5_NOCATCH
 
+/* Define if you want to disable catching mechanism for
+   ddff modules. Useful for debugging only. */
+#cmakedefine DDFF_NOCATCH
+
 /* Name of package */
 #cmakedefine PACKAGE
 

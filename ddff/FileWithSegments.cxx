@@ -229,8 +229,9 @@ FileWithSegments::recorderCheckIn(const std::string &key,
        The new stream_id for a recorder does not match the current
        configuration.
     */
-    E_XTR("Incompatible recorder check-in, key " << key << ", already have "
-          << next_tag.offset.size() << " with id " << fsr->getStreamId());
+    E_XTR("Incompatible recorder check-in, key "
+          << key << ", already have " << next_tag.offset.size() << " with id "
+          << fsr->getStreamId());
   }
 
   ScopeLock r(g_recorders);
@@ -252,8 +253,8 @@ ddff::FileHandler::pos_type FileWithSegments::findBlockStart(unsigned cycle,
     assert(stream_id >= 2U);
     return tags[cycle].offset[stream_id - 2U];
   }
-  throw cannot_find_segment(
-    fmt::format("stream{:d}", stream_id).c_str(), cycle);
+  throw cannot_find_segment(fmt::format("stream{:d}", stream_id).c_str(),
+                            cycle);
   return ddff::FileHandler::pos_type(-1);
 }
 
@@ -263,7 +264,7 @@ void FileWithSegments::startStretch(
   if (next_tag.label.size()) {
 
     // get the time
-    next_tag.index0 = 0U;
+    next_tag.index0 = tick;
     next_tag.time = stime;
     next_tag.cycle = tags.size();
     next_tag.offset.resize(streams.size() - 2, 0U);
@@ -344,7 +345,7 @@ bool FileWithSegments::completeStretch(TimeTickType tick)
   }
 
   // complete the tag
-  next_tag.index1 = ts_switch.validity_end - ts_switch.validity_start;
+  next_tag.index1 = ts_switch.validity_end; // - ts_switch.validity_start;
 
   // no more recording for this stretch, mark completion
   ts_switch.validity_start = MAX_TIMETICK;
@@ -370,6 +371,9 @@ bool FileWithSegments::completeStretch(TimeTickType tick)
 
 void FileWithSegments::spoolForReplay(unsigned cycle)
 {
+  // remember the replay cycle
+  replay_cycle = cycle;
+
   // verify that this replay cycle is available
   if (cycle >= tags.size()) {
     throw cannot_find_segment("entity", cycle);
@@ -394,7 +398,8 @@ void FileWithSegments::spoolForReplay(unsigned cycle)
       recorder->spoolReplay(tag0->offset[idx],
                             (tag1 != NULL)
                               ? tag1->offset[idx]
-                              : std::numeric_limits<pos_type>::max());
+                              : std::numeric_limits<pos_type>::max(),
+                            tag0->index0, tag0->inblock_offset[idx]);
       idx++;
     }
   }

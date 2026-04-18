@@ -145,6 +145,9 @@ public:
     Tag();
   };
 
+  /** Current replay cycle */
+  unsigned replay_cycle;
+
 protected:
   /** List of tags; the tags are stored, but also kept in memory since
       they need to provide quick access to locations in the file. */

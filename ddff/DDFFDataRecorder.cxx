@@ -23,13 +23,16 @@
 #include "DDFFExceptions.hxx"
 #include <dueca/DCOtypeJSON.hxx>
 
-#define DEBPRINTLEVEL -1
+#define DEBPRINTLEVEL 2
 #include <debprint.h>
 
 DDFF_NS_START
 
-DDFFDataRecorder::recordermap_t& DDFFDataRecorder::allRecorders()
-{ static recordermap_t _recorders; return _recorders; }
+DDFFDataRecorder::recordermap_t &DDFFDataRecorder::allRecorders()
+{
+  static recordermap_t _recorders;
+  return _recorders;
+}
 
 DDFFDataRecorder::DDFFDataRecorder() :
   entity(),
@@ -44,11 +47,11 @@ DDFFDataRecorder::DDFFDataRecorder() :
   replay_tick(MAX_TIMETICK),
   replay_span(0),
   replay_start_tick(MAX_TIMETICK),
-  rit0()
+  rit0(),
+  block_offset(0U)
 {
   //
 }
-
 
 DDFFDataRecorder::~DDFFDataRecorder()
 {
@@ -62,19 +65,19 @@ DDFFDataRecorder::~DDFFDataRecorder()
   }
 }
 
-
-bool DDFFDataRecorder::complete(const std::string& entity,
-                                const ChannelWriteToken& w_token,
-                                const std::string& _key)
+bool DDFFDataRecorder::complete(const std::string &entity,
+                                const ChannelWriteToken &w_token,
+                                const std::string &_key)
 {
   // early return when already configured;
-  if (this->entity.size()) return true;
+  if (this->entity.size())
+    return true;
 
   // create a key for the data; channel name + entry label
   NameSet ns = w_token.getName();
-  ChannelEntryInfo ei { w_token.getChannelEntryInfo() };
-  std::string key = (_key.size() != 0) ? _key :
-    ns.name + std::string(";") + ei.entry_label;
+  ChannelEntryInfo ei{ w_token.getChannelEntryInfo() };
+  std::string key =
+    (_key.size() != 0) ? _key : ns.name + std::string(";") + ei.entry_label;
 
   // let the general complete method find the filer, and register
   // the stream
@@ -98,12 +101,13 @@ bool DDFFDataRecorder::complete(const std::string& entity,
   return res;
 }
 
-bool DDFFDataRecorder::complete(const std::string& entity,
-                                const std::string& key,
-                                const std::string& dataclass)
+bool DDFFDataRecorder::complete(const std::string &entity,
+                                const std::string &key,
+                                const std::string &dataclass)
 {
   // early return when already configured
-  if (this->entity.size()) return true;
+  if (this->entity.size())
+    return true;
 
   if (!entity.size() || !key.size()) {
     throw data_recorder_configuration_error("specify entity and key");
@@ -119,8 +123,8 @@ bool DDFFDataRecorder::complete(const std::string& entity,
        Cannot find the filer for this DataRecorder. Has it been
        created in this node?
     */
-    W_MOD("DataRecorder, no filer for entity=\"" << entity <<
-          "\", has it been created in the script?");
+    W_MOD("DataRecorder, no filer for entity=\""
+          << entity << "\", has it been created in the script?");
     return false;
   }
 
@@ -150,8 +154,8 @@ bool DDFFDataRecorder::isValid()
        A DataRecorder needs both entity and key defined. One or
        both are empty.
     */
-    W_CNF("DataRecorder is not correctly initialized, entity=\"" <<
-          entity << "\", key=\"" << key << "\"");
+    W_CNF("DataRecorder is not correctly initialized, entity=\""
+          << entity << "\", key=\"" << key << "\"");
     return false;
   }
 
@@ -160,11 +164,9 @@ bool DDFFDataRecorder::isValid()
 
        Replay filer has not been found?
     */
-    E_CNF("DataRecorder, have no filer for entity=\"" << entity <<
-          "\"");
+    E_CNF("DataRecorder, have no filer for entity=\"" << entity << "\"");
     return false;
   }
-
 
   // open the file with whatever is specified
   if (filer->isComplete()) {
@@ -174,24 +176,27 @@ bool DDFFDataRecorder::isValid()
       rapidjson::StringBuffer doc;
       DCOtypeJSON(doc, data_class.c_str());
       w_stream = filer->createNamedWrite(key, doc.GetString());
-    } else {
+    }
+    else {
       w_stream = filer->createNamedWrite(key, data_class);
     }
     r_stream = filer->recorderCheckIn(key, this);
-    DEB("DataRecordern connected, entity=\"" <<
-        entity << "\", key=\"" << key << "\" stream id=" <<
-        r_stream->getStreamId());
+    DEB("DataRecordern connected, entity=\""
+        << entity << "\", key=\"" << key
+        << "\" stream id=" << r_stream->getStreamId());
+    rit0 = r_stream->iterator();
 
     // create functors if applicable
     if (w_token_ptr != NULL) {
       auto metafunctor =
-	w_token_ptr->getMetaFunctor<ddff::DDFFDCOMetaFunctor>("msgpack");
+        w_token_ptr->getMetaFunctor<ddff::DDFFDCOMetaFunctor>("msgpack");
 
-      record_functor.reset(metafunctor.lock()->getReadFunctor
-			   (w_stream, filer->getRunTimeSpec()));
+      record_functor.reset(
+        metafunctor.lock()->getReadFunctor(w_stream, filer->getRunTimeSpec()));
       // reads data, writes channel, does not read the timing information from
       // the data
       replay_functor.reset(metafunctor.lock()->getWriteFunctor(false));
+      replay_functor->setIterator(rit0);
     }
 
     return false;
@@ -203,15 +208,17 @@ bool DDFFDataRecorder::isValid()
      filer cannot (yet) be found is is not yet complete. Check your
      configuration if this persists.
   */
-  W_MOD("DataRecorder, replay filer not complete, entity=\"" <<
-        entity << "\", key=\"" << key << "\"");
+  W_MOD("DataRecorder, replay filer not complete, entity=\""
+        << entity << "\", key=\"" << key << "\"");
   return false;
 }
 
-void DDFFDataRecorder::channelRecord(const DataTimeSpec& ts,
-                                     const CommObjectWriter& writer)
+void DDFFDataRecorder::channelRecord(const DataTimeSpec &ts,
+                                     const CommObjectWriter &writer)
 {
-  if (!record_functor) { throw channel_access_not_available(); }
+  if (!record_functor) {
+    throw channel_access_not_available();
+  }
 
   if (ts.getValidityStart() >= record_start_tick) {
 
@@ -233,6 +240,10 @@ void DDFFDataRecorder::channelRecord(const DataTimeSpec& ts,
     // packs the object and the ticks
     (*record_functor)(writer.getObjectPtr(), ts);
 
+    DEB1("S " << r_stream->getStreamId() << " packed for "
+              << ts.getValidityStart() << "-"
+              << ts.getValiditySpan());
+
     // record end tick
     marked_tick = ts.getValidityEnd();
   }
@@ -241,26 +252,33 @@ void DDFFDataRecorder::channelRecord(const DataTimeSpec& ts,
 
        Recording start is not aligned with data time spans; adjust
        your intervals when starting the Environment. */
-    W_XTR("Omitting partial data span for recording, span=" << ts <<
-          " recording start=" << record_start_tick);
+    W_XTR("Omitting partial data span for recording, span="
+          << ts << " recording start=" << record_start_tick);
   }
 }
 
-unsigned DDFFDataRecorder::channelReplay(const DataTimeSpec& ts,
-                                         ChannelWriteToken& w_token)
+unsigned DDFFDataRecorder::channelReplay(const DataTimeSpec &ts,
+                                         ChannelWriteToken &w_token)
 {
-  if (!replay_functor) { throw channel_access_not_available(); }
+  if (!replay_functor) {
+    throw channel_access_not_available();
+  }
 
-  if (rit0 == r_stream->end()) return 0U;
+  if (rit0 == r_stream->end()) {
+    DEB("S" << r_stream->getStreamId() << " stream exhausted at " << ts);
+    return 0U;
+  }
 
   if (replay_tick == MAX_TIMETICK) {
     unsigned sz =
-      msgunpack::unstream<ddff::FileStreamRead::Iterator>::unpack_arraysize
-      (rit0, r_stream->end());
+      msgunpack::unstream<ddff::FileStreamRead::Iterator>::unpack_arraysize(
+        rit0, r_stream->end());
     assert(sz == 3);
     msgunpack::msg_unpack(rit0, r_stream->end(), replay_tick);
     msgunpack::msg_unpack(rit0, r_stream->end(), replay_span);
-    replay_tick += replay_start_tick;
+    DEB1("S" << r_stream->getStreamId() << " new timing " << replay_tick << "-"
+             << replay_span);
+    replay_tick = replay_tick - replay_record_tick + replay_start_tick;
   }
 
   if (replay_span == 0) {
@@ -268,26 +286,32 @@ unsigned DDFFDataRecorder::channelReplay(const DataTimeSpec& ts,
     while (replay_tick <= ts.getValidityStart()) {
       DataTimeSpec object_ts(replay_tick, replay_tick);
       w_token.applyFunctor(replay_functor.get(), object_ts);
+      DEB1("S" << r_stream->getStreamId() << " event");
       nwrites++;
 
-      if (rit0 == r_stream->end()) { return nwrites; }
+      if (rit0 == r_stream->end()) {
+        return nwrites;
+      }
       unsigned sz =
-        msgunpack::unstream<ddff::FileStreamRead::Iterator>::unpack_arraysize
-        (rit0, r_stream->end());
+        msgunpack::unstream<ddff::FileStreamRead::Iterator>::unpack_arraysize(
+          rit0, r_stream->end());
       assert(sz == 3);
       msgunpack::msg_unpack(rit0, r_stream->end(), replay_tick);
       msgunpack::msg_unpack(rit0, r_stream->end(), replay_span);
-      replay_tick += replay_start_tick;
+      DEB1("S" << r_stream->getStreamId() << " new timing " << replay_tick
+               << "-" << replay_span);
+      replay_tick = replay_tick - replay_record_tick + replay_start_tick;
     }
     return nwrites;
   }
   else {
     if (replay_tick != ts.getValidityStart() ||
         ts.getValiditySpan() != replay_span) {
-      throw(replay_synchronization
-            (entity.c_str(), r_stream->getStreamId(),
-             ts.getValidityStart(), ts.getValidityEnd(),
-             replay_tick, replay_tick + replay_span));
+      DEB("S" << r_stream->getStreamId() << " replay timing mismatch at " << ts
+              << " start tick " << replay_start_tick);
+      throw(replay_synchronization(entity.c_str(), r_stream->getStreamId(),
+                                   ts.getValidityStart(), ts.getValidityEnd(),
+                                   replay_tick, replay_tick + replay_span));
     }
     w_token.applyFunctor(replay_functor.get(), ts);
     replay_tick = MAX_TIMETICK;
@@ -295,7 +319,7 @@ unsigned DDFFDataRecorder::channelReplay(const DataTimeSpec& ts,
   return 1U;
 }
 
-void DDFFDataRecorder::checkIn(pointer rec, const std::string& entity)
+void DDFFDataRecorder::checkIn(pointer rec, const std::string &entity)
 {
   auto group = allRecorders().find(entity);
   if (group == allRecorders().end()) {
@@ -303,29 +327,30 @@ void DDFFDataRecorder::checkIn(pointer rec, const std::string& entity)
     allRecorders()[entity].push_back(rec);
     return;
   }
-  assert (std::find(group->second.begin(), group->second.end(), rec) ==
-          group->second.end());
+  assert(std::find(group->second.begin(), group->second.end(), rec) ==
+         group->second.end());
   group->second.push_back(rec);
 }
 
 void DDFFDataRecorder::spoolReplay(ddff::FileHandler::pos_type offset,
-                               ddff::FileHandler::pos_type end_offset)
+                                   ddff::FileHandler::pos_type end_offset,
+                                   TimeTickType _replay_record_tick,
+                                   unsigned blockoffset)
 {
   r_stream->setReadRange(offset, end_offset);
   replay_start_tick = 0;
+  replay_record_tick = _replay_record_tick;
   replay_tick = MAX_TIMETICK;
-  DEB("Replay spooling to range 0x" << std::hex << offset
-      << " - 0x" << end_offset << std::dec);
+  block_offset = blockoffset;
+  DEB("Replay spooling to range 0x" << std::hex << offset << " - 0x"
+                                    << end_offset << std::dec);
 }
 
 void DDFFDataRecorder::startReplay(TimeTickType tick)
 {
   replay_start_tick = tick;
-  rit0 = r_stream->iterator();
-  if (replay_functor) { replay_functor->setIterator(rit0); }
+  rit0.setStart(block_offset);
   DEB("Replay start planned for time " << tick);
 }
-
-
 
 DDFF_NS_END
