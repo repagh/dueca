@@ -253,6 +253,7 @@ unsigned FileHandler::processWrites()
       file.write(buffer->data(), buffer->capacity);
 
       // callback the client with information on the location/buffer
+      // removed, not wanted for a re-write? Need some more logic here
       bufferWriteInformation(tmpoffset, buffer);
 
       // callback the client on partial writing, to remember where this

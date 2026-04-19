@@ -241,8 +241,7 @@ void DDFFDataRecorder::channelRecord(const DataTimeSpec &ts,
     (*record_functor)(writer.getObjectPtr(), ts);
 
     DEB1("S " << r_stream->getStreamId() << " packed for "
-              << ts.getValidityStart() << "-"
-              << ts.getValiditySpan());
+              << ts.getValidityStart() << "-" << ts.getValiditySpan());
 
     // record end tick
     marked_tick = ts.getValidityEnd();
@@ -343,7 +342,8 @@ void DDFFDataRecorder::spoolReplay(ddff::FileHandler::pos_type offset,
   replay_tick = MAX_TIMETICK;
   block_offset = blockoffset;
   DEB("Replay spooling to range 0x" << std::hex << offset << " - 0x"
-                                    << end_offset << std::dec);
+                                    << end_offset << " block offset "
+                                    << std::dec << block_offset);
 }
 
 void DDFFDataRecorder::startReplay(TimeTickType tick)

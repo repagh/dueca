@@ -221,6 +221,8 @@ FileStreamRead::Iterator::operator=(const FileStreamRead::Iterator &o)
 void FileStreamRead::Iterator::setStart(unsigned b_offset)
 {
   m_ptr = stream->current(b_offset);
+  DEB("Iterator to start at offset " << b_offset << " first data " << std::hex
+                                     << unsigned(*m_ptr) << std::dec);
 }
 
 FileStreamRead::Iterator::const_pointer
@@ -366,9 +368,9 @@ void FileStreamRead::setReadRange(pos_type offset, pos_type end_off)
 
   // load the given offset into the indices
   pos_type rounded_offset = offset - offset % buffers.allocator.bufsize;
-  DEB("After read range set, streamid=" << this->getStreamId()
-                                        << " request buffer at 0x" << std::hex
-                                        << rounded_offset << std::dec);
+  DEB("After read range set, streamid="
+      << this->getStreamId() << " request buffer at 0x" << std::hex
+      << rounded_offset << std::dec << " cycle " << read_cycle);
   requested.push_back(rounded_offset);
   handler->requestLoad(this, rounded_offset, read_cycle);
 }
@@ -390,9 +392,9 @@ unsigned FileStreamRead::preload()
   unsigned newloads = 0;
   for (unsigned ii = num_cache; ii > nloaded && indices.notEmpty(); ii--) {
     newloads++;
-    DEB("In preload, streamid=" << this->getStreamId()
-                                << " request buffer at 0x" << std::hex
-                                << indices.front() << std::dec);
+    DEB("In preload, streamid="
+        << this->getStreamId() << " request buffer at 0x" << std::hex
+        << indices.front() << std::dec << " cycle " << read_cycle);
     handler->requestLoad(this, indices.front(), read_cycle);
     requested.push_back(indices.front());
     indices.pop();

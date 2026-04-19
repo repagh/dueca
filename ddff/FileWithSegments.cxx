@@ -26,7 +26,7 @@
 #include <dueca/debug.h>
 #include <fmt/format.h>
 
-#define DEBPRINTLEVEL -1
+#define DEBPRINTLEVEL 2
 #include <debprint.h>
 
 namespace msgpack {
@@ -268,6 +268,12 @@ void FileWithSegments::startStretch(
     next_tag.time = stime;
     next_tag.cycle = tags.size();
     next_tag.offset.resize(streams.size() - 2, 0U);
+    for (auto s = streams.size() - 2U; s--; ) {
+      next_tag.offset[s] = 0;
+      next_tag.inblock_offset[s] = 0;
+    }
+
+    DEB("Segment " << next_tag.cycle << " start index " << tick);
 
     // get all my recorders to mark the next (first) write of data
     {
@@ -294,6 +300,9 @@ void FileWithSegments::bufferWriteInformation(
   // of data starts. Record it for indexed streams
   if (buffer->object_offset && buffer->stream_id >= 2 &&
       next_tag.offset[buffer->stream_id - 2U] == 0) {
+    DEB("tag " << next_tag.cycle << " write information buffer "
+               << buffer->stream_id << " offset " << std::hex << offset
+               << std::dec << " inblock " << buffer->object_offset);
     next_tag.offset[buffer->stream_id - 2] = offset;
     next_tag.inblock_offset[buffer->stream_id - 2] = buffer->object_offset;
   }
@@ -359,6 +368,8 @@ bool FileWithSegments::completeStretch(TimeTickType tick)
   pk.pack(next_tag);
   tags.push_back(next_tag);
 
+  DEB("Writing tag " << next_tag.cycle);
+
   // mark the tags for writing
   w_tags->closeOff(true);
 
@@ -397,12 +408,14 @@ void FileWithSegments::spoolForReplay(unsigned cycle)
     for (auto &recorder : myRecorders()) {
       recorder->spoolReplay(tag0->offset[idx],
                             (tag1 != NULL)
-                              ? tag1->offset[idx]
+                              ? tag1->offset[idx] + tag1->inblock_offset[idx]
                               : std::numeric_limits<pos_type>::max(),
                             tag0->index0, tag0->inblock_offset[idx]);
       idx++;
     }
   }
+  DEB("Selected segment " << cycle);
+
   // load the initial blocks of data
   runLoads();
 }
