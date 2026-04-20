@@ -13,12 +13,10 @@
 
 #define DDFFMessageBuffer_cxx
 #include "DDFFMessageBuffer.hxx"
-#include "DAtomics.hxx"
 #include "debug.h"
-#include <iostream>
 #include <dassert.h>
 #include <exception>
-#include <algorithm>
+#include <limits>
 
 DUECA_NS_START;
 
@@ -37,9 +35,10 @@ DDFFMessageBuffer::DDFFMessageBuffer(size_t size, size_t offset) :
   capacity(size),
   fill(0U),
   object_offset(0U),
-  stream_id(0xffffffff),
-  buffer(new char[capacity]),
-  creation_id(creation_count++)
+  stream_id(std::numeric_limits<uint32_t>::max()),
+  cycle(std::numeric_limits<uint32_t>::max()),
+  creation_id(creation_count++),
+  buffer(new char[capacity])
 {
   DEB("DDFFMessageBuffer, creating id=" << creation_id << " size " << size);
 }
@@ -53,6 +52,7 @@ DDFFMessageBuffer& DDFFMessageBuffer::operator=(const DDFFMessageBuffer& o)
     this->fill = o.fill;
     this->object_offset = o.object_offset;
     this->stream_id = o.stream_id;
+    this->cycle = o.cycle;
     std::copy(o.buffer, o.buffer + o.fill, this->buffer);
   }
 
@@ -62,9 +62,10 @@ DDFFMessageBuffer& DDFFMessageBuffer::operator=(const DDFFMessageBuffer& o)
 void  DDFFMessageBuffer::reset()
 {
   // capacity does not change
-  this->fill = 0;
-  this->object_offset = 0;
-  this->stream_id = 0xffffffff;
+  this->fill = 0U;
+  this->object_offset = 0U;
+  this->stream_id = std::numeric_limits<uint32_t>::max();
+  this->cycle = std::numeric_limits<uint32_t>::max();
 }
 
 DDFFMessageBuffer::~DDFFMessageBuffer()

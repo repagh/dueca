@@ -25,6 +25,7 @@
 #include <dassert.h>
 #include <dueca/debug.h>
 #include <fmt/format.h>
+#include "ControlBlock.hxx"
 
 #define DEBPRINTLEVEL 2
 #include <debprint.h>
@@ -261,6 +262,9 @@ ddff::FileHandler::pos_type FileWithSegments::findBlockStart(unsigned cycle,
 void FileWithSegments::startStretch(
   TimeTickType tick, const std::chrono::system_clock::time_point &stime)
 {
+  // the label on the upcoming tag is set by the nameRecording call.
+  // if that label is set, initialize the remaining parameter, specificallly the
+  // timing
   if (next_tag.label.size()) {
 
     // get the time
@@ -268,8 +272,12 @@ void FileWithSegments::startStretch(
     next_tag.time = stime;
     next_tag.cycle = tags.size();
     next_tag.offset.resize(streams.size() - 2, 0U);
-    for (auto s = streams.size() - 2U; s--; ) {
-      next_tag.offset[s] = 0;
+
+    // zero out the offset values for this next segment. The
+    // bufferWriteInformation call will provide the offset information
+    // on the different streams
+    // keeps the offsets as they are?????
+    for (auto s = streams.size() - 2U; s--;) {
       next_tag.inblock_offset[s] = 0;
     }
 
@@ -279,11 +287,13 @@ void FileWithSegments::startStretch(
     {
       ScopeLock r(g_recorders);
       for (auto recorder : myRecorders()) {
-        recorder->startStretch(tick);
+        recorder->startStretch(tick, next_tag.cycle);
       }
     }
 
-    // push the current inventory to file
+    // the inventory lists all streams in this file. The syncInventory
+    // call returns true if there is any new information there, and this
+    // requires processing write information
     if (syncInventory()) {
       processWrites();
       DEB("Updated FileWithSegments for inventory");
@@ -298,13 +308,20 @@ void FileWithSegments::bufferWriteInformation(
 {
   // the buffer object_offset is used as flag for the offset where a stretch
   // of data starts. Record it for indexed streams
-  if (buffer->object_offset && buffer->stream_id >= 2 &&
-      next_tag.offset[buffer->stream_id - 2U] == 0) {
-    DEB("tag " << next_tag.cycle << " write information buffer "
-               << buffer->stream_id << " offset " << std::hex << offset
-               << std::dec << " inblock " << buffer->object_offset);
-    next_tag.offset[buffer->stream_id - 2] = offset;
-    next_tag.inblock_offset[buffer->stream_id - 2] = buffer->object_offset;
+  if (buffer->cycle != std::numeric_limits<uint32_t>::max()) {
+
+    if (buffer->cycle == next_tag.cycle) {
+      if (buffer->object_offset && buffer->stream_id >= 2) {
+        DEB("tag " << next_tag.cycle << " S" << buffer->stream_id << " bufferid"
+                   << buffer->creation_id << " offset 0x" << std::hex << offset
+                   << std::dec << " inblock " << buffer->object_offset);
+        next_tag.offset[buffer->stream_id - 2] = offset;
+        next_tag.inblock_offset[buffer->stream_id - 2] = buffer->object_offset;
+      }
+    }
+    else {
+      DEB("Ingnoring write information older cycle " << buffer->cycle);
+    }
   }
 }
 
@@ -314,6 +331,7 @@ bool FileWithSegments::completeStretch(TimeTickType tick)
   if (ts_switch.validity_start == MAX_TIMETICK)
     return true;
 
+  DEB("FileWithSegments complete stretch " << next_tag.cycle << " at " << tick);
   // first check that all data has been written
   bool complete = true;
   {
@@ -323,28 +341,44 @@ bool FileWithSegments::completeStretch(TimeTickType tick)
     }
 
     // return for a next invocation if that is not the case
-    if (!complete)
+    if (!complete) {
+      DEB("FileWithSegments not yet complete");
       return false;
+    }
 
     // when complete, initiate saving of all recorder/recorded data
     // will only save when actually data was written in the period
+    // this does the intermediate closeoff of the streams
     for (const auto &recorder : myRecorders()) {
       recorder->syncRecorder();
     }
   }
-  // all data for this stretch has been received, if applicable
-  // schedule all partial blocks and then schedules data saving, with
-  // the parent class's method
-  syncToFile();
+
+  // all data for this stretch has been received
+  // process remaining writes, this forces blocks for short stretches to
+  // call bufferWriteInformation
+  processWrites();
 
   // and check up whether the offsets are present, or whether no data
-  // was writting in this stretch, and offsets remain 0
+  // was writting in this stretch, and offsets remain 0#
   unsigned idx = 0;
   {
     ScopeLock r(g_recorders);
     for (const auto &recorder : myRecorders()) {
-      complete = complete &&
-                 (recorder->checkAndMakeClean() || (next_tag.offset[idx] != 0));
+      if (recorder->checkOrMakeClean()) {
+
+        // if clean, keep the tag as for the previous stretch
+        next_tag.inblock_offset[idx] =
+          tags.size() ? tags.back().inblock_offset[idx] : control_block_size;
+      }
+      else if (next_tag.inblock_offset[idx] == 0) {
+
+        // this should not be possible. The recorder has been used, but an offset has
+        // not been reported
+        complete = false;
+        DEB("No offset report received on stream" << idx);
+      }
+      idx++;
     }
   }
 
@@ -444,7 +478,9 @@ void FileWithSegments::nameRecording(const std::string &label,
 {
   next_tag.label = label;
   next_tag.inco_name = aux;
-  unsigned suffix = 0u;
+  unsigned suffix = 0U;
+
+  // make the label unique if needed
   while (tag_lookup.count(next_tag.label)) {
     next_tag.label = fmt::format("{}_{:06d}", label, ++suffix);
 

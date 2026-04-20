@@ -52,10 +52,11 @@ public:
 
   /** Starting a new stretch; will mark the first data written in this
   stretch (if any) for callback with the offset of that data */
-  inline void startStretch(TimeTickType tick)
+  inline void startStretch(TimeTickType tick, unsigned cycle)
   {
     DEB("S" << w_stream->getStreamId() << " " << " record_start to " << tick);
     record_start_tick = tick;
+    w_stream->setBufferCycle(cycle);
   }
 
   /** Check and possibly reset the dirty flag.
@@ -64,7 +65,7 @@ public:
                0), otherwise returns false, and tag offset should
                have a value.
   */
-  bool checkAndMakeClean();
+  bool checkOrMakeClean();
 
   /** Initiate syncing of the data to disk */
   void syncRecorder();

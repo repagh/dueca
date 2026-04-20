@@ -38,7 +38,6 @@ DDFFDataRecorder::DDFFDataRecorder() :
   entity(),
   key(),
   data_class(),
-  stretch_offset(ddff::FileHandler::pos_type(0)),
   r_stream(),
   record_functor(),
   replay_functor(),

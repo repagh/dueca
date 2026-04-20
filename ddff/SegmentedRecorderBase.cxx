@@ -46,7 +46,7 @@ void SegmentedRecorderBase::syncRecorder()
   }
 }
 
-bool SegmentedRecorderBase::checkAndMakeClean()
+bool SegmentedRecorderBase::checkOrMakeClean()
 {
   if (dirty) {
     dirty = false;

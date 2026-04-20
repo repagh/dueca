@@ -186,9 +186,6 @@ private:
   /** class of the data */
   std::string data_class;
 
-  /** Offset location for a stretch of data in the file stream */
-  ddff::FileHandler::pos_type stretch_offset;
-
   /** Same file stream, but now for reading */
   ddff::FileStreamRead::pointer r_stream;
 

@@ -17,7 +17,6 @@
 #include <dueca_ns.h>
 #include <inttypes.h>
 #include <cstddef>
-#include "DAtomics.hxx"
 
 DUECA_NS_START;
 
@@ -37,22 +36,25 @@ struct DDFFMessageBuffer
   /** Total use of the buffer */
   uint32_t fill;
 
-  /** If applicable, offset of the first complete object stored in 
-      the buffer, for reading, when starting somewhere in the block, 
+  /** If applicable, offset of the first complete object stored in
+      the buffer, for reading, when starting somewhere in the block,
       offset to put the read pointer. */
   uint32_t object_offset;
 
   /** Stream ID for this buffer */
   uint32_t stream_id;
 
+  /** segment/cycle identification */
+  uint32_t cycle;
+
+  /** Identification */
+  unsigned creation_id;
+
   /** Buffer itself */
   char *buffer;
 
   /** A count, identifying each buffer, for debug purposes */
   static unsigned creation_count;
-
-  /** Identification */
-  unsigned creation_id;
 
 public:
   /** Constructor */

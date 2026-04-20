@@ -270,6 +270,9 @@ public:
   bool markItemStart(TimeTickType& start_stretch,
                      const DataTimeSpec& ts);
 
+  /** Set current buffer cycle, for segmented recording */
+  void setBufferCycle(unsigned cycle);
+
   /** "stream" interface for msgpack
 
       @param data      Data to be written

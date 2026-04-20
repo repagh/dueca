@@ -19,7 +19,7 @@
 #include <boost/filesystem.hpp>
 #include <debug.h>
 
-#define DEBPRINTLEVEL -1
+#define DEBPRINTLEVEL 0
 #include <debprint.h>
 
 DDFF_NS_START
@@ -275,7 +275,6 @@ unsigned FileHandler::processWrites()
            << " offset=" << buffer->object_offset << " size=" << buffer->fill
            << " blockno=" << head.block_num);
 #endif
-
       // simply write at the end of the file
       file.write(buffer->data(), buffer->capacity);
 
