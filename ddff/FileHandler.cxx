@@ -120,7 +120,7 @@ FileStreamWrite::pointer FileHandler::createWrite(size_t bufsize)
     new FileStreamWrite(this, streams.size(), bufsize ? bufsize : blocksize));
 
   // new writer, auto-mark the first object offset
-  write->markItemStart();
+  // write->markItemStart();
   streams.emplace_back(write);
   return write;
 }
@@ -456,7 +456,7 @@ void FileHandler::StreamSetInfo::setWriter(FileHandler *handler, unsigned sid,
   }
   else {
     // clean writer
-    writer->markItemStart();
+    // writer->markItemStart();
   }
 }
 

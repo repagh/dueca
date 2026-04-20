@@ -293,7 +293,7 @@ bool FileStreamWrite::markItemStart()
                                                 << " already marked");
     return false;
   }
-  DEB1("FileStreamWrite, marking start of an object, stream="
+  DEB("FileStreamWrite, marking start of an object, stream="
        << stream_id << " at " << current_buffer->data.fill << " bufid " << current_buffer->data.creation_id);
   current_buffer->data.object_offset = current_buffer->data.fill;
   return true;
@@ -302,6 +302,7 @@ bool FileStreamWrite::markItemStart()
 void FileStreamWrite::setBufferCycle(unsigned cycle)
 {
   current_buffer->data.cycle = cycle;
+  current_buffer->data.object_offset = 0;
 }
 
 void FileStreamWrite::recordOffsetForRewrite(uint64_t offset)

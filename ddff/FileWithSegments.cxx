@@ -281,7 +281,7 @@ void FileWithSegments::startStretch(
       next_tag.inblock_offset[s] = 0;
     }
 
-    DEB("Segment " << next_tag.cycle << " start index " << tick);
+    DEB("FileWithSetments S" << next_tag.cycle << " start index " << tick);
 
     // get all my recorders to mark the next (first) write of data
     {
@@ -421,7 +421,7 @@ void FileWithSegments::spoolForReplay(unsigned cycle)
 
   // verify that this replay cycle is available
   if (cycle >= tags.size()) {
-    throw cannot_find_segment("entity", cycle);
+    throw cannot_find_segment(entity.c_str(), cycle);
   }
 
   // find tags defining start and optionally end of recording
@@ -440,7 +440,7 @@ void FileWithSegments::spoolForReplay(unsigned cycle)
     // reset all recorders to their respective offset
     unsigned idx = 0;
     for (auto &recorder : myRecorders()) {
-      recorder->spoolReplay(tag0->offset[idx],
+      recorder->spoolReplay(tag0->offset[idx] + tag0->inblock_offset[idx],
                             (tag1 != NULL)
                               ? tag1->offset[idx] + tag1->inblock_offset[idx]
                               : std::numeric_limits<pos_type>::max(),
@@ -488,6 +488,7 @@ void FileWithSegments::nameRecording(const std::string &label,
     //modlabel << label << "_" << std::setw(6) << std::setfill('0') << ++suffix;
     //next_tag.label = modlabel.str();
   }
+  DEB("FileWithSegments new label " << next_tag.label);
 }
 
 FileWithSegments::pointer FileWithSegments::findFiler(const std::string &entity,

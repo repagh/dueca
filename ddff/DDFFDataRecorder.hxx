@@ -310,9 +310,9 @@ public:
         assert(sz == 3);
         msgunpack::msg_unpack(rit0, r_stream->end(), replay_tick);
         msgunpack::msg_unpack(rit0, r_stream->end(), replay_span);
+        replay_tick = replay_tick - replay_record_tick + replay_start_tick;
         DEB1("S" << r_stream->getStreamId() << " new timing " << replay_tick
                  << "-" << replay_span);
-        replay_tick = replay_tick - replay_record_tick + replay_start_tick;
       }
 
       // event-type data, span=0, keep returning while the event happened

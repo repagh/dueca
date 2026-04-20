@@ -222,7 +222,7 @@ void FileStreamRead::Iterator::setStart(unsigned b_offset)
 {
   m_ptr = stream->current(b_offset);
   DEB("Iterator to start at offset " << b_offset << " first data " << std::hex
-                                     << unsigned(*m_ptr) << std::dec);
+                                     << int(*m_ptr) << std::dec);
 }
 
 FileStreamRead::Iterator::const_pointer
@@ -269,7 +269,7 @@ FileStreamRead::increment(FileStreamRead::Iterator::const_pointer m_ptr)
 
 #if DEBPRINTLEVEL >= 0
       ControlBlockRead headr(currentBuffer()->data());
-      DEB("FileStreamRead, over to new buffer "
+      DEB("FileStreamRead, S" << stream_id << " over to new buffer "
           << headr.block_num << " chk=0x" << std::hex << headr.checksum
           << std::dec << " size " << currentBuffer()->fill);
 #endif

@@ -22,6 +22,7 @@
 #include <algorithm>
 #include "DDFFExceptions.hxx"
 #include <dueca/DCOtypeJSON.hxx>
+#include "ControlBlock.hxx"
 
 #define DEBPRINTLEVEL 2
 #include <debprint.h>
@@ -180,7 +181,7 @@ bool DDFFDataRecorder::isValid()
       w_stream = filer->createNamedWrite(key, data_class);
     }
     r_stream = filer->recorderCheckIn(key, this);
-    DEB("DataRecordern connected, entity=\""
+    DEB("DataRecorder connected, entity=\""
         << entity << "\", key=\"" << key
         << "\" stream id=" << r_stream->getStreamId());
     rit0 = r_stream->iterator();
@@ -274,9 +275,9 @@ unsigned DDFFDataRecorder::channelReplay(const DataTimeSpec &ts,
     assert(sz == 3);
     msgunpack::msg_unpack(rit0, r_stream->end(), replay_tick);
     msgunpack::msg_unpack(rit0, r_stream->end(), replay_span);
+    replay_tick = replay_tick - replay_record_tick + replay_start_tick;
     DEB1("S" << r_stream->getStreamId() << " new timing " << replay_tick << "-"
              << replay_span);
-    replay_tick = replay_tick - replay_record_tick + replay_start_tick;
   }
 
   if (replay_span == 0) {
@@ -340,16 +341,25 @@ void DDFFDataRecorder::spoolReplay(ddff::FileHandler::pos_type offset,
   replay_record_tick = _replay_record_tick;
   replay_tick = MAX_TIMETICK;
   block_offset = blockoffset;
-  DEB("Replay spooling to range 0x" << std::hex << offset << " - 0x"
-                                    << end_offset << " block offset "
-                                    << std::dec << block_offset);
+  DEB("DDFFDataRecorder, Replay spooling to range 0x"
+      << std::hex << offset << " - 0x" << end_offset << " block offset "
+      << std::dec << block_offset);
 }
 
 void DDFFDataRecorder::startReplay(TimeTickType tick)
 {
   replay_start_tick = tick;
-  rit0.setStart(block_offset);
-  DEB("Replay start planned for time " << tick);
+  rit0 = r_stream->iterator();
+  /* if (block_offset) {
+    for (auto idx = block_offset - control_block_size;
+         rit0 != r_stream->end() && idx--; ) {
+      rit0++;
+    }
+  }*/
+
+  //rit0.setStart(block_offset);
+  DEB("FFDDDataRecorder, Replay start planned for time "
+      << tick << " bloff=" << block_offset);
 }
 
 DDFF_NS_END
