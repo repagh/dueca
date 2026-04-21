@@ -27,7 +27,7 @@
 #include <fmt/format.h>
 #include "ControlBlock.hxx"
 
-#define DEBPRINTLEVEL 2
+#define DEBPRINTLEVEL -2
 #include <debprint.h>
 
 namespace msgpack {

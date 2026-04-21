@@ -15,7 +15,7 @@
 #include <ddff/FileStreamWrite.hxx>
 #include <ddff/FileHandler.hxx>
 #include <boost/intrusive_ptr.hpp>
-#define DEBPRINTLEVEL 2
+#define DEBPRINTLEVEL -2
 #include <debprint.h>
 #ifdef HAVE_BOOST_SMART_PTR_INTRUSIVE_REF_COUNTER_HPP
 #include <boost/smart_ptr/intrusive_ref_counter.hpp>

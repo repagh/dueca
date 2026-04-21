@@ -39,7 +39,8 @@ int main()
 
   auto it0 = write0->iterator();
   write0->markItemStart();
-  msgpack::packer<FileStreamWrite> pk(*write0); pk.pack(o1);
+  msgpack::packer<FileStreamWrite> pk(*write0);
+  pk.pack(*reinterpret_cast<const msgpack_dco_array<dueca::Objectx> *>(&o1));
 
   // sync the file
   testlogfile.syncToFile();

@@ -43,7 +43,8 @@ int main()
 
     auto it0 = write0->iterator();
     write0->markItemStart();
-    msgpack::packer<FileStreamWrite> pk(*write0); pk.pack(o1);
+    msgpack::packer<FileStreamWrite> pk(*write0);
+    pk.pack(*reinterpret_cast<const msgpack_dco_array<dueca::Objectx>*>(&o1));
 
     // sync the file
     testlogfile.syncToFile();
@@ -77,7 +78,8 @@ int main()
     auto it0 = write0->iterator();
     for (unsigned ii = 5; ii--; ) {
       write0->markItemStart();
-      msgpack::packer<FileStreamWrite> pk(*write0); pk.pack(o1);
+      msgpack::packer<FileStreamWrite> pk(*write0);
+      pk.pack(*reinterpret_cast<const msgpack_dco_array<dueca::Objectx>*>(&o1));
     }
 
     // and a new write stream
@@ -86,7 +88,8 @@ int main()
 
     for (unsigned ii = 5; ii--; ) {
       write1->markItemStart();
-      msgpack::packer<FileStreamWrite> pk(*write1); pk.pack(o1);
+      msgpack::packer<FileStreamWrite> pk(*write1);
+      pk.pack(*reinterpret_cast<const msgpack_dco_array<dueca::Objectx>*>(&o1));
     }
 
     // sync the file

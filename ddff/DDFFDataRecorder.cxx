@@ -24,7 +24,7 @@
 #include <dueca/DCOtypeJSON.hxx>
 #include "ControlBlock.hxx"
 
-#define DEBPRINTLEVEL 2
+#define DEBPRINTLEVEL -1
 #include <debprint.h>
 
 DDFF_NS_START

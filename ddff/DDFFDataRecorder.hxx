@@ -34,7 +34,7 @@
 #include <exception>
 #include <map>
 #include <list>
-#define DEBPRINTLEVEL 2
+#define DEBPRINTLEVEL -1
 #include <debprint.h>
 #include <dueca/debug.h>
 
