@@ -45,7 +45,7 @@ struct DDFFMessageBuffer
   uint32_t stream_id;
 
   /** segment/cycle identification */
-  uint32_t cycle;
+  uint32_t start_offset;
 
   /** Identification */
   unsigned creation_id;
@@ -80,6 +80,20 @@ public:
 
   /** Size for unpacking */
   inline size_t size() const { return fill; }
+
+  /** Mark offsets */
+  inline unsigned markOffsets() {
+    auto res = 0U;
+    if (!object_offset) {
+      object_offset = fill;
+      res = 1U;
+    }
+    if (!start_offset) {
+      start_offset = fill;
+      res += 2U;
+    }
+    return res;
+  }
 
   /** Reset the meta information */
   void reset();

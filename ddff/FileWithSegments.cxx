@@ -287,7 +287,7 @@ void FileWithSegments::startStretch(
     {
       ScopeLock r(g_recorders);
       for (auto recorder : myRecorders()) {
-        recorder->startStretch(tick, next_tag.cycle);
+        recorder->startSegment(tick);
       }
     }
 
@@ -308,19 +308,25 @@ void FileWithSegments::bufferWriteInformation(
 {
   // the buffer object_offset is used as flag for the offset where a stretch
   // of data starts. Record it for indexed streams
-  if (buffer->cycle != std::numeric_limits<uint32_t>::max()) {
+  if (buffer->start_offset != std::numeric_limits<uint32_t>::max()) {
 
-    if (buffer->cycle == next_tag.cycle) {
-      if (buffer->object_offset && buffer->stream_id >= 2) {
-        DEB("tag " << next_tag.cycle << " S" << buffer->stream_id << " bufferid"
-                   << buffer->creation_id << " offset 0x" << std::hex << offset
-                   << std::dec << " inblock " << buffer->object_offset);
-        next_tag.offset[buffer->stream_id - 2] = offset;
-        next_tag.inblock_offset[buffer->stream_id - 2] = buffer->object_offset;
-      }
+    if (buffer->start_offset && buffer->stream_id >= 2) {
+      DEB("FileWithSegments tag "
+          << next_tag.cycle << " S" << buffer->stream_id << " bufferid "
+          << buffer->creation_id << " offset 0x" << std::hex << offset
+          << std::dec << " segstart " << buffer->start_offset);
+      next_tag.offset[buffer->stream_id - 2] = offset;
+      next_tag.inblock_offset[buffer->stream_id - 2] = buffer->start_offset;
     }
     else {
-      DEB("Ingnoring write information older cycle " << buffer->cycle);
+      assert(offset == next_tag.offset[buffer->stream_id - 2]);
+      assert(next_tag.inblock_offset[buffer->stream_id - 2] > 0);
+      assert(next_tag.inblock_offset[buffer->stream_id - 2] <=
+             buffer->capacity);
+      DEB("tag " << next_tag.cycle << " S" << buffer->stream_id << " bufferid"
+                 << buffer->creation_id << " offset 0x" << std::hex << offset
+                 << std::dec << " no data in segment, keep "
+                 << next_tag.inblock_offset[buffer->stream_id - 2]);
     }
   }
 }
@@ -438,9 +444,11 @@ void FileWithSegments::spoolForReplay(unsigned cycle)
     }
 
     // reset all recorders to their respective offset
+    // recorders should re-initialize the read iterators, and initiate a load of the
+    // read stream buffers
     unsigned idx = 0;
     for (auto &recorder : myRecorders()) {
-      recorder->spoolReplay(tag0->offset[idx] + tag0->inblock_offset[idx],
+      recorder->spoolReplay(tag0->offset[idx],
                             (tag1 != NULL)
                               ? tag1->offset[idx] + tag1->inblock_offset[idx]
                               : std::numeric_limits<pos_type>::max(),

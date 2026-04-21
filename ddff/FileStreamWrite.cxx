@@ -288,21 +288,18 @@ bool FileStreamWrite::markItemStart(TimeTickType &start_stretch,
 
 bool FileStreamWrite::markItemStart()
 {
-  if (current_buffer->data.object_offset) {
-    DEB3("FileStreamWrite, object mark stream=" << stream_id
-                                                << " already marked");
-    return false;
+  if (auto res = current_buffer->data.markOffsets()) {
+    DEB("FileStreamWrite, S"
+        << stream_id << " offsets mark=" << res << " start 0x" << std::hex
+        << current_buffer->data.start_offset << " object 0x"
+        << current_buffer->data.object_offset << std::dec);
   }
-  DEB("FileStreamWrite, marking start of an object, stream="
-       << stream_id << " at " << current_buffer->data.fill << " bufid " << current_buffer->data.creation_id);
-  current_buffer->data.object_offset = current_buffer->data.fill;
   return true;
 }
 
-void FileStreamWrite::setBufferCycle(unsigned cycle)
+void FileStreamWrite::markNewSegment()
 {
-  current_buffer->data.cycle = cycle;
-  current_buffer->data.object_offset = 0;
+  current_buffer->data.start_offset = 0U;
 }
 
 void FileStreamWrite::recordOffsetForRewrite(uint64_t offset)

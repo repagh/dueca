@@ -334,13 +334,12 @@ void DDFFDataRecorder::checkIn(pointer rec, const std::string &entity)
 void DDFFDataRecorder::spoolReplay(ddff::FileHandler::pos_type offset,
                                    ddff::FileHandler::pos_type end_offset,
                                    TimeTickType _replay_record_tick,
-                                   unsigned blockoffset)
+                                   unsigned blockstart)
 {
-  r_stream->setReadRange(offset, end_offset);
-  replay_start_tick = 0;
+  r_stream->setReadRange(offset, end_offset, blockstart);
   replay_record_tick = _replay_record_tick;
   replay_tick = MAX_TIMETICK;
-  block_offset = blockoffset;
+  block_offset = blockstart;
   DEB("DDFFDataRecorder, Replay spooling to range 0x"
       << std::hex << offset << " - 0x" << end_offset << " block offset "
       << std::dec << block_offset);

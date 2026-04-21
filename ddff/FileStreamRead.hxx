@@ -214,7 +214,7 @@ private:
   /** Access the next buffer for loading */
   AQMTMessageBufferAlloc::element_ptr getBufferToLoad();
 
-  /** Insert a freshly loaded buffer */
+  /** Insert a freshly loaded buffer, called by FileHandler */
   void appendBuffer(AQMTMessageBufferAlloc::element_ptr buffer,
                     pos_type offset, pos_type next_offset,
                     unsigned buffer_num, unsigned cycle);
@@ -265,7 +265,8 @@ public:
                      be done.
    */
   void setReadRange(pos_type offset=pos_type(0),
-                    pos_type end_off=std::numeric_limits<pos_type>::max());
+                    pos_type end_off=std::numeric_limits<pos_type>::max(),
+                    unsigned blockstart = 0U);
 
   /** Return a pointer for the file handler */
   boost::intrusive_ptr<FileHandler> getHandler() const;

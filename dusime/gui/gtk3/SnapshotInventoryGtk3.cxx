@@ -405,7 +405,7 @@ void SnapshotInventoryGtk3::prepareEditingMap(bool init)
         std::string etext(sn.getEdit());
         gtk_text_buffer_set_text(ne.first->second.edit_text, etext.c_str(),
                                  etext.size());
-        edit->second.dirty = false;
+        // edit->second.dirty = false;
 
         // labels?
         std::ifstream f(store_path + sn.originator.getClass() +

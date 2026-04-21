@@ -59,10 +59,18 @@ bool FileStreamRead::informOffset(pos_type offset)
 {
   assert(buffers.allocator.bufsize != 0);
 
+  // ignore offset information, will be communicated through indexer
+  if (slice_indexed) {
+    return true;
+  }
+
   if (start_offset == pos_type(-1)) {
     start_offset = offset;
     assert(indices.size() == 0);
     assert(requested.size() == 0);
+    DEB("FileStreamRead, S" << this->getStreamId() << " set start offset to 0x"
+                            << std::hex << offset << std::dec);
+
     // if this is the first index, store it
     if (!slice_indexed) {
       DEB("At inform, streamid=" << this->getStreamId()
@@ -73,7 +81,12 @@ bool FileStreamRead::informOffset(pos_type offset)
       return true;
     }
   }
-  return slice_indexed;
+  else {
+    DEB("FileStreamRead, S" << this->getStreamId() << " ignoring offset 0x"
+                            << std::hex << offset << " have 0x" << start_offset
+                            << std::dec);
+  }
+  return false;
 }
 
 FileStreamRead::~FileStreamRead()
@@ -97,6 +110,8 @@ void FileStreamRead::appendBuffer(AQMTMessageBufferAlloc::element_ptr buffer,
     DEB("appendBuffer for " << getStreamId() << " request for 0x" << std::hex
                             << offset << std::dec << " old cycle " << cycle
                             << " now at " << read_cycle << ", ignoring");
+
+    // do not use, return the buffer
     return_list_elt(buffers, buffer);
     return;
   }
@@ -107,7 +122,7 @@ void FileStreamRead::appendBuffer(AQMTMessageBufferAlloc::element_ptr buffer,
     indices.push_back(next_offset);
   }
 
-  // some cases when the very first buffer in a stream is loaded
+  // when the very first buffer in a stream or segment is loaded
   if (first_buffer_load) {
 
     // when the start_offset falls in this buffer, it indicates
@@ -117,10 +132,10 @@ void FileStreamRead::appendBuffer(AQMTMessageBufferAlloc::element_ptr buffer,
 
       // of course, we would not have requested this buffer if
       // it is completely before the start_offset.
-      assert(offset + buffer->data.capacity > start_offset);
+      assert(offset + buffer->data.fill >= start_offset);
 
       DEB("appendBuffer for " << getStreamId() << " request for 0x" << offset
-                              << " start offset 0x" << start_offset
+                              << " start offset 0x" << std::hex << start_offset
                               << " adjusted object offset to 0x"
                               << uint32_t(start_offset - offset) << " from 0x"
                               << buffer->data.object_offset << std::dec);
@@ -270,8 +285,9 @@ FileStreamRead::increment(FileStreamRead::Iterator::const_pointer m_ptr)
 #if DEBPRINTLEVEL >= 0
       ControlBlockRead headr(currentBuffer()->data());
       DEB("FileStreamRead, S" << stream_id << " over to new buffer "
-          << headr.block_num << " chk=0x" << std::hex << headr.checksum
-          << std::dec << " size " << currentBuffer()->fill);
+                              << headr.block_num << " chk=0x" << std::hex
+                              << headr.checksum << std::dec << " size "
+                              << currentBuffer()->fill);
 #endif
       return &(currentBuffer()->data()[currentBuffer()->object_offset]);
     }
@@ -353,12 +369,15 @@ void FileStreamRead::resetRead()
   DEB("FileStreamRead reset " << getStreamId());
 }
 
-void FileStreamRead::setReadRange(pos_type offset, pos_type end_off)
+void FileStreamRead::setReadRange(pos_type offset, pos_type end_off, unsigned blockstart)
 {
   // reset all current data
-  start_offset = offset;
+  start_offset = offset + blockstart;
   end_offset = end_off;
   read_cycle++;
+  first_buffer_load = true;
+
+  // clear all buffers
   while (buffers.notEmpty()) {
     buffers.pop();
   }
@@ -366,13 +385,20 @@ void FileStreamRead::setReadRange(pos_type offset, pos_type end_off)
     indices.pop();
   }
 
+  #if 0
   // load the given offset into the indices
   pos_type rounded_offset = offset - offset % buffers.allocator.bufsize;
   DEB("After read range set, streamid="
       << this->getStreamId() << " request buffer at 0x" << std::hex
       << rounded_offset << std::dec << " cycle " << read_cycle);
-  requested.push_back(rounded_offset);
-  handler->requestLoad(this, rounded_offset, read_cycle);
+  #endif
+
+  // remember which offset was requested
+  requested.push_back(offset);
+
+  // ask the file handler to load this data. When available, the
+  // buffer will be offered through the appendBuffer method
+  handler->requestLoad(this, offset, read_cycle);
 }
 
 FileHandler::pointer FileStreamRead::getHandler() const { return handler; }

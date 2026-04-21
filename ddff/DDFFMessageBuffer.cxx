@@ -36,7 +36,7 @@ DDFFMessageBuffer::DDFFMessageBuffer(size_t size, size_t offset) :
   fill(0U),
   object_offset(0U),
   stream_id(std::numeric_limits<uint32_t>::max()),
-  cycle(std::numeric_limits<uint32_t>::max()),
+  start_offset(std::numeric_limits<uint32_t>::max()),
   creation_id(creation_count++),
   buffer(new char[capacity])
 {
@@ -52,7 +52,8 @@ DDFFMessageBuffer& DDFFMessageBuffer::operator=(const DDFFMessageBuffer& o)
     this->fill = o.fill;
     this->object_offset = o.object_offset;
     this->stream_id = o.stream_id;
-    this->cycle = o.cycle;
+    this->start_offset = o.start_offset;
+    const_cast<DDFFMessageBuffer*>(&o)->start_offset = std::numeric_limits<uint32_t>::max();
     std::copy(o.buffer, o.buffer + o.fill, this->buffer);
   }
 
@@ -65,7 +66,7 @@ void  DDFFMessageBuffer::reset()
   this->fill = 0U;
   this->object_offset = 0U;
   this->stream_id = std::numeric_limits<uint32_t>::max();
-  this->cycle = std::numeric_limits<uint32_t>::max();
+  this->start_offset = std::numeric_limits<uint32_t>::max();
 }
 
 DDFFMessageBuffer::~DDFFMessageBuffer()
