@@ -96,7 +96,7 @@ struct pack<msgpack_dco_array<{{ nsprefix }}{{ name }}>>:
 
   template <typename Stream>
   static void pack_members(msgpack::packer<Stream>& o,
-                           const msgpack_dco_array<{{ nsprefix }}{{ name }}>& v)
+                           const {{ nsprefix }}{{ name }}& v)
   {
     {%- if parent %}
     pack<msgpack_dco_array<{{ parent }}>>::pack_members<Stream>(o, v);

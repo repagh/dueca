@@ -18,6 +18,7 @@ d2[0] = (1, 2, 3)
 #fname = f"{os.environ['HOME']}/tmp/recording-PHLAB-new.ddff"
 # fname = f"{os.environ['HOME']}/tmp/varstab/260224/runlogs/2026-02-24_12:39:03/simlog-20260224_113932.ddff"
 fname = f"{os.environ['HOME']}/gdapps/VarStabCitation2/VarStabCitation2/run/solo/solo/simlog-20260422_100504.ddff"
+fname = f"{os.environ['HOME']}/gdapps/DuecaTestCommunication/DuecaTestCommunication/run/solo/solo/datalog.ddff"
 # separate test of the readstream
 #df = DDFFTagged(fname)
 pres = parser.parse_args(

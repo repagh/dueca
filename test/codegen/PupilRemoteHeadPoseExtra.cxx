@@ -12,7 +12,7 @@ namespace PupilRemoteHeadPose_space {
 static dueca::fixvector<16,double> examplefix;
 
 #define __CUSTOM_HDF5_WRITE_FUNCTOR
-  
+
   HDF5DCOWriteFunctor::
   HDF5DCOWriteFunctor(std::weak_ptr<H5::H5File> file,
                       const std::string& path,
@@ -34,7 +34,7 @@ static dueca::fixvector<16,double> examplefix;
                            HOFFSET(PupilRemoteHeadPose, camera_extrinsics),
                            dueca::get_hdf5_elt_type(example.camera_extrinsics),
                            dueca::get_hdf5_elt_length(example.camera_extrinsics));
-    
+
     this->configureDataSet(2, "/data/camera_poses",
                            HOFFSET(PupilRemoteHeadPose, camera_poses),
                            dueca::get_hdf5_elt_type(example.camera_poses),
@@ -73,11 +73,10 @@ static dueca::fixvector<16,double> examplefix;
       return false;
     }
     this->prepareRow();
-    unsigned ii = 0;
     this->sets[0].writeNew(dpointer, chunkidx, example.topic);
 
     this->sets[1].writeNew(dpointer, chunkidx, example.camera_extrinsics);
-    
+
     this->sets[2].writeNew(dpointer, chunkidx, example.camera_poses);
 
     this->sets[3].writeNew(dpointer, chunkidx, example.camera_trace);
@@ -110,7 +109,7 @@ static dueca::fixvector<16,double> examplefix;
                            HOFFSET(PupilRemoteHeadPose, camera_extrinsics),
                            dueca::get_hdf5_elt_type(example.camera_extrinsics),
                            dueca::get_hdf5_elt_length(example.camera_extrinsics));
-    
+
     this->configureDataSet(2, "/data/camera_poses",
                            HOFFSET(PupilRemoteHeadPose, camera_poses),
                            dueca::get_hdf5_elt_type(example.camera_poses),
@@ -143,7 +142,7 @@ static dueca::fixvector<16,double> examplefix;
     this->sets[0].readObjectPart(dpointer, example.topic);
 
     this->sets[1].readObjectPart(dpointer, example.camera_extrinsics);
-    
+
     this->sets[2].readObjectPart(dpointer, example.camera_poses);
 
     this->sets[3].readObjectPart(dpointer, example.camera_trace);
@@ -167,4 +166,3 @@ GobbleVisitor& v_gobble_PupilRemoteHeadPose()
 }
 } // namespace messagepack
 } // namespace dueca
-

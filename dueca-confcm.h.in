@@ -13,236 +13,349 @@
 #cmakedefine GREEDY_PERIODIC
 
 /* Define to 1 if you have the `atexit' function. */
+#ifndef HAVE_ATEXIT
 #cmakedefine HAVE_ATEXIT
+#endif
 
 /* define if the Boost library is available */
+#ifndef HAVE_BOOST
 #cmakedefine HAVE_BOOST
+#endif
 
 /* define if the compiler supports basic C++11 syntax */
+#ifndef HAVE_CXX11
 #cmakedefine HAVE_CXX11
+#endif
 
 /* Define to 1 if you have the <dlfcn.h> header file. */
+#ifndef HAVE_DLFCN_H
 #cmakedefine HAVE_DLFCN_H
+#endif
 
 /* Define to 1 if you have the <eigen3/unsupported/Eigen/MatrixFunctions>
    header file. */
+#ifndef HAVE_EIGEN3_UNSUPPORTED_EIGEN_MATRIXFUNCTIONS
 #cmakedefine HAVE_EIGEN3_UNSUPPORTED_EIGEN_MATRIXFUNCTIONS
+#endif
 
 /* Define to 1 if you have the <fcntl.h> header file. */
+#ifndef HAVE_FCNTL_H
 #cmakedefine HAVE_FCNTL_H
+#endif
 
 /* Define to 1 if you have the <FL/Fl.H> header file. */
+#ifndef HAVE_FL_FL_H
 #cmakedefine HAVE_FL_FL_H
+#endif
 
 /* Define to 1 if you have the <fp.h> header file. */
+#ifndef HAVE_FP_H
 #cmakedefine HAVE_FP_H
+#endif
 
 /* Define to 1 if you have the <gdk/gdk.h> header file. */
+#ifndef HAVE_GDK_GDK_H
 #cmakedefine HAVE_GDK_GDK_H
+#endif
 
 /* Defined if a valid OpenGL implementation is found. */
+#ifndef HAVE_GL
 #cmakedefine HAVE_GL
+#endif
 
 /* Define to 1 if you have the <glade/glade.h> header file. */
+#ifndef HAVE_GLADE_GLADE_H
 #cmakedefine HAVE_GLADE_GLADE_H
+#endif
 
 /* Define to 1 if you have the <glade/glade-xml.h> header file. */
+#ifndef HAVE_GLADE_GLADE_XML_H
 #cmakedefine HAVE_GLADE_GLADE_XML_H
+#endif
 
 /* Define to 1 if you have the <glibconfig.h> header file. */
+#ifndef HAVE_GLIBCONFIG_H
 #cmakedefine HAVE_GLIBCONFIG_H
+#endif
 
 /* Defined if a valid GLU implementation is found. */
+#ifndef HAVE_GLU
 #cmakedefine HAVE_GLU
+#endif
 
 /* Define to 1 if you have the <glui.h> header file. */
+#ifndef HAVE_GLUI_H
 #cmakedefine HAVE_GLUI_H
+#endif
 
 /* glutMainLoopEvent from freeglut is available */
+#ifndef HAVE_GLUTMAINLOOPEVENT
 #cmakedefine HAVE_GLUTMAINLOOPEVENT
+#endif
 
 /* Define to 1 if you have the <GLUT/glut.h> header file. */
+#ifndef HAVE_GLUT_GLUT_H
 #cmakedefine HAVE_GLUT_GLUT_H
+#endif
 
 /* Define to 1 if you have the <GL/freeglut.h> header file. */
+#ifndef HAVE_GL_FREEGLUT_H
 #cmakedefine HAVE_GL_FREEGLUT_H
+#endif
 
 /* Define to 1 if you have the <GL/glui.h> header file. */
+#ifndef HAVE_GL_GLUI_H
 #cmakedefine HAVE_GL_GLUI_H
+#endif
 
 /* Define to 1 if you have the <GL/glut.h> header file. */
+#ifndef HAVE_GL_GLUT_H
 #cmakedefine HAVE_GL_GLUT_H
+#endif
 
 /* Define to 1 if you have the <GL/glu.h> header file. */
+#ifndef HAVE_GL_GLU_H
 #cmakedefine HAVE_GL_GLU_H
+#endif
 
 /* Define to 1 if you have the <GL/glxext.h> header file. */
+#ifndef HAVE_GL_GLXEXT_H
 #cmakedefine HAVE_GL_GLXEXT_H
+#endif
 
 /* Define to 1 if you have the <GL/glx.h> header file. */
+#ifndef HAVE_GL_GLX_H
 #cmakedefine HAVE_GL_GLX_H
+#endif
 
 /* Define to 1 if you have the <GL/gl.h> header file. */
+#ifndef HAVE_GL_GL_H
 #cmakedefine HAVE_GL_GL_H
+#endif
 
 /* Define to 1 if you have the <gtk/gtk.h> header file. */
+#ifndef HAVE_GTK_GTK_H
 #cmakedefine HAVE_GTK_GTK_H
+#endif
 
 /* Define to 1 if you have the <inttypes.h> header file. */
+#ifndef HAVE_INTTYPES_H
 #cmakedefine HAVE_INTTYPES_H
+#endif
 
 /* Define to 1 if you have the <libguile18.h> header file. */
+#ifndef HAVE_LIBGUILE18_H
 #cmakedefine HAVE_LIBGUILE18_H
+#endif
 
 /* Define to 1 if you have the <libguile.h> header file. */
+#ifndef HAVE_LIBGUILE_H
 #cmakedefine HAVE_LIBGUILE_H
+#endif
 
 /* Define to 1 if you have the <libkern/OSAtomic.h> header file. */
+#ifndef HAVE_LIBKERN_OSATOMIC_H
 #cmakedefine HAVE_LIBKERN_OSATOMIC_H
+#endif
 
 /* Define to 1 if you have the `m' library (-lm). */
+#ifndef HAVE_LIBM
 #cmakedefine HAVE_LIBM
+#endif
 
 /* Define to 1 if you have the <limits.h> header file. */
+#ifndef HAVE_LIMITS_H
 #cmakedefine HAVE_LIMITS_H
+#endif
 
 /* Define to 1 if you have the <memory.h> header file. */
+#ifndef HAVE_MEMORY_H
 #cmakedefine HAVE_MEMORY_H
+#endif
 
 /* Define to 1 if you have the `mlockall' function. */
+#ifndef HAVE_MLOCKALL
 #cmakedefine HAVE_MLOCKALL
-
-/* define if the compiler implements namespaces */
-#cmakedefine HAVE_NAMESPACES
+#endif
 
 /* Define to 1 if you have the <native/task.h> header file. */
+#ifndef HAVE_NATIVE_TASK_H
 #cmakedefine HAVE_NATIVE_TASK_H
+#endif
 
 /* Define to 1 if you have the <native/timer.h> header file. */
+#ifndef HAVE_NATIVE_TIMER_H
 #cmakedefine HAVE_NATIVE_TIMER_H
+#endif
 
 /* define if the compiler has numeric_limits<T> */
+#ifndef HAVE_NUMERIC_LIMITS
 #cmakedefine HAVE_NUMERIC_LIMITS
+#endif
 
 /* Define to 1 if you have the `on_exit' function. */
+#ifndef HAVE_ON_EXIT
 #cmakedefine HAVE_ON_EXIT
+#endif
 
 /* Define to 1 if you have the <OpenGL/glu.h> header file. */
+#ifndef HAVE_OPENGL_GLU_H
 #cmakedefine HAVE_OPENGL_GLU_H
+#endif
 
 /* Define to 1 if you have the <OpenGL/gl.h> header file. */
+#ifndef HAVE_OPENGL_GL_H
 #cmakedefine HAVE_OPENGL_GL_H
+#endif
 
 /* Define to 1 if you have the <posix/posix.h> header file. */
+#ifndef HAVE_POSIX_POSIX_H
 #cmakedefine HAVE_POSIX_POSIX_H
+#endif
 
 /* pthread_attr_setinheritsched is available */
+#ifndef HAVE_PTHREAD_ATTR_SETINHERITSCHED
 #cmakedefine HAVE_PTHREAD_ATTR_SETINHERITSCHED
+#endif
 
 /* Define to 1 if you have the <pthread.h> header file. */
+#ifndef HAVE_PTHREAD_H
 #cmakedefine HAVE_PTHREAD_H
+#endif
 
 /* Define to 1 if you have the `rand' function. */
+#ifndef HAVE_RAND
 #cmakedefine HAVE_RAND
+#endif
 
 /* Define to 1 if you have the `random' function. */
+#ifndef HAVE_RANDOM
 #cmakedefine HAVE_RANDOM
+#endif
 
 /* Define to 1 if you have the <rtai_lxrt.h> header file. */
+#ifndef HAVE_RTAI_LXRT_H
 #cmakedefine HAVE_RTAI_LXRT_H
+#endif
 
 /* Define to 1 if you have the <sched.h> header file. */
+#ifndef HAVE_SCHED_H
 #cmakedefine HAVE_SCHED_H
+#endif
 
 /* Define to 1 if you have the <scramnet.h> header file. */
+#ifndef HAVE_SCRAMNET_H
 #cmakedefine HAVE_SCRAMNET_H
+#endif
 
 /* Define to 1 if you have the <scrplus.h> header file. */
+#ifndef HAVE_SCRPLUS_H
 #cmakedefine HAVE_SCRPLUS_H
+#endif
 
 /* Define to 1 if you have the `select' function. */
+#ifndef HAVE_SELECT
 #cmakedefine HAVE_SELECT
+#endif
 
 /* Define to 1 if you have the <setjmp.h> header file. */
 // #cmakedefine HAVE_SETJMP_H
 
 /* Define to 1 if you have the `setuid' function. */
+#ifndef HAVE_SETUID
 #cmakedefine HAVE_SETUID
+#endif
 
 /* Define to 1 if you have the <signal.h> header file. */
+#ifndef HAVE_SIGNAL_H
 #cmakedefine HAVE_SIGNAL_H
+#endif
 
 /* Define to 1 if you have the `socket' function. */
 // #cmakedefine HAVE_SOCKET
 
 /* Define if you have and want to use the sstream library */
+#ifndef HAVE_SSTREAM
 #cmakedefine HAVE_SSTREAM
+#endif
 
 /* Define to 1 if you have the <stdint.h> header file. */
+#ifndef HAVE_STDINT_H
 #cmakedefine HAVE_STDINT_H
+#endif
 
 /* Define to 1 if you have the <stdlib.h> header file. */
+#ifndef HAVE_STDLIB_H
 #cmakedefine HAVE_STDLIB_H
-
-/* Define to 1 if you have the <strings.h> header file. */
-#cmakedefine HAVE_STRINGS_H
-
-/* Define to 1 if you have the <string.h> header file. */
-#cmakedefine HAVE_STRING_H
+#endif
 
 /* Define to 1 if you have the <strstream> header file. */
+#ifndef HAVE_STRSTREAM
 #cmakedefine HAVE_STRSTREAM
-
-/* Define to 1 if you have the <sys/neutrino.h> header file. */
-#cmakedefine HAVE_SYS_NEUTRINO_H
+#endif
 
 /* Define to 1 if you have the <sys/param.h> header file. */
+#ifndef HAVE_SYS_PARAM_H
 #cmakedefine HAVE_SYS_PARAM_H
+#endif
 
 /* Define to 1 if you have the <sys/shm.h> header file. */
+#ifndef HAVE_SYS_SHM_H
 #cmakedefine HAVE_SYS_SHM_H
+#endif
 
 /* Define to 1 if you have the <sys/stat.h> header file. */
+#ifndef HAVE_SYS_STAT_H
 #cmakedefine HAVE_SYS_STAT_H
+#endif
 
 /* Define to 1 if you have the <sys/time.h> header file. */
+#ifndef HAVE_SYS_TIME_H
 #cmakedefine HAVE_SYS_TIME_H
+#endif
 
 /* Define to 1 if you have the <sys/types.h> header file. */
+#ifndef HAVE_SYS_TYPES_H
 #cmakedefine HAVE_SYS_TYPES_H
+#endif
 
 /* Define to 1 if you have the <unistd.h> header file. */
+#ifndef HAVE_UNISTD_H
 #cmakedefine HAVE_UNISTD_H
+#endif
 
 /* Define to 1 if you have the <unix.h> header file. */
+#ifndef HAVE_UNIX_H
 #cmakedefine HAVE_UNIX_H
-
-/* Use nonstandard varargs form for the GLU tesselator callback */
-#cmakedefine HAVE_VARARGS_GLU_TESSCB
-
-/* Define to 1 if you have the <windows.h> header file. */
-#cmakedefine HAVE_WINDOWS_H
+#endif
 
 /* Define to 1 if you have the <X11/XKBlib.h> header file. */
+#ifndef HAVE_X11_XKBLIB_H
 #cmakedefine HAVE_X11_XKBLIB_H
+#endif
 
 /* Define to 1 if you have the <X11/Xlib.h> header file. */
+#ifndef HAVE_X11_XLIB_H
 #cmakedefine HAVE_X11_XLIB_H
+#endif
 
 /* Define to 1 if you have the <X11/X.h> header file. */
+#ifndef HAVE_X11_X_H
 #cmakedefine HAVE_X11_X_H
+#endif
 
 /* Define if you want the compiler to "see" the template source */
 #cmakedefine INCLUDE_TEMPLATE_SOURCE
 
-/* Define to the sub-directory where libtool stores uninstalled libraries. */
-#cmakedefine LT_OBJDIR
-
 /* ios namespace is available */
+#ifndef NAMESPACE_IOS
 #cmakedefine NAMESPACE_IOS
+#endif
 
 /* ios_base namespace is available */
+#ifndef NAMESPACE_IOS_BASE
 #cmakedefine NAMESPACE_IOS_BASE
+#endif
 
 /* Define if you want the new logging code */
 #cmakedefine NEW_LOGGING

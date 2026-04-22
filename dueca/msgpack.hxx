@@ -92,7 +92,7 @@ MSGPACK_API_VERSION_NAMESPACE(v1)
   {
     template <typename Stream>
     msgpack::packer<Stream> &operator()(msgpack::packer<Stream> &o,
-                                        const dueca::fixvector<N, T> &v) const
+                                        const msgpack_dco_array<dueca::fixvector<N, T>> &v) const
     {
       uint32_t size = checked_get_container_size(v.size());
       o.pack_array(size);
@@ -146,7 +146,7 @@ MSGPACK_API_VERSION_NAMESPACE(v1)
     template <typename Stream>
     msgpack::packer<Stream> &
     operator()(msgpack::packer<Stream> &o,
-               const dueca::fixvector_withdefault<N, T, DEFLT, BASE> &v) const
+               const msgpack_dco_array<dueca::fixvector_withdefault<N, T, DEFLT, BASE>> &v) const
     {
       uint32_t size = checked_get_container_size(v.size());
       o.pack_array(size);
@@ -213,11 +213,12 @@ MSGPACK_API_VERSION_NAMESPACE(v1)
     /// @endcond
   namespace adaptor {
   /// pack limited vector, nested dco's as array
-  template <typename T, size_t N> struct pack<msgpack_dco_array<dueca::limvector<N, T>>>
+  template <typename T, size_t N>
+  struct pack<msgpack_dco_array<dueca::limvector<N, T>>>
   {
     template <typename Stream>
     msgpack::packer<Stream> &operator()(msgpack::packer<Stream> &o,
-                                        const dueca::limvector<N, T> &v) const
+                                        const msgpack_dco_array<dueca::limvector<N, T>> &v) const
     {
       uint32_t size = checked_get_container_size(v.size());
       o.pack_array(size);
@@ -279,7 +280,7 @@ MSGPACK_API_VERSION_NAMESPACE(v1)
   {
     template <typename Stream>
     msgpack::packer<Stream> &operator()(msgpack::packer<Stream> &o,
-                                        const dueca::varvector<T> &v) const
+                                        const msgpack_dco_array<dueca::varvector<T>> &v) const
     {
       uint32_t size = checked_get_container_size(v.size());
       o.pack_array(size);
@@ -415,6 +416,109 @@ MSGPACK_API_VERSION_NAMESPACE(v1)
 #endif
 #endif
 
+#ifdef _GLIBCXX_MAP
+#ifndef msgpack_GLIBCXX_MAP
+#define msgpack_GLIBCXX_MAP
+
+namespace msgpack {
+/// @cond
+MSGPACK_API_VERSION_NAMESPACE(v1)
+{
+    /// @endcond
+  namespace adaptor {
+  template <typename K, typename V, typename Compare, typename Alloc>
+  struct pack<msgpack_dco_array<std::map<K, V, Compare, Alloc>>>
+  {
+    template <typename Stream>
+    msgpack::packer<Stream> &
+    operator()(msgpack::packer<Stream> &o,
+               const msgpack_dco_array<std::map<K, V, Compare, Alloc>> &v) const
+    {
+      uint32_t size = checked_get_container_size(v.size());
+      o.pack_map(size);
+      for (typename type::assoc_vector<K, V, Compare, Alloc>::const_iterator
+             it(v.begin()),
+           it_end(v.end());
+           it != it_end; ++it) {
+        o.pack(it->first);
+        o.pack(mark_for_dco_msgpack(it->second));
+      }
+      return o;
+    }
+  };
+  }// namespace adaptor
+}
+}// namespace msgpack
+#endif
+#endif
+
+#ifdef _GLIBCXX_LIST
+#ifndef msgpack_GLIBCXX_LIST
+#define msgpack_GLIBCXX_LIST
+
+namespace msgpack {
+/// @cond
+MSGPACK_API_VERSION_NAMESPACE(v1)
+{
+    /// @endcond
+  namespace adaptor {
+  template <typename T, typename Alloc>
+  struct pack<msgpack_dco_array<std::list<T, Alloc>>>
+  {
+    template <typename Stream>
+    msgpack::packer<Stream> &operator()(msgpack::packer<Stream> &o,
+                                        const msgpack_dco_array<std::list<T, Alloc>> &v) const
+    {
+      uint32_t size = checked_get_container_size(v.size());
+      o.pack_array(size);
+      for (typename std::list<T, Alloc>::const_iterator it(v.begin()),
+           it_end(v.end());
+           it != it_end; ++it) {
+        o.pack(mark_for_dco_msgpack(*it));
+      }
+      return o;
+    }
+  };
+
+  }// namespace adaptor
+}
+}// namespace msgpack
+#endif
+#endif
+
+#ifdef _GLIBCXX_VECTOR
+#ifndef msgpack_GLIBCXX_VECTOR
+#define msgpack_GLIBCXX_VECTOR
+
+namespace msgpack {
+/// @cond
+MSGPACK_API_VERSION_NAMESPACE(v1)
+{
+    /// @endcond
+  namespace adaptor {
+  template <typename T, typename Alloc>
+  struct pack<msgpack_dco_array<std::vector<T, Alloc>>>
+  {
+    template <typename Stream>
+    msgpack::packer<Stream> &operator()(msgpack::packer<Stream> &o,
+                                        const msgpack_dco_array<std::vector<T, Alloc>> &v) const
+    {
+      uint32_t size = checked_get_container_size(v.size());
+      o.pack_array(size);
+      for (typename std::vector<T, Alloc>::const_iterator it(v.begin()),
+           it_end(v.end());
+           it != it_end; ++it) {
+        o.pack(mark_for_dco_msgpack(*it));
+      }
+      return o;
+    }
+  };
+  }// namespace adaptor
+}
+}// namespace msgpack
+#endif
+#endif
+
 #ifndef msgpack_hxx
 #define msgpack_hxx
 
@@ -428,7 +532,6 @@ MSGPACK_API_VERSION_NAMESPACE(v1)
 
 #define DEBPRINTLEVEL -2
 #include <debprint.h>
-
 
 /** @group Utilities for generated code */
 template <typename O> inline void pack_member_id_inmap(O &o, const char *mid)
