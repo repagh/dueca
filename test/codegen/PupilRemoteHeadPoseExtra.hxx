@@ -3,6 +3,16 @@
 
 
 #define __CUSTOM_COMPATLEVEL_MSGPACK_1
+#define __CUSTOM_COMPATLEVEL_MSGPACK_2
+
+/** This ensures that this DCO objects are marked as such when trying
+    to pack to msgpack as array */
+inline const msgpack_dco_array<PupilRemoteHeadPose>&
+mark_for_dco_msgpack(const PupilRemoteHeadPose &obj)
+{
+  return *reinterpret_cast<const msgpack_dco_array<PupilRemoteHeadPose>*>(&obj);
+}
+
 
 #define __CUSTOM_MSGPACK_PACK_PupilRemoteHeadPose
 namespace msgpack {
@@ -10,6 +20,103 @@ namespace msgpack {
 MSGPACK_API_VERSION_NAMESPACE(v1) {
 /// @endcond
 namespace adaptor {
+
+#if DUECA_MSGPACK_CODEGEN_VERSION == 2
+
+/// member size for this type of object, including parent members
+struct PupilRemoteHeadPose_membersize
+{
+  /// return number of elements in object
+  static constexpr unsigned n_members() {
+  return 6U;
+  }
+};
+
+/// msgpack pack specialization with array coding
+template <>
+struct pack<msgpack_dco_array<PupilRemoteHeadPose>>:
+  public PupilRemoteHeadPose_membersize
+{
+  // main operator, packs data
+  template <typename Stream>
+  msgpack::packer<Stream>& operator()(
+    msgpack::packer<Stream>& o,
+    const msgpack_dco_array<PupilRemoteHeadPose>& v) const
+  {
+    o.pack_array(this->n_members());
+    this->pack_members<Stream>(o, v);
+    return o;
+  }
+
+  template <typename Stream>
+  static void pack_members(msgpack::packer<Stream>& o,
+                           const PupilRemoteHeadPose& v)
+  {
+    o.pack(mark_for_dco_msgpack(v.topic));
+    o.pack(mark_for_dco_msgpack(v.camera_extrinsics));
+    o.pack(mark_for_dco_msgpack(v.camera_poses));
+    o.pack(mark_for_dco_msgpack(v.camera_trace));
+    o.pack(*reinterpret_cast<const matrix44double2*>(&v.camera_pose_matrix));
+    // o.pack(mark_for_dco_msgpack(v.camera_pose_matrix));
+    o.pack(mark_for_dco_msgpack(v.timestamp));
+  }
+
+  template<typename S>
+  static void unpack_members(S& i0, const S& iend,
+                             PupilRemoteHeadPose& v)
+  {
+    msgunpack::msg_unpack(i0, iend, v.topic);
+    msgunpack::msg_unpack(i0, iend, v.camera_extrinsics);
+    msgunpack::msg_unpack(i0, iend, v.camera_poses);
+    msgunpack::msg_unpack(i0, iend, v.camera_trace);
+    msgunpack::msg_unpack(i0, iend, *reinterpret_cast<matrix44double2*>(&(v.camera_pose_matrix)) );
+    // msgunpack::msg_unpack(i0, iend, v.camera_pose_matrix);
+    msgunpack::msg_unpack(i0, iend, v.timestamp);
+   }
+};
+
+/// msgpack pack specialization with object coding
+template <>
+struct pack<PupilRemoteHeadPose>:
+  public PupilRemoteHeadPose_membersize
+{
+  /// main operator, packs DCO as object
+  template <typename Stream>
+  msgpack::packer<Stream>& operator()(msgpack::packer<Stream>& o,
+                                      const PupilRemoteHeadPose& v) const
+  {
+    o.pack_map(this->n_members());
+    this->pack_members<Stream>(o, v);
+    return o;
+  }
+
+  template <typename Stream>
+  static void pack_members(msgpack::packer<Stream>& o,
+                           const PupilRemoteHeadPose& v)
+  {
+    o.pack_str(5);
+    o.pack_str_body("topic", 5);
+    o.pack(v.topic);
+    o.pack_str(17);
+    o.pack_str_body("camera_extrinsics", 17);
+    o.pack(v.camera_extrinsics);
+    o.pack_str(12);
+    o.pack_str_body("camera_poses", 12);
+    o.pack(v.camera_poses);
+    o.pack_str(12);
+    o.pack_str_body("camera_trace", 12);
+    o.pack(v.camera_trace);
+    o.pack_str(18);
+    o.pack_str_body("camera_pose_matrix", 18);
+    o.pack(*reinterpret_cast<const matrix44double2*>(&v.camera_pose_matrix));
+    // o.pack(v.camera_pose_matrix);
+    o.pack_str(9);
+    o.pack_str_body("timestamp", 9);
+    o.pack(v.timestamp);
+  }
+};
+
+#else
 
 /// msgpack pack specialization
 template <>
@@ -39,13 +146,13 @@ struct pack<PupilRemoteHeadPose> {
     MSGPACK_DCO_MEMBER(timestamp);
   }
 };
+#endif
+
 } // namespace adaptor
 /// @cond
 } // MSGPACK_API_VERSION_NAMESPACE(v1)
 /// @endcond
 } // namespace msgpack
-
-
 
 
 namespace dueca {
@@ -139,6 +246,7 @@ struct UnpackVisitor<msgpack_container_dco,PupilRemoteHeadPose>:
 } // namespace messagepack
 } // namespace dueca
 
+#if DUECA_MSGPACK_CODEGEN_VERSION == 1
 #define __CUSTOM_MSGPACK_UNPACK_PupilRemoteHeadPose
 namespace msgunpack {
 template<typename S>
@@ -155,7 +263,7 @@ void msg_unpack(S& i0, const S& iend, PupilRemoteHeadPose&i)
   MSGPACK_UNPACK_MEMBER(i.timestamp);
 };
 } // namespace msgunpack
-
+#endif
 
 
 

@@ -410,7 +410,7 @@ public:
       pk.pack_array(3);
       pk.pack(ts.getValidityStart());
       pk.pack(ts.getValiditySpan());
-      pk.pack(*reinterpret_cast<const msgpack_dco_array<DCO> *>(&object));
+      pk.pack(mark_for_dco_msgpack(object));
 
       DEB1("S " << r_stream->getStreamId() << " packed for "
                 << ts.getValidityStart() << "-" << ts.getValiditySpan());

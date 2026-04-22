@@ -712,12 +712,12 @@ bool GtkGladeWindow::getValue(T &value, const char *name, bool warn)
   return res;
 }
 
-// specialization for const char argument
+/// specialization of setValue for char* argument
 template <>
 bool GtkGladeWindow::setValue<char *>(char *const &value, const char *name,
                                       bool warn);
 
-//
+// generic implementation
 template <typename T>
 bool GtkGladeWindow::setValue(const T &value, const char *name, bool warn)
 {
@@ -725,13 +725,15 @@ bool GtkGladeWindow::setValue(const T &value, const char *name, bool warn)
   auto res = _setValue(name, name, _v, warn);
   return res;
 }
-// claim there is a specialized version
+
+/// claim there is a specialized version for CommObjectWriter
 template <>
 unsigned GtkGladeWindow::getValues<CommObjectWriter>(CommObjectWriter &cow,
                                                      const char *format,
                                                      const char *arrformat,
                                                      bool warn);
-// claim there is a specialized version
+
+/// claim there is a specialized version for DCOWriter
 template <>
 unsigned GtkGladeWindow::getValues<DCOWriter>(DCOWriter &cow,
                                               const char *format,
@@ -746,13 +748,13 @@ unsigned GtkGladeWindow::getValues(DCO &dco, const char *format,
   return GtkGladeWindow::getValues(cow, format, arrformat, warn);
 }
 
-// claim there is a specialized version
+/// claim there is a specialized version for CommObjectReader
 template <>
 unsigned GtkGladeWindow::setValues<CommObjectReader>(CommObjectReader &cow,
                                                      const char *format,
                                                      const char *arrformat,
                                                      bool warn);
-// claim there is a specialized version
+/// claim there is a specialized version for DCOReader
 template <>
 unsigned GtkGladeWindow::setValues<DCOReader>(DCOReader &cow,
                                               const char *format,

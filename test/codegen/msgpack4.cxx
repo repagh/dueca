@@ -46,24 +46,32 @@ int main()
         <dueca::messagepack::msgpack_container_dco,PupilRemoteHeadPose> v(hpc);
       std::size_t off = 0;
       bool res = msgpack::v2::parse(buf.data(), buf.size(), off, v);
-      
+      assert(res);
+      cout << "base headpose " << res << endl;
+    }
+
+    {
+      dueca::MessageBuffer buf(600);
+
+      // stream/array pack
+      msgpack::packer<dueca::MessageBuffer> pk(buf);
+      pk.pack(mark_for_dco_msgpack(hp));
+
       // stream unpack
       auto i0 = buf.begin();
       auto iend = buf.end();
       msgunpack::msg_unpack(i0, iend, hps);
-      assert(res);
       assert(hp == hpc);
       assert(hp == hps);
-       
-      cout << "base headpose " << res << endl;
+
       cout << "original" << hp << endl;
       cout << "unpacked" << hpc << endl;
       cout << "unstreamed" << hps << endl;
     }
   }
 #endif
- 
- 
+
+
 #if 1
   {
     // JSON cycle, with some NaN

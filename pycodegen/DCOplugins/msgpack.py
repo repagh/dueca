@@ -48,7 +48,17 @@ MSGPACK_ADD_ENUM_UNSTREAM({{ m.getType() }});
 {%- endif %}
 {%- endfor %}
 
+
 #ifndef __CUSTOM_MSGPACK_PACK_{{ name }}
+
+/** This ensures that this DCO objects are marked as such when trying
+    to pack to msgpack as array */
+inline const msgpack_dco_array<{{ nsprefix }}{{ name }}>&
+mark_for_dco_msgpack(const {{ nsprefix }}{{ name }} &obj)
+{
+  return *reinterpret_cast<const msgpack_dco_array<{{ nsprefix }}{{ name }}>*>(&obj);
+}
+
 namespace msgpack {
 /// @cond
 MSGPACK_API_VERSION_NAMESPACE(v1) {
@@ -86,28 +96,15 @@ struct pack<msgpack_dco_array<{{ nsprefix }}{{ name }}>>:
 
   template <typename Stream>
   static void pack_members(msgpack::packer<Stream>& o,
-                           const {{ nsprefix }}{{ name }}& v)
+                           const msgpack_dco_array<{{ nsprefix }}{{ name }}>& v)
   {
     {%- if parent %}
     pack<msgpack_dco_array<{{ parent }}>>::pack_members<Stream>(o, v);
     {%- endif %}
     {%- for m in members %}
-    o.pack(v.{{ m.getName() }});
+    o.pack(mark_for_dco_msgpack(v.{{ m.getName() }}));
     {%- endfor %}
   }
-
-  template<typename S>
-  static void unpack_members(S& i0, const S& iend,
-                             {{ nsprefix }}{{ name }}& v)
-  {
-    {%- if parent %}
-    pack<msgpack_dco_array<{{ parent }}>>::
-      unpack_members<S>(i0, iend, v);
-    {%- endif %}
-    {%- for m in members %}
-    msgunpack::msg_unpack(i0, iend, v.{{ m.getName() }});
-    {%- endfor %}
-   }
 };
 
 /// msgpack pack specialization with object coding
@@ -138,6 +135,21 @@ struct pack<{{ nsprefix }}{{ name }}>:
     o.pack(v.{{ m.getName()}});
     {%- endfor %}
   }
+
+  // unpack members, assembled in the pack struct to enable referring
+  // to parent code
+  template<typename S>
+  static void unpack_members(S& i0, const S& iend,
+                             {{ nsprefix }}{{ name }}& v)
+  {
+    {%- if parent %}
+    pack<{{ parent }}>::
+      unpack_members<S>(i0, iend, v);
+    {%- endif %}
+    {%- for m in members %}
+    msgunpack::msg_unpack(i0, iend, v.{{ m.getName() }});
+    {%- endfor %}
+   }
 };
 } // namespace adaptor
 /// @cond
@@ -257,7 +269,7 @@ void msg_unpack(S& i0, const S& iend, {{ nsprefix }}{{ name }}&i)
   if (s != msgpack::v1::adaptor::{{ name }}_membersize::n_members()) {
     throw(dueca::messagepack::msgpack_object_changed_size("{{ name }}"));
   }
-  msgpack::v1::adaptor::pack<msgpack_dco_array<{{ nsprefix }}{{ name }}>>::
+  msgpack::v1::adaptor::pack<{{ nsprefix }}{{ name }}>::
     unpack_members(i0, iend, i);
 };
 } // namespace msgunpack
@@ -363,7 +375,7 @@ struct DDFFDCOReadFunctor: public dueca::ddff::DDFFDCOReadFunctor {
     }
 
     // pack the object
-    pk.pack(*reinterpret_cast<const {{ nsprefix }}{{ name }}*>(dpointer));
+    pk.pack(mark_for_dco_msgpack(*reinterpret_cast<const {{ nsprefix }}{{ name }}*>(dpointer)));
     return true;
   }
 };
@@ -456,17 +468,20 @@ class AddOn(object):
         self.parent = parent
         self.members = members
         self.nest = nest
-        self.dueca_msgpack_version = 1
+        self.dueca_msgpack_version = 2
 
     def printHeaderInclude(self):
         """ print the lines that will be added to the header's include area
         """
-        return """
+        return r"""
 #include <dueca/msgpack.hxx>
 #include <dueca/msgpack-unstream-iter.hxx>
+#ifndef DUECA_MSGPACK_CODEGEN_VERSION
+#define DUECA_MSGPACK_CODEGEN_VERSION {dueca_msgpack_version}
+#endif
 #ifndef NESTED_DCO
 #include <dueca/msgpack-unstream-iter.ixx>
-#endif"""
+#endif""".format(dueca_msgpack_version=self.dueca_msgpack_version)
 
     def printBodyInclude(self):
         """ print the lines that will be added to the body's include area
