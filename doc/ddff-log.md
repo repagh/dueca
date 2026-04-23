@@ -133,7 +133,7 @@ Timing for the logged data can be influenced by a number of keywords
   events you use in your simulation.
 
 - To reduce the data rate, use the `reduction` variable with a time
-  specification. Logging defined after this, is logged according to that
+  specification. Logging defined after this setting, is logged according to that
   time specification. Note that this only makes sense for stream channels.
 
 The logger can also be controlled and monitored through DUECA channels. You
@@ -182,10 +182,12 @@ print(df.tags())
 # numpy arrays.
 # without arguments getData will get all data, with a period or index,
 # it will collect only that segment.
-# this returns time tick, span, and a dictionary of numpy arrays with data.
-t, span, d = df['/data/traffic'].getData()
+# this returns time `tick`, `span` as numpy arrays, and `d` a dictionary
+# of numpy arrays with data.
+t, span, d = df['/data/traffic'].get_data()
 
-# for events, it makes more sense to iterate over these
+# for events, it makes more sense to iterate over these, you will get
+# the event data in a dictionary, one by one
 for t, event in df['/data/config'].items():
     print(t, event)
 ~~~~
@@ -209,6 +211,8 @@ and replaying are implemented:
 - Custom replay, where any data codable in a DCO object can be recorded, and
   at replay, this data is read back by the program and used to drive the
   simulation, feedback, or output.
+
+This uses the [DataRecorder](@ref dueca::DataRecorder) class.
 
 ~~~~{.hxx}
   /// Recorder for record and replay
@@ -313,4 +317,46 @@ to help you manage and select recorded data.
 
 ## Record and Replay configuration
 
-To be completed.
+To configure record and replay, you need to add a number of elements to
+the `dueca_mod.py` file. For each entity that you want to include in
+the record and replay, you need to add a replay controller, and it also
+makes sense to add a separate controller/handler for the initial model
+state (snapshots).
+
+~~~~{.py}
+# suppose you named your entity
+entity = 'PHLAB'
+
+# the initial state inventory is part of the DUECA modules
+DUECA_mods.append(
+    dueca.Module("initials-inventory", entity, admin_priority).param(
+                 # reference_file=f"initials-{entity}.toml",
+                 store_file=f"initials-{entity}-new.toml"))
+DUECA_mods.append(
+    dueca.Module("replay-master", entity, admin_priority).param(
+                 # reference_files=f"recordings-{entity}.ddff",
+                 store_files=f"recordings-{entity}-new.ddff"))
+~~~~
+
+This adds new windows to the view menu of the DUECA interface. If you
+have a reference file, the initial model states and recordings from
+the reference file will become available for use right away, and
+together with any new states or recordings you capture, these will
+be added to the store files.
+
+After a run, a new initials file will be available on node 0 of
+your DUECA process. Files for the recordings are stored locally, so
+if you have multiple DUECA nodes, and record data on these, multiple
+recording files will be generated, each with its part of the data
+needed for replay.
+
+In addition to the replay master, each DUECA node where recording or
+replay takes place, needs a `ReplayFiler` object, one per entity serviced.
+Simply create that in the dueca_mod.py file, and assign it to a variable.
+
+~~~~{.py}
+filer = dueca.ReplayFiler(entity)
+~~~~
+
+The filer will connect to its corresponding master, and ensure that
+any recorders you use can store their data and retrieve replay data.

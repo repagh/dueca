@@ -29,18 +29,31 @@ unpacking of a DCO object with arrays, rather than as an object */
 template <class DCO> struct msgpack_dco_array : public DCO
 {};
 
-/** A generic non-marking call version for all non-DCO objects */
-template <typename D> inline const D &mark_for_dco_msgpack(const D &obj)
+struct msgpack_container_none
 {
-  return obj;
-}
+  template <typename C>
+  inline static const C &mark_for_dco_msgpack(const C &obj)
+  {
+    return obj;
+  }
+};
+
+struct msgpack_container_base
+{
+  template <typename C>
+  inline static const msgpack_dco_array<C> &mark_for_dco_msgpack(const C &obj)
+  {
+    return *reinterpret_cast<const msgpack_dco_array<C>*>(&obj);
+  }
+};
 
 #endif
 // always pre define
-namespace dueca {
-namespace messagepack {
-template <typename C> struct msgpack_visitor;
-}
+namespace dueca
+{
+  namespace messagepack {
+  template <typename C> struct msgpack_visitor;
+  }
 }// namespace dueca
 
 // other-file-specific
@@ -91,15 +104,16 @@ MSGPACK_API_VERSION_NAMESPACE(v1)
   struct pack<msgpack_dco_array<dueca::fixvector<N, T>>>
   {
     template <typename Stream>
-    msgpack::packer<Stream> &operator()(msgpack::packer<Stream> &o,
-                                        const msgpack_dco_array<dueca::fixvector<N, T>> &v) const
+    msgpack::packer<Stream> &
+    operator()(msgpack::packer<Stream> &o,
+               const msgpack_dco_array<dueca::fixvector<N, T>> &v) const
     {
       uint32_t size = checked_get_container_size(v.size());
       o.pack_array(size);
       for (typename dueca::fixvector<N, T>::const_iterator it(v.begin()),
            it_end(v.end());
            it != it_end; ++it) {
-        o.pack(mark_for_dco_msgpack(*it));
+        o.pack(dueca::messagepack::msgpack_visitor<T>::variant::mark_for_dco_msgpack(*it));
       }
       return o;
     }
@@ -143,10 +157,12 @@ MSGPACK_API_VERSION_NAMESPACE(v1)
   struct pack<
     msgpack_dco_array<dueca::fixvector_withdefault<N, T, DEFLT, BASE>>>
   {
+
     template <typename Stream>
-    msgpack::packer<Stream> &
-    operator()(msgpack::packer<Stream> &o,
-               const msgpack_dco_array<dueca::fixvector_withdefault<N, T, DEFLT, BASE>> &v) const
+    msgpack::packer<Stream> &operator()(
+      msgpack::packer<Stream> &o,
+      const msgpack_dco_array<dueca::fixvector_withdefault<N, T, DEFLT, BASE>>
+        &v) const
     {
       uint32_t size = checked_get_container_size(v.size());
       o.pack_array(size);
@@ -155,7 +171,7 @@ MSGPACK_API_VERSION_NAMESPACE(v1)
              it(v.begin()),
            it_end(v.end());
            it != it_end; ++it) {
-        o.pack(mark_for_dco_msgpack(*it));
+        o.pack(dueca::messagepack::msgpack_visitor<T>::variant::mark_for_dco_msgpack(*it));
       }
       return o;
     }
@@ -217,15 +233,16 @@ MSGPACK_API_VERSION_NAMESPACE(v1)
   struct pack<msgpack_dco_array<dueca::limvector<N, T>>>
   {
     template <typename Stream>
-    msgpack::packer<Stream> &operator()(msgpack::packer<Stream> &o,
-                                        const msgpack_dco_array<dueca::limvector<N, T>> &v) const
+    msgpack::packer<Stream> &
+    operator()(msgpack::packer<Stream> &o,
+               const msgpack_dco_array<dueca::limvector<N, T>> &v) const
     {
       uint32_t size = checked_get_container_size(v.size());
       o.pack_array(size);
       for (typename dueca::limvector<N, T>::const_iterator it(v.begin()),
            it_end(v.end());
            it != it_end; ++it) {
-        o.pack(mark_for_dco_msgpack(*it));
+        o.pack(dueca::messagepack::msgpack_visitor<T>::variant::mark_for_dco_msgpack(*it));
       }
       return o;
     }
@@ -279,15 +296,16 @@ MSGPACK_API_VERSION_NAMESPACE(v1)
   template <typename T> struct pack<msgpack_dco_array<dueca::varvector<T>>>
   {
     template <typename Stream>
-    msgpack::packer<Stream> &operator()(msgpack::packer<Stream> &o,
-                                        const msgpack_dco_array<dueca::varvector<T>> &v) const
+    msgpack::packer<Stream> &
+    operator()(msgpack::packer<Stream> &o,
+               const msgpack_dco_array<dueca::varvector<T>> &v) const
     {
       uint32_t size = checked_get_container_size(v.size());
       o.pack_array(size);
       for (typename dueca::varvector<T>::const_iterator it(v.begin()),
            it_end(v.end());
            it != it_end; ++it) {
-        o.pack(mark_for_dco_msgpack(*it));
+        o.pack(dueca::messagepack::msgpack_visitor<T>::variant::mark_for_dco_msgpack(*it));
       }
       return o;
     }
@@ -347,7 +365,7 @@ MSGPACK_API_VERSION_NAMESPACE(v1)
                                         const dueca::fix_optional<T> &v) const
     {
       if (v.valid) {
-        o.pack(mark_for_dco_msgpack(v.value));
+        o.pack(dueca::messagepack::msgpack_visitor<T>::variant::mark_for_dco_msgpack(v.value));
       }
       else {
         o.pack_nil();
@@ -420,6 +438,16 @@ MSGPACK_API_VERSION_NAMESPACE(v1)
 #ifndef msgpack_GLIBCXX_MAP
 #define msgpack_GLIBCXX_MAP
 
+namespace dueca {
+namespace messagepack {
+struct msgpack_container_map;
+template <typename K, typename T> struct msgpack_visitor<std::map<K, T>>
+{
+  typedef msgpack_container_map variant;
+};
+} // namespace messagepack
+} // namespace dueca
+
 namespace msgpack {
 /// @cond
 MSGPACK_API_VERSION_NAMESPACE(v1)
@@ -429,6 +457,7 @@ MSGPACK_API_VERSION_NAMESPACE(v1)
   template <typename K, typename V, typename Compare, typename Alloc>
   struct pack<msgpack_dco_array<std::map<K, V, Compare, Alloc>>>
   {
+    typedef std::map<K, V, Compare, Alloc> _type;
     template <typename Stream>
     msgpack::packer<Stream> &
     operator()(msgpack::packer<Stream> &o,
@@ -436,12 +465,12 @@ MSGPACK_API_VERSION_NAMESPACE(v1)
     {
       uint32_t size = checked_get_container_size(v.size());
       o.pack_map(size);
-      for (typename type::assoc_vector<K, V, Compare, Alloc>::const_iterator
+      for (typename _type::const_iterator
              it(v.begin()),
            it_end(v.end());
            it != it_end; ++it) {
         o.pack(it->first);
-        o.pack(mark_for_dco_msgpack(it->second));
+        o.pack(dueca::messagepack::msgpack_visitor<V>::variant::mark_for_dco_msgpack(it->second));
       }
       return o;
     }
@@ -456,6 +485,16 @@ MSGPACK_API_VERSION_NAMESPACE(v1)
 #ifndef msgpack_GLIBCXX_LIST
 #define msgpack_GLIBCXX_LIST
 
+namespace dueca {
+namespace messagepack {
+struct msgpack_container_push;
+template <typename T> struct msgpack_visitor<std::list<T>>
+{
+  typedef msgpack_container_push variant;
+};
+} // namespace messagepack
+} // namespace dueca
+
 namespace msgpack {
 /// @cond
 MSGPACK_API_VERSION_NAMESPACE(v1)
@@ -466,15 +505,16 @@ MSGPACK_API_VERSION_NAMESPACE(v1)
   struct pack<msgpack_dco_array<std::list<T, Alloc>>>
   {
     template <typename Stream>
-    msgpack::packer<Stream> &operator()(msgpack::packer<Stream> &o,
-                                        const msgpack_dco_array<std::list<T, Alloc>> &v) const
+    msgpack::packer<Stream> &
+    operator()(msgpack::packer<Stream> &o,
+               const msgpack_dco_array<std::list<T, Alloc>> &v) const
     {
       uint32_t size = checked_get_container_size(v.size());
       o.pack_array(size);
       for (typename std::list<T, Alloc>::const_iterator it(v.begin()),
            it_end(v.end());
            it != it_end; ++it) {
-        o.pack(mark_for_dco_msgpack(*it));
+        o.pack(dueca::messagepack::msgpack_visitor<T>::variant::mark_for_dco_msgpack(*it));
       }
       return o;
     }
@@ -490,6 +530,16 @@ MSGPACK_API_VERSION_NAMESPACE(v1)
 #ifndef msgpack_GLIBCXX_VECTOR
 #define msgpack_GLIBCXX_VECTOR
 
+namespace dueca {
+namespace messagepack {
+struct msgpack_container_stretch;
+template <typename T> struct msgpack_visitor<std::vector<T>>
+{
+  typedef msgpack_container_stretch variant;
+};
+} // namespace messagepack
+} // namespace dueca
+
 namespace msgpack {
 /// @cond
 MSGPACK_API_VERSION_NAMESPACE(v1)
@@ -500,15 +550,16 @@ MSGPACK_API_VERSION_NAMESPACE(v1)
   struct pack<msgpack_dco_array<std::vector<T, Alloc>>>
   {
     template <typename Stream>
-    msgpack::packer<Stream> &operator()(msgpack::packer<Stream> &o,
-                                        const msgpack_dco_array<std::vector<T, Alloc>> &v) const
+    msgpack::packer<Stream> &
+    operator()(msgpack::packer<Stream> &o,
+               const msgpack_dco_array<std::vector<T, Alloc>> &v) const
     {
       uint32_t size = checked_get_container_size(v.size());
       o.pack_array(size);
       for (typename std::vector<T, Alloc>::const_iterator it(v.begin()),
            it_end(v.end());
            it != it_end; ++it) {
-        o.pack(mark_for_dco_msgpack(*it));
+        o.pack(dueca::messagepack::msgpack_visitor<T>::variant::mark_for_dco_msgpack(*it));
       }
       return o;
     }
@@ -525,13 +576,16 @@ MSGPACK_API_VERSION_NAMESPACE(v1)
 #include <dueca_ns.h>
 
 #include "Dstring.hxx"
-#include <list>
-#include <map>
 #include <string>
-#include <vector>
 
 #define DEBPRINTLEVEL -2
 #include <debprint.h>
+
+/** A generic non-marking call version for all non-DCO objects and non-containers */
+template <typename D> inline const D &mark_for_dco_msgpack(const D &obj)
+{
+  return obj;
+}
 
 /** @group Utilities for generated code */
 template <typename O> inline void pack_member_id_inmap(O &o, const char *mid)
@@ -558,7 +612,7 @@ template <typename O> inline void pack_member_id_inarray(O &o, const char *mid)
   MSGPACK_PACK_MEMBER_ID(o, #A);                                               \
   o.pack(v.A);
 
-struct msgpack_variant_enum
+struct msgpack_variant_enum: msgpack_container_none
 {};
 #define MSGPACK_ADD_ENUM_VISITOR(A)                                            \
   namespace dueca {                                                            \
@@ -587,7 +641,7 @@ DUECA_NS_START;
 namespace messagepack {
 struct VirtualVisitor;
 
-  /** DCO Visitor unpack mode */
+/** DCO Visitor unpack mode */
 enum class VVMode { Init, Map, Array, Exit };
 
 enum class MMode { Init, Key, Value, Exit };
@@ -755,7 +809,7 @@ struct msgpack_object_changed_size : public std::exception
 };
 
 /** Trait struct indicating undefined objects for msgpack */
-struct msgpack_variant_none
+struct msgpack_variant_none: public msgpack_container_none
 {};
 
 /** Detecting traits for visitor */
@@ -768,7 +822,7 @@ template <typename C> struct msgpack_visitor
 template <typename VAR, typename DCO> struct UnpackVisitor
 {};
 
-struct msgpack_variant_float32
+struct msgpack_variant_float32: public msgpack_container_none
 {};
 template <typename T>
 struct UnpackVisitor<msgpack_variant_float32, T> : public VirtualVisitor
@@ -810,7 +864,7 @@ template <> struct msgpack_visitor<float>
   typedef msgpack_variant_float32 variant;
 };
 
-struct msgpack_variant_float64
+struct msgpack_variant_float64: public msgpack_container_none
 {};
 template <typename T>
 struct UnpackVisitor<msgpack_variant_float64, T> : public VirtualVisitor
@@ -852,7 +906,7 @@ template <> struct msgpack_visitor<double>
   typedef msgpack_variant_float64 variant;
 };
 
-struct msgpack_variant_signed
+struct msgpack_variant_signed: public msgpack_container_none
 {};
 template <typename T>
 struct UnpackVisitor<msgpack_variant_signed, T> : public VirtualVisitor
@@ -894,7 +948,7 @@ template <> struct msgpack_visitor<int64_t>
   typedef msgpack_variant_signed variant;
 };
 
-struct msgpack_variant_unsigned
+struct msgpack_variant_unsigned: public msgpack_container_none
 {};
 template <typename T>
 struct UnpackVisitor<msgpack_variant_unsigned, T> : public VirtualVisitor
@@ -930,7 +984,7 @@ template <> struct msgpack_visitor<uint64_t>
   typedef msgpack_variant_unsigned variant;
 };
 
-struct msgpack_variant_bool
+struct msgpack_variant_bool: public msgpack_container_none
 {};
 template <typename T>
 struct UnpackVisitor<msgpack_variant_bool, T> : public VirtualVisitor
@@ -954,7 +1008,7 @@ template <> struct msgpack_visitor<bool>
   typedef msgpack_variant_bool variant;
 };
 
-struct msgpack_variant_string
+struct msgpack_variant_string: public msgpack_container_none
 {};
 template <typename T>
 struct UnpackVisitor<msgpack_variant_string, T> : public VirtualVisitor
@@ -1074,8 +1128,9 @@ template <typename A> struct UnpackVisitorArray : public VirtualVisitor
   }
 };
 
-struct msgpack_container_fix
+struct msgpack_container_fix: public msgpack_container_base
 {};
+
 template <typename A>
 struct UnpackVisitor<msgpack_container_fix, A> : public UnpackVisitorArray<A>
 {
@@ -1113,7 +1168,7 @@ struct UnpackVisitor<msgpack_container_fix, A> : public UnpackVisitorArray<A>
   }
 };
 
-struct msgpack_container_fix_default
+struct msgpack_container_fix_default: public msgpack_container_base
 {};
 template <typename A>
 struct UnpackVisitor<msgpack_container_fix_default, A> :
@@ -1164,7 +1219,7 @@ struct UnpackVisitor<msgpack_container_fix_default, A> :
   }
 };
 
-struct msgpack_container_push
+struct msgpack_container_push: public msgpack_container_base
 {};
 template <typename A>
 struct UnpackVisitor<msgpack_container_push, A> : public UnpackVisitorArray<A>
@@ -1213,13 +1268,8 @@ struct UnpackVisitor<msgpack_container_push, A> : public UnpackVisitorArray<A>
   }
 };
 
-template <typename T> struct msgpack_visitor<std::list<T>>
-{
-  typedef msgpack_container_push variant;
-};
-
 /** Containers that can be stretched (resize), when size is known */
-struct msgpack_container_stretch
+struct msgpack_container_stretch: public msgpack_container_base
 {};
 
 /** Visitor for containers that are resized when the size is known */
@@ -1282,12 +1332,7 @@ struct UnpackVisitor<msgpack_container_stretch, A> :
   }
 };
 
-template <typename T> struct msgpack_visitor<std::vector<T>>
-{
-  typedef msgpack_container_stretch variant;
-};
-
-struct msgpack_container_optional
+struct msgpack_container_optional: public msgpack_container_base
 {};
 template <typename A>
 struct UnpackVisitor<msgpack_container_optional, A> : public VirtualVisitor
@@ -1773,7 +1818,7 @@ template <typename A> struct UnpackVisitorMap : public VirtualVisitor
   }
 };
 
-struct msgpack_container_map
+struct msgpack_container_map: public msgpack_container_base
 {};
 template <typename A>
 struct UnpackVisitor<msgpack_container_map, A> : public UnpackVisitorMap<A>
@@ -1781,11 +1826,6 @@ struct UnpackVisitor<msgpack_container_map, A> : public UnpackVisitorMap<A>
   UnpackVisitor(A &obj) :
     UnpackVisitorMap<A>(obj)
   {}
-};
-
-template <typename K, typename T> struct msgpack_visitor<std::map<K, T>>
-{
-  typedef msgpack_container_map variant;
 };
 
 /** Base unpack visitor for DCO objects. */
@@ -1867,7 +1907,7 @@ struct GobbleVisitor : public VirtualVisitor
   VirtualVisitor *missingMember(const char *name);
 };
 
-struct msgpack_container_dco
+struct msgpack_container_dco: public msgpack_container_base
 {};
 
 } // namespace messagepack
@@ -1878,10 +1918,10 @@ namespace msgpack {
 /// @cond
 MSGPACK_API_VERSION_NAMESPACE(v1)
 {
-/// @endcond
+  /// @endcond
   namespace adaptor {
 
-/** packing adaptor for Dstring */
+  /** packing adaptor for Dstring */
   template <unsigned mxsize> struct pack<dueca::Dstring<mxsize>>
   {
     template <typename Stream>

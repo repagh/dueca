@@ -102,7 +102,7 @@ struct pack<msgpack_dco_array<{{ nsprefix }}{{ name }}>>:
     pack<msgpack_dco_array<{{ parent }}>>::pack_members<Stream>(o, v);
     {%- endif %}
     {%- for m in members %}
-    o.pack(mark_for_dco_msgpack(v.{{ m.getName() }}));
+    o.pack(dueca::messagepack::msgpack_visitor<{{ m.getType() }}>::variant::mark_for_dco_msgpack(v.{{ m.getName() }}));
     {%- endfor %}
   }
 };
