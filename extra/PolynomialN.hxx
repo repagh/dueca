@@ -21,15 +21,15 @@
 #include "SimpleFunction.hxx"
 #include <dueca_ns.h>
 #include <iostream>
+#include <algorithm>
 DUECA_NS_START
-
 
 /** Implementation of a scaling/converting device, using a polynomial
     function. This class is a functor, with a double as input and
     another double as output. The application for this in DUECA is as
     an input calibrator for IO signals, see also the InputCalibrator
     and OutputCalibrator documentation. */
-class PolynomialN: public SimpleFunction
+class PolynomialN : public SimpleFunction
 {
   /** Order of the polynomial. */
   unsigned int n;
@@ -47,27 +47,37 @@ public:
                  \f$a_0 + a_1 x + \ldots + a_n x^n \f$ */
   PolynomialN(unsigned int n, const double ai[]);
 
+  /** Constructor from array */
+  template <typename A>
+  PolynomialN(const A &ai) :
+    n(ai.size() - 1),
+    a(new double[n + 1])
+  {
+    std::copy(ai.begin(), ai.end(), a);
+  }
+
   /** Copy constructor. */
-  PolynomialN(const PolynomialN& o);
+  PolynomialN(const PolynomialN &o);
 
   /** assignment */
-  PolynomialN& operator = (const PolynomialN& o);
+  PolynomialN &operator=(const PolynomialN &o);
 
   /** Destructor. */
   ~PolynomialN();
 
   /** The operator. */
-  double operator () (const double x) const;
+  double operator()(const double x) const;
 
   /** Print the object */
-  std::ostream& print (std::ostream& os) const;
+  std::ostream &print(std::ostream &os) const;
 };
 
 DUECA_NS_END
 
-inline std::ostream& operator << (std::ostream& os,
-                                  const DUECA_NS::PolynomialN& o)
-{ return o.print(os); }
+inline std::ostream &operator<<(std::ostream &os,
+                                const DUECA_NS::PolynomialN &o)
+{
+  return o.print(os);
+}
 
 #endif
-

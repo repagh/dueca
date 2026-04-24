@@ -23,11 +23,10 @@
 #else
 #include <dueca_ns.h>
 #endif
-#include <limits>
 #include <iostream>
+#include <algorithm>
 
 DUECA_NS_START
-
 
 /** Implementation of a rotary scaling/converting device, using a
     polynomial for final correction and optionally tracking of the
@@ -60,7 +59,7 @@ DUECA_NS_START
     polynomial from the second step the scaling may be further
     defined.
 */
-class CircularWithPoly: public SimpleFunction
+class CircularWithPoly : public SimpleFunction
 {
   /** Initial scaling gain \f$K\f$. */
   double K;
@@ -88,31 +87,43 @@ public:
       @param  ai      Array with polynomial coefficients, polynomial is
                       \f$a_0 + a_1 x + \ldots + a_n x^n \f$
   */
-  CircularWithPoly(double K, double xzero, double norm_start,
-                   size_t n, const double ai[]);
+  CircularWithPoly(double K, double xzero, double norm_start, size_t n,
+                   const double ai[]);
 
   /** Copy constructor */
-  CircularWithPoly(const CircularWithPoly& o);
+  CircularWithPoly(const CircularWithPoly &o);
+
+  template <typename A>
+  CircularWithPoly(double K, double xzero, double norm_start, const A &ai) :
+    K(K),
+    xzero(xzero),
+    norm_start(norm_start),
+    n(ai.size() - 1U),
+    a(new double[n + 1])
+  {
+    std::copy(ai.begin(), ai.end(), a);
+  }
 
   /** assignment */
-  CircularWithPoly& operator = (const CircularWithPoly& o);
+  CircularWithPoly &operator=(const CircularWithPoly &o);
 
   /** Destructor. */
   ~CircularWithPoly();
 
   /** The operator. */
-  double operator () (const double x) const;
+  double operator()(const double x) const;
 
   /** Print the object */
-  std::ostream& print (std::ostream& os) const;
+  std::ostream &print(std::ostream &os) const;
 };
 
 DUECA_NS_END
 
 /** Print operator for CircularWithPoly */
-inline std::ostream& operator << (std::ostream& os,
-                                  const DUECA_NS::CircularWithPoly& o)
-{ return o.print(os); }
+inline std::ostream &operator<<(std::ostream &os,
+                                const DUECA_NS::CircularWithPoly &o)
+{
+  return o.print(os);
+}
 
 #endif
-

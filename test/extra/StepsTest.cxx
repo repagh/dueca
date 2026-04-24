@@ -1,20 +1,18 @@
 /* ------------------------------------------------------------------   */
-/*      item            : InterpTest.cxx
+/*      item            : StepsTest.cxx
         made by         : Rene' van Paassen
-        date            : 010614
+        date            : 260424
         category        : body file
         description     :
-        changes         : 010614 first version
+        changes         : 260424 first version
         language        : C++
-        copyright       : (c) 2016 TUDelft-AE-C&S
-        copyright       : (c) 2022 René van Paassen
+        copyright       : (c) 2026 René van Paassen
         license         : EUPL-1.2
 */
 
 #define InterpTest_cxx
 
 #include "Steps.hxx"
-#include <cmath>
 #include <cassert>
 #include <array>
 
