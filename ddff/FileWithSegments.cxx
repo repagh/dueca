@@ -422,9 +422,6 @@ bool FileWithSegments::completeStretch(TimeTickType tick)
 
 void FileWithSegments::spoolForReplay(unsigned cycle)
 {
-  // remember the replay cycle
-  replay_cycle = cycle;
-
   // verify that this replay cycle is available
   if (cycle >= tags.size()) {
     throw cannot_find_segment(entity.c_str(), cycle);

@@ -16,7 +16,6 @@
 
 #include "ddff_ns.h"
 #include "FileHandler.hxx"
-#include <map>
 #include <string>
 
 DDFF_NS_START
@@ -34,9 +33,9 @@ DDFF_NS_START
     - A key, which must be a unique string, resulting in the name of the
       data stream
     - An integer ID, linking it to the stream number (2 .. n)
-    - A free-text label. Commonly, information about the data written in 
+    - A free-text label. Commonly, information about the data written in
       the stream is given there, in the form of a JSON variable. From DUECA.
-      this can be created with the DCOtypeJSON function. 
+      this can be created with the DCOtypeJSON function.
  */
 class FileWithInventory: public FileHandler
 {

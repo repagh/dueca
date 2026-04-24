@@ -179,7 +179,7 @@ bool DDFFLogger::complete()
   }
 
   if (r_config) {
-    // wait for hdf file name or start command
+    // wait for ddff file name or start command
     /* DUECA ddff.
 
        A configuration channel has been configured. The DDFF file will

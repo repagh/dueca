@@ -99,6 +99,9 @@ GtkWidget *NewGtkDuecaButton_pixmaps()
   pixmap = gtk_image_new_from_pixbuf(button_icons[4]);
   gtk_container_add(box, pixmap);
 
+  gtk_widget_set_halign(GTK_WIDGET(box), GTK_ALIGN_CENTER);
+  gtk_widget_set_valign(GTK_WIDGET(box), GTK_ALIGN_CENTER);
+
   // show the box
   gtk_widget_show(GTK_WIDGET(box));
 
@@ -129,6 +132,9 @@ GtkWidget *NewGtkDuecaAbortButton_pixmaps()
   pixmap = gtk_image_new_from_pixbuf(emergency_icons[1]);
   gtk_container_add(box, pixmap);
   gtk_widget_show(GTK_WIDGET(box));
+
+  gtk_widget_set_halign(GTK_WIDGET(box), GTK_ALIGN_CENTER);
+  gtk_widget_set_valign(GTK_WIDGET(box), GTK_ALIGN_CENTER);
 
   return GTK_WIDGET(box);
 }
