@@ -165,7 +165,7 @@ get instructions. When working with python and the `pyddff` module directly,
 you can efficiently convert the data to a convenient format.
 
 ~~~~{.bash}
-from pyddff import DDFFSegements
+from pyddff import DDFFSegments
 
 # Open a file
 df = DDFFSegments("mylogfile.ddff")
@@ -180,7 +180,7 @@ print(df.tags())
 # numpy arrays. For "simple" data (floats, doubles, ints, strings, or
 # fixed-length arrays of these), this results in 1 or 2-dimensional
 # numpy arrays.
-# without arguments getData will get all data, with a period or index,
+# without arguments get_data will get all data, with a period or index,
 # it will collect only that segment.
 # this returns time `tick`, `span` as numpy arrays, and `d` a dictionary
 # of numpy arrays with data.
@@ -360,3 +360,10 @@ filer = dueca.ReplayFiler(entity)
 
 The filer will connect to its corresponding master, and ensure that
 any recorders you use can store their data and retrieve replay data.
+
+## Relation to msgpack
+
+The DDFF file format uses msgpack to convert the DUECA data to file.
+When logging a DCO object, the msgpack codes this as an array with
+each element of the array corresponding to a data member in the DCO
+object.

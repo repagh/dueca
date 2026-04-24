@@ -41,6 +41,7 @@
     <node>five</node>
     <command>./runscript</command>
   </execute>
+  <offset x="0" y="16"/>
   <actions>
     <check window="DUECA/DUSIME control panel" x="463" y="101" r="104" g="104" b="104" timeout="10.0" wait="0.5"/>
     <click window="DUECA/DUSIME control panel" x="463" y="101" button="Button.left" pressed="true" wait="0.2"/>
@@ -272,5 +273,4 @@
     <click window="Are you serious?" x="33" y="50" button="Button.left" pressed="false" wait="0.2"/>
     <click x="270" y="344" button="Button.left" pressed="true" wait="0.2"/>
   </actions>
-  <offset x="-1" y="19"/>
 </scenario>

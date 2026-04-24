@@ -8,17 +8,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 - Clean up and better comments dueca-gproject
 - New dependency on fmt-devel, instead of boost/format.hpp
-- Fix a dueca-gconfig behaviour on new projects, checking clean remote
+- Fix a dueca-gconfig behaviour on new projects, for checking clean remote
 - Fix new module templates, first include comm-objects.h
 - Limit the messages on DDFFLogger, when started with immediate-start
 - Fix the timing on snapshot collection
 - Correct the replay in the state machine for HardwareModule
 - Change DDFF/msgpack packing and unpacking, to unpack/pack DCO's as either
-  object or array.
+  object or array. Using a flag to recursively mark the packing strategy
+- Change loading the button images for gtk3 Dueca interface, use png instead of
+  xpm. Solves a new problem where button images would not show on Fedora 43
+- Adjust/redo the runtest scripts, because the DUECA window layout changed due
+  to the different buttons.
 
 ### Added
 
 - Some more documentation on replay recorder
+- A new doc page on ddff logging, record and replay
 
 ## [4.2.7] - 2026-03-25
 
