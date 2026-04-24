@@ -42,6 +42,7 @@
     <platform>solo</platform>
     <node>recordreplay</node>
   </execute>
+  <offset x="0" y="16"/>
   <actions>
     <check window="DUECA/DUSIME control panel" x="461" y="60" r="65" g="255" b="11" timeout="10.0" wait="0.5"/>
     <check window="DUECA/DUSIME control panel" x="462" y="96" r="104" g="104" b="104" timeout="10.0" wait="0.5"/>
@@ -125,5 +126,4 @@
     <click window="DUECA/DUSIME control panel" x="135" y="165" button="Button.left" pressed="false" wait="0.2"/>
     <click x="142" y="190" button="Button.left" pressed="true" wait="0.2"/>
   </actions>
-  <offset x="0" y="16"/>
 </scenario>

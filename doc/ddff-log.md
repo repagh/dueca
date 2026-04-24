@@ -364,6 +364,31 @@ any recorders you use can store their data and retrieve replay data.
 ## Relation to msgpack
 
 The DDFF file format uses msgpack to convert the DUECA data to file.
-When logging a DCO object, the msgpack codes this as an array with
+When logging a DCO object, msgpack codes this as an array with
 each element of the array corresponding to a data member in the DCO
-object.
+object. The msgpack format can also be used in general inter-process
+communication, the websocket server can use this format, and in the
+past it was also used to communicate with the PupilLabs Core eye
+tracker. In those cases it is better to code the DCO objects as object
+structs (i.e., coding variable name + value), rather than as arrays.
+This way of coding is actually the default. Let's show this with a
+simple example, first a DCO object:
+
+~~~~{.scheme}
+(Type int)
+(Object MyObject
+  (Option msgpack)
+  (int a (Default 1))
+  (int b (Default 2))
+)
+~~~~
+
+If you want to pack the data, you could use a DUECA messagebuffer:
+~~~~{.cxx}
+dueca::MessageBuffer buf(200);
+MyObject o1; // will have default data
+msgpack::packer<dueca::MessageBuffer> pk(buf); pk.pack(o1);
+~~~~
+
+In this case, the object will be packed as an object. The msgpack format
+is binary, but can be

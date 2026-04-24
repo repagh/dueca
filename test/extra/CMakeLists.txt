@@ -1,4 +1,4 @@
-add_test(INTERPOLATOR InterpTest.x)
+add_test(INTERPOLATOR InterpTest.x StepsTest.x)
 
 include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
@@ -16,3 +16,5 @@ include_directories(
 
 add_executable(InterpTest.x InterpTest.cxx)
 target_link_libraries(InterpTest.x dueca-extra${STATICSUFFIX})
+add_executable(StepsTest.x StepsTest.cxx)
+target_link_libraries(StepsTest.x dueca-extra${STATICSUFFIX})
