@@ -1,4 +1,8 @@
-add_test(INTERPOLATOR InterpTest.x StepsTest.x PolynomialNTest.x CircularWithPolyTest.x CircularTest.x)
+add_test(INTERPOLATOR InterpTest.x)
+add_test(STEPS StepsTest.x)
+add_test(POLYNOMIALN PolynomialNTest.x)
+add_test(CIRCULARPOLY CircularWithPolyTest.x)
+add_test(CIRCULAR CircularTest.x)
 
 include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
