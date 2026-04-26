@@ -288,12 +288,16 @@ bool FileStreamWrite::markItemStart(TimeTickType &start_stretch,
 
 bool FileStreamWrite::markItemStart()
 {
+#if DEBPRINTLEVEL >= 0
   if (auto res = current_buffer->data.markOffsets()) {
     DEB("FileStreamWrite, S"
         << stream_id << " offsets mark=" << res << " start 0x" << std::hex
         << current_buffer->data.start_offset << " object 0x"
         << current_buffer->data.object_offset << std::dec);
   }
+#else
+  current_buffer->data.markOffsets();
+#endif
   return true;
 }
 
