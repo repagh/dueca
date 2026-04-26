@@ -8,12 +8,13 @@ fi
 
 @NESTSERVER@ @DISPLAY@ @NESTEXTRAARGS@ &
 NESTSERVERPID=$!
-xauth extract @CMAKE_BINARY_DIR@/.Xauthority @DISPLAY@ 
+xauth extract @CMAKE_BINARY_DIR@/.Xauthority @DISPLAY@
 
 echo "Operate the DUECA process with mouse clicks and keypresses"
 echo "- F1 button to insert a color check at the cursor"
 echo "- F2 button to inserts a snapshot in the sequence"
 echo "- F3 button calibrates the "0,0" in the display windows"
+echo "- F4 button to insert an image check near the cursor"
 echo "- Esc to end the recording"
 sleep 1
 
@@ -32,11 +33,10 @@ env -i DISPLAY=@DISPLAY@ \
     XAUTHORITY=@CMAKE_BINARY_DIR@/.Xauthority \
     @Python_EXECUTABLE@ @CMAKE_CURRENT_SOURCE_DIR@/testrunner.py \
        --base @TESTRUN_BASE@ \
-       --control $1 --learn
+       --control $1 --learn \
+       --templates @CMAKE_CURRENT_SOURCE_DIR@/gtk3
 RESULT=$?
 sleep 1
 
 @NESTSERVER_CLEAN@
 exit ${RESULT}
-
-

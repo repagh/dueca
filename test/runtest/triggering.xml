@@ -23,7 +23,7 @@
     <platform>solo</platform>
     <node>triggering</node>
   </execute>
-  <offset x="0" y="16"/>
+  <offset x="0" y="18"/>
   <actions>
     <check window="DUECA/DUSIME control panel" x="460" y="59" r="65" g="255" b="11" timeout="10.0" wait="0.5"/>
     <check window="DUECA/DUSIME control panel" x="464" y="94" r="104" g="104" b="104" timeout="10.0" wait="0.5"/>
