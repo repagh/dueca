@@ -1,17 +1,17 @@
 #!/usr/bin/make -f
 # -*- makefile -*-
 
-include /usr/share/cdbs/1/rules/debhelper.mk
-include /usr/share/cdbs/1/class/cmake.mk
+%:
+	dh $@ --buildsystem-cmake
 
-DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
-
+# DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
 FORCE_PYTHON_MALLOC ?= $(shell lsb_release -si | grep -q Ubuntu && lsb_release -sr | grep -qE "18\.04|20\.04" && echo "-DFORCE_PYTHON_MALLOC=ON" || echo "-DFORCE_PYTHON_MALLOC=OFF")
-
 BUILD_GTK4 ?= $(shell dpkg -V libgtk-4-dev 2>/dev/null && echo "-DBUILD_GTK4=ON" || echo "-DBUILD_GTK4=OFF")
 BUILD_GTKMM4 ?= $(shell dpkg -V libgtkmm-4.0-dev >/dev/null && echo "-DBUILD_GTKMM4=ON" || echo "-DBUILD_GTKMM4=OFF")
 
-DEB_CMAKE_EXTRA_FLAGS += -DALSO_INIT_GLUT=ON \
+override_dh_auto_configure:
+	dh_auto_configure --
+	 		-DALSO_INIT_GLUT=ON \
 			-DCMAKE_BUILD_TYPE=Release \
 			-DSYSCONF_INSTALL_DIR=/etc \
 			-DDUECA_BUILD_STATIC=OFF \
