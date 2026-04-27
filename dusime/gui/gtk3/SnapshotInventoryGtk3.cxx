@@ -286,7 +286,7 @@ bool SnapshotInventoryGtk3::complete()
       // deselect from list
     gtk_label_set_text(GTK_LABEL(window["initials_status"]), "snapshot taken");
     gtk_tree_selection_unselect_all(
-      GTK_TREE_SELECTION(window["initials_listselection"]));
+      GTK_TREE_SELECTION(window.getObject("initials_listselection")));
   });
 
   // set a title
