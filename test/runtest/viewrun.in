@@ -7,7 +7,7 @@ fi
 
 @NESTSERVER@ @DISPLAY@ @NESTEXTRAARGS@ &
 NESTSERVERPID=$!
-xauth extract @CMAKE_BINARY_DIR@/.Xauthority @DISPLAY@ 
+xauth extract @CMAKE_BINARY_DIR@/.Xauthority @DISPLAY@
 
 sleep 1
 
@@ -26,11 +26,10 @@ env -i DISPLAY=@DISPLAY@ \
     XAUTHORITY=@CMAKE_BINARY_DIR@/.Xauthority \
     @Python_EXECUTABLE@ @CMAKE_CURRENT_SOURCE_DIR@/testrunner.py \
        --base @TESTRUN_BASE@ \
-       --control $1
+       --control $1 \
+       --template-folder @CMAKE_CURRENT_SOURCE_DIR@
 RESULT=$?
 sleep 1
 
 @NESTSERVER_CLEAN@
 exit ${RESULT}
-
-

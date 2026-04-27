@@ -172,7 +172,10 @@ if (PYTHON_HAVE_PIL EQUAL 0 AND
     set(NESTEXTRAARGS "-screen ${DISPLAYSIZE} +extension GLX")
   endif()
 
+  set(GTKVARIANT gtk3)
   configure_file(createrun.in createrun @ONLY)
+  set(GTKVARIANT gtk4)
+  configure_file(createrun.in createrun_gtk4 @ONLY)
   execute_process(COMMAND chmod +x ${CMAKE_CURRENT_BINARY_DIR}/createrun)
   configure_file(viewrun.in viewrun @ONLY)
   execute_process(COMMAND chmod +x ${CMAKE_CURRENT_BINARY_DIR}/viewrun)

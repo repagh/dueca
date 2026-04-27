@@ -18,6 +18,7 @@ import asyncio
 import time
 import argparse
 import pathlib
+import glob
 import sys
 from lxml import etree
 from duecautils.xmlutil import XML_comment, XML_tag, XML_interpret_bool
@@ -28,6 +29,21 @@ x11display = os.environ.get("DISPLAY")
 the_mouse = pynput.mouse.Controller()
 the_keyboard = pynput.keyboard.Controller()
 templates = {}
+imgkeys = {Key.f4: 48, Key.f5: 64, Key.f6: 96, Key.f7: 140}
+lastxy = 0, 0
+test_relative = True
+criterion = 0.995
+template_pattern = "/gtk3/*.png"
+templates_folder = ""
+
+
+def load_templates(tpattern: str):
+    print("Loading templates from", tpattern)
+    for f in glob.glob(tpattern):
+        basename = f.split(os.sep)[-1]
+        templates[basename] = cv2.imread(f)
+        print(f"Added template {basename}")
+
 
 class Translation:
     def __init__(self, offset_x=0, offset_y=0, extra_y=0):
@@ -186,15 +202,19 @@ class Offset:
 
     def __init__(self, xmlroot=None, xmlnode=None, x=0, y=0):
 
-        global translation
+        global translation, criterion, template_pattern
         if xmlroot is not None:
             self.xmlnode = etree.SubElement(xmlroot, "offset")
             self.xmlnode.set("x", str(x))
             self.xmlnode.set("y", str(y))
+            self.xmlnode.set("criterion", str(criterion))
+            self.xmlnode.set("template-pattern", template_pattern)
         elif xmlnode is not None:
             self.xmlnode = xmlnode
             x = int(xmlnode.get("x", "0"))
             y = int(xmlnode.get("y", "0"))
+            criterion = float(xmlnode.get("criterion", 0.99))
+            template_pattern = xmlnode.get("template-pattern", "/gtk3/*.png")
 
         translation.adjust(x, y)
 
@@ -220,6 +240,7 @@ class Click:
         xmlnode=None,
         x=0,
         y=0,
+        relative=False,
         window=None,
         button=None,
         pressed=False,
@@ -227,9 +248,16 @@ class Click:
     ):
         if xmlroot is not None:
             xmlnode = etree.SubElement(xmlroot, "click")
-            if window is not None:
-                x, y = translation.toWindow(x, y, window)
+            if relative:
+                _x, _y = x - lastxy[0], y - lastxy[1]
+                print(f"Relative click, at {x},{y} last {lastxy}, becomes {_x},{_y}")
+                xmlnode.set("relative", str(relative).lower())
+            elif window is not None:
+                _x, _y = translation.toWindow(x, y, window)
+                print(f"RelWindow click, at {x},{y} relative {_x},{_y}")
                 xmlnode.set("window", window.wm_name)
+            else:
+                print(f"Absolute click at {x},{y}")
             xmlnode.set("x", str(x))
             xmlnode.set("y", str(y))
             xmlnode.set("button", str(button))
@@ -239,6 +267,7 @@ class Click:
             self.window = xmlnode.get("window", "")
             self.x = int(xmlnode.get("x", "0"))
             self.y = int(xmlnode.get("y", "0"))
+            self.relative = XML_interpret_bool(xmlnode.get("relative", "false"))
             self.button = Click.buttonmap[xmlnode.get("button")]
             self.wait = float(xmlnode.get("wait", 0.1))
             self.pressed = XML_interpret_bool(xmlnode.get("pressed", "false"))
@@ -251,7 +280,10 @@ class Click:
             f"...Try click {self.window} {self.x},{self.y} {self.button}, {self.pressed}"
         )
 
-        if self.window:
+        if self.relative:
+            x, y = lastxy[0] + self.x, lastxy[1] + self.y
+            the_mouse.position = x, y
+        elif self.window:
             w = findWindow(self.window)
             if w is None:
                 if self.pressed:
@@ -262,6 +294,8 @@ class Click:
         else:
             x, y = self.x, self.y
             the_mouse.position = x, y
+
+        print(f"Click position now {x, y}")
 
         if self.wait > 0.0:
             await asyncio.sleep(self.wait)
@@ -339,10 +373,10 @@ class Check:
         self, xmlroot=None, xmlnode=None, x=0, y=0, timeout=10.0, window="", wait=0.5
     ):
 
-        global translation
+        global translation, lastxy
 
         if xmlroot is not None:
-            xmlnode = etree.SubElement(xmlroot, "check")
+            xmlnode = etree.SubElement(xmlroot, "check-color")
 
             if window:
                 _x, _y = translation.toWindow(x, y, window)
@@ -357,6 +391,7 @@ class Check:
             print(f"Found {col} at {x},{y}")
             if window:
                 print(f"rel to window {window.wm_name} at {_x},{_y}")
+            lastxy = x, y
 
             xmlnode.set("x", str(_x))
             xmlnode.set("y", str(_y))
@@ -391,6 +426,8 @@ class Check:
                 self.color = None
 
     async def execute(self):
+
+        global lastxy
 
         print(
             f"...Check {self.window} {self.x},{self.y} {self.wait}+{self.timeout} {self.color}"
@@ -429,6 +466,9 @@ class Check:
                 # set the mouse position
                 the_mouse.position = x, y
                 moved = True
+
+            # for relative clicks
+            lastxy = x, y
 
             # wait part of the timeout, to see if the interface reacts
             if self.timeout > 0.0:
@@ -483,73 +523,147 @@ class CheckImage:
 
     errcnt = 0
 
-    def __init__(self, xmlroot=None, xmlnode=None,
-                 x:int=0, y:int=0, timeout:float=10.0, # props
-                 window="", testsize:int=140, wait:float=0.5):
+    def __init__(
+        self,
+        xmlroot=None,
+        xmlnode=None,
+        x: int = 0,
+        y: int = 0,
+        timeout: float = 10.0,  # props
+        window="",
+        testsize: int = 140,
+        wait: float = 0.5,
+    ):
+        """Retrieve or create an image check
 
-        global translation
+        Parameters
+        ----------
+        xmlroot : XMLNode, optional
+            Root of the newly created actions, if None, retrieve
+        xmlnode : XMLNode, optional
+            XML node with data, by default None
+        x : int, optional
+            X coordinate of mouse click, by default 0
+        y : int, optional
+            Y coordinate of mouse click, by default 0
+        timeout : float, optional
+            Timeout to use in waiting for image, by default 10.0
+        testsize : int, optional
+            Test area size to use for image, by default 140
+        wait : float, optional
+            Wait time to apply before moving to next action, by default 0.5
+
+        Raises
+        ------
+        ValueError
+            Cannot find a suitable image in the testsize region around the
+            cursor
+        """
+
+        global translation, lastxy
 
         if xmlroot is not None:
-            xmlnode = etree.SubElement(xmlroot, "image")
 
+            # try to create a new image test
             if window:
                 _x, _y = translation.toWindow(x, y, window)
-                xmlnode.set("window", window.wm_name)
             else:
                 _x, _y = x, y
 
-            iname, template = testimg
-            h, w, _ = template.shape
-
-            under_cursor = ImageGrab.grab(
-                bbox=self.bbox(x, y, testsize), xdisplay=x11display
+            # image region
+            under_cursor = cv2.cvtColor(
+                np.array(
+                    ImageGrab.grab(bbox=self._bbox(x, y, testsize), xdisplay=x11display)
+                ),
+                cv2.COLOR_RGB2BGR,
             )
 
+            # find the matching image
             tfound = None
-            crit = 0.98
             for tname, template in templates.items():
+                th, tw, _ = template.shape
+                if tw > testsize or th > testsize:
+                    continue
                 res = cv2.matchTemplate(under_cursor, template, cv2.TM_CCOEFF_NORMED)
                 _, max_val, _, max_loc = cv2.minMaxLoc(res)
-                if max_val > crit:
+                print(f"tested {tname}, found {max_loc} crit {max_val}")
+                if max_val > criterion:
                     tfound = tname
                     break
 
             if not tfound:
                 print(f"Did not find a matching image near {x}, {y}")
+
+                errimg = ImageGrab.grab(xdisplay=x11display)
+                draw = ImageDraw.Draw(errimg)
+                draw.rectangle(self._bbox(x, y, testsize), outline=(255, 255, 0))
+                errimg.save(sanitize(f"{scenario.name}-nocreate-no-img-at{x},{y}.png"))
+
                 raise ValueError("No image match")
 
-            xmlnode.set("x", str(xc))
-            xmlnode.set("y", str(yc))
+            # record last click position as center of image
+            xt, yt, _, _ = self._bbox(x, y, testsize)
+            print(f"template shape {template.shape}")
+            lastxy = (xt + max_loc[0] + tw // 2, yt + max_loc[1] + th // 2)
+            print(f"click {x,y}, bb {self._bbox(x, y, testsize)}, found at {lastxy}")
+
+            xmlnode = etree.SubElement(xmlroot, "check-image")
+            if window:
+                xmlnode.set("window", window.wm_name)
+            xmlnode.set("x", str(_x))
+            xmlnode.set("y", str(_y))
             xmlnode.set("template", tfound)
+            xmlnode.set("testsize", str(testsize))
             xmlnode.set("timeout", str(timeout))
             xmlnode.set("wait", str(wait))
-            self.x, self.y, self.timeout, self.wait, self.window, self.template, self.testsize = (
-                x,
-                y,
-                timeout,
-                wait,
-                window,
-                tfound,
-                testsize
-            )
+            (
+                self.x,
+                self.y,
+                self.timeout,
+                self.wait,
+                self.window,
+                self.template,
+                self.testsize,
+            ) = (x, y, timeout, wait, window, tfound, testsize)
+            print(f"Add check for image {tfound} near {x},{y} window {window.wm_name}")
 
         elif xmlnode is not None:
-            self.window, self.x, self.y, self.timeout, self.wait, self.template = (
+
+            # read this test from its xml description
+            (
+                self.window,
+                self.x,
+                self.y,
+                self.timeout,
+                self.wait,
+                self.template,
+                self.testsize,
+            ) = (
                 xmlnode.get("window", ""),
                 int(xmlnode.get("x", 1)),
                 int(xmlnode.get("y", 1)),
                 float(xmlnode.get("timeout", 0.0)),
                 float(xmlnode.get("wait", 0.0)),
                 xmlnode.get("template"),
-                int(xmlnode.get("testsize", 100))
+                int(xmlnode.get("testsize", 100)),
             )
 
-    def bbox(self, x:int, y:int, testsize:int):
-        return (max(x - testsize // 2, 0), max(y - testsize // 2, 0),
-                x + testsize // 2, y + testsize // 2)
-
+    def _bbox(self, x: int, y: int, testsize: int):
+        return (
+            max(x - testsize // 2, 0),
+            max(y - testsize // 2, 0),
+            x + testsize // 2,
+            y + testsize // 2,
+        )
 
     async def execute(self):
+        """Wait for the right image to appear
+
+        Returns
+        -------
+        bool
+            True if image found within timeout
+        """
 
         print(
             f"...Check {self.window} {self.x},{self.y} {self.wait}+{self.timeout} {self.template}"
@@ -557,12 +671,14 @@ class CheckImage:
         # simply run in 100 sleep increments
 
         # move the mouse, since that may change color
-        global the_mouse
+        global the_mouse, lastxy
 
-        if self.wait:
-            await asyncio.sleep(self.wait)
         moved = False
 
+        # get the image to test for
+        template = templates[self.template]
+
+        # run 20 tests in the timeout range
         for cnt in range(20):
 
             if not moved:
@@ -589,22 +705,31 @@ class CheckImage:
                 the_mouse.position = x, y
                 moved = True
 
-            # wait part of the timeout, to see if the interface reacts
-            if self.timeout > 0.0:
-                await asyncio.sleep(0.05 * self.timeout)
+                # initial wait here
+                if self.wait:
+                    await asyncio.sleep(self.wait)
 
-            # get the image
-            template = templates[self.template]
+            else:
 
-            under_cursor = ImageGrab.grab(
-                 bbox = self.bbox(x, y, self.testsize), xdisplay=x11display
+                # wait part of the timeout, to see if the interface reacts
+                if self.timeout > 0.0:
+                    await asyncio.sleep(0.05 * self.timeout)
+
+            # look what is there now
+            under_cursor = cv2.cvtColor(
+                np.array(
+                    ImageGrab.grab(
+                        bbox=self._bbox(x, y, self.testsize), xdisplay=x11display
+                    )
+                ),
+                cv2.COLOR_RGB2BGR,
             )
 
             # analyse
             res = cv2.matchTemplate(under_cursor, template, cv2.TM_CCOEFF_NORMED)
             _, max_val, _, max_loc = cv2.minMaxLoc(res)
 
-            if max_val < 0.97:
+            if max_val < criterion:
                 # keep searching or exit
                 continue
 
@@ -612,11 +737,14 @@ class CheckImage:
             h, w, _ = template.shape
 
             # corrected position
-            xt, yt, _, _ = self.bbox(x, y, self.testsize)
+            xt, yt, _, _ = self._bbox(x, y, self.testsize)
             xc = xt + max_loc[0] + w // 2
             yc = yt + max_loc[1] + h // 2
 
-            print(f"Found template {self.template}, correction {xc-x},{yc-y}")
+            # set the correction
+            lastxy = xc, yc
+
+            print(f"Found template {self.template}, searched {x,y} found at {xc},{yc}")
             return True
 
         # no window or color found, create a snapshot and increase errror count
@@ -628,19 +756,19 @@ class CheckImage:
                     f"{scenario.name}-error{Check.errcnt:03d}-no-win-{self.window}.png"
                 )
             )
-        elif self.color is not None:
+        else:
             draw = ImageDraw.Draw(img)
-            draw.rectangle(((x - 3, y - 3), (x, y)), outline=(255, 0, 0))
+            draw.rectangle(self._bbox(x, y, self.testsize), outline=(255, 0, 0))
             img.save(
                 sanitize(
-                    f'{scenario.name}-error{Check.errcnt:03d}-no-col-{",".join(map(str, self.color))}-at{self.x},{self.y}.png'
+                    f"{scenario.name}-error{Check.errcnt:03d}-no-img-{self.template}-at{self.x},{self.y}.png"
                 )
             )
             print(
-                f"Failed to find color {self.color} at "
-                f"{self.x}, {self.y} after {cnt+1} checks, found {col}"
+                f"Failed to find image {self.template} near "
+                f"{self.x}, {self.y} after {cnt+1} checks"
             )
-        if self.window is None and self.color is None:
+        if self.window is None and self.template is None:
             print(f"Wait {self.wait}+{self.timeout} performed")
             return True
 
@@ -682,8 +810,10 @@ class Scenario:
         for node in actionroot:
             if XML_comment(node):
                 pass
-            elif XML_tag(node, "check"):
+            elif XML_tag(node, "check-color") or XML_tag(node, "check"):
                 self.actions.append(Check(xmlnode=node))
+            elif XML_tag(node, "check-image"):
+                self.actions.append(CheckImage(xmlnode=node))
             elif XML_tag(node, "click"):
                 self.actions.append(Click(xmlnode=node))
             elif XML_tag(node, "snap"):
@@ -761,6 +891,7 @@ class Scenario:
         self.clean = True
 
     def pass_click(self, x, y, button, pressed):
+        global test_relative
 
         window = findWindowUnder(self.project.windows, x, y, True, margin=10)
         self.actions.append(
@@ -769,6 +900,7 @@ class Scenario:
                 window=window,
                 x=x,
                 y=y,
+                relative=test_relative,
                 button=button,
                 pressed=pressed,
             )
@@ -779,6 +911,7 @@ class Scenario:
         self.x, self.y = x, y
 
     def pass_key(self, key):
+        global test_relative
         print(f"Key press {key}")
         if key in (Key.f1,):
 
@@ -815,30 +948,37 @@ class Scenario:
 
         elif key in imgkeys:
 
-            testimg = images.get(key, None)
+            # locate image here
+            window = findWindowUnder(
+                self.project.windows, self.x, self.y, True, margin=10
+            )
 
-            if testimg:
-
-                # locate image here
-                window = findWindowUnder(
-                    self.project.windows, self.x, self.y, True, margin=10
-                )
+            try:
                 self.actions.append(
                     CheckImage(
                         xmlroot=self.actionnode,
                         x=self.x,
                         y=self.y,
                         window=window,
-                        image=testimg,
+                        testsize=imgkeys[key],
                     )
                 )
-            else:
-                print("No image defined for key", key)
-
+            except ValueError:
+                pass
             return True
 
         elif key in (Key.esc,):
             return False
+
+        elif key in (Key.f11,):
+            test_relative = True
+            print("Clicks are relative to latest color/image test")
+            return True
+
+        elif key in (Key.f12,):
+            test_relative = False
+            print("Clicks are absolute")
+            return True
 
         else:
             window = findWindowUnder(
@@ -884,7 +1024,8 @@ class Scenario:
 
             pynput.mouse.Listener(on_click=pass_click, on_move=pass_move).start()
 
-            while True:
+            collecting = True
+            while collecting:
                 val = await queue.get()
                 # print(f"Have queue value {val}")
                 if isinstance(val, tuple) and len(val) == 2:
@@ -893,7 +1034,7 @@ class Scenario:
                     self.pass_click(*val)
                 else:
                     if not self.pass_key(val):
-                        break
+                        collecting = False
             self._sync()
 
 
@@ -1155,24 +1296,22 @@ parser.add_argument(
 parser.add_argument(
     "--timelimit", default=3600, type=int, help="Time limit for running the test"
 )
-parser.add_argument(
-    "--templates", nargs='+', type=str
-)
+parser.add_argument("--template-folder", type=str, nargs="?",
+                    help="Base folder for image template matches")
+parser.add_argument("--template-pattern", type=str, default=template_pattern,
+                    help="filename pattern for image template matches")
 pres = parser.parse_args(sys.argv[1:])
 
 t0 = time.time()
 
 translation = Translation(pres.offset_x, pres.offset_y, pres.extra_y)
+template_pattern = pres.template_pattern
 
-# read the scenario
+# read the scenario, might override pattern, offset
 scenario = Scenario(fname=pres.control)
 
-
-if pres.images:
-    for k, name in zip(imgkeys, pres.templates):
-        img = cv2.imread(img)
-        name = os.path.basename(name)
-        templates[name] = img
+if pres.template_folder:
+    load_templates(pres.template_folder + template_pattern)
 
 # prepare the executable
 runner = DuecaRunner(
@@ -1199,4 +1338,4 @@ async def main():
 
 asyncio.run(main())
 
-sys.exit(Check.errcnt)
+sys.exit(Check.errcnt + CheckImage.errcnt)
