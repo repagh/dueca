@@ -28,6 +28,7 @@
     <platform>simlab</platform>
     <node>igtest</node>
   </execute>
+  <offset x="0" y="17" criterion="0.995"/>
   <actions>
     <!-- hold -->
     <!-- calibrate -->
@@ -88,5 +89,4 @@
     <click x="0" y="0" relative="true" button="Button.left" pressed="false" wait="0.2"/>
     <click x="1" y="0" relative="true" button="Button.left" pressed="true" wait="0.2"/>
   </actions>
-  <offset x="0" y="17" criterion="0.995"/>
 </scenario>

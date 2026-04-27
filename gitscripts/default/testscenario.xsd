@@ -58,6 +58,8 @@
   <xs:complexType name="offset_t">
     <xs:attribute name="x" type="xs:integer" />
     <xs:attribute name="y" type="xs:integer" />
+    <xs:attribute name="criterion" type="xs:float" />
+    <xs:attribute name="template-pattern" type="xs:string" />
   </xs:complexType>
 
   <xs:complexType name="checkcolor_t">
@@ -75,7 +77,8 @@
     <xs:attribute name="window" type="xs:string" />
     <xs:attribute name="x" type="xs:integer" />
     <xs:attribute name="y" type="xs:integer" />
-    <xs:attribute name="template" type="xs:string"/>
+    <xs:attribute name="testsize" type="xs:integer" />
+    <xs:attribute name="template" type="xs:string" />
     <xs:attribute name="timeout" type="xs:decimal" />
     <xs:attribute name="wait" type="xs:decimal" />
   </xs:complexType>

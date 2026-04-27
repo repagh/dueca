@@ -33,6 +33,7 @@ imgkeys = {Key.f4: 48, Key.f5: 64, Key.f6: 96, Key.f7: 140}
 lastxy = 0, 0
 test_relative = True
 criterion = 0.995
+offset_max = 30
 template_pattern = "/gtk3/*.png"
 templates_folder = ""
 
@@ -257,9 +258,10 @@ class Click:
                 print(f"RelWindow click, at {x},{y} relative {_x},{_y}")
                 xmlnode.set("window", window.wm_name)
             else:
+                _x, _y = x, y
                 print(f"Absolute click at {x},{y}")
-            xmlnode.set("x", str(x))
-            xmlnode.set("y", str(y))
+            xmlnode.set("x", str(_x))
+            xmlnode.set("y", str(_y))
             xmlnode.set("button", str(button))
             xmlnode.set("pressed", str(pressed).lower())
             xmlnode.set("wait", str(wait))
@@ -580,6 +582,7 @@ class CheckImage:
 
             # find the matching image
             tfound = None
+            foundvals = {}
             for tname, template in templates.items():
                 th, tw, _ = template.shape
                 if tw > testsize or th > testsize:
@@ -587,13 +590,15 @@ class CheckImage:
                 res = cv2.matchTemplate(under_cursor, template, cv2.TM_CCOEFF_NORMED)
                 _, max_val, _, max_loc = cv2.minMaxLoc(res)
                 print(f"tested {tname}, found {max_loc} crit {max_val}")
+                foundvals[tname] = max_val
                 if max_val > criterion:
                     tfound = tname
                     break
 
             if not tfound:
                 print(f"Did not find a matching image near {x}, {y}")
-
+                for k, v in foundvals:
+                    print(f"Tested {k}, {templates[k].shape}, result {v}")
                 errimg = ImageGrab.grab(xdisplay=x11display)
                 draw = ImageDraw.Draw(errimg)
                 draw.rectangle(self._bbox(x, y, testsize), outline=(255, 255, 0))
@@ -711,6 +716,12 @@ class CheckImage:
 
             else:
 
+                # keep the mouse moving???
+                if cnt % 2 == 1:
+                    the_mouse.position = x, y
+                else:
+                    the_mouse.position = x-2, y+2
+
                 # wait part of the timeout, to see if the interface reacts
                 if self.timeout > 0.0:
                     await asyncio.sleep(0.05 * self.timeout)
@@ -756,6 +767,7 @@ class CheckImage:
                     f"{scenario.name}-error{Check.errcnt:03d}-no-win-{self.window}.png"
                 )
             )
+            lastxy = x, y
         else:
             draw = ImageDraw.Draw(img)
             draw.rectangle(self._bbox(x, y, self.testsize), outline=(255, 0, 0))
@@ -766,8 +778,9 @@ class CheckImage:
             )
             print(
                 f"Failed to find image {self.template} near "
-                f"{self.x}, {self.y} after {cnt+1} checks"
+                f"{x}, {y} after {cnt+1} checks"
             )
+            lastxy = x, y
         if self.window is None and self.template is None:
             print(f"Wait {self.wait}+{self.timeout} performed")
             return True
@@ -940,6 +953,10 @@ class Scenario:
                 self.project.windows, self.x, self.y, True, margin=80
             )
             print(f"press {self.x},{self.y}, window {window.x},{window.y}")
+            if abs(window.x - self.x) > offset_max or \
+                abs(window.y - self.y) > offset_max:
+                print(f"Ignoring excessive offset")
+                return True
             self.offset = Offset(
                 xmlroot=self.xmltree, x=window.x - self.x, y=window.y - self.y
             )
