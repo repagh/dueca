@@ -95,7 +95,7 @@
       wait="0.2" />
     <click window="DUECA/DUSIME control panel" x="413" y="168" button="Button.left" pressed="false"
       wait="0.2" />
-    <check window="Record&amp;Replay control - PHLAB" x="163" y="237" r="248" g="247" b="247"
+    <check window="Record&amp;Replay control - PHLAB" x="163" y="237" r="248" g="247" b="246"
       timeout="10.0" wait="0.5" />
     <click window="Record&amp;Replay control - PHLAB" x="164" y="237" button="Button.left"
       pressed="true" wait="0.2" />

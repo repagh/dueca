@@ -695,6 +695,11 @@ void SnapshotInventoryGtk4::cbEditSelection(GObject *box, GParamSpec *pspec,
   window.getValue(selorigin, "editwin_module_selection");
   sel_origin = editmap.find(selorigin);
   if (sel_origin == editmap.end()) {
+    /* DUSIME replay&initial
+
+       Error in linking initial state edit window to the selection. Please
+       report what you did to get here.
+    */
     W_XTR("Somehow cannot find edit selection");
     return;
   }

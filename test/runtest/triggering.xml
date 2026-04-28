@@ -24,28 +24,28 @@
     <node>triggering</node>
   </execute>
   <actions>
-    <check-image window="DUECA/DUSIME control panel" x="461" y="41" template="buttongreensel.png" testsize="64" timeout="10.0" wait="0.5"/>
-    <check-image window="DUECA/DUSIME control panel" x="463" y="75" template="buttongraysel.png" testsize="64" timeout="10.0" wait="0.5"/>
+    <check-image window="DUECA/DUSIME control panel" x="461" y="41" template="buttongreensel" testsize="64" timeout="10.0" wait="0.5"/>
+    <check-image window="DUECA/DUSIME control panel" x="463" y="75" template="buttongraysel" testsize="64" timeout="10.0" wait="0.5"/>
     <click x="-1" y="-2" relative="true" button="Button.left" pressed="true" wait="0.2"/>
     <click x="-1" y="-2" relative="true" button="Button.left" pressed="false" wait="0.2"/>
-    <check-image window="DUECA/DUSIME control panel" x="463" y="75" template="buttongreensel.png" testsize="64" timeout="10.0" wait="0.5"/>
-    <check-image window="DUECA/DUSIME control panel" x="465" y="109" template="buttongraysel.png" testsize="64" timeout="10.0" wait="0.5"/>
+    <check-image window="DUECA/DUSIME control panel" x="463" y="75" template="buttongreensel" testsize="64" timeout="10.0" wait="0.5"/>
+    <check-image window="DUECA/DUSIME control panel" x="465" y="109" template="buttongraysel" testsize="64" timeout="10.0" wait="0.5"/>
     <click x="1" y="-2" relative="true" button="Button.left" pressed="true" wait="0.2"/>
     <click x="1" y="-2" relative="true" button="Button.left" pressed="false" wait="0.2"/>
-    <check-image window="DUECA/DUSIME control panel" x="465" y="109" template="buttongreensel.png" testsize="64" timeout="10.0" wait="20.5"/>
+    <check-image window="DUECA/DUSIME control panel" x="465" y="109" template="buttongreensel" testsize="64" timeout="10.0" wait="20.5"/>
     <snap name="triggering000.png"/>
-    <check-image window="DUECA/DUSIME control panel" x="463" y="75" template="buttongraysel.png" testsize="64" timeout="10.0" wait="0.5"/>
+    <check-image window="DUECA/DUSIME control panel" x="463" y="75" template="buttongraysel" testsize="64" timeout="10.0" wait="0.5"/>
     <click x="-1" y="-2" relative="true" button="Button.left" pressed="true" wait="0.2"/>
     <click x="-1" y="-2" relative="true" button="Button.left" pressed="false" wait="0.2"/>
-    <check-image window="DUECA/DUSIME control panel" x="463" y="75" template="buttongreensel.png" testsize="64" timeout="10.0" wait="0.5"/>
-    <check-image window="DUECA/DUSIME control panel" x="463" y="39" template="buttongraysel.png" testsize="64" timeout="10.0" wait="0.5"/>
+    <check-image window="DUECA/DUSIME control panel" x="463" y="75" template="buttongreensel" testsize="64" timeout="10.0" wait="0.5"/>
+    <check-image window="DUECA/DUSIME control panel" x="463" y="39" template="buttongraysel" testsize="64" timeout="10.0" wait="0.5"/>
     <click x="-1" y="-4" relative="true" button="Button.left" pressed="true" wait="0.2"/>
     <click x="-1" y="-4" relative="true" button="Button.left" pressed="false" wait="0.2"/>
-    <check-image window="DUECA/DUSIME control panel" x="463" y="39" template="buttongreensel.png" testsize="64" timeout="10.0" wait="0.5"/>
-    <check-image window="DUECA/DUSIME control panel" x="18" y="-10" template="fileword.png" testsize="48" timeout="10.0" wait="0.5"/>
+    <check-image window="DUECA/DUSIME control panel" x="463" y="39" template="buttongreensel" testsize="64" timeout="10.0" wait="0.5"/>
+    <check-image window="DUECA/DUSIME control panel" x="18" y="-10" template="fileword" testsize="48" timeout="10.0" wait="0.5"/>
     <click x="0" y="-7" relative="true" button="Button.left" pressed="true" wait="0.2"/>
     <click x="0" y="-7" relative="true" button="Button.left" pressed="false" wait="0.2"/>
-    <check-image window="DUECA/DUSIME control panel" x="22" y="41" template="quit-blue.png" testsize="96" timeout="10.0" wait="0.5"/>
+    <check-image window="DUECA/DUSIME control panel" x="22" y="41" template="quit-blue" testsize="96" timeout="10.0" wait="0.5"/>
     <click x="-13" y="-6" relative="true" button="Button.left" pressed="true" wait="0.2"/>
     <click x="-13" y="-6" relative="true" button="Button.left" pressed="false" wait="0.2"/>
     <check-color window="Are you serious?" x="15" y="36" r="248" g="248" b="247" timeout="10.0" wait="0.5"/>

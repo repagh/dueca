@@ -8,6 +8,7 @@ Created on Mon Sep 27 20:32:23 2021
 
 from PIL import ImageGrab, ImageDraw
 import numpy as np
+import re
 import cv2
 import pynput
 from pynput.keyboard import Key
@@ -31,20 +32,72 @@ the_keyboard = pynput.keyboard.Controller()
 templates = {}
 imgkeys = {Key.f4: 48, Key.f5: 64, Key.f6: 96, Key.f7: 140}
 lastxy = 0, 0
+lastpress = 0, 0
+lastrelease = 0, 0
 test_relative = True
 criterion = 0.995
 offset_max = 30
+max_cnt = 20
 template_pattern = "/gtk3/*.png"
 templates_folder = ""
 
 
-def load_templates(tpattern: str):
+_TMPLATE_MATCH = re.compile(r'^(.*)/([a-zA-Z-]+)(_v[0-9a-zA-Z])?\.png$')
+
+def _load_templates(tpattern: str):
     print("Loading templates from", tpattern)
     for f in glob.glob(tpattern):
-        basename = f.split(os.sep)[-1]
-        templates[basename] = cv2.imread(f)
-        print(f"Added template {basename}")
+        tm = _TMPLATE_MATCH.match(f)
+        if tm:
+            basename = tm.group(2)
+            filename = tm.group(2) + (tm.group(3) or '') + '.png'
+        else:
+            print(f"File {f} not recognized as template, doing crude split")
+            basename = '.'.join(f.split(os.sep)[-1].split('.')[:-1])
+            filename = basename
 
+        if basename in templates:
+            templates[basename][filename] = cv2.imread(f)
+        else:
+            templates[basename] = { filename: cv2.imread(f) }
+
+def _best_match_alt(candidates: dict, area, threshold:float=0.9, basename=''):
+    match = threshold
+    filename = ''
+    location = None
+    candidate = None
+    ah, aw, _ = area.shape
+
+    for ix, (fname, c) in enumerate(candidates.items()):
+        th, tw, _ = c.shape
+        if th <= ah and tw <= aw:
+            res = cv2.matchTemplate(area, c, cv2.TM_CCOEFF_NORMED)
+            _, max_val, _, max_loc = cv2.minMaxLoc(res)
+            if basename:
+                print(f"template {basename}({fname}) val={max_val} at {max_loc}")
+            if max_val > match:
+                match = max_val
+                filename = fname
+                candidate = c
+                location = max_loc
+        elif basename:
+            print(f"template {basename}({fname}) too large {tw},{th} for {aw},{ah}")
+
+    return match, location, filename, candidate
+
+def _best_match(area, debug=False):
+    best = None
+    basename = None
+    _match = 0.0
+
+    for base, candidates in templates.items():
+        res = _best_match_alt(candidates, area, _match, debug and base or '')
+        if res[0] > _match:
+            best = res
+            basename = base
+            _match = res[0]
+
+    return basename, *best
 
 class Translation:
     def __init__(self, offset_x=0, offset_y=0, extra_y=0):
@@ -277,6 +330,7 @@ class Click:
     async def execute(self):
         global the_mouse
         global translation
+        global lastpress, lastrelease
 
         print(
             f"...Try click {self.window} {self.x},{self.y} {self.button}, {self.pressed}"
@@ -296,6 +350,13 @@ class Click:
         else:
             x, y = self.x, self.y
             the_mouse.position = x, y
+
+        # record last click position
+        if self.pressed:
+            lastpress = x, y
+        else:
+            lastrelease = x, y
+
 
         print(f"Click position now {x, y}")
 
@@ -503,6 +564,8 @@ class Check:
         elif self.color is not None:
             draw = ImageDraw.Draw(img)
             draw.rectangle(((x - 3, y - 3), (x, y)), outline=(255, 0, 0))
+            draw.circle(lastpress, 2, outline=(0, 255, 255))
+            draw.circle(lastrelease, 1, outline=(0, 255, 255))
             img.save(
                 sanitize(
                     f'{scenario.name}-error{Check.errcnt:03d}-no-col-{",".join(map(str, self.color))}-at{self.x},{self.y}.png'
@@ -572,7 +635,7 @@ class CheckImage:
             else:
                 _x, _y = x, y
 
-            # image region
+            # grab an image region
             under_cursor = cv2.cvtColor(
                 np.array(
                     ImageGrab.grab(bbox=self._bbox(x, y, testsize), xdisplay=x11display)
@@ -580,25 +643,13 @@ class CheckImage:
                 cv2.COLOR_RGB2BGR,
             )
 
-            # find the matching image
-            tfound = None
-            foundvals = {}
-            for tname, template in templates.items():
-                th, tw, _ = template.shape
-                if tw > testsize or th > testsize:
-                    continue
-                res = cv2.matchTemplate(under_cursor, template, cv2.TM_CCOEFF_NORMED)
-                _, max_val, _, max_loc = cv2.minMaxLoc(res)
-                print(f"tested {tname}, found {max_loc} crit {max_val}")
-                foundvals[tname] = max_val
-                if max_val > criterion:
-                    tfound = tname
-                    break
+            # find the best matching image
+            basename, max_val, max_loc, filename, template = _best_match(under_cursor)
 
-            if not tfound:
+            # if we don't meet the start criterion
+            if max_val < criterion:
                 print(f"Did not find a matching image near {x}, {y}")
-                for k, v in foundvals:
-                    print(f"Tested {k}, {templates[k].shape}, result {v}")
+                _best_match(under_cursor, True)
                 errimg = ImageGrab.grab(xdisplay=x11display)
                 draw = ImageDraw.Draw(errimg)
                 draw.rectangle(self._bbox(x, y, testsize), outline=(255, 255, 0))
@@ -608,6 +659,7 @@ class CheckImage:
 
             # record last click position as center of image
             xt, yt, _, _ = self._bbox(x, y, testsize)
+            th, tw, _ = template.shape
             print(f"template shape {template.shape}")
             lastxy = (xt + max_loc[0] + tw // 2, yt + max_loc[1] + th // 2)
             print(f"click {x,y}, bb {self._bbox(x, y, testsize)}, found at {lastxy}")
@@ -617,7 +669,7 @@ class CheckImage:
                 xmlnode.set("window", window.wm_name)
             xmlnode.set("x", str(_x))
             xmlnode.set("y", str(_y))
-            xmlnode.set("template", tfound)
+            xmlnode.set("template", basename)
             xmlnode.set("testsize", str(testsize))
             xmlnode.set("timeout", str(timeout))
             xmlnode.set("wait", str(wait))
@@ -629,8 +681,9 @@ class CheckImage:
                 self.window,
                 self.template,
                 self.testsize,
-            ) = (x, y, timeout, wait, window, tfound, testsize)
-            print(f"Add check for image {tfound} near {x},{y} window {window.wm_name}")
+                self.criterion,
+            ) = (x, y, timeout, wait, window, basename, testsize, criterion)
+            print(f"Add check for image {basename}({filename}) near {x},{y} window {window.wm_name}")
 
         elif xmlnode is not None:
 
@@ -643,6 +696,7 @@ class CheckImage:
                 self.wait,
                 self.template,
                 self.testsize,
+                self.criterion,
             ) = (
                 xmlnode.get("window", ""),
                 int(xmlnode.get("x", 1)),
@@ -651,6 +705,7 @@ class CheckImage:
                 float(xmlnode.get("wait", 0.0)),
                 xmlnode.get("template"),
                 int(xmlnode.get("testsize", 100)),
+                float(xmlnode.get("criterion", criterion)),
             )
 
     def _bbox(self, x: int, y: int, testsize: int):
@@ -680,11 +735,8 @@ class CheckImage:
 
         moved = False
 
-        # get the image to test for
-        template = templates[self.template]
-
         # run 20 tests in the timeout range
-        for cnt in range(20):
+        for cnt in range(max_cnt):
 
             if not moved:
                 if self.window:
@@ -720,7 +772,7 @@ class CheckImage:
                 if cnt % 2 == 1:
                     the_mouse.position = x, y
                 else:
-                    the_mouse.position = x-2, y+2
+                    the_mouse.position = x - 2, y + 2
 
                 # wait part of the timeout, to see if the interface reacts
                 if self.timeout > 0.0:
@@ -737,10 +789,10 @@ class CheckImage:
             )
 
             # analyse
-            res = cv2.matchTemplate(under_cursor, template, cv2.TM_CCOEFF_NORMED)
-            _, max_val, _, max_loc = cv2.minMaxLoc(res)
+            max_val, max_loc, filename, template = _best_match_alt(
+                templates[self.template], under_cursor, 0.0, ((cnt + 1 == max_cnt) and self.template) or '')
 
-            if max_val < criterion:
+            if max_val < self.criterion:
                 # keep searching or exit
                 continue
 
@@ -755,7 +807,7 @@ class CheckImage:
             # set the correction
             lastxy = xc, yc
 
-            print(f"Found template {self.template}, searched {x,y} found at {xc},{yc}")
+            print(f"Found template {self.template}({filename}), searched {x,y} found at {xc},{yc}")
             return True
 
         # no window or color found, create a snapshot and increase errror count
@@ -771,6 +823,8 @@ class CheckImage:
         else:
             draw = ImageDraw.Draw(img)
             draw.rectangle(self._bbox(x, y, self.testsize), outline=(255, 0, 0))
+            draw.circle(lastpress, 2, outline=(0, 255, 255))
+            draw.circle(lastrelease, 1, outline=(0, 255, 255))
             img.save(
                 sanitize(
                     f"{scenario.name}-error{Check.errcnt:03d}-no-img-{self.template}-at{self.x},{self.y}.png"
@@ -778,7 +832,7 @@ class CheckImage:
             )
             print(
                 f"Failed to find image {self.template} near "
-                f"{x}, {y} after {cnt+1} checks"
+                f"{x}, {y} after {cnt+1} checks, max_val={max_val} crit={self.criterion}"
             )
             lastxy = x, y
         if self.window is None and self.template is None:
@@ -953,8 +1007,10 @@ class Scenario:
                 self.project.windows, self.x, self.y, True, margin=80
             )
             print(f"press {self.x},{self.y}, window {window.x},{window.y}")
-            if abs(window.x - self.x) > offset_max or \
-                abs(window.y - self.y) > offset_max:
+            if (
+                abs(window.x - self.x) > offset_max
+                or abs(window.y - self.y) > offset_max
+            ):
                 print(f"Ignoring excessive offset")
                 return True
             self.offset = Offset(
@@ -1313,10 +1369,18 @@ parser.add_argument(
 parser.add_argument(
     "--timelimit", default=3600, type=int, help="Time limit for running the test"
 )
-parser.add_argument("--template-folder", type=str, nargs="?",
-                    help="Base folder for image template matches")
-parser.add_argument("--template-pattern", type=str, default=template_pattern,
-                    help="filename pattern for image template matches")
+parser.add_argument(
+    "--template-folder",
+    type=str,
+    nargs="?",
+    help="Base folder for image template matches",
+)
+parser.add_argument(
+    "--template-pattern",
+    type=str,
+    default=template_pattern,
+    help="filename pattern for image template matches",
+)
 pres = parser.parse_args(sys.argv[1:])
 
 t0 = time.time()
@@ -1328,7 +1392,7 @@ template_pattern = pres.template_pattern
 scenario = Scenario(fname=pres.control)
 
 if pres.template_folder:
-    load_templates(pres.template_folder + template_pattern)
+    _load_templates(pres.template_folder + template_pattern)
 
 # prepare the executable
 runner = DuecaRunner(

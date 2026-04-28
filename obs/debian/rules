@@ -1,37 +1,37 @@
 #!/usr/bin/make -f
 # -*- makefile -*-
 
-%:
-	dh $@ --buildsystem-cmake
-
-# DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
+# detect some available software
 FORCE_PYTHON_MALLOC ?= $(shell lsb_release -si | grep -q Ubuntu && lsb_release -sr | grep -qE "18\.04|20\.04" && echo "-DFORCE_PYTHON_MALLOC=ON" || echo "-DFORCE_PYTHON_MALLOC=OFF")
 BUILD_GTK4 ?= $(shell dpkg -V libgtk-4-dev 2>/dev/null && echo "-DBUILD_GTK4=ON" || echo "-DBUILD_GTK4=OFF")
 BUILD_GTKMM4 ?= $(shell dpkg -V libgtkmm-4.0-dev >/dev/null && echo "-DBUILD_GTKMM4=ON" || echo "-DBUILD_GTKMM4=OFF")
+BUILD_GTK2 ?= $(shell dpkg -V libglade2-dev >/dev/null && echo "-DBUILD_GTK2=ON -DBUILD_GTKMM=ON" || echo "-DBUILD_GTK2=OFF -DBUILD_GTKMM=OFF")
+
+%:
+	dh $@ --buildsystem-cmake
 
 override_dh_auto_configure:
-	dh_auto_configure --
-	 		-DALSO_INIT_GLUT=ON \
-			-DCMAKE_BUILD_TYPE=Release \
-			-DSYSCONF_INSTALL_DIR=/etc \
-			-DDUECA_BUILD_STATIC=OFF \
-			-DDUECA_BUILD_SHARED=ON \
-			-DDUECA_INIT_STATIC=ON \
-			-DDUECA_DOC_PATH:PATH=/usr/share/doc \
-			-DBUILD_GLUT=ON \
-			-DBUILD_GLUTGUI=ON \
-			-DBUILD_GTK2=ON \
-			-DBUILD_GTKMM=ON \
-			-DBUILD_GTK3=ON \
-			-DBUILD_GTKMM3=ON \
-			-DBUILD_HDF5=ON \
-			-DBUILD_UDP=ON \
-			-DBUILD_WEBSOCK=ON \
-			-DSCRIPT_PYTHON=ON \
-			$(FORCE_PYTHON_MALLOC) \
-			$(BUILD_GTK4) \
-			$(BUILD_GTKMM4) \
-			-DSCRIPT_SCHEME=ON \
-			-DBUILD_DDFF=ON \
-			-DTRY_INSTALL_PYTHON_BUILD=ON \
-			-DCMAKE_INSTALL_LIBDIR:PATH=/usr/lib/$(DEB_HOST_MULTIARCH)
+	dh_auto_configure -- \
+	 	-DALSO_INIT_GLUT=ON \
+		-DCMAKE_BUILD_TYPE=Release \
+		-DSYSCONF_INSTALL_DIR=/etc \
+		-DDUECA_BUILD_STATIC=OFF \
+		-DDUECA_BUILD_SHARED=ON \
+		-DDUECA_INIT_STATIC=ON \
+		-DDUECA_DOC_PATH:PATH=/usr/share/doc \
+		-DBUILD_GLUT=ON \
+		-DBUILD_GLUTGUI=ON \
+		$(BUILD_GTK2) \
+		-DBUILD_GTK3=ON \
+		-DBUILD_GTKMM3=ON \
+		-DBUILD_HDF5=ON \
+		-DBUILD_UDP=ON \
+		-DBUILD_WEBSOCK=ON \
+		-DSCRIPT_PYTHON=ON \
+		$(FORCE_PYTHON_MALLOC) \
+		$(BUILD_GTK4) \
+		$(BUILD_GTKMM4) \
+		-DSCRIPT_SCHEME=ON \
+		-DBUILD_DDFF=ON \
+		-DTRY_INSTALL_PYTHON_BUILD=ON \
+		-DCMAKE_INSTALL_LIBDIR:PATH=/usr/lib/$(DEB_HOST_MULTIARCH)

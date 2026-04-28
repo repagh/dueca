@@ -81,6 +81,7 @@
     <xs:attribute name="template" type="xs:string" />
     <xs:attribute name="timeout" type="xs:decimal" />
     <xs:attribute name="wait" type="xs:decimal" />
+    <xs:attribute name="criterion" type="xs:float" />
   </xs:complexType>
 
   <xs:complexType name="click_t">
