@@ -21,94 +21,91 @@
     <platform>solo</platform>
     <node>recordreplay</node>
   </execute>
-  <offset x="-3" y="15" criterion="0.995" template-pattern="/gtk4/*.png"/>
+  <offset x="0" y="0" criterion="0.994" template-pattern="/gtk4/*.png" />
   <actions>
-    <check-image window="DUECA/DUSIME control panel" x="489" y="65" template="greenbuttonsel" testsize="64" timeout="30.0" wait="0.5"/>
-    <check-image window="DUECA/DUSIME control panel" x="490" y="93" template="graybuttonsel" testsize="64" timeout="10.0" wait="0.5"/>
-    <click relative="true" x="-1" y="0" button="Button.left" pressed="true" wait="0.3"/>
-    <click relative="true" x="-1" y="0" button="Button.left" pressed="false" wait="0.5"/>
-    <check-image window="DUECA/DUSIME control panel" x="490" y="93" template="greenbuttonsel" testsize="64" timeout="20.0" wait="0.5"/>
-    <check-image window="DUECA/DUSIME control panel" x="492" y="128" template="graybuttonsel" testsize="64" timeout="10.0" wait="1.5"/>
-    <click relative="true" x="1" y="1" button="Button.left" pressed="true" wait="0.3"/>
-    <click relative="true" x="1" y="1" button="Button.left" pressed="false" wait="0.5"/>
-    <check-image window="DUECA/DUSIME control panel" x="493" y="129" template="greenbuttonsel" testsize="64" timeout="20.0" wait="0.5"/>
-    <check-image window="DUECA/DUSIME control panel" x="493" y="197" template="graybuttonsel" testsize="64" timeout="10.0" wait="0.5"/>
-    <click relative="true" x="2" y="2" button="Button.left" pressed="true" wait="0.2"/>
-    <click relative="true" x="2" y="2" button="Button.left" pressed="false" wait="0.5"/>
-    <click relative="true" x="2" y="2" button="Button.left" pressed="true" wait="0.2"/>
-    <click relative="true" x="2" y="2" button="Button.left" pressed="false" wait="0.5"/>
-    <check-image window="DUECA/DUSIME control panel" x="493" y="196" template="greenbuttonsel" testsize="64" timeout="10.0" wait="0.5"/>
-    <check-image window="DUECA/DUSIME control panel" x="445" y="193" template="graybuttonsel" testsize="64" timeout="10.0" wait="0.5"/>
-    <click relative="true" x="-2" y="-2" button="Button.left" pressed="true" wait="0.2"/>
-    <click relative="true" x="-2" y="-2" button="Button.left" pressed="false" wait="0.5"/>
-    <check-image window="DUECA/DUSIME control panel" x="489" y="231" template="graybuttonsel" testsize="64" timeout="10.0" wait="0.5"/>
+    <check-image window="DUECA/DUSIME control panel" x="496" y="38" template="greenbuttonsel" testsize="64" timeout="30.0" wait="0.5"/>
+    <check-image window="DUECA/DUSIME control panel" x="494" y="73" template="graybuttonsel" testsize="64" timeout="10.0" wait="0.5"/>
+    <click relative="true" x="-2" y="-1" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="-2" y="-1" button="Button.left" pressed="false" wait="0.3"/>
+    <check-image window="DUECA/DUSIME control panel" x="495" y="75" template="greenbuttonsel" testsize="64" timeout="20.0" wait="0.5"/>
+    <check-image window="DUECA/DUSIME control panel" x="495" y="109" template="graybuttonsel" testsize="64" timeout="20.0" wait="0.5"/>
+    <click relative="true" x="-1" y="1" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="-1" y="1" button="Button.left" pressed="false" wait="0.3"/>
+    <check-image window="DUECA/DUSIME control panel" x="491" y="104" template="greenbuttonsel" testsize="64" timeout="20.0" wait="0.5"/>
+    <check-image window="DUECA/DUSIME control panel" x="494" y="139" template="greenbuttonsel" testsize="64" timeout="20.0" wait="0.5"/>
+    <check-image window="DUECA/DUSIME control panel" x="495" y="175" template="graybuttonsel" testsize="64" timeout="10.0" wait="0.5"/>
+    <click relative="true" x="-1" y="-3" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="-1" y="-3" button="Button.left" pressed="false" wait="0.3"/>
+    <check-image window="DUECA/DUSIME control panel" x="493" y="175" template="greenbuttonsel" testsize="64" timeout="20.0" wait="0.5"/>
+    <check-image window="DUECA/DUSIME control panel" x="454" y="176" template="graybuttonsel" testsize="64" timeout="10.0" wait="0.5"/>
+    <click relative="true" x="2" y="0" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="2" y="0" button="Button.left" pressed="false" wait="0.3"/>
+    <check-image window="DUECA/DUSIME control panel" x="495" y="208" template="graybuttonsel" testsize="64" timeout="10.0" wait="0.5"/>
+    <check-image window="DUECA/DUSIME control panel" x="62" y="-7" template="word-View" testsize="64" timeout="10.0" wait="0.5"/>
+    <click relative="true" x="-2" y="-2" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="-2" y="-2" button="Button.left" pressed="false" wait="0.3"/>
+    <check-image window="DUECA/DUSIME control panel" x="111" y="144" template="word-Initialstate" testsize="140" timeout="10.0" wait="0.5"/>
+    <click relative="true" x="0" y="-2" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="0" y="-2" button="Button.left" pressed="false" wait="0.3"/>
+    <check-image window="DUECA/DUSIME control panel" x="61" y="-9" template="word-View" testsize="64" timeout="10.0" wait="0.5"/>
+    <click relative="true" x="-3" y="-4" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="-3" y="-4" button="Button.left" pressed="false" wait="0.3"/>
+    <check-image window="DUECA/DUSIME control panel" x="119" y="173" template="word-Replaycontro" testsize="140" timeout="10.0" wait="0.5"/>
+    <click relative="true" x="0" y="-5" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="0" y="-5" button="Button.left" pressed="false" wait="0.3"/>
+    <check-image window="DUECA/DUSIME control panel" x="391" y="141" template="word-snap" testsize="64" timeout="10.0" wait="0.5"/>
+    <click relative="true" x="-5" y="-1" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="-5" y="-1" button="Button.left" pressed="false" wait="0.3"/>
+    <check-image window="Record&amp;Replay control - PHLAB" x="121" y="42" template="word-Record" testsize="64" timeout="10.0" wait="0.5"/>
+    <click relative="true" x="1" y="-4" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="1" y="-4" button="Button.left" pressed="false" wait="0.3"/>
+    <check-image window="Record&amp;Replay control - PHLAB" x="105" y="214" template="word-Prepare" testsize="140" timeout="10.0" wait="0.5"/>
+    <click relative="true" x="37" y="-4" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="37" y="-4" button="Button.left" pressed="false" wait="0.3"/>
+    <check-image window="DUECA/DUSIME control panel" x="496" y="206" template="graybuttonsel" testsize="64" timeout="10.0" wait="0.5"/>
+    <click relative="true" x="0" y="-4" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="0" y="-4" button="Button.left" pressed="false" wait="0.3"/>
+    <check-image window="DUECA/DUSIME control panel" x="495" y="205" template="greenbuttonsel" testsize="64" timeout="20.0" wait="0.5"/>
+    <check-image window="DUECA/DUSIME control panel" x="494" y="175" template="graybuttonsel" testsize="64" timeout="10.0" wait="7.5"/>
+    <click relative="true" x="-2" y="-1" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="-2" y="-1" button="Button.left" pressed="false" wait="0.3"/>
+    <check-image window="DUECA/DUSIME control panel" x="494" y="175" template="greenbuttonsel" testsize="64" timeout="20.0" wait="0.5"/>
     <snap name="replayscenario_gtk4000.png"/>
-    <check-color window="DUECA/DUSIME control panel" x="41" y="13" r="246" g="245" b="244" timeout="10.0" wait="0.5"/>
-    <click relative="true" x="0" y="0" button="Button.left" pressed="true" wait="0.2"/>
-    <click relative="true" x="0" y="0" button="Button.left" pressed="false" wait="0.2"/>
-    <snap name="replayscenario_gtk4001.png"/>
-    <check-color window="DUECA/DUSIME control panel" x="58" y="161" r="232" g="230" b="227" timeout="10.0" wait="0.5"/>
-    <click relative="true" x="0" y="0" button="Button.left" pressed="true" wait="0.2"/>
-    <click relative="true" x="0" y="0" button="Button.left" pressed="false" wait="0.2"/>
-    <check-color window="DUECA/DUSIME control panel" x="36" y="16" r="246" g="245" b="244" timeout="10.0" wait="0.5"/>
-    <check-color window="DUECA/DUSIME control panel" x="39" y="11" r="246" g="245" b="244" timeout="10.0" wait="0.5"/>
-    <click relative="true" x="0" y="0" button="Button.left" pressed="true" wait="0.2"/>
-    <click relative="true" x="0" y="0" button="Button.left" pressed="false" wait="0.2"/>
-    <check-color window="DUECA/DUSIME control panel" x="56" y="191" r="232" g="230" b="227" timeout="10.0" wait="0.5"/>
-    <click relative="true" x="0" y="0" button="Button.left" pressed="true" wait="0.2"/>
-    <click relative="true" x="0" y="0" button="Button.left" pressed="false" wait="0.2"/>
-    <snap name="replayscenario_gtk4002.png"/>
-    <check-color window="Record&amp;Replay control - PHLAB" x="91" y="70" r="216" g="212" b="208" timeout="10.0" wait="0.5"/>
-    <click relative="true" x="0" y="0" button="Button.left" pressed="true" wait="0.2"/>
-    <click relative="true" x="0" y="0" button="Button.left" pressed="false" wait="0.2"/>
-    <snap name="replayscenario_gtk4003.png"/>
-    <click relative="true" x="228" y="-215" button="Button.left" pressed="true" wait="0.2"/>
-    <click relative="true" x="228" y="-215" button="Button.left" pressed="false" wait="0.2"/>
-    <check-color window="Record&amp;Replay control - PHLAB" x="72" y="239" r="232" g="230" b="227" timeout="10.0" wait="0.5"/>
-    <click relative="true" x="0" y="0" button="Button.left" pressed="true" wait="0.2"/>
-    <click relative="true" x="0" y="0" button="Button.left" pressed="false" wait="0.2"/>
-    <check-image window="DUECA/DUSIME control panel" x="491" y="228" template="graybuttonsel" testsize="64" timeout="10.0" wait="0.5"/>
-    <click relative="true" x="0" y="-1" button="Button.left" pressed="true" wait="0.2"/>
-    <click relative="true" x="0" y="-1" button="Button.left" pressed="false" wait="0.2"/>
-    <check-image window="DUECA/DUSIME control panel" x="491" y="231" template="greenbuttonsel" testsize="64" timeout="10.0" wait="6.5"/>
-    <check-image window="DUECA/DUSIME control panel" x="493" y="197" template="graybuttonsel" testsize="64" timeout="10.0" wait="0.5"/>
-    <click relative="true" x="2" y="2" button="Button.left" pressed="true" wait="0.2"/>
-    <click relative="true" x="2" y="2" button="Button.left" pressed="false" wait="0.2"/>
-    <snap name="replayscenario_gtk4004.png"/>
-    <check-color window="Record&amp;Replay control - PHLAB" x="29" y="67" r="216" g="212" b="208" timeout="10.0" wait="0.5"/>
-    <click relative="true" x="0" y="0" button="Button.left" pressed="true" wait="0.2"/>
-    <click relative="true" x="0" y="0" button="Button.left" pressed="false" wait="0.2"/>
-    <check-color window="Record&amp;Replay control - PHLAB" x="41" y="223" r="244" g="245" b="245" timeout="10.0" wait="0.5"/>
-    <click relative="true" x="0" y="0" button="Button.left" pressed="true" wait="0.2"/>
-    <click relative="true" x="0" y="0" button="Button.left" pressed="false" wait="0.2"/>
-    <check-image window="Record&amp;Replay control - PHLAB" x="20" y="102" template="button-loadinco" testsize="64" timeout="10.0" wait="0.5"/>
-    <click relative="true" x="1" y="2" button="Button.left" pressed="true" wait="0.2"/>
-    <click relative="true" x="1" y="2" button="Button.left" pressed="false" wait="0.2"/>
-    <check-image window="Record&amp;Replay control - PHLAB" x="56" y="103" template="button-loadreplay" testsize="64" timeout="10.0" wait="0.5"/>
-    <click relative="true" x="-7" y="2" button="Button.left" pressed="true" wait="0.2"/>
-    <click relative="true" x="-7" y="2" button="Button.left" pressed="false" wait="0.2"/>
-    <check-image window="DUECA/DUSIME control panel" x="454" y="230" template="graybuttonsel" testsize="64" timeout="10.0" wait="0.5"/>
-    <click relative="true" x="7" y="1" button="Button.left" pressed="true" wait="0.2"/>
-    <click relative="true" x="7" y="1" button="Button.left" pressed="false" wait="0.2"/>
-    <check-image window="DUECA/DUSIME control panel" x="489" y="197" template="greenbuttonsel" testsize="64" timeout="10.0" wait="0.5"/>
-    <check-image window="DUECA/DUSIME control panel" x="494" y="167" template="graybuttonsel" testsize="64" timeout="10.0" wait="0.5"/>
-    <click relative="true" x="3" y="6" button="Button.left" pressed="true" wait="0.2"/>
-    <click relative="true" x="3" y="6" button="Button.left" pressed="false" wait="0.2"/>
-    <check-image window="DUECA/DUSIME control panel" x="492" y="95" template="graybuttonsel" testsize="64" timeout="10.0" wait="0.5"/>
-    <click relative="true" x="1" y="2" button="Button.left" pressed="true" wait="0.2"/>
-    <click relative="true" x="1" y="2" button="Button.left" pressed="false" wait="0.2"/>
-    <check-image window="DUECA/DUSIME control panel" x="497" y="58" template="graybuttonsel" testsize="64" timeout="10.0" wait="0.5"/>
-    <click relative="true" x="6" y="-1" button="Button.left" pressed="true" wait="0.2"/>
-    <click relative="true" x="6" y="-1" button="Button.left" pressed="false" wait="0.2"/>
-    <check-image window="DUECA/DUSIME control panel" x="497" y="58" template="greenbuttonsel" testsize="64" timeout="10.0" wait="0.5"/>
-    <click relative="true" x="-470" y="-51" button="Button.left" pressed="true" wait="0.2"/>
-    <click relative="true" x="-470" y="-51" button="Button.left" pressed="false" wait="0.2"/>
-    <check-color window="DUECA/DUSIME control panel" x="84" y="71" r="232" g="230" b="227" timeout="10.0" wait="0.5"/>
-    <click relative="true" x="0" y="0" button="Button.left" pressed="true" wait="0.2"/>
-    <click relative="true" x="0" y="0" button="Button.left" pressed="false" wait="0.2"/>
-    <check-color window="Are you serious?" x="41" y="21" r="232" g="230" b="227" timeout="10.0" wait="0.5"/>
-    <click relative="true" x="0" y="0" button="Button.left" pressed="true" wait="0.2"/>
-    <click relative="true" x="0" y="0" button="Button.left" pressed="false" wait="0.2"/>
-    <click relative="true" x="9" y="5" button="Button.left" pressed="true" wait="0.2"/>
+    <check-image window="Record&amp;Replay control - PHLAB" x="38" y="44" template="word-Replay" testsize="96" timeout="10.0" wait="0.5"/>
+    <click relative="true" x="-5" y="-1" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="-5" y="-1" button="Button.left" pressed="false" wait="0.3"/>
+    <check-image window="Record&amp;Replay control - PHLAB" x="39" y="218" template="word-anonymous" testsize="140" timeout="10.0" wait="0.5"/>
+    <click relative="true" x="-7" y="1" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="-7" y="1" button="Button.left" pressed="false" wait="0.3"/>
+    <check-image window="Record&amp;Replay control - PHLAB" x="22" y="86" template="button-loadinco" testsize="64" timeout="10.0" wait="0.5"/>
+    <click relative="true" x="0" y="-1" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="0" y="-1" button="Button.left" pressed="false" wait="0.3"/>
+    <check-image window="Record&amp;Replay control - PHLAB" x="60" y="92" template="button-loadreplay" testsize="64" timeout="10.0" wait="0.5"/>
+    <click relative="true" x="-6" y="4" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="-6" y="4" button="Button.left" pressed="false" wait="0.3"/>
+    <check-image window="DUECA/DUSIME control panel" x="452" y="206" template="graybuttonsel" testsize="64" timeout="10.0" wait="0.5"/>
+    <click relative="true" x="0" y="-4" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="0" y="-4" button="Button.left" pressed="false" wait="0.3"/>
+    <check-image window="DUECA/DUSIME control panel" x="500" y="172" template="greenbuttonsel" testsize="64" timeout="20.0" wait="0.5"/>
+    <check-image window="DUECA/DUSIME control panel" x="500" y="140" template="graybuttonsel" testsize="64" timeout="10.0" wait="0.5"/>
+    <click relative="true" x="4" y="-2" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="4" y="-2" button="Button.left" pressed="false" wait="0.3"/>
+    <check-image window="DUECA/DUSIME control panel" x="499" y="74" template="graybuttonsel" testsize="64" timeout="10.0" wait="0.5"/>
+    <click relative="true" x="3" y="0" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="3" y="0" button="Button.left" pressed="false" wait="0.3"/>
+    <check-image window="DUECA/DUSIME control panel" x="497" y="41" template="graybuttonsel" testsize="64" timeout="10.0" wait="0.5"/>
+    <click relative="true" x="1" y="1" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="1" y="1" button="Button.left" pressed="false" wait="0.3"/>
+    <check-image window="DUECA/DUSIME control panel" x="496" y="34" template="greenbuttonsel" testsize="64" timeout="10.0" wait="0.5"/>
+    <check-image window="DUECA/DUSIME control panel" x="11" y="-8" template="word-File" testsize="64" timeout="10.0" wait="0.5"/>
+    <click relative="true" x="-8" y="-3" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="-8" y="-3" button="Button.left" pressed="false" wait="0.3"/>
+    <check-image window="DUECA/DUSIME control panel" x="38" y="50" template="word-Quit" testsize="64" timeout="10.0" wait="0.5"/>
+    <click relative="true" x="-1" y="-8" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="-1" y="-8" button="Button.left" pressed="false" wait="0.3"/>
+    <check-image window="Are you serious?" x="60" y="2" template="word-yes-really" testsize="140" timeout="10.0" wait="0.5"/>
+    <click relative="true" x="-4" y="1" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="-4" y="1" button="Button.left" pressed="false" wait="0.3"/>
+    <click relative="true" x="-4" y="1" button="Button.left" pressed="true" wait="0.3"/>
   </actions>
 </scenario>
