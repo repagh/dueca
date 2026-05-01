@@ -47,10 +47,10 @@ _TMPLATE_MATCH = re.compile(r"^([a-zA-Z-]+)(_[0-9a-zA-Z]+)?\.png$")
 def _load_templates(tpattern: str):
     print("Loading templates from", tpattern)
     for f in glob.glob(tpattern):
-        tm = _TMPLATE_MATCH.match(os.path.basename(base))
+        tm = _TMPLATE_MATCH.match(os.path.basename(f))
         if tm:
-            basename = tm.group(2)
-            filename = tm.group(2) + (tm.group(3) or "") + ".png"
+            basename = tm.group(1)
+            filename = tm.group(0)
         else:
             print(f"File {f} not recognized as template, doing crude split")
             basename = ".".join(f.split(os.sep)[-1].split(".")[:-1])
