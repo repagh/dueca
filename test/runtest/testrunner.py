@@ -298,7 +298,7 @@ class Click:
         window=None,
         button=None,
         pressed=False,
-        wait=0.2,
+        wait=0.3,
     ):
         if xmlroot is not None:
             xmlnode = etree.SubElement(xmlroot, "click")
@@ -324,7 +324,7 @@ class Click:
             self.y = int(xmlnode.get("y", "0"))
             self.relative = XML_interpret_bool(xmlnode.get("relative", "false"))
             self.button = Click.buttonmap[xmlnode.get("button")]
-            self.wait = float(xmlnode.get("wait", 0.1))
+            self.wait = float(xmlnode.get("wait", 0.3))
             self.pressed = XML_interpret_bool(xmlnode.get("pressed", "false"))
 
     async def execute(self):
@@ -500,11 +500,13 @@ class Check:
         # move the mouse, since that may change color
         global the_mouse
 
-        if self.wait:
-            await asyncio.sleep(self.wait)
         moved = False
 
-        for cnt in range(20):
+        # initial wait
+        if self.wait:
+            await asyncio.sleep(self.wait)
+
+        for cnt in range(max_cnt):
 
             if not moved:
                 if self.window:
@@ -530,12 +532,18 @@ class Check:
                 the_mouse.position = x, y
                 moved = True
 
-            # for relative clicks
-            lastxy = x, y
+            else:
+                # make sure some mouse movement is there, so the interface
+                # reacts as hovered
+                the_mouse.position = x + (cnt % 2), y - (cnt % 2)
 
             # wait part of the timeout, to see if the interface reacts
             if self.timeout > 0.0:
                 await asyncio.sleep(0.05 * self.timeout)
+
+            # for relative clicks
+            lastxy = x, y
+
 
             # exit when we found the requested color
             if self.color is not None:
@@ -735,6 +743,10 @@ class CheckImage:
 
         moved = False
 
+        # initial wait
+        if self.wait:
+            await asyncio.sleep(self.wait)
+
         # run 20 tests in the timeout range
         for cnt in range(max_cnt):
 
@@ -756,27 +768,21 @@ class CheckImage:
                     x, y = translation.toScreen(self.x, self.y, w)
 
                 else:
+                    # click without window, coordinates must absolute
                     x, y = self.x, self.y
 
                 # set the mouse position
                 the_mouse.position = x, y
                 moved = True
 
-                # initial wait here
-                if self.wait:
-                    await asyncio.sleep(self.wait)
-
             else:
+                # make sure mouse movement is there, so the interface
+                # reacts as hovered
+                the_mouse.position = x + (cnt % 2), y - (cnt % 2)
 
-                # keep the mouse moving???
-                if cnt % 2 == 1:
-                    the_mouse.position = x, y
-                else:
-                    the_mouse.position = x - 2, y + 2
-
-                # wait part of the timeout, to see if the interface reacts
-                if self.timeout > 0.0:
-                    await asyncio.sleep(0.05 * self.timeout)
+            # wait part of the timeout, to see if the interface reacts
+            if self.timeout > 0.0:
+                await asyncio.sleep(0.05 * self.timeout)
 
             # look what is there now
             under_cursor = cv2.cvtColor(
@@ -823,8 +829,10 @@ class CheckImage:
         else:
             draw = ImageDraw.Draw(img)
             draw.rectangle(self._bbox(x, y, self.testsize), outline=(255, 0, 0))
-            draw.circle(lastpress, 2, outline=(0, 255, 255))
-            draw.circle(lastrelease, 1, outline=(0, 255, 255))
+            if abs(lastpress[0] - x) > self.testsize // 2 and \
+                abs(lastpress[1] - y) > self.testsize // 2:
+                draw.circle(lastpress, 2, outline=(0, 255, 255))
+                draw.circle(lastrelease, 1, outline=(0, 255, 255))
             img.save(
                 sanitize(
                     f"{scenario.name}-error{Check.errcnt:03d}-no-img-{self.template}-at{self.x},{self.y}.png"
@@ -851,6 +859,9 @@ class Snap:
             xmlnode = etree.SubElement(xmlroot, "snap")
             xmlnode.set("name", name)
             self.name = name
+            print(f"Inserting snapshot {name}")
+            img = ImageGrab.grab(xdisplay=x11display)
+            img.save(sanitize(self.name))
 
         elif xmlnode is not None:
             self.name = xmlnode.get("name")

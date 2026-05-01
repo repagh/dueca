@@ -32,15 +32,15 @@
   <actions>
     <!-- hold -->
     <!-- calibrate -->
-    <check-image window="DUECA/DUSIME control panel" x="461" y="56" template="buttongreensel" testsize="48" timeout="25.0" wait="0.5"/>
+    <check-image window="DUECA/DUSIME control panel" x="461" y="56" template="buttongreensel" testsize="48" timeout="40.0" wait="0.5"/>
     <check-image window="DUECA/DUSIME control panel" x="463" y="92" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
     <click x="-1" y="-2" relative="true" button="Button.left" pressed="true" wait="0.2"/>
     <click x="-1" y="-2" relative="true" button="Button.left" pressed="false" wait="0.2"/>
-    <check-image window="DUECA/DUSIME control panel" x="463" y="92" template="buttongreensel" testsize="48" timeout="10.0" wait="0.5"/>
+    <check-image window="DUECA/DUSIME control panel" x="463" y="92" template="buttongreensel" testsize="48" timeout="20.0" wait="0.5"/>
     <check-image window="DUECA/DUSIME control panel" x="464" y="126" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
     <click x="0" y="-2" relative="true" button="Button.left" pressed="true" wait="0.2"/>
     <click x="0" y="-2" relative="true" button="Button.left" pressed="false" wait="0.2"/>
-    <check-image window="DUECA/DUSIME control panel" x="464" y="126" template="buttongreensel" testsize="48" timeout="10.0" wait="0.5"/>
+    <check-image window="DUECA/DUSIME control panel" x="464" y="126" template="buttongreensel" testsize="48" timeout="20.0" wait="0.5"/>
     <check-image window="DUECA/DUSIME control panel" x="462" y="159" template="buttongreensel" testsize="48" timeout="10.0" wait="0.5"/>
     <check-image window="DUECA/DUSIME control panel" x="464" y="196" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
     <click x="0" y="0" relative="true" button="Button.left" pressed="true" wait="0.2"/>

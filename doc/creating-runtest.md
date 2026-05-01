@@ -121,8 +121,20 @@ can be recognised by the script. To start, move the mouse near DUECA's first gre
 an area around the mouse's current location (the sizes differ, respectively 48, 64, 96
 and 140 pixels), and figures out which of the template files in the `gtk3` (or `gtk4`)
 folder best matches. The terminal will spit out a message about the chosen file, or
-a list of files tried if no match is found.
+a list of files tried if no good match is found.
 
-The recording can be done in relative mode or in absolute mode.
+The recording can be done in relative mode or in absolute mode. In absolute mode, each
+click will be within absolute coordinates, measured from the top left of the window
+in which the click is done. In relative mode, the clicks are performed relative to the
+last colour or image detection. In this way, if elements in the GUI shift a little, the
+actions shift with them. Recording starts in relative mode, by pressing f12 it will
+enter absolute mode (which will be good for clicks close to the top left of the window),
+and f11 enters relative again.
 
-## Fixing failures
+An alternative way of checking the interface is by checking for a specific colour. Use f1 to do this.
+
+To insert a snapshot of the screen, press f2.
+
+## Fixing up and fixing failures
+
+After
