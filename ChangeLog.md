@@ -2,7 +2,7 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
-## [4.2.8] - 2023-04-17
+## [4.2.8] - 2023-05-01
 
 ### Changed
 
@@ -31,6 +31,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 - A new doc page on ddff logging, record and replay.
 - Package build config for Ubuntu 26.04, move away for cdbs.
 - Add tests for PolynomialN, Steps, Circular, CircularWithPoly from extra.
+- Option to use multiple files in button or word recognition for the test runner.
+
+### Removed
+
+- The gtk2 interface is not available for Ubuntu 26.04 and Debian 13
 
 ## [4.2.7] - 2026-03-25
 

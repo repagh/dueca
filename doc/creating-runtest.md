@@ -109,10 +109,17 @@ cp simplesimulation-clean.xml simplesimulation.xml
 ./test/createrun simplesimulation.xml
 ~~~~
 
-After compilation, an X window comes up with the DUECA interface. Keep an eye on
+For new test scenarios, you can adapt one of the existing cleaned scenarios, detailing
+the project name, repository, run folders and start commands.
+
+The `createrun` script will use the `testrunner.py` to perform its actions. First
+the given project is checked out and compiled, then an X window comes up. The DUECA
+executable or other scripts, as specified in the cleaned start script, are started,
+usually producing a DUECA interface. Keep an eye on
 the terminal from where you started createrun, to see the program's reactions. You
 can now interact with the DUECA program to operate it, and use function keys to
-insert checks or specific actions.
+insert checks or specific actions. Key clicks and keyboard presses will be monitored and
+coded in the xml file.
 
 A good strategy for creating a scenario is to check before you act. The `gtk3`
 and `gtk4` folders under `test/runtest` contain a number of small images that
@@ -126,6 +133,7 @@ a list of files tried if no good match is found.
 The recording can be done in relative mode or in absolute mode. In absolute mode, each
 click will be within absolute coordinates, measured from the top left of the window
 in which the click is done. In relative mode, the clicks are performed relative to the
+location where you performed the
 last colour or image detection. In this way, if elements in the GUI shift a little, the
 actions shift with them. Recording starts in relative mode, by pressing f12 it will
 enter absolute mode (which will be good for clicks close to the top left of the window),
@@ -135,6 +143,24 @@ An alternative way of checking the interface is by checking for a specific colou
 
 To insert a snapshot of the screen, press f2.
 
+After completing the scenario, press the escape key, and perform a mouse click. The
+window will close and the updated xml file will be written.
+
 ## Fixing up and fixing failures
 
-After
+After a run with a `createrun` script, you might tweak the scenario. Typically,
+you may increase the wait times before detections or clicks, to let the program
+run a little.
+
+To view the result, invoke the `test/viewrun` script with the created or updated
+scenario file. You can follow along, and see the actions in the terminal where you
+started the view. In cases where an image may not be recognized, the program will
+print out a message and produce a screenshot, with the search area marked in red.
+
+Typically, different distributions of the linux operating system, or different
+installed fonts, may produce slightly different interfaces. To accommodate this,
+you can take the screenshot from a failed test, cut out the word or button that
+should have been recognized, and save it as an additional version of that image,
+by separating base name and version by an underscore, for example if "File" was not
+recognize as matching the image `word-file.png`, you can save the alternate image
+as `word-file_v2.png`, and add it to the DUECA source.

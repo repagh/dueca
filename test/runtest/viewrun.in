@@ -27,6 +27,7 @@ env -i DISPLAY=@DISPLAY@ \
     @Python_EXECUTABLE@ @CMAKE_CURRENT_SOURCE_DIR@/testrunner.py \
        --base @TESTRUN_BASE@ \
        --control $1 \
+       --action-debug \
        --template-folder @CMAKE_CURRENT_SOURCE_DIR@
 RESULT=$?
 sleep 1

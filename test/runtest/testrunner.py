@@ -40,30 +40,31 @@ offset_max = 30
 max_cnt = 20
 template_pattern = "/gtk3/*.png"
 templates_folder = ""
+clickdebug = False
 
-
-_TMPLATE_MATCH = re.compile(r'^(.*)/([a-zA-Z-]+)(_v[0-9a-zA-Z])?\.png$')
+_TMPLATE_MATCH = re.compile(r"^([a-zA-Z-]+)(_[0-9a-zA-Z]+)?\.png$")
 
 def _load_templates(tpattern: str):
     print("Loading templates from", tpattern)
     for f in glob.glob(tpattern):
-        tm = _TMPLATE_MATCH.match(f)
+        tm = _TMPLATE_MATCH.match(os.path.basename(base))
         if tm:
             basename = tm.group(2)
-            filename = tm.group(2) + (tm.group(3) or '') + '.png'
+            filename = tm.group(2) + (tm.group(3) or "") + ".png"
         else:
             print(f"File {f} not recognized as template, doing crude split")
-            basename = '.'.join(f.split(os.sep)[-1].split('.')[:-1])
+            basename = ".".join(f.split(os.sep)[-1].split(".")[:-1])
             filename = basename
 
         if basename in templates:
             templates[basename][filename] = cv2.imread(f)
         else:
-            templates[basename] = { filename: cv2.imread(f) }
+            templates[basename] = {filename: cv2.imread(f)}
 
-def _best_match_alt(candidates: dict, area, threshold:float=0.9, basename=''):
+
+def _best_match_alt(candidates: dict, area, threshold: float = 0.9, basename=""):
     match = threshold
-    filename = ''
+    filename = ""
     location = None
     candidate = None
     ah, aw, _ = area.shape
@@ -71,7 +72,7 @@ def _best_match_alt(candidates: dict, area, threshold:float=0.9, basename=''):
     for ix, (fname, c) in enumerate(candidates.items()):
         th, tw, _ = c.shape
         if th <= ah and tw <= aw:
-            res = cv2.matchTemplate(area, c, cv2.TM_CCOEFF_NORMED)
+            res = cv2.matchTemplate(area, c, cv2.TM_CCORR_NORMED)
             _, max_val, _, max_loc = cv2.minMaxLoc(res)
             if basename:
                 print(f"template {basename}({fname}) val={max_val} at {max_loc}")
@@ -85,19 +86,21 @@ def _best_match_alt(candidates: dict, area, threshold:float=0.9, basename=''):
 
     return match, location, filename, candidate
 
+
 def _best_match(area, debug=False):
     best = None
     basename = None
     _match = 0.0
 
     for base, candidates in templates.items():
-        res = _best_match_alt(candidates, area, _match, debug and base or '')
+        res = _best_match_alt(candidates, area, _match, debug and base or "")
         if res[0] > _match:
             best = res
             basename = base
             _match = res[0]
 
     return basename, *best
+
 
 class Translation:
     def __init__(self, offset_x=0, offset_y=0, extra_y=0):
@@ -288,6 +291,9 @@ class Click:
         "Button.middle": pynput.mouse.Button.middle,
     }
 
+    relcnt = 0
+    clickcnt = 0
+
     def __init__(
         self,
         xmlroot=None,
@@ -357,7 +363,6 @@ class Click:
         else:
             lastrelease = x, y
 
-
         print(f"Click position now {x, y}")
 
         if self.wait > 0.0:
@@ -366,9 +371,24 @@ class Click:
         if self.pressed:
             the_mouse.press(self.button)
             print("Mouse pressed")
+            Click.clickcnt += 1
         else:
             the_mouse.release(self.button)
             print("Mouse released")
+
+            if clickdebug:
+
+                # show where we clicked
+                img = ImageGrab.grab(xdisplay=x11display)
+                draw = ImageDraw.Draw(img)
+                draw.circle(lastpress, 2, outline=(0, 255, 255))
+                draw.circle(lastrelease, 1, outline=(0, 255, 255))
+                img.save(
+                    sanitize(
+                        f"{scenario.name}-release{Click.relcnt:03d}-at{self.x},{self.y}.png"
+                    )
+                )
+            Click.relcnt += 1
 
 
 class KeyPress:
@@ -544,7 +564,6 @@ class Check:
             # for relative clicks
             lastxy = x, y
 
-
             # exit when we found the requested color
             if self.color is not None:
                 under_cursor = ImageGrab.grab(
@@ -691,7 +710,9 @@ class CheckImage:
                 self.testsize,
                 self.criterion,
             ) = (x, y, timeout, wait, window, basename, testsize, criterion)
-            print(f"Add check for image {basename}({filename}) near {x},{y} window {window.wm_name}")
+            print(
+                f"Add check for image {basename}({filename}) near {x},{y} window {window.wm_name}"
+            )
 
         elif xmlnode is not None:
 
@@ -796,7 +817,11 @@ class CheckImage:
 
             # analyse
             max_val, max_loc, filename, template = _best_match_alt(
-                templates[self.template], under_cursor, 0.0, ((cnt + 1 == max_cnt) and self.template) or '')
+                templates[self.template],
+                under_cursor,
+                0.0,
+                ((cnt + 1 == max_cnt) and self.template) or "",
+            )
 
             if max_val < self.criterion:
                 # keep searching or exit
@@ -813,7 +838,9 @@ class CheckImage:
             # set the correction
             lastxy = xc, yc
 
-            print(f"Found template {self.template}({filename}), searched {x,y} found at {xc},{yc}")
+            print(
+                f"Found template {self.template}({filename}), searched {x,y} found at {xc},{yc} {max_val}>={self.criterion}"
+            )
             return True
 
         # no window or color found, create a snapshot and increase errror count
@@ -829,8 +856,10 @@ class CheckImage:
         else:
             draw = ImageDraw.Draw(img)
             draw.rectangle(self._bbox(x, y, self.testsize), outline=(255, 0, 0))
-            if abs(lastpress[0] - x) > self.testsize // 2 and \
-                abs(lastpress[1] - y) > self.testsize // 2:
+            if (
+                abs(lastpress[0] - x) > self.testsize // 2
+                and abs(lastpress[1] - y) > self.testsize // 2
+            ):
                 draw.circle(lastpress, 2, outline=(0, 255, 255))
                 draw.circle(lastrelease, 1, outline=(0, 255, 255))
             img.save(
@@ -1354,6 +1383,11 @@ parser.add_argument(
     "--learn", action="store_true", help="Learning mode, record mouse clicks"
 )
 parser.add_argument(
+    "--action-debug",
+    action="store_true",
+    help="Provide screenshots to show action locations",
+)
+parser.add_argument(
     "--offset-x",
     default=0,
     type=int,
@@ -1398,6 +1432,7 @@ t0 = time.time()
 
 translation = Translation(pres.offset_x, pres.offset_y, pres.extra_y)
 template_pattern = pres.template_pattern
+clickdebug = pres.action_debug
 
 # read the scenario, might override pattern, offset
 scenario = Scenario(fname=pres.control)
