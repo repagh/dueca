@@ -10,7 +10,6 @@
 
 # virtual framebuffer x server
 find_program(XVFB NAMES Xvfb)
-find_program(XNEST NAMES Xnest)
 find_program(NESTSERVER NAMES ${RUNTEST_SERVER})
 find_program(WINDOWMANAGER NAMES openbox)
 find_program(WMCTRL NAMES wmctrl)

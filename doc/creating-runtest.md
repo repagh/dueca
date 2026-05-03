@@ -89,7 +89,7 @@ The script is not run directly, but is typically run in one of three modes:
 
   Output appears on the terminal, and any screenshots made, either regular as
   specified in the script, or after the script fails to detect interface changes, are
-  saved to the current folder.
+  saved to the current folder. This currently uses the Xephyr server.
 
 - When you want to create a new script, you can use the `createrun` command for a DUECA
   project build with a `gtk3` interface, or the `createrun_gtk4` command for a `gtk4`
@@ -164,3 +164,16 @@ should have been recognized, and save it as an additional version of that image,
 by separating base name and version by an underscore, for example if "File" was not
 recognize as matching the image `word-file.png`, you can save the alternate image
 as `word-file_v2.png`, and add it to the DUECA source.
+
+The differences appear to be quite subtle. Although the environment in which
+the DUECA interfaces run is controlled as much as possible, there are
+differences between different environments, such as:
+
+- Development on your chosen Linux distribution (e.g., Fedora)
+- Local runs using act, nominally with the Ubuntu distribution also used on
+  the CI runs, with Xvfb.
+- Runs on github, with github actions.
+
+To fix this, you can take the screenshots produced after failed matches, and
+cut out with gimp or a similar program, the template files that the runner
+should recognize.
