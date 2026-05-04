@@ -192,6 +192,9 @@ if(NOT XMLSTARLET MATCHES ".*-NOTFOUND")
       COMMAND ${XMLSTARLET} edit -N x="https://dueca.tudelft.nl/testscenario"
       --delete 'x:scenario/x:actions/x:snap'
       --delete 'x:scenario/x:actions/x:click'
+      --delete 'x:scenario/x:actions/x:check-image'
+      --delete 'x:scenario/x:actions/x:check-word'
+      --delete 'x:scenario/x:actions/x:check-color'
       --delete 'x:scenario/x:actions/x:check'
       --delete 'x:scenario/x:actions/x:key'
       --delete 'x:scenario/x:offset'

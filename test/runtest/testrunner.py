@@ -8,12 +8,14 @@ Created on Mon Sep 27 20:32:23 2021
 
 from PIL import ImageGrab
 import aggdraw
+import pytesseract
 import numpy as np
 import re
 import cv2
 import pynput
 from pynput.keyboard import Key
 from wmctrl import Window
+from math import sqrt
 import subprocess
 import os
 import asyncio
@@ -32,6 +34,7 @@ the_mouse = pynput.mouse.Controller()
 the_keyboard = pynput.keyboard.Controller()
 templates = {}
 imgkeys = {Key.f4: 48, Key.f5: 64, Key.f6: 96, Key.f7: 140}
+wordkeys = {Key.f8: 48, Key.f9: 64, Key.f10: 96}
 lastxy = 0, 0
 lastpress = 0, 0
 lastrelease = 0, 0
@@ -63,8 +66,7 @@ def _load_templates(tpattern: str):
         else:
             templates[basename] = {filename: cv2.imread(f)}
 
-
-def drawCircle(dr, xy, r, p):
+def _drawCircle(dr, xy, r, p):
     dr.ellipse((xy[0] - r, xy[1] - r, xy[0] + r, xy[1] + r), p)
 
 
@@ -107,6 +109,68 @@ def _best_match(area, debug=False):
 
     return basename, *best
 
+def _find_word(area, criterion=40, dist=16):
+    ha, wa = area.shape
+    dev = dist**2
+    word = ''
+    bounds = 0,0,0,0
+
+    d = pytesseract.image_to_data(area, output_type=pytesseract.Output.DICT)
+    for wrd, x, y, conf, w, h in zip(d['text'], d['left'], d['top'], d['conf'], d['width'], d['height']):
+        if not wrd:
+            continue
+        xdev = x + w // 2 - wa // 2
+        ydev = y + h // 2 - ha // 2
+        if conf < criterion:
+            print(f"Rejecting word '{wrd}' at distance {xdev},{ydev} for conf={conf}({criterion})")
+            continue
+        if xdev ** 2 + ydev ** 2 > dev:
+            print(f"Rejecting word '{wrd}' for distance {xdev},{ydev}")
+            continue
+
+        if word:
+            print(f"Replacing word '{word}' with '{wrd}' at distance {xdev},{ydev}")
+        # new closest
+        dev = xdev ** 2 + ydev ** 2
+        word = wrd
+        bounds = x, y, x+w, y+h
+
+    if word:
+        print(f"Closest word found '{word}', distance {sqrt(dev):.2}")
+    return word, bounds
+
+def _match_word(area, matchword, criterion=40):
+
+    ha, wa = area.shape
+    dev = ha**2 + wa**2
+    word = ''
+    bounds = 0,0,0,0
+    d = pytesseract.image_to_data(area, output_type=pytesseract.Output.DICT)
+
+    for wrd, x, y, conf, w, h in zip(d['text'], d['left'], d['top'], d['conf'], d['width'], d['height']):
+
+        if not wrd or wrd != matchword:
+            continue
+
+        xdev = x + w // 2 - wa // 2
+        ydev = y + h // 2 - ha // 2
+        if conf < criterion:
+            print(f"Rejecting word '{wrd}' at distance {xdev},{ydev} for conf={conf}({criterion})")
+            continue
+
+        if word:
+            print(f"Multiple matches for word {word}, using closest")
+
+        if xdev ** 2 + ydev ** 2 > dev:
+            print(f"Rejecting word '{wrd}' for distance {xdev},{ydev}")
+            continue
+
+        # new closest
+        dev = xdev ** 2 + ydev ** 2
+        word = wrd
+        bounds = x, y, x+w, y+h
+
+    return word, bounds
 
 class Translation:
     def __init__(self, offset_x=0, offset_y=0, extra_y=0):
@@ -388,8 +452,8 @@ class Click:
                 img = ImageGrab.grab(xdisplay=x11display)
                 draw = aggdraw.Draw(img)
                 pen = aggdraw.Pen((0, 255, 255))
-                drawCircle(draw, lastpress, 4, p)
-                drawCircle(draw, lastrelease, 3, p)
+                _drawCircle(draw, lastpress, 4, pen)
+                _drawCircle(draw, lastrelease, 3, pen)
                 draw.flush().save(
                     sanitize(
                         f"{scenario.name}-release{Click.relcnt:03d}-at{self.x},{self.y}.png"
@@ -598,10 +662,10 @@ class Check:
         elif self.color is not None:
             draw = aggdraw.Draw(img)
             pen1 = aggdraw.Pen((255, 0, 0))
-            draw.rectangle((x - 1, y - 1, x + 1, y + 1))
+            draw.rectangle((x - 1, y - 1, x + 1, y + 1), pen1)
             pen2 = aggdraw.Pen((0, 255, 255))
-            drawCircle(draw, lastrelease, 1, pen2)
-            drawCircle(draw, lastpress, 2, pen2)
+            _drawCircle(draw, lastrelease, 1, pen2)
+            _drawCircle(draw, lastpress, 2, pen2)
             draw.flush().save(
                 sanitize(
                     f'{scenario.name}-error{Check.errcnt:03d}-no-col-{",".join(map(str, self.color))}-at{self.x},{self.y}.png'
@@ -687,9 +751,9 @@ class CheckImage:
                 print(f"Did not find a matching image near {x}, {y}")
                 _best_match(under_cursor, True)
                 errimg = ImageGrab.grab(xdisplay=x11display)
-                draw = aggdraw.Draw(img)
-                pen2 = aggdraw.Pen((0, 255, 255))
-                draw.rectangle(self._bbox(x, y, testsize), pen2)
+                draw = aggdraw.Draw(errimg)
+                pen = aggdraw.Pen((255, 0, 0))
+                draw.rectangle(self._bbox(x, y, testsize), pen)
                 draw.flush().save(sanitize(f"{scenario.name}-nocreate-no-img-at{x},{y}.png"))
 
                 raise ValueError("No image match")
@@ -876,8 +940,8 @@ class CheckImage:
                 abs(lastpress[0] - x) > self.testsize // 2
                 and abs(lastpress[1] - y) > self.testsize // 2
             ):
-                drawCircle(draw, lastpress, 2, pen2)
-                drawCircle(draw, lastrelease, 1, pen2)
+                _drawCircle(draw, lastpress, 2, pen2)
+                _drawCircle(draw, lastrelease, 1, pen2)
 
             draw.flush().save(
                 sanitize(
@@ -890,6 +954,273 @@ class CheckImage:
             )
             lastxy = x, y
         if self.window is None and self.template is None:
+            print(f"Wait {self.wait}+{self.timeout} performed")
+            return True
+
+        Check.errcnt += 1
+        print("Check failed")
+        return False
+
+class CheckWord:
+
+    errcnt = 0
+
+    def __init__(
+        self,
+        xmlroot=None,
+        xmlnode=None,
+        x: int = 0,
+        y: int = 0,
+        timeout: float = 10.0,  # props
+        window="",
+        testsize: int = 140,
+        wait: float = 0.5,
+    ):
+        """Retrieve or create an image check
+
+        Parameters
+        ----------
+        xmlroot : XMLNode, optional
+            Root of the newly created actions, if None, retrieve
+        xmlnode : XMLNode, optional
+            XML node with data, by default None
+        x : int, optional
+            X coordinate of mouse click, by default 0
+        y : int, optional
+            Y coordinate of mouse click, by default 0
+        timeout : float, optional
+            Timeout to use in waiting for image, by default 10.0
+        testsize : int, optional
+            Test area size to use for image, by default 140
+        wait : float, optional
+            Wait time to apply before moving to next action, by default 0.5
+
+        Raises
+        ------
+        ValueError
+            Cannot find a suitable image in the testsize region around the
+            cursor
+        """
+
+        global translation, lastxy
+
+        if xmlroot is not None:
+
+            # try to create a new image test
+            if window:
+                _x, _y = translation.toWindow(x, y, window)
+            else:
+                _x, _y = x, y
+
+            # grab an image region
+            under_cursor = cv2.cvtColor(
+                np.array(
+                    ImageGrab.grab(bbox=self._bbox(x, y, testsize), xdisplay=x11display)
+                ),
+                cv2.COLOR_RGB2GRAY,
+            )
+
+            # find the most centric word
+            word, wbounds = _find_word(under_cursor)
+
+            # if we don't meet the start criterion
+            if not word:
+                print(f"Did not find a proper word near {x}, {y}")
+                errimg = ImageGrab.grab(xdisplay=x11display)
+                draw = aggdraw.Draw(errimg)
+                pen = aggdraw.Pen((255, 0, 0))
+                draw.rectangle(self._bbox(x, y, testsize), pen)
+                draw.flush().save(sanitize(f"{scenario.name}-nocreate-no-word-at{x},{y}.png"))
+
+                raise ValueError("No word match")
+
+            # record last click position as center of image
+            xt, yt, _, _ = self._bbox(x, y, testsize)
+            th, tw, _, _ = wbounds
+            print(f"word shape {wbounds}")
+            lastxy = (xt + (wbounds[0] + wbounds[2]) // 2, yt + (wbounds[1]+wbounds[3]) // 2)
+            print(f"click {x,y}, bb {self._bbox(x, y, testsize)}, found at {lastxy}")
+
+            xmlnode = etree.SubElement(xmlroot, "check-word")
+            if window:
+                xmlnode.set("window", window.wm_name)
+            xmlnode.set("x", str(_x))
+            xmlnode.set("y", str(_y))
+            xmlnode.set("word", word)
+            xmlnode.set("testsize", str(testsize))
+            xmlnode.set("timeout", str(timeout))
+            xmlnode.set("wait", str(wait))
+            (
+                self.x,
+                self.y,
+                self.timeout,
+                self.wait,
+                self.window,
+                self.word,
+                self.testsize
+            ) = (x, y, timeout, wait, window, word, testsize)
+            print(
+                f"Add check for word '{word}' near {x},{y} window {window.wm_name}"
+            )
+
+        elif xmlnode is not None:
+
+            # read this test from its xml description
+            (
+                self.window,
+                self.x,
+                self.y,
+                self.timeout,
+                self.wait,
+                self.word,
+                self.testsize
+            ) = (
+                xmlnode.get("window", ""),
+                int(xmlnode.get("x", 1)),
+                int(xmlnode.get("y", 1)),
+                float(xmlnode.get("timeout", 0.0)),
+                float(xmlnode.get("wait", 0.0)),
+                xmlnode.get("word"),
+                int(xmlnode.get("testsize", 100))
+            )
+
+    def _bbox(self, x: int, y: int, testsize: int):
+        dx = max(testsize // 2 - x, 0)
+        dy = max(testsize // 2 - y, 0)
+        return (
+            x - testsize // 2 + dx,
+            y - testsize // 2 + dy,
+            x + testsize // 2 + dx,
+            y + testsize // 2 + dy,
+        )
+
+    async def execute(self):
+        """Wait for the right image to appear
+
+        Returns
+        -------
+        bool
+            True if image found within timeout
+        """
+
+        print(
+            f"...Check {self.window} {self.x},{self.y} {self.wait}+{self.timeout} '{self.word}'"
+        )
+        # simply run in 100 sleep increments
+
+        # move the mouse, since that may change color
+        global the_mouse, lastxy
+
+        moved = False
+
+        # initial wait
+        if self.wait:
+            await asyncio.sleep(self.wait)
+
+        x, y = 0, 0
+
+        # run 20 tests in the timeout range
+        for cnt in range(max_cnt):
+
+            if not moved:
+                if self.window:
+
+                    # check the window is present
+                    w = findWindow(self.window)
+
+                    # when no window there, wait some more
+                    if w is None and self.timeout > 0.0:
+                        await asyncio.sleep(0.05 * self.timeout)
+                        continue
+
+                    # pull the window up and to focus if needed
+                    w.activate()
+
+                    # translate the coordinates for test to screen
+                    x, y = translation.toScreen(self.x, self.y, w)
+
+                else:
+                    # click without window, coordinates must absolute
+                    x, y = self.x, self.y
+
+                # set the mouse position
+                the_mouse.position = x, y
+                moved = True
+
+            else:
+                # make sure mouse movement is there, so the interface
+                # reacts as hovered
+                the_mouse.position = x + (cnt % 2), y - (cnt % 2)
+
+            # wait part of the timeout, to see if the interface reacts
+            if self.timeout > 0.0:
+                await asyncio.sleep(0.05 * self.timeout)
+
+            # look what is there now
+            under_cursor = cv2.cvtColor(
+                np.array(
+                    ImageGrab.grab(
+                        bbox=self._bbox(x, y, self.testsize), xdisplay=x11display
+                    )
+                ),
+                cv2.COLOR_RGB2GRAY,
+            )
+
+            # analyse
+            word, wbounds = _match_word(under_cursor, self.word)
+
+            if not word:
+                # keep searching or exit
+                continue
+
+            # corrected position
+            xt, yt, _, _ = self._bbox(x, y, self.testsize)
+            xc = xt + (wbounds[0] + wbounds[2]) // 2
+            yc = yt + (wbounds[1] + wbounds[3]) // 2
+
+            # set the correction
+            lastxy = xc, yc
+
+            print(
+                f"Found word '{self.word}', searched {x,y} found at {xc},{yc}"
+            )
+            return True
+
+        # no window or color found, create a snapshot and increase errror count
+        img = ImageGrab.grab(xdisplay=x11display)
+        if self.window and w is None:
+            print(f"Failed to find window {self.window} after {cnt+1} checks")
+            img.save(
+                sanitize(
+                    f"{scenario.name}-error{Check.errcnt:03d}-no-win-{self.window}.png"
+                )
+            )
+            lastxy = x, y
+        else:
+            draw = aggdraw.Draw(img)
+            pen1 = aggdraw.Pen((255, 0, 0))
+            pen2 = aggdraw.Pen((0, 255, 255))
+            draw.rectangle(self._bbox(x, y, self.testsize), pen1)
+
+            # add last press and release, if not in the area
+            if (
+                abs(lastpress[0] - x) > self.testsize // 2
+                and abs(lastpress[1] - y) > self.testsize // 2
+            ):
+                _drawCircle(draw, lastpress, 2, pen2)
+                _drawCircle(draw, lastrelease, 1, pen2)
+
+            draw.flush().save(
+                sanitize(
+                    f"{scenario.name}-error{Check.errcnt:03d}-no-word-{self.word}-at{self.x},{self.y}.png"
+                )
+            )
+            print(
+                f"Failed to find image {self.word} near "
+                f"{x}, {y} after {cnt+1} checks"
+            )
+            lastxy = x, y
+        if self.window is None and self.word is None:
             print(f"Wait {self.wait}+{self.timeout} performed")
             return True
 
@@ -938,6 +1269,8 @@ class Scenario:
                 self.actions.append(Check(xmlnode=node))
             elif XML_tag(node, "check-image"):
                 self.actions.append(CheckImage(xmlnode=node))
+            elif XML_tag(node, "check-word"):
+                self.actions.append(CheckWord(xmlnode=node))
             elif XML_tag(node, "click"):
                 self.actions.append(Click(xmlnode=node))
             elif XML_tag(node, "snap"):
@@ -1091,6 +1424,27 @@ class Scenario:
                         y=self.y,
                         window=window,
                         testsize=imgkeys[key],
+                    )
+                )
+            except ValueError:
+                pass
+            return True
+
+        elif key in wordkeys:
+
+            # locate image here
+            window = findWindowUnder(
+                self.project.windows, self.x, self.y, True, margin=10
+            )
+
+            try:
+                self.actions.append(
+                    CheckWord(
+                        xmlroot=self.actionnode,
+                        x=self.x,
+                        y=self.y,
+                        window=window,
+                        testsize=wordkeys[key],
                     )
                 )
             except ValueError:

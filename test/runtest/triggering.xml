@@ -42,14 +42,14 @@
     <click x="-1" y="-4" relative="true" button="Button.left" pressed="true" wait="0.2"/>
     <click x="-1" y="-4" relative="true" button="Button.left" pressed="false" wait="0.2"/>
     <check-image window="DUECA/DUSIME control panel" x="463" y="39" template="buttongreensel" testsize="64" timeout="10.0" wait="0.5"/>
-    <check-image window="DUECA/DUSIME control panel" x="18" y="-10" template="fileword" testsize="48" timeout="10.0" wait="0.5"/>
-    <click x="0" y="-7" relative="true" button="Button.left" pressed="true" wait="0.2"/>
-    <click x="0" y="-7" relative="true" button="Button.left" pressed="false" wait="0.2"/>
-    <check-image window="DUECA/DUSIME control panel" x="22" y="41" template="quit-blue" testsize="96" timeout="10.0" wait="0.5"/>
-    <click x="-13" y="-6" relative="true" button="Button.left" pressed="true" wait="0.2"/>
-    <click x="-13" y="-6" relative="true" button="Button.left" pressed="false" wait="0.2"/>
-    <check-color window="Are you serious?" x="15" y="36" r="248" g="248" b="247" timeout="10.0" wait="0.5"/>
-    <click x="0" y="0" relative="true" button="Button.left" pressed="true" wait="0.2"/>
-    <click x="0" y="0" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-word window="DUECA/DUSIME control panel" x="14" y="11" word="File" testsize="64" timeout="10.0" wait="0.5"/>
+    <click relative="true" x="-1" y="-1" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="-1" y="-1" button="Button.left" pressed="false" wait="0.3"/>
+    <check-image window="DUECA/DUSIME control panel" x="29" y="66" template="quit-blue" testsize="96" timeout="10.0" wait="0.5"/>
+    <click relative="true" x="1" y="-1" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="1" y="-1" button="Button.left" pressed="false" wait="0.3"/>
+    <check-word window="Are you serious?" x="25" y="51" word="Yes," testsize="64" timeout="10.0" wait="0.5"/>
+    <click relative="true" x="-2" y="-4" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="-2" y="-4" button="Button.left" pressed="false" wait="0.3"/>
   </actions>
 </scenario>
