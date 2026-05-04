@@ -6,7 +6,8 @@ Created on Mon Sep 27 20:32:23 2021
 @author: repa
 """
 
-from PIL import ImageGrab, ImageDraw
+from PIL import ImageGrab
+import aggdraw
 import numpy as np
 import re
 import cv2
@@ -44,6 +45,7 @@ clickdebug = False
 
 _TMPLATE_MATCH = re.compile(r"^([a-zA-Z-]+)(_[0-9a-zA-Z]+)?\.png$")
 
+
 def _load_templates(tpattern: str):
     print("Loading templates from", tpattern)
     for f in glob.glob(tpattern):
@@ -60,6 +62,10 @@ def _load_templates(tpattern: str):
             templates[basename][filename] = cv2.imread(f)
         else:
             templates[basename] = {filename: cv2.imread(f)}
+
+
+def drawCircle(dr, xy, r, p):
+    dr.ellipse((xy[0] - r, xy[1] - r, xy[0] + r, xy[1] + r), p)
 
 
 def _best_match_alt(candidates: dict, area, threshold: float = 0.9, basename=""):
@@ -380,10 +386,11 @@ class Click:
 
                 # show where we clicked
                 img = ImageGrab.grab(xdisplay=x11display)
-                draw = ImageDraw.Draw(img)
-                draw.circle(lastpress, 2, outline=(0, 255, 255))
-                draw.circle(lastrelease, 1, outline=(0, 255, 255))
-                img.save(
+                draw = aggdraw.Draw(img)
+                pen = aggdraw.Pen((0, 255, 255))
+                drawCircle(draw, lastpress, 4, p)
+                drawCircle(draw, lastrelease, 3, p)
+                draw.flush().save(
                     sanitize(
                         f"{scenario.name}-release{Click.relcnt:03d}-at{self.x},{self.y}.png"
                     )
@@ -589,11 +596,13 @@ class Check:
                 )
             )
         elif self.color is not None:
-            draw = ImageDraw.Draw(img)
-            draw.rectangle(((x - 3, y - 3), (x, y)), outline=(255, 0, 0))
-            draw.circle(lastpress, 2, outline=(0, 255, 255))
-            draw.circle(lastrelease, 1, outline=(0, 255, 255))
-            img.save(
+            draw = aggdraw.Draw(img)
+            pen1 = aggdraw.Pen((255, 0, 0))
+            draw.rectangle((x - 1, y - 1, x + 1, y + 1))
+            pen2 = aggdraw.Pen((0, 255, 255))
+            drawCircle(draw, lastrelease, 1, pen2)
+            drawCircle(draw, lastpress, 2, pen2)
+            draw.flush().save(
                 sanitize(
                     f'{scenario.name}-error{Check.errcnt:03d}-no-col-{",".join(map(str, self.color))}-at{self.x},{self.y}.png'
                 )
@@ -678,9 +687,10 @@ class CheckImage:
                 print(f"Did not find a matching image near {x}, {y}")
                 _best_match(under_cursor, True)
                 errimg = ImageGrab.grab(xdisplay=x11display)
-                draw = ImageDraw.Draw(errimg)
-                draw.rectangle(self._bbox(x, y, testsize), outline=(255, 255, 0))
-                errimg.save(sanitize(f"{scenario.name}-nocreate-no-img-at{x},{y}.png"))
+                draw = aggdraw.Draw(img)
+                pen2 = aggdraw.Pen((0, 255, 255))
+                draw.rectangle(self._bbox(x, y, testsize), pen2)
+                draw.flush().save(sanitize(f"{scenario.name}-nocreate-no-img-at{x},{y}.png"))
 
                 raise ValueError("No image match")
 
@@ -768,6 +778,8 @@ class CheckImage:
         if self.wait:
             await asyncio.sleep(self.wait)
 
+        x, y = 0, 0
+
         # run 20 tests in the timeout range
         for cnt in range(max_cnt):
 
@@ -854,15 +866,20 @@ class CheckImage:
             )
             lastxy = x, y
         else:
-            draw = ImageDraw.Draw(img)
-            draw.rectangle(self._bbox(x, y, self.testsize), outline=(255, 0, 0))
+            draw = aggdraw.Draw(img)
+            pen1 = aggdraw.Pen((255, 0, 0))
+            pen2 = aggdraw.Pen((0, 255, 255))
+            draw.rectangle(self._bbox(x, y, self.testsize), pen1)
+
+            # add last press and release, if not in the area
             if (
                 abs(lastpress[0] - x) > self.testsize // 2
                 and abs(lastpress[1] - y) > self.testsize // 2
             ):
-                draw.circle(lastpress, 2, outline=(0, 255, 255))
-                draw.circle(lastrelease, 1, outline=(0, 255, 255))
-            img.save(
+                drawCircle(draw, lastpress, 2, pen2)
+                drawCircle(draw, lastrelease, 1, pen2)
+
+            draw.flush().save(
                 sanitize(
                     f"{scenario.name}-error{Check.errcnt:03d}-no-img-{self.template}-at{self.x},{self.y}.png"
                 )
