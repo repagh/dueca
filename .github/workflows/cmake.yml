@@ -106,7 +106,7 @@ jobs:
         source ${{env.PREFIX}}/dueca-env.sh && USER=example ctest -C ${{env.BUILD_TYPE}}
 
     - name: Upload log
-      if: always() && ${{ !env.ACT }}
+      if: always()
       uses: actions/upload-artifact@v6
       with:
         name: TestResult
