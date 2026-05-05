@@ -697,7 +697,7 @@ class CheckImage:
         timeout: float = 10.0,  # props
         window="",
         testsize: int = 140,
-        wait: float = 0.5,
+        wait: float = 0.5
     ):
         """Retrieve or create an image check
 
@@ -774,6 +774,7 @@ class CheckImage:
             xmlnode.set("testsize", str(testsize))
             xmlnode.set("timeout", str(timeout))
             xmlnode.set("wait", str(wait))
+            xmlnode.set("criterion", str(criterion))
             (
                 self.x,
                 self.y,
@@ -975,6 +976,7 @@ class CheckWord:
         window="",
         testsize: int = 140,
         wait: float = 0.5,
+        criterion: float = 40
     ):
         """Retrieve or create an image check
 
@@ -1021,7 +1023,7 @@ class CheckWord:
             )
 
             # find the most centric word
-            word, wbounds = _find_word(under_cursor)
+            word, wbounds = _find_word(under_cursor, self.criterion)
 
             # if we don't meet the start criterion
             if not word:
@@ -1057,8 +1059,9 @@ class CheckWord:
                 self.wait,
                 self.window,
                 self.word,
-                self.testsize
-            ) = (x, y, timeout, wait, window, word, testsize)
+                self.testsize,
+                self.criterion
+            ) = (x, y, timeout, wait, window, word, testsize, criterion)
             print(
                 f"Add check for word '{word}' near {x},{y} window {window.wm_name}"
             )
@@ -1073,7 +1076,8 @@ class CheckWord:
                 self.timeout,
                 self.wait,
                 self.word,
-                self.testsize
+                self.testsize,
+                self.criterion
             ) = (
                 xmlnode.get("window", ""),
                 int(xmlnode.get("x", 1)),
@@ -1081,7 +1085,8 @@ class CheckWord:
                 float(xmlnode.get("timeout", 0.0)),
                 float(xmlnode.get("wait", 0.0)),
                 xmlnode.get("word"),
-                int(xmlnode.get("testsize", 100))
+                int(xmlnode.get("testsize", 100)),
+                float(xmlnode.get("criterion", 40))
             )
 
     def _bbox(self, x: int, y: int, testsize: int):
@@ -1167,7 +1172,7 @@ class CheckWord:
             )
 
             # analyse
-            word, wbounds = _match_word(under_cursor, self.word)
+            word, wbounds = _match_word(under_cursor, self.word, self.criterion)
 
             if not word:
                 # keep searching or exit

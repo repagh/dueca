@@ -174,7 +174,7 @@ def _gui_choices():
     return ("none", "gtk4", "gtk3", "gtk2", "glut", "glut-gui")
 
 
-def read_transform_and_write(f0: str, f1: str, subst: dict, insert: dict | None = None):
+def read_transform_and_write(f0: str, f1: str, subst: dict, insert = None):
     """Read a template file, and write to output file with substitutions
 
     Parameters
@@ -222,7 +222,7 @@ def create_and_copy(
     subst: dict,
     keepcurrent: bool = False,
     inform: bool = False,
-    insert: dict | None = None,
+    insert = None,
 ):
     """Create folders and copy files
 

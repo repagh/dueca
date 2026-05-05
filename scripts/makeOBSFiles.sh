@@ -65,6 +65,7 @@ function trimversion()
                 s/python3-build,//
                 s/libgtk-4-dev,//
                 s/libmsgpack-cxx-dev,//
+                s/librsvg2-bin/inkscape/
                 s/libgtkmm-4.0-dev,//
                 s/debian\.tar/debian-xUbuntu_18.04.tar/' $1 > $2
     elif [ "$3" = '20.04' ]; then
@@ -73,6 +74,7 @@ function trimversion()
                 s/python3-build,//
                 s/libmsgpack-cxx-dev,//
                 s/libgtkmm-4.0-dev,//
+                s/librsvg2-bin/inkscape/
                 s/debian\.tar/debian-xUbuntu_20.04.tar/' $1 > $2
     elif [ "$3" = '22.04' ]; then
         sed -e 's/libgtkmm-4.0-dev,//
