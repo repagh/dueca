@@ -12,21 +12,17 @@
         license         : EUPL-1.2
 */
 
-
 #include <dueca_ns.h>
 #include <msgpack.hpp>
 
 #include <boost/endian/conversion.hpp>
 #include "msgpack-unstream-iter.hxx"
 
-#ifndef msgpack_unstream_iter_ixx
-#define msgpack_unstream_iter_ixx
-
-
-
 /*
   all my unpack defines for templated types, need to be called
   after including objects on which this is done
+
+  Each is individually guarded
 */
 
 
@@ -176,6 +172,3 @@ inline void msg_unpack(S &i0, const S &iend,
 #endif
 
 MSGPACKUS_NS_END;
-
-#endif
-

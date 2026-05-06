@@ -2,7 +2,16 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
-## [4.2.8] - 2023-05-01
+## [4.2.9] - 2026-05-??
+
+### Changed
+
+- Fix msgpack unstream code, would fail on large strings, large maps and
+  large arrays.
+- Make msgpack unstream including consistent, deprecate msgpack-unstream.hxx
+  force msgpack-unstream-iter.hxx/ixx
+
+## [4.2.8] - 2026-05-01
 
 ### Changed
 

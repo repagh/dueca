@@ -29,6 +29,7 @@ add_test(MSGPACK2 msgpack2.x)
 add_test(MSGPACK3 msgpack3.x)
 add_test(MSGPACKX msgpackx.x)
 add_test(MSGPACK4 msgpack4.x)
+add_test(MSGPACK4B msgpack4b.x)
 add_test(MSGPACK5 msgpack5.x)
 
 set_tests_properties(MSGPACKX PROPERTIES DEPENDS PupilRemoteGaze2.msgpack)
@@ -86,7 +87,8 @@ add_executable(msgpack2.x msgpack2.cxx ${DCOMSG_OUTPUTS})
 add_executable(msgpack3.x msgpack3.cxx)
 add_executable(msgpackx.x msgpackx.cxx ${DCOMSG_OUTPUTS})
 add_executable(msgpack4.x msgpack4.cxx ${DCOMSG_OUTPUTS})
-add_executable(msgpack5.x msgpack4.cxx ${DCOMSG_OUTPUTS})
+add_executable(msgpack4b.x msgpack4.cxx ${DCOMSG_OUTPUTS})
+add_executable(msgpack5.x msgpack5.cxx ${DCOMSG_OUTPUTS})
 
 
 #execute_process(
@@ -119,7 +121,8 @@ target_link_libraries(msgpack2.x dueca${STATICSUFFIX} dueca-ddff${STATICSUFFIX})
 target_link_libraries(msgpack3.x dueca${STATICSUFFIX} dueca-ddff${STATICSUFFIX})
 target_link_libraries(msgpackx.x dueca${STATICSUFFIX} dueca-ddff${STATICSUFFIX})
 target_link_libraries(msgpack4.x dueca${STATICSUFFIX} dueca-ddff${STATICSUFFIX})
-target_link_libraries(msgpack5.x dueca${STATICSUFFIX} dueca-ddff${STATICSUFFIX} dueca-hdf${STATICSUFFIX})
+target_link_libraries(msgpack4b.x dueca${STATICSUFFIX} dueca-ddff${STATICSUFFIX} dueca-hdf${STATICSUFFIX})
+target_link_libraries(msgpack5.x dueca${STATICSUFFIX} dueca-ddff${STATICSUFFIX})
 
 target_compile_options(test1.x PRIVATE -DDUECA_CONFIG_MSGPACK)
 target_compile_options(test2.x PRIVATE -DDUECA_CONFIG_MSGPACK)
@@ -133,16 +136,7 @@ target_compile_options(msgpack2.x PRIVATE -DDUECA_CONFIG_MSGPACK)
 target_compile_options(msgpack3.x PRIVATE -DDUECA_CONFIG_MSGPACK)
 target_compile_options(msgpackx.x PRIVATE -DDUECA_CONFIG_MSGPACK)
 target_compile_options(msgpack4.x PRIVATE -DDUECA_CONFIG_MSGPACK)
-target_compile_options(msgpack5.x PRIVATE -DDUECA_CONFIG_MSGPACK -DDUECA_CONFIG_HDF5)
+target_compile_options(msgpack4b.x PRIVATE -DDUECA_CONFIG_MSGPACK -DDUECA_CONFIG_HDF5)
+target_compile_options(msgpack5.x PRIVATE -DDUECA_CONFIG_MSGPACK)
 
 #target_link_libraries(test8.x ${DUECA_LDFLAGS})
-
-
-
-
-
-
-
-
-
-
