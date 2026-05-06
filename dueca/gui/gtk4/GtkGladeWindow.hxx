@@ -322,7 +322,7 @@ struct GladeCallbackTable
   with `-` and the enum value.
 
   These setting and getting actions that
-  you can do with DCO objects, are also available for simple variables (float, 
+  you can do with DCO objects, are also available for simple variables (float,
   double, integer types, std::string), through the setValue and getValue calls.
 
  */
@@ -708,15 +708,16 @@ bool GtkGladeWindow::loadDropDownText(const char *name, const T &values)
   if (GTK_IS_DROP_DOWN(o)) {
 
     // check whether a model or the right kind of model is set
-    auto model = G_LIST_STORE(gtk_drop_down_get_model(GTK_DROP_DOWN(o)));
+    auto model = GTK_STRING_LIST(gtk_drop_down_get_model(GTK_DROP_DOWN(o)));
     if (!model) {
-      model = g_list_store_new(gtk_string_object_get_type());
+      // model = g_list_store_new(gtk_string_object_get_type());
+      model = gtk_string_list_new(NULL);
       gtk_drop_down_set_model(GTK_DROP_DOWN(o), G_LIST_MODEL(model));
     }
 
     // reader and writer are coupled, run through all options
     for (const auto &s : values) {
-      g_list_store_append(model, gtk_string_object_new(s.c_str()));
+      gtk_string_list_append(model, s.c_str());
     }
     return true;
   }

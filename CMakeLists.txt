@@ -6,7 +6,7 @@
 #       copyright       : (c) 2016 TUDelft-AE-C&S
 #       copyright       : (c) 2022- DUECA authors
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.10)
 
 # set preferred policies
 foreach(P CMP0057 CMP0075 CMP0167)
@@ -21,10 +21,10 @@ endforeach()
 # version information, please update accordingly
 set(VERMAJOR 4)
 set(VERMINOR 2)
-set(REVISION 6)
+set(REVISION 8)
 set(GENCODEGEN 111)
 set(SOVERSION "${VERMAJOR}.${VERMINOR}")
-set(VERSION_DATE "11 Mar 2026")
+set(VERSION_DATE "28 Apr 2026")
 string(REPLACE " " "" "${VERSION_DATE}" CLIENT_DATE)
 set(versioned "${VERMAJOR}-${VERMINOR}-${REVISION}")
 
@@ -88,6 +88,7 @@ option(BUILD_DEBPRINT      "Build with debug print statements" OFF)
 option(BUILD_FEXCEPT       "Build with floating point exceptions" OFF)
 option(ACTIV_NOCATCH       "Remove exception catching mechanisms, debug only" OFF)
 option(HDF5_NOCATCH        "Remove exception catching, debug only" OFF)
+option(DDFF_NOCATCH        "Remove exception catching, debug only" OFF)
 option(BUILD_CALLTRACE     "Generate call trace log" OFF)
 option(NEW_LOGGING         "new logging code" ON)
 option(RUN_TESTS           "run test code" OFF)
@@ -654,6 +655,8 @@ if (Boost_VERSION_STRING VERSION_LESS 1.86.0)
 
 endif()
 
+# fmt format library, replacing boost, stringstream, printf now
+find_package(fmt REQUIRED)
 
 # python packages to test
 # python packages needed

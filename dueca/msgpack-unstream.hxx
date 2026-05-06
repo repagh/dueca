@@ -26,21 +26,6 @@
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
 
-#if 0
-#ifdef MSGPACK_USE_DEFINE_MAP
-#define MSGPACK_CHECK_DCO_SIZE( N ) \
-  unstream<S,O>::unpack_mapsize(s, o);
-#define MSGPACK_UNPACK_MEMBER( A ) \
-  o += unstream<S,O>::unpack_strsize(s, o); \
-  msg_unpack(s, o, A )
-#else
-#define MSGPACK_CHECK_DCO_SIZE( N ) \
-  unstream<S,O>::unpack_arraysize(s, o);
-#define MSGPACK_UNPACK_MEMBER( A ) \
-  msg_unpack(s, o, A )
-#endif
-#endif
-
 #define MSGPACK_CHECK_BUFFER_SIZE( S, O ) \
   if (S .size() < ( O )) \
     throw msgpack_unpack_mismatch("buffer too small");

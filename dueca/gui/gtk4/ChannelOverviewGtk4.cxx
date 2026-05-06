@@ -21,7 +21,7 @@
 #include "gtk/gtk.h"
 #include <boost/smart_ptr/shared_ptr.hpp>
 #include <boost/lexical_cast.hpp>
-#include <boost/format.hpp>
+#include <fmt/format.h>
 
 #define ChannelOverviewGtk4_cxx
 
@@ -329,7 +329,7 @@ gint smallerString(gconstpointer _1, gconstpointer _2, gpointer self)
     return 1;
 
   // channel nnames are equal, next comparison, channel with "anything else"
-  if (c1->type == Channel) 
+  if (c1->type == Channel)
     return -1;
   if (c2->type == Channel)
     return 1;
@@ -359,9 +359,9 @@ gint smallerNumber(gconstpointer _1, gconstpointer _2, gpointer self)
     return -1;
   if (c1->channel > c2->channel)
     return 1;
-  
+
   // channel numbers are equal, next comparison, channel with "anything else"
-  if (c1->type == Channel) 
+  if (c1->type == Channel)
     return -1;
   if (c2->type == Channel)
     return 1;
@@ -933,7 +933,7 @@ void ChannelOverviewGtk4::cbBindChannelNum(GtkSignalListItemFactory *fact,
   if (chn->type == Channel && channel) {
     auto label = GTK_LABEL(gtk_list_item_get_child(item));
     gtk_label_set_label(
-      label, boost::str(boost::format("%d") % channel->chanid).c_str());
+      label, fmt::format("{:d}", channel->chanid).c_str());
     // g_object_unref(label);
   }
 }
@@ -1020,7 +1020,7 @@ gboolean uint2text(GBinding *bnd, const GValue *source, GValue *target,
 {
   g_value_set_string(
     target,
-    boost::str(boost::format("%8d") % g_value_get_uint(source)).c_str());
+    fmt::format("{:8d}", g_value_get_uint(source)).c_str());
   return TRUE;
 }
 

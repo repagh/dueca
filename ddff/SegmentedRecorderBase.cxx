@@ -27,7 +27,9 @@ SegmentedRecorderBase::SegmentedRecorderBase() :
 SegmentedRecorderBase::~SegmentedRecorderBase() {}
 
 void SegmentedRecorderBase::spoolReplay(ddff::FileHandler::pos_type offset,
-                                        ddff::FileHandler::pos_type end_offset)
+                                        ddff::FileHandler::pos_type end_offset,
+                                        TimeTickType replay_record_tick,
+                                        unsigned inblock_offset)
 {
   throw replay_not_implemented();
 }
@@ -44,7 +46,7 @@ void SegmentedRecorderBase::syncRecorder()
   }
 }
 
-bool SegmentedRecorderBase::checkAndMakeClean()
+bool SegmentedRecorderBase::checkOrMakeClean()
 {
   if (dirty) {
     dirty = false;

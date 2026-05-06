@@ -21,11 +21,39 @@
 // #include "fix_optional.hxx"
 // #include <set>
 
+#ifndef msgpack_part1_hxx
+#define msgpack_part1_hxx
+
+/** Flagging class, used to indicate treating packing and
+unpacking of a DCO object with arrays, rather than as an object */
+template <class DCO> struct msgpack_dco_array : public DCO
+{};
+
+struct msgpack_container_none
+{
+  template <typename C>
+  inline static const C &mark_for_dco_msgpack(const C &obj)
+  {
+    return obj;
+  }
+};
+
+struct msgpack_container_base
+{
+  template <typename C>
+  inline static const msgpack_dco_array<C> &mark_for_dco_msgpack(const C &obj)
+  {
+    return *reinterpret_cast<const msgpack_dco_array<C>*>(&obj);
+  }
+};
+
+#endif
 // always pre define
-namespace dueca {
-namespace messagepack {
-template <typename C> struct msgpack_visitor;
-}
+namespace dueca
+{
+  namespace messagepack {
+  template <typename C> struct msgpack_visitor;
+  }
 }// namespace dueca
 
 // other-file-specific
@@ -49,21 +77,43 @@ template <size_t N, typename T> struct msgpack_visitor<dueca::fixvector<N, T>>
 // support for packing adaptors of DUECA containers
 namespace msgpack {
   /// @cond
-MSGPACK_API_VERSION_NAMESPACE(v1) {
-    /// @endcond
+MSGPACK_API_VERSION_NAMESPACE(v1)
+{
+  /// @endcond
   namespace adaptor {
-      /** packing adaptor for fixvector */
+  /** packing adaptor for fixvector */
   template <typename T, size_t N> struct pack<dueca::fixvector<N, T>>
   {
     template <typename Stream>
     msgpack::packer<Stream> &operator()(msgpack::packer<Stream> &o,
-                                        const dueca::fixvector<N, T> &v) const {
+                                        const dueca::fixvector<N, T> &v) const
+    {
       uint32_t size = checked_get_container_size(v.size());
       o.pack_array(size);
       for (typename dueca::fixvector<N, T>::const_iterator it(v.begin()),
            it_end(v.end());
            it != it_end; ++it) {
         o.pack(*it);
+      }
+      return o;
+    }
+  };
+
+  /** packing adaptor for fixvector with dco array mark */
+  template <typename T, size_t N>
+  struct pack<msgpack_dco_array<dueca::fixvector<N, T>>>
+  {
+    template <typename Stream>
+    msgpack::packer<Stream> &
+    operator()(msgpack::packer<Stream> &o,
+               const msgpack_dco_array<dueca::fixvector<N, T>> &v) const
+    {
+      uint32_t size = checked_get_container_size(v.size());
+      o.pack_array(size);
+      for (typename dueca::fixvector<N, T>::const_iterator it(v.begin()),
+           it_end(v.end());
+           it != it_end; ++it) {
+        o.pack(dueca::messagepack::msgpack_visitor<T>::variant::mark_for_dco_msgpack(*it));
       }
       return o;
     }
@@ -97,22 +147,51 @@ struct msgpack_visitor<dueca::fixvector_withdefault<N, T, DEFLT, BASE>>
 // support for packing adaptors of DUECA containers
 namespace msgpack {
   /// @cond
-MSGPACK_API_VERSION_NAMESPACE(v1) {
+MSGPACK_API_VERSION_NAMESPACE(v1)
+{
     /// @endcond
   namespace adaptor {
-      /** packing adaptor for fixvector_withdefault */
+
+  /// packing adaptor for fixvector_withdefault, dco object as array
   template <typename T, size_t N, int DEFLT, unsigned BASE>
+  struct pack<
+    msgpack_dco_array<dueca::fixvector_withdefault<N, T, DEFLT, BASE>>>
+  {
+
+    template <typename Stream>
+    msgpack::packer<Stream> &operator()(
+      msgpack::packer<Stream> &o,
+      const msgpack_dco_array<dueca::fixvector_withdefault<N, T, DEFLT, BASE>>
+        &v) const
+    {
+      uint32_t size = checked_get_container_size(v.size());
+      o.pack_array(size);
+      for (typename dueca::fixvector_withdefault<N, T, DEFLT,
+                                                 BASE>::const_iterator
+             it(v.begin()),
+           it_end(v.end());
+           it != it_end; ++it) {
+        o.pack(dueca::messagepack::msgpack_visitor<T>::variant::mark_for_dco_msgpack(*it));
+      }
+      return o;
+    }
+  };
+
+  /** packing adaptor for fixvector_withdefault */
+  template <typename T, size_t N, int DEFLT, unsigned BASE>
+
   struct pack<dueca::fixvector_withdefault<N, T, DEFLT, BASE>>
   {
     template <typename Stream>
     msgpack::packer<Stream> &
     operator()(msgpack::packer<Stream> &o,
-               const dueca::fixvector_withdefault<N, T, DEFLT, BASE> &v) const {
+               const dueca::fixvector_withdefault<N, T, DEFLT, BASE> &v) const
+    {
       uint32_t size = checked_get_container_size(v.size());
       o.pack_array(size);
       for (typename dueca::fixvector_withdefault<N, T, DEFLT,
                                                  BASE>::const_iterator
-               it(v.begin()),
+             it(v.begin()),
            it_end(v.end());
            it != it_end; ++it) {
         o.pack(*it);
@@ -120,6 +199,7 @@ MSGPACK_API_VERSION_NAMESPACE(v1) {
       return o;
     }
   };
+
   }// namespace adaptor
 }
 }// namespace msgpack
@@ -144,14 +224,36 @@ template <size_t N, typename T> struct msgpack_visitor<dueca::limvector<N, T>>
 // support for packing adaptors of DUECA containers
 namespace msgpack {
   /// @cond
-MSGPACK_API_VERSION_NAMESPACE(v1) {
+MSGPACK_API_VERSION_NAMESPACE(v1)
+{
     /// @endcond
   namespace adaptor {
+  /// pack limited vector, nested dco's as array
+  template <typename T, size_t N>
+  struct pack<msgpack_dco_array<dueca::limvector<N, T>>>
+  {
+    template <typename Stream>
+    msgpack::packer<Stream> &
+    operator()(msgpack::packer<Stream> &o,
+               const msgpack_dco_array<dueca::limvector<N, T>> &v) const
+    {
+      uint32_t size = checked_get_container_size(v.size());
+      o.pack_array(size);
+      for (typename dueca::limvector<N, T>::const_iterator it(v.begin()),
+           it_end(v.end());
+           it != it_end; ++it) {
+        o.pack(dueca::messagepack::msgpack_visitor<T>::variant::mark_for_dco_msgpack(*it));
+      }
+      return o;
+    }
+  };
+  /// pack limited vector, nested dco's as object
   template <typename T, size_t N> struct pack<dueca::limvector<N, T>>
   {
     template <typename Stream>
     msgpack::packer<Stream> &operator()(msgpack::packer<Stream> &o,
-                                        const dueca::limvector<N, T> &v) const {
+                                        const dueca::limvector<N, T> &v) const
+    {
       uint32_t size = checked_get_container_size(v.size());
       o.pack_array(size);
       for (typename dueca::limvector<N, T>::const_iterator it(v.begin()),
@@ -185,14 +287,37 @@ template <typename T> struct msgpack_visitor<dueca::varvector<T>>
 // support for packing adaptors of DUECA containers
 namespace msgpack {
   /// @cond
-MSGPACK_API_VERSION_NAMESPACE(v1) {
+MSGPACK_API_VERSION_NAMESPACE(v1)
+{
     /// @endcond
   namespace adaptor {
+
+  /// pack variable-length vector, nested dco as array
+  template <typename T> struct pack<msgpack_dco_array<dueca::varvector<T>>>
+  {
+    template <typename Stream>
+    msgpack::packer<Stream> &
+    operator()(msgpack::packer<Stream> &o,
+               const msgpack_dco_array<dueca::varvector<T>> &v) const
+    {
+      uint32_t size = checked_get_container_size(v.size());
+      o.pack_array(size);
+      for (typename dueca::varvector<T>::const_iterator it(v.begin()),
+           it_end(v.end());
+           it != it_end; ++it) {
+        o.pack(dueca::messagepack::msgpack_visitor<T>::variant::mark_for_dco_msgpack(*it));
+      }
+      return o;
+    }
+  };
+
+  /// pack variable-length vector, nested dco as object
   template <typename T> struct pack<dueca::varvector<T>>
   {
     template <typename Stream>
     msgpack::packer<Stream> &operator()(msgpack::packer<Stream> &o,
-                                        const dueca::varvector<T> &v) const {
+                                        const dueca::varvector<T> &v) const
+    {
       uint32_t size = checked_get_container_size(v.size());
       o.pack_array(size);
       for (typename dueca::varvector<T>::const_iterator it(v.begin()),
@@ -203,6 +328,7 @@ MSGPACK_API_VERSION_NAMESPACE(v1) {
       return o;
     }
   };
+
   }// namespace adaptor
 }
 }// namespace msgpack
@@ -226,14 +352,34 @@ template <typename T> struct msgpack_visitor<dueca::fix_optional<T>>
 // support for packing adaptors of fix_optional
 namespace msgpack {
   /// @cond
-MSGPACK_API_VERSION_NAMESPACE(v1) {
+MSGPACK_API_VERSION_NAMESPACE(v1)
+{
     /// @endcond
   namespace adaptor {
+
+  /// pack optional value, nested dco as array
+  template <typename T> struct pack<msgpack_dco_array<dueca::fix_optional<T>>>
+  {
+    template <typename Stream>
+    msgpack::packer<Stream> &operator()(msgpack::packer<Stream> &o,
+                                        const dueca::fix_optional<T> &v) const
+    {
+      if (v.valid) {
+        o.pack(dueca::messagepack::msgpack_visitor<T>::variant::mark_for_dco_msgpack(v.value));
+      }
+      else {
+        o.pack_nil();
+      }
+      return o;
+    }
+  };
+
   template <typename T> struct pack<dueca::fix_optional<T>>
   {
     template <typename Stream>
     msgpack::packer<Stream> &operator()(msgpack::packer<Stream> &o,
-                                        const dueca::fix_optional<T> &v) const {
+                                        const dueca::fix_optional<T> &v) const
+    {
       if (v.valid) {
         o.pack(v.value);
       }
@@ -266,17 +412,155 @@ template <> struct msgpack_visitor<dueca::smartstring>
 // support for packing adaptors of DUECA containers
 namespace msgpack {
   /// @cond
-MSGPACK_API_VERSION_NAMESPACE(v1) {
+MSGPACK_API_VERSION_NAMESPACE(v1)
+{
     /// @endcond
   namespace adaptor {
   template <> struct pack<dueca::smartstring>
   {
     template <typename Stream>
     msgpack::packer<Stream> &operator()(msgpack::packer<Stream> &o,
-                                        const dueca::smartstring &v) const {
+                                        const dueca::smartstring &v) const
+    {
       uint32_t size = checked_get_container_size(v.size());
       o.pack_str(size);
       o.pack_str_body(v.data(), size);
+      return o;
+    }
+  };
+  }// namespace adaptor
+}
+}// namespace msgpack
+#endif
+#endif
+
+#ifdef _GLIBCXX_MAP
+#ifndef msgpack_GLIBCXX_MAP
+#define msgpack_GLIBCXX_MAP
+
+namespace dueca {
+namespace messagepack {
+struct msgpack_container_map;
+template <typename K, typename T> struct msgpack_visitor<std::map<K, T>>
+{
+  typedef msgpack_container_map variant;
+};
+} // namespace messagepack
+} // namespace dueca
+
+namespace msgpack {
+/// @cond
+MSGPACK_API_VERSION_NAMESPACE(v1)
+{
+    /// @endcond
+  namespace adaptor {
+  template <typename K, typename V, typename Compare, typename Alloc>
+  struct pack<msgpack_dco_array<std::map<K, V, Compare, Alloc>>>
+  {
+    typedef std::map<K, V, Compare, Alloc> _type;
+    template <typename Stream>
+    msgpack::packer<Stream> &
+    operator()(msgpack::packer<Stream> &o,
+               const msgpack_dco_array<std::map<K, V, Compare, Alloc>> &v) const
+    {
+      uint32_t size = checked_get_container_size(v.size());
+      o.pack_map(size);
+      for (typename _type::const_iterator
+             it(v.begin()),
+           it_end(v.end());
+           it != it_end; ++it) {
+        o.pack(it->first);
+        o.pack(dueca::messagepack::msgpack_visitor<V>::variant::mark_for_dco_msgpack(it->second));
+      }
+      return o;
+    }
+  };
+  }// namespace adaptor
+}
+}// namespace msgpack
+#endif
+#endif
+
+#ifdef _GLIBCXX_LIST
+#ifndef msgpack_GLIBCXX_LIST
+#define msgpack_GLIBCXX_LIST
+
+namespace dueca {
+namespace messagepack {
+struct msgpack_container_push;
+template <typename T> struct msgpack_visitor<std::list<T>>
+{
+  typedef msgpack_container_push variant;
+};
+} // namespace messagepack
+} // namespace dueca
+
+namespace msgpack {
+/// @cond
+MSGPACK_API_VERSION_NAMESPACE(v1)
+{
+    /// @endcond
+  namespace adaptor {
+  template <typename T, typename Alloc>
+  struct pack<msgpack_dco_array<std::list<T, Alloc>>>
+  {
+    template <typename Stream>
+    msgpack::packer<Stream> &
+    operator()(msgpack::packer<Stream> &o,
+               const msgpack_dco_array<std::list<T, Alloc>> &v) const
+    {
+      uint32_t size = checked_get_container_size(v.size());
+      o.pack_array(size);
+      for (typename std::list<T, Alloc>::const_iterator it(v.begin()),
+           it_end(v.end());
+           it != it_end; ++it) {
+        o.pack(dueca::messagepack::msgpack_visitor<T>::variant::mark_for_dco_msgpack(*it));
+      }
+      return o;
+    }
+  };
+
+  }// namespace adaptor
+}
+}// namespace msgpack
+#endif
+#endif
+
+#ifdef _GLIBCXX_VECTOR
+#ifndef msgpack_GLIBCXX_VECTOR
+#define msgpack_GLIBCXX_VECTOR
+
+namespace dueca {
+namespace messagepack {
+struct msgpack_container_stretch;
+template <typename T> struct msgpack_visitor<std::vector<T>>
+{
+  typedef msgpack_container_stretch variant;
+};
+} // namespace messagepack
+} // namespace dueca
+
+namespace msgpack {
+/// @cond
+MSGPACK_API_VERSION_NAMESPACE(v1)
+{
+    /// @endcond
+  namespace adaptor {
+  template <typename T, typename Alloc>
+  struct pack<msgpack_dco_array<std::vector<T, Alloc>>>
+  {
+    template <typename Stream>
+    msgpack::packer<Stream> &
+    operator()(msgpack::packer<Stream> &o,
+               const msgpack_dco_array<std::vector<T, Alloc>> &v) const
+    {
+      uint32_t size = checked_get_container_size(v.size());
+      o.pack_array(size);
+      for (typename std::vector<T, Alloc>::const_iterator it(v.begin()),
+           it_end(v.end());
+           it != it_end; ++it) {
+        o.pack(dueca::messagepack::msgpack_visitor<T>::variant::mark_for_dco_msgpack(*it));
+      }
       return o;
     }
   };
@@ -292,30 +576,31 @@ MSGPACK_API_VERSION_NAMESPACE(v1) {
 #include <dueca_ns.h>
 
 #include "Dstring.hxx"
-#include <list>
-#include <map>
-#include <sstream>
 #include <string>
-#include <vector>
 
 #define DEBPRINTLEVEL -2
 #include <debprint.h>
 
+/** A generic non-marking call version for all non-DCO objects and non-containers */
+template <typename D> inline const D &mark_for_dco_msgpack(const D &obj)
+{
+  return obj;
+}
+
 /** @group Utilities for generated code */
-template <typename O> inline void pack_member_id_inmap(O &o, const char *mid) {
+template <typename O> inline void pack_member_id_inmap(O &o, const char *mid)
+{
   o.pack_str(strlen(mid));
   o.pack_str_body(mid, strlen(mid));
 }
-template <typename O>
-inline void pack_member_id_inarray(O &o, const char *mid) {}
+template <typename O> inline void pack_member_id_inarray(O &o, const char *mid)
+{}
 
 #ifdef MSGPACK_USE_DEFINE_MAP
 
 #define MSGPACK_PACK_MEMBER_ID pack_member_id_inmap
 /// Packing macro for use in DCO objects
 #define MSGPACK_DCO_OBJECT(N) o.pack_map((N))
-
-
 
 #else
 #define MSGPACK_PACK_MEMBER_ID pack_member_id_inarray
@@ -327,9 +612,8 @@ inline void pack_member_id_inarray(O &o, const char *mid) {}
   MSGPACK_PACK_MEMBER_ID(o, #A);                                               \
   o.pack(v.A);
 
-struct msgpack_variant_enum
-{
-};
+struct msgpack_variant_enum: msgpack_container_none
+{};
 #define MSGPACK_ADD_ENUM_VISITOR(A)                                            \
   namespace dueca {                                                            \
   namespace messagepack {                                                      \
@@ -337,8 +621,11 @@ struct msgpack_variant_enum
   struct UnpackVisitor<msgpack_variant_enum, A> : public VirtualVisitor        \
   {                                                                            \
     A &obj;                                                                    \
-    UnpackVisitor(A &obj) : obj(obj) {}                                        \
-    bool visit_positive_integer(uint64_t v) {                                  \
+    UnpackVisitor(A &obj) :                                                    \
+      obj(obj)                                                                 \
+    {}                                                                         \
+    bool visit_positive_integer(uint64_t v)                                    \
+    {                                                                          \
       obj = A(v);                                                              \
       return true;                                                             \
     }                                                                          \
@@ -354,7 +641,7 @@ DUECA_NS_START;
 namespace messagepack {
 struct VirtualVisitor;
 
-  /** DCO Visitor unpack mode */
+/** DCO Visitor unpack mode */
 enum class VVMode { Init, Map, Array, Exit };
 
 enum class MMode { Init, Key, Value, Exit };
@@ -386,86 +673,107 @@ namespace messagepack {
 struct VirtualVisitor
 {
 
-  virtual bool visit_nil() {
+  virtual bool visit_nil()
+  {
     DEB("X visit_nil");
     return false;
   }
-  virtual bool visit_boolean(bool v) {
+  virtual bool visit_boolean(bool v)
+  {
     DEB("X visit_boolean " << v);
     return false;
   }
-  virtual bool visit_positive_integer(uint64_t v) {
+  virtual bool visit_positive_integer(uint64_t v)
+  {
     DEB("X visit_positive_integer " << v);
     return false;
   }
-  virtual bool visit_negative_integer(int64_t v) {
+  virtual bool visit_negative_integer(int64_t v)
+  {
     DEB("X visit_negative_integer " << v);
     return false;
   }
-  virtual bool visit_float32(float v) {
+  virtual bool visit_float32(float v)
+  {
     DEB("X visit_float32 " << v);
     return false;
   }
-  virtual bool visit_float64(double v) {
+  virtual bool visit_float64(double v)
+  {
     DEB("X visit_float64 " << v);
     return false;
   }
-  virtual bool visit_str(const char *v, uint32_t size) {
+  virtual bool visit_str(const char *v, uint32_t size)
+  {
     DEB("X visit_str " << std::string().assign(v, size));
     return false;
   }
-  virtual bool visit_bin(const char *v, uint32_t size) {
+  virtual bool visit_bin(const char *v, uint32_t size)
+  {
     DEB("X visit_bin " << size);
     return false;
   }
-  virtual bool visit_ext(const char *v, uint32_t size) {
+  virtual bool visit_ext(const char *v, uint32_t size)
+  {
     DEB("X visit_ext " << size);
     return false;
   }
-  virtual bool start_array(uint32_t num_elements) {
+  virtual bool start_array(uint32_t num_elements)
+  {
     DEB("X start_array " << num_elements);
     return false;
   }
-  virtual bool start_array_item() {
+  virtual bool start_array_item()
+  {
     DEB("X start_array_item");
     return false;
   }
-  virtual bool end_array_item() {
+  virtual bool end_array_item()
+  {
     DEB("X end_array_item ");
     return false;
   }
-  virtual bool end_array() {
+  virtual bool end_array()
+  {
     DEB("X end_array ");
     return false;
   }
-  virtual bool start_map(uint32_t num_kv_pairs) {
+  virtual bool start_map(uint32_t num_kv_pairs)
+  {
     DEB("X start_map " << num_kv_pairs);
     return false;
   }
-  virtual bool start_map_key() {
+  virtual bool start_map_key()
+  {
     DEB("X start_map_key ");
     return false;
   }
-  virtual bool end_map_key() {
+  virtual bool end_map_key()
+  {
     DEB("X end_map_key ");
     return false;
   }
-  virtual bool start_map_value() {
+  virtual bool start_map_value()
+  {
     DEB("X start_map_value ");
     return false;
   }
-  virtual bool end_map_value() {
+  virtual bool end_map_value()
+  {
     DEB("X end_map_value ");
     return false;
   }
-  virtual bool end_map() {
+  virtual bool end_map()
+  {
     DEB("X end_map ");
     return false;
   }
-  virtual void parse_error(size_t parsed_offset, size_t error_offset) {
+  virtual void parse_error(size_t parsed_offset, size_t error_offset)
+  {
     DEB("X parse_error " << error_offset);
   }
-  virtual void insufficient_bytes(size_t parsed_offset, size_t error_offset) {
+  virtual void insufficient_bytes(size_t parsed_offset, size_t error_offset)
+  {
     DEB("X insufficient_bytes" << error_offset);
   }
 };
@@ -492,10 +800,17 @@ struct msgpack_excess_array_members : public std::exception
   const char *what() const noexcept;
 };
 
-/** Trait struct indicating undefined objects for msgpack */
-struct msgpack_variant_none
+/** Reading streamed data, but object size is now different */
+struct msgpack_object_changed_size : public std::exception
 {
+  std::string msg;
+  msgpack_object_changed_size(const char *dconame);
+  const char *what() const noexcept;
 };
+
+/** Trait struct indicating undefined objects for msgpack */
+struct msgpack_variant_none: public msgpack_container_none
+{};
 
 /** Detecting traits for visitor */
 template <typename C> struct msgpack_visitor
@@ -505,33 +820,39 @@ template <typename C> struct msgpack_visitor
 
 /** base struct for DCO-based visitors */
 template <typename VAR, typename DCO> struct UnpackVisitor
-{
-};
+{};
 
-struct msgpack_variant_float32
-{
-};
+struct msgpack_variant_float32: public msgpack_container_none
+{};
 template <typename T>
 struct UnpackVisitor<msgpack_variant_float32, T> : public VirtualVisitor
 {
   T &obj;
-  UnpackVisitor(T &obj) : obj(obj) { DEB2("visitof float32 constructor"); }
-  bool visit_float32(float v) {
+  UnpackVisitor(T &obj) :
+    obj(obj)
+  {
+    DEB2("visitof float32 constructor");
+  }
+  bool visit_float32(float v)
+  {
     DEB("F visit_float32, v=" << v);
     obj = v;
     return true;
   }
-  virtual bool visit_float64(double v) {
+  virtual bool visit_float64(double v)
+  {
     DEB("F visit_float64 " << v);
     obj = float(v);
     return true;
   }
-  virtual bool visit_positive_integer(uint64_t v) {
+  virtual bool visit_positive_integer(uint64_t v)
+  {
     DEB("F visit_positive_integer " << v);
     obj = float(v);
     return true;
   }
-  virtual bool visit_negative_integer(int64_t v) {
+  virtual bool visit_negative_integer(int64_t v)
+  {
     DEB("F visit_negative_integer " << v);
     obj = float(v);
     return true;
@@ -543,30 +864,37 @@ template <> struct msgpack_visitor<float>
   typedef msgpack_variant_float32 variant;
 };
 
-struct msgpack_variant_float64
-{
-};
+struct msgpack_variant_float64: public msgpack_container_none
+{};
 template <typename T>
 struct UnpackVisitor<msgpack_variant_float64, T> : public VirtualVisitor
 {
   double &obj;
-  UnpackVisitor(double &obj) : obj(obj) { DEB2("visitof float64 constructor"); }
-  bool visit_float32(float v) {
+  UnpackVisitor(double &obj) :
+    obj(obj)
+  {
+    DEB2("visitof float64 constructor");
+  }
+  bool visit_float32(float v)
+  {
     DEB("D visit_float32, v=" << v);
     obj = double(v);
     return true;
   }
-  bool visit_float64(double v) {
+  bool visit_float64(double v)
+  {
     DEB("D visit_float64, v=" << v);
     obj = v;
     return true;
   }
-  virtual bool visit_positive_integer(uint64_t v) {
+  virtual bool visit_positive_integer(uint64_t v)
+  {
     DEB("D visit_positive_integer " << v);
     obj = double(v);
     return true;
   }
-  virtual bool visit_negative_integer(int64_t v) {
+  virtual bool visit_negative_integer(int64_t v)
+  {
     DEB("D visit_negative_integer " << v);
     obj = double(v);
     return true;
@@ -578,20 +906,25 @@ template <> struct msgpack_visitor<double>
   typedef msgpack_variant_float64 variant;
 };
 
-struct msgpack_variant_signed
-{
-};
+struct msgpack_variant_signed: public msgpack_container_none
+{};
 template <typename T>
 struct UnpackVisitor<msgpack_variant_signed, T> : public VirtualVisitor
 {
   T &obj;
-  UnpackVisitor(T &obj) : obj(obj) { DEB2("visitof int64 constructor"); }
-  bool visit_positive_integer(uint64_t v) {
+  UnpackVisitor(T &obj) :
+    obj(obj)
+  {
+    DEB2("visitof int64 constructor");
+  }
+  bool visit_positive_integer(uint64_t v)
+  {
     DEB("I visit_positive_integer, v=" << v);
     obj = v;
     return true;
   }
-  bool visit_negative_integer(int64_t v) {
+  bool visit_negative_integer(int64_t v)
+  {
     DEB("I visit_negative_integer, v=" << v);
     obj = v;
     return true;
@@ -615,15 +948,19 @@ template <> struct msgpack_visitor<int64_t>
   typedef msgpack_variant_signed variant;
 };
 
-struct msgpack_variant_unsigned
-{
-};
+struct msgpack_variant_unsigned: public msgpack_container_none
+{};
 template <typename T>
 struct UnpackVisitor<msgpack_variant_unsigned, T> : public VirtualVisitor
 {
   T &obj;
-  UnpackVisitor(T &obj) : obj(obj) { DEB2("visitof uint64 constructor"); }
-  bool visit_positive_integer(uint64_t v) {
+  UnpackVisitor(T &obj) :
+    obj(obj)
+  {
+    DEB2("visitof uint64 constructor");
+  }
+  bool visit_positive_integer(uint64_t v)
+  {
     DEB("U visit_positive_integer, v=" << v);
     obj = v;
     return true;
@@ -647,15 +984,19 @@ template <> struct msgpack_visitor<uint64_t>
   typedef msgpack_variant_unsigned variant;
 };
 
-struct msgpack_variant_bool
-{
-};
+struct msgpack_variant_bool: public msgpack_container_none
+{};
 template <typename T>
 struct UnpackVisitor<msgpack_variant_bool, T> : public VirtualVisitor
 {
   T &obj;
-  UnpackVisitor(T &obj) : obj(obj) { DEB2("visitof bool constructor"); }
-  bool visit_boolean(bool v) {
+  UnpackVisitor(T &obj) :
+    obj(obj)
+  {
+    DEB2("visitof bool constructor");
+  }
+  bool visit_boolean(bool v)
+  {
     DEB("U visit_boolean, v=" << v);
     obj = v;
     return true;
@@ -667,15 +1008,19 @@ template <> struct msgpack_visitor<bool>
   typedef msgpack_variant_bool variant;
 };
 
-struct msgpack_variant_string
-{
-};
+struct msgpack_variant_string: public msgpack_container_none
+{};
 template <typename T>
 struct UnpackVisitor<msgpack_variant_string, T> : public VirtualVisitor
 {
   T &obj;
-  UnpackVisitor(T &obj) : obj(obj) { DEB2("visitof string constructor"); }
-  bool visit_str(const char *v, uint32_t size) {
+  UnpackVisitor(T &obj) :
+    obj(obj)
+  {
+    DEB2("visitof string constructor");
+  }
+  bool visit_str(const char *v, uint32_t size)
+  {
     DEB("S visit_str, v=" << std::string().assign(v, size));
     obj.assign(v, size);
     return true;
@@ -696,78 +1041,96 @@ template <typename A> struct UnpackVisitorArray : public VirtualVisitor
   A &obj;
   typename A::value_type elt;
   typedef UnpackVisitor<
-      typename msgpack_visitor<typename A::value_type>::variant,
-      typename A::value_type>
-      nested_type;
+    typename msgpack_visitor<typename A::value_type>::variant,
+    typename A::value_type>
+    nested_type;
   nested_type nest;
   int depth;
-  UnpackVisitorArray(A &obj) : obj(obj), elt(), nest(elt), depth(-1) {
+  UnpackVisitorArray(A &obj) :
+    obj(obj),
+    elt(),
+    nest(elt),
+    depth(-1)
+  {
     DEB3("visitof array constructor");
   }
 
   bool visit_nil() { return nest.visit_nil(); }
   bool visit_boolean(bool v) { return nest.visit_boolean(v); }
-  bool visit_positive_integer(uint64_t v) {
+  bool visit_positive_integer(uint64_t v)
+  {
     return nest.visit_positive_integer(v);
   }
-  bool visit_negative_integer(int64_t v) {
+  bool visit_negative_integer(int64_t v)
+  {
     return nest.visit_negative_integer(v);
   }
   bool visit_float32(float v) { return nest.visit_float32(v); }
   bool visit_float64(double v) { return nest.visit_float64(v); }
-  bool visit_str(const char *v, uint32_t size) {
+  bool visit_str(const char *v, uint32_t size)
+  {
     return nest.visit_str(v, size);
   }
-  bool visit_bin(const char *v, uint32_t size) {
+  bool visit_bin(const char *v, uint32_t size)
+  {
     return nest.visit_bin(v, size);
   }
-  bool visit_ext(const char *v, uint32_t size) {
+  bool visit_ext(const char *v, uint32_t size)
+  {
     return nest.visit_ext(v, size);
   }
 
-  bool end_array_item() {
+  bool end_array_item()
+  {
     DEB1("a end_array_item, depth=" << depth);
     if (depth)
       return nest.end_array_item();
     DEB("a end_array_item, item complete");
     return true;
   }
-  bool end_array() {
+  bool end_array()
+  {
     DEB1("a end_array, depth=" << depth);
     if (depth--)
       nest.end_array();
     DEB("a end_array, complete");
     return true;
   }
-  bool start_map(uint32_t num_kv_pairs) {
+  bool start_map(uint32_t num_kv_pairs)
+  {
     DEB1("a start_map, depth=" << depth);
     return nest.start_map(num_kv_pairs);
   }
-  bool start_map_key() {
+  bool start_map_key()
+  {
     DEB1("a start_map_key, depth=" << depth);
     return nest.start_map_key();
   }
-  bool end_map_key() {
+  bool end_map_key()
+  {
     DEB1("a end_map_key, depth=" << depth);
     return nest.end_map_key();
   }
-  bool start_map_value() {
+  bool start_map_value()
+  {
     DEB1("a start_map_value, depth=" << depth);
     return nest.start_map_value();
   }
-  bool end_map_value() {
+  bool end_map_value()
+  {
     DEB1("a end_map_value, depth=" << depth);
     return nest.end_map_value();
   }
-  bool end_map() {
+  bool end_map()
+  {
     DEB1("a end_map, depth=" << depth);
     return nest.end_map();
   }
 };
 
-struct msgpack_container_fix
-{
-};
+struct msgpack_container_fix: public msgpack_container_base
+{};
+
 template <typename A>
 struct UnpackVisitor<msgpack_container_fix, A> : public UnpackVisitorArray<A>
 {
@@ -776,11 +1139,15 @@ struct UnpackVisitor<msgpack_container_fix, A> : public UnpackVisitorArray<A>
   using UnpackVisitorArray<A>::obj;
 
   unsigned idx;
-  UnpackVisitor(A &obj) : UnpackVisitorArray<A>(obj), idx(0U) {
+  UnpackVisitor(A &obj) :
+    UnpackVisitorArray<A>(obj),
+    idx(0U)
+  {
     DEB2("visitof fixarray constructor");
   }
 
-  bool start_array(uint32_t num_elements) {
+  bool start_array(uint32_t num_elements)
+  {
     DEB1("F start_array, depth=" << depth);
     if (++this->depth)
       return nest.start_array(num_elements);
@@ -789,34 +1156,38 @@ struct UnpackVisitor<msgpack_container_fix, A> : public UnpackVisitorArray<A>
     obj.resize(num_elements);
     return true;
   }
-  bool start_array_item() {
+  bool start_array_item()
+  {
     DEB1("F start_array_item, depth=" << depth);
     if (depth)
       return nest.start_array_item();
     DEB("F start_array_item, selecting #" << idx);
     new (reinterpret_cast<unsigned char *>(&nest))
-        typename UnpackVisitorArray<A>::nested_type(obj[idx++]);
+      typename UnpackVisitorArray<A>::nested_type(obj[idx++]);
     return true;
   }
 };
 
-struct msgpack_container_fix_default
-{
-};
+struct msgpack_container_fix_default: public msgpack_container_base
+{};
 template <typename A>
-struct UnpackVisitor<msgpack_container_fix_default, A>
-    : public UnpackVisitorArray<A>
+struct UnpackVisitor<msgpack_container_fix_default, A> :
+  public UnpackVisitorArray<A>
 {
   using UnpackVisitorArray<A>::depth;
   using UnpackVisitorArray<A>::nest;
   using UnpackVisitorArray<A>::obj;
 
   unsigned idx;
-  UnpackVisitor(A &obj) : UnpackVisitorArray<A>(obj), idx(0U) {
+  UnpackVisitor(A &obj) :
+    UnpackVisitorArray<A>(obj),
+    idx(0U)
+  {
     DEB2("visitof fixarray constructor");
   }
 
-  bool start_array(uint32_t num_elements) {
+  bool start_array(uint32_t num_elements)
+  {
     DEB1("F start_array, depth=" << depth);
     if (++this->depth)
       return nest.start_array(num_elements);
@@ -825,19 +1196,21 @@ struct UnpackVisitor<msgpack_container_fix_default, A>
     obj.resize(num_elements);
     return true;
   }
-  bool start_array_item() {
+  bool start_array_item()
+  {
     DEB1("F start_array_item, depth=" << depth);
     if (depth)
       return nest.start_array_item();
     DEB("F start_array_item, selecting #" << idx);
     new (reinterpret_cast<unsigned char *>(&nest))
-        typename UnpackVisitorArray<A>::nested_type(obj[idx++]);
+      typename UnpackVisitorArray<A>::nested_type(obj[idx++]);
     return true;
   }
 
   /** Callback for a NULL/NIL/None value, in this case clears the list.
       @return true, always */
-  bool visit_nil() {
+  bool visit_nil()
+  {
     DEB1("L visit nil, depth=" << depth);
     if (depth > 0)
       return nest.visit_nil();
@@ -846,27 +1219,30 @@ struct UnpackVisitor<msgpack_container_fix_default, A>
   }
 };
 
-struct msgpack_container_push
-{
-};
+struct msgpack_container_push: public msgpack_container_base
+{};
 template <typename A>
 struct UnpackVisitor<msgpack_container_push, A> : public UnpackVisitorArray<A>
 {
   using UnpackVisitorArray<A>::depth;
   using UnpackVisitorArray<A>::nest;
   using UnpackVisitorArray<A>::obj;
-  UnpackVisitor(A &obj) : UnpackVisitorArray<A>(obj) {
+  UnpackVisitor(A &obj) :
+    UnpackVisitorArray<A>(obj)
+  {
     DEB2("visitof list constructor");
   }
 
-  bool start_array(uint32_t num_elements) {
+  bool start_array(uint32_t num_elements)
+  {
     DEB1("L start_array, depth=" << depth);
     if (++depth)
       return nest.start_array(num_elements);
     DEB("L start_array, initial array");
     return true;
   }
-  bool start_array_item() {
+  bool start_array_item()
+  {
     DEB1("L start_array_item, depth=" << depth);
     if (depth)
       return nest.start_array_item();
@@ -879,7 +1255,8 @@ struct UnpackVisitor<msgpack_container_push, A> : public UnpackVisitorArray<A>
 
   /** Callback for a NULL/NIL/None value, in this case clears the list.
       @return true, always */
-  bool visit_nil() {
+  bool visit_nil()
+  {
     DEB1("L visit nil, depth=" << depth);
     if (depth > 0) {
       nest.visit_nil();
@@ -891,30 +1268,28 @@ struct UnpackVisitor<msgpack_container_push, A> : public UnpackVisitorArray<A>
   }
 };
 
-template <typename T> struct msgpack_visitor<std::list<T>>
-{
-  typedef msgpack_container_push variant;
-};
-
 /** Containers that can be stretched (resize), when size is known */
-struct msgpack_container_stretch
-{
-};
+struct msgpack_container_stretch: public msgpack_container_base
+{};
 
 /** Visitor for containers that are resized when the size is known */
 template <typename A>
-struct UnpackVisitor<msgpack_container_stretch, A>
-    : public UnpackVisitorArray<A>
+struct UnpackVisitor<msgpack_container_stretch, A> :
+  public UnpackVisitorArray<A>
 {
   using UnpackVisitorArray<A>::depth;
   using UnpackVisitorArray<A>::nest;
   using UnpackVisitorArray<A>::obj;
   unsigned idx;
-  UnpackVisitor(A &obj) : UnpackVisitorArray<A>(obj), idx(0) {
+  UnpackVisitor(A &obj) :
+    UnpackVisitorArray<A>(obj),
+    idx(0)
+  {
     DEB2("visitof vector constructor");
   }
 
-  bool start_array(uint32_t num_elements) {
+  bool start_array(uint32_t num_elements)
+  {
     DEB1("Y start_array, depth=" << depth);
     if (++this->depth)
       return nest.start_array(num_elements);
@@ -931,19 +1306,21 @@ struct UnpackVisitor<msgpack_container_stretch, A>
 
       @return true, or nested result
   */
-  bool start_array_item() {
+  bool start_array_item()
+  {
     DEB1("Y start_array_item, depth=" << depth);
     if (depth)
       return nest.start_array_item();
     DEB("Y start_array_item, adding item " << obj.size());
     new (reinterpret_cast<unsigned char *>(&nest))
-        typename UnpackVisitorArray<A>::nested_type(obj[idx++]);
+      typename UnpackVisitorArray<A>::nested_type(obj[idx++]);
     return true;
   }
 
   /** Callback for a NULL/NIL/None value, in this case clears the list.
       @return true, always */
-  bool visit_nil() {
+  bool visit_nil()
+  {
     DEB1("Y visit nil, depth=" << depth);
     if (depth > 0) {
       nest.visit_nil();
@@ -955,37 +1332,37 @@ struct UnpackVisitor<msgpack_container_stretch, A>
   }
 };
 
-template <typename T> struct msgpack_visitor<std::vector<T>>
-{
-  typedef msgpack_container_stretch variant;
-};
-
-struct msgpack_container_optional
-{
-};
+struct msgpack_container_optional: public msgpack_container_base
+{};
 template <typename A>
 struct UnpackVisitor<msgpack_container_optional, A> : public VirtualVisitor
 {
   A &obj;
   typedef UnpackVisitor<
-      typename msgpack_visitor<typename A::value_type>::variant,
-      typename A::value_type>
-      nested_type;
+    typename msgpack_visitor<typename A::value_type>::variant,
+    typename A::value_type>
+    nested_type;
   nested_type nest;
   VVMode mode;
 
 private:
-  void check_nest(const char *op) {
+  void check_nest(const char *op)
+  {
     if (mode == VVMode::Exit)
       throw msgpack_obj_mode_mismatch(op, mode);
   }
 
 public:
-  UnpackVisitor(A &obj) : obj(obj), nest(obj.value), mode(VVMode::Init) {
+  UnpackVisitor(A &obj) :
+    obj(obj),
+    nest(obj.value),
+    mode(VVMode::Init)
+  {
     DEB2("visitof optional constructor");
   }
 
-  bool visit_nil() {
+  bool visit_nil()
+  {
     DEB("O visit_nil");
     if (mode == VVMode::Init) {
       obj.valid = false;
@@ -995,101 +1372,121 @@ public:
     throw msgpack_obj_mode_mismatch("O nil", mode);
   }
 
-  bool visit_boolean(bool v) {
+  bool visit_boolean(bool v)
+  {
     DEB("O visit_boolean " << v);
     check_nest("O visit_boolean");
     return nest.visit_boolean(v);
   }
 
-  bool visit_positive_integer(uint64_t v) {
+  bool visit_positive_integer(uint64_t v)
+  {
     DEB("O visit_positive_integer " << v);
     check_nest("O visit_positive_integet");
     return nest.visit_positive_integer(v);
   }
-  bool visit_negative_integer(int64_t v) {
+  bool visit_negative_integer(int64_t v)
+  {
     DEB("O visit_negative_integer " << v);
     check_nest("O visit_negative_integer");
     return nest.visit_negative_integer(v);
   }
-  bool visit_float32(float v) {
+  bool visit_float32(float v)
+  {
     DEB("O visit_float32 " << v);
     check_nest("O visit_float32");
     return nest.visit_float32(v);
   }
-  bool visit_float64(double v) {
+  bool visit_float64(double v)
+  {
     DEB("O visit_float64 " << v);
     check_nest("O visit_float64");
     return nest.visit_float64(v);
   }
-  bool visit_str(const char *v, uint32_t size) {
+  bool visit_str(const char *v, uint32_t size)
+  {
     DEB("O visit_str " << std::string().assign(v, size));
     check_nest("O visit_str");
     return nest.visit_str(v, size);
   }
-  bool visit_bin(const char *v, uint32_t size) {
+  bool visit_bin(const char *v, uint32_t size)
+  {
     DEB("O visit_bin " << size);
     check_nest("O visit_bin");
     return nest.visit_bin(v, size);
   }
-  bool visit_ext(const char *v, uint32_t size) {
+  bool visit_ext(const char *v, uint32_t size)
+  {
     DEB("O visit_ext " << size);
     check_nest("O visit_ext");
     return nest.visit_ext(v, size);
   }
-  bool start_array(uint32_t num_elements) {
+  bool start_array(uint32_t num_elements)
+  {
     DEB("O start_array " << num_elements);
     check_nest("O start_array");
     return nest.start_array(num_elements);
   }
-  bool start_array_item() {
+  bool start_array_item()
+  {
     DEB("O start_array_item");
     check_nest("O start_array_item");
     return nest.start_array_item();
   }
-  bool end_array_item() {
+  bool end_array_item()
+  {
     DEB("O end_array_item ");
     check_nest("O end_array_item");
     return nest.end_array_item();
   }
-  bool end_array() {
+  bool end_array()
+  {
     DEB("O end_array ");
     check_nest("O end_array");
     return nest.end_array();
   }
-  bool start_map(uint32_t num_kv_pairs) {
+  bool start_map(uint32_t num_kv_pairs)
+  {
     DEB("O start_map " << num_kv_pairs);
     check_nest("O start_map");
     return nest.start_map(num_kv_pairs);
   }
-  bool start_map_key() {
+  bool start_map_key()
+  {
     DEB("O start_map_key ");
     check_nest("O start_map_key");
     return nest.start_map_key();
   }
-  bool end_map_key() {
+  bool end_map_key()
+  {
     DEB("O end_map_key ");
     check_nest("O end_map_key");
     return nest.end_map_key();
   }
-  bool start_map_value() {
+  bool start_map_value()
+  {
     DEB("O start_map_value ");
     check_nest("O start_map_value");
     return nest.start_map_value();
   }
-  bool end_map_value() {
+  bool end_map_value()
+  {
     DEB("O end_map_value ");
     check_nest("O end_map_value");
     return nest.end_map_value();
   }
-  bool end_map() {
+  bool end_map()
+  {
     DEB("O end_map ");
     check_nest("O end_map");
     return nest.end_map();
   }
-  void parse_error(size_t parsed_offset, size_t error_offset) {
+  void parse_error(size_t parsed_offset, size_t error_offset)
+  {
     DEB("O parse_error " << error_offset);
   }
-  void insufficient_bytes(size_t parsed_offset, size_t error_offset) {
+  void insufficient_bytes(size_t parsed_offset, size_t error_offset)
+  {
     DEB("O insufficient_bytes" << error_offset);
   }
 };
@@ -1114,13 +1511,13 @@ template <typename A> struct UnpackVisitorMap : public VirtualVisitor
   /** Nested visitor type for unpacking the key */
   typedef UnpackVisitor<typename msgpack_visitor<typename A::key_type>::variant,
                         typename A::key_type>
-      nested_key_type;
+    nested_key_type;
 
   /** Nested visitor type for unpacking the mapped value */
   typedef UnpackVisitor<
-      typename msgpack_visitor<typename A::mapped_type>::variant,
-      typename A::mapped_type>
-      nested_type;
+    typename msgpack_visitor<typename A::mapped_type>::variant,
+    typename A::mapped_type>
+    nested_type;
 
   /** The nested visitor for the key */
   nested_key_type nest_key;
@@ -1141,13 +1538,20 @@ template <typename A> struct UnpackVisitorMap : public VirtualVisitor
 
       @param obj   Map-like object
   */
-  UnpackVisitorMap(A &obj)
-      : obj(obj), key(), val(), nest_key(key), nest_val(val), depth(-1),
-        mode(MMode::Init) {
+  UnpackVisitorMap(A &obj) :
+    obj(obj),
+    key(),
+    val(),
+    nest_key(key),
+    nest_val(val),
+    depth(-1),
+    mode(MMode::Init)
+  {
     DEB2("visitof map constructor");
   }
 
-  bool visit_nil() {
+  bool visit_nil()
+  {
     DEB1("m visit_nil, depth=" << depth << " mode=" << mode);
     switch (mode) {
     case MMode::Key:
@@ -1161,7 +1565,8 @@ template <typename A> struct UnpackVisitorMap : public VirtualVisitor
       return false;
     }
   }
-  bool visit_boolean(bool v) {
+  bool visit_boolean(bool v)
+  {
     DEB1("m visit_boolean, depth=" << depth << " mode=" << mode);
     switch (mode) {
     case MMode::Key:
@@ -1172,7 +1577,8 @@ template <typename A> struct UnpackVisitorMap : public VirtualVisitor
       return false;
     }
   }
-  bool visit_positive_integer(uint64_t v) {
+  bool visit_positive_integer(uint64_t v)
+  {
     DEB1("m visit_positive_integer, depth=" << depth << " mode=" << mode);
     switch (mode) {
     case MMode::Key:
@@ -1183,7 +1589,8 @@ template <typename A> struct UnpackVisitorMap : public VirtualVisitor
       return false;
     }
   }
-  bool visit_negative_integer(int64_t v) {
+  bool visit_negative_integer(int64_t v)
+  {
     DEB1("m visit_negative_integer, depth=" << depth << " mode=" << mode);
     switch (mode) {
     case MMode::Key:
@@ -1194,7 +1601,8 @@ template <typename A> struct UnpackVisitorMap : public VirtualVisitor
       return false;
     }
   }
-  bool visit_float32(float v) {
+  bool visit_float32(float v)
+  {
     DEB1("m visit_float32, depth=" << depth << " mode=" << mode);
     switch (mode) {
     case MMode::Key:
@@ -1205,7 +1613,8 @@ template <typename A> struct UnpackVisitorMap : public VirtualVisitor
       return false;
     }
   }
-  bool visit_float64(double v) {
+  bool visit_float64(double v)
+  {
     DEB1("m visit_float64, depth=" << depth << " mode=" << mode);
     switch (mode) {
     case MMode::Key:
@@ -1216,7 +1625,8 @@ template <typename A> struct UnpackVisitorMap : public VirtualVisitor
       return false;
     }
   }
-  bool visit_str(const char *v, uint32_t size) {
+  bool visit_str(const char *v, uint32_t size)
+  {
     DEB1("m visit_str, depth=" << depth << " mode=" << mode);
     switch (mode) {
     case MMode::Key:
@@ -1227,7 +1637,8 @@ template <typename A> struct UnpackVisitorMap : public VirtualVisitor
       return false;
     }
   }
-  bool visit_bin(const char *v, uint32_t size) {
+  bool visit_bin(const char *v, uint32_t size)
+  {
     DEB1("m visit_bin, depth=" << depth << " mode=" << mode);
     switch (mode) {
     case MMode::Key:
@@ -1238,7 +1649,8 @@ template <typename A> struct UnpackVisitorMap : public VirtualVisitor
       return false;
     }
   }
-  bool visit_ext(const char *v, uint32_t size) {
+  bool visit_ext(const char *v, uint32_t size)
+  {
     DEB1("m visit_ext, depth=" << depth << " mode=" << mode);
     switch (mode) {
     case MMode::Key:
@@ -1249,7 +1661,8 @@ template <typename A> struct UnpackVisitorMap : public VirtualVisitor
       return false;
     }
   }
-  bool start_array(uint32_t num_elements) {
+  bool start_array(uint32_t num_elements)
+  {
     DEB1("m start_array, depth=" << depth << " mode=" << mode);
     switch (mode) {
     case MMode::Key:
@@ -1260,7 +1673,8 @@ template <typename A> struct UnpackVisitorMap : public VirtualVisitor
       return false;
     }
   }
-  bool start_array_item() {
+  bool start_array_item()
+  {
     DEB1("m start_array_item, depth=" << depth << " mode=" << mode);
     switch (mode) {
     case MMode::Key:
@@ -1271,7 +1685,8 @@ template <typename A> struct UnpackVisitorMap : public VirtualVisitor
       return false;
     }
   }
-  bool end_array_item() {
+  bool end_array_item()
+  {
     DEB1("m end_array_item, depth=" << depth << " mode=" << mode);
     switch (mode) {
     case MMode::Key:
@@ -1282,7 +1697,8 @@ template <typename A> struct UnpackVisitorMap : public VirtualVisitor
       return false;
     }
   }
-  bool end_array() {
+  bool end_array()
+  {
     DEB1("m end_array, depth=" << depth << " mode=" << mode);
     switch (mode) {
     case MMode::Key:
@@ -1293,7 +1709,8 @@ template <typename A> struct UnpackVisitorMap : public VirtualVisitor
       return false;
     }
   }
-  bool start_map(uint32_t num_kv_pairs) {
+  bool start_map(uint32_t num_kv_pairs)
+  {
     DEB1("m start_map, depth=" << depth << " mode=" << mode);
     if (++depth) {
       switch (mode) {
@@ -1308,7 +1725,8 @@ template <typename A> struct UnpackVisitorMap : public VirtualVisitor
     DEB("m start_map ->Init");
     return mode == MMode::Init;
   }
-  bool start_map_key() {
+  bool start_map_key()
+  {
     DEB1("m start_map_key, depth=" << depth << " mode=" << mode);
     switch (mode) {
     case MMode::Init:
@@ -1326,7 +1744,8 @@ template <typename A> struct UnpackVisitorMap : public VirtualVisitor
       return false;
     }
   }
-  bool end_map_key() {
+  bool end_map_key()
+  {
     DEB1("m end_map_key, depth=" << depth << " mode=" << mode);
     switch (mode) {
     case MMode::Key:
@@ -1341,7 +1760,8 @@ template <typename A> struct UnpackVisitorMap : public VirtualVisitor
       return false;
     }
   }
-  bool start_map_value() {
+  bool start_map_value()
+  {
     DEB1("m start_map_value, depth=" << depth << " mode=" << mode);
     switch (mode) {
     case MMode::Key:
@@ -1355,7 +1775,8 @@ template <typename A> struct UnpackVisitorMap : public VirtualVisitor
       return false;
     }
   }
-  bool end_map_value() {
+  bool end_map_value()
+  {
     DEB1("m end_map_value, depth=" << depth << " mode=" << mode);
     switch (mode) {
     case MMode::Key:
@@ -1378,7 +1799,8 @@ template <typename A> struct UnpackVisitorMap : public VirtualVisitor
       return false;
     }
   }
-  bool end_map() {
+  bool end_map()
+  {
     DEB1("m end_map, depth=" << depth << " mode=" << mode);
     if (--depth < 0) {
       DEB("m end_map, to Exit");
@@ -1396,18 +1818,14 @@ template <typename A> struct UnpackVisitorMap : public VirtualVisitor
   }
 };
 
-struct msgpack_container_map
-{
-};
+struct msgpack_container_map: public msgpack_container_base
+{};
 template <typename A>
 struct UnpackVisitor<msgpack_container_map, A> : public UnpackVisitorMap<A>
 {
-  UnpackVisitor(A &obj) : UnpackVisitorMap<A>(obj) {}
-};
-
-template <typename K, typename T> struct msgpack_visitor<std::map<K, T>>
-{
-  typedef msgpack_container_map variant;
+  UnpackVisitor(A &obj) :
+    UnpackVisitorMap<A>(obj)
+  {}
 };
 
 /** Base unpack visitor for DCO objects. */
@@ -1489,9 +1907,8 @@ struct GobbleVisitor : public VirtualVisitor
   VirtualVisitor *missingMember(const char *name);
 };
 
-struct msgpack_container_dco
-{
-};
+struct msgpack_container_dco: public msgpack_container_base
+{};
 
 } // namespace messagepack
 DUECA_NS_END;
@@ -1499,17 +1916,18 @@ DUECA_NS_END;
 // support for packing adaptors of DUECA containers
 namespace msgpack {
 /// @cond
-MSGPACK_API_VERSION_NAMESPACE(v1) {
-/// @endcond
+MSGPACK_API_VERSION_NAMESPACE(v1)
+{
+  /// @endcond
   namespace adaptor {
 
-/** packing adaptor for Dstring */
+  /** packing adaptor for Dstring */
   template <unsigned mxsize> struct pack<dueca::Dstring<mxsize>>
   {
     template <typename Stream>
-    ::msgpack::packer<Stream> &
-    operator()(::msgpack::packer<Stream> &o,
-               const dueca::Dstring<mxsize> &v) const {
+    ::msgpack::packer<Stream> &operator()(::msgpack::packer<Stream> &o,
+                                          const dueca::Dstring<mxsize> &v) const
+    {
       uint32_t size = checked_get_container_size(v.size());
       o.pack_str(size);
       o.pack_str_body(v.data(), size);

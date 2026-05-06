@@ -118,7 +118,7 @@ public:
     std::vector<int64_t> offset;
 
     /** Within-block offsets of the different streams. */
-    std::vector<int32_t> inblock_offset;
+    std::vector<uint32_t> inblock_offset;
 
     /** Generation cycle for the tag, basically a recording number */
     unsigned cycle;

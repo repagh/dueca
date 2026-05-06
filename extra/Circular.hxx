@@ -17,7 +17,6 @@
 
 #include "SimpleFunction.hxx"
 #include <dueca_ns.h>
-#include <limits>
 #include <iostream>
 
 DUECA_NS_START
@@ -26,12 +25,13 @@ DUECA_NS_START
 /** Implementation of a rotary scaling/converting device, using a
     simple gain. This class is a functor, with a double as input and
     another double as output. The application for this in DUECA is as
-    an input calibrator for IO signals, see also the InputCalibrator
+    an input calibrator for IO signals that can wrap around in angle,
+    such as syncrho devices. See also the InputCalibrator
     and OutputCalibrator documentation.
 
     Implements function
     \f[
-    y(x) = R * ( \frac{K}{x-x_0} ) + n * R
+    y(x) = R * ( \frac{K}{x-i_0} ) + n * R
     \f]
 
     Here the integer \f$n\f$ is adjusted so that the function's output
@@ -40,7 +40,7 @@ DUECA_NS_START
     How to calibrate:
 
     * Determine the input value for which your parameter is zero, set
-      \f$ x_0 \f$ to this value
+      \f$ i_0 \f$ to this value
 
     * Determine the range of input values and set \f$ K \f$ to its inverse,
       e.g., if the range is \f$ 2^{12} \f$, then
@@ -51,9 +51,8 @@ DUECA_NS_START
 
     * Determine where you want to "start" the output, e.g.,
       \f$ y_{start}  = -180 \f$ means you will get outputs from -180
-      to 180, with \f$ y_{start}  = 0 \f$ the output will be 0 to
+      to 180, with \f$ y_{start} = 0 \f$ the output will be 0 to
       360.
-
 */
 class Circular: public SimpleFunction
 {
@@ -72,12 +71,12 @@ class Circular: public SimpleFunction
 public:
   /** Constructor.
       @param  K       Gain coefficient, 1.0/(increments in full rotation)
-      @param  xzero   Input value when angle is zero (normally integer)
+      @param  izero   Input value when angle is zero (normally integer)
       @param  range   Range that the value is to be scaled to, e.g. 360
                       degrees or \f$2\pi\f$
       @param  ystart  Start value of the output range, for exaple 0, -180, etc.
   */
-  Circular(double K, double xzero, double range, double ystart);
+  Circular(double K, double izero, double range, double ystart);
 
   /** Destructor. */
   ~Circular();
@@ -97,4 +96,3 @@ inline std::ostream& operator << (std::ostream& os,
 { return o.print(os); }
 
 #endif
-

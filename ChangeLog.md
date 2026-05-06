@@ -2,6 +2,58 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
+## [4.2.8] - 2023-05-01
+
+### Changed
+
+- Clean up and better comments dueca-gproject.
+- New dependency on fmt-devel, instead of boost/format.hpp
+- Fix a dueca-gconfig behaviour on new projects, for checking clean remote.
+- Fix new module templates, first include comm-objects.h
+- Limit the messages on DDFFLogger, when started with immediate-start.
+- Fix the timing on snapshot collection.
+- Correct the replay in the state machine for HardwareModule
+- Change DDFF/msgpack packing and unpacking, to unpack/pack DCO's as either
+  object or array. Using a template flag to recursively mark the packing strategy
+- Change loading the button images for gtk3 Dueca interface, use png instead of
+  xpm. Solves a new problem where button images would not show on Fedora 43
+- Adjust/redo the runtest scripts, because the DUECA window layout changed due
+  to the different buttons.
+- Use opencv in the testrunner.py script to be able to find pieces of the
+  interface, and adjust movements accordingly.
+- Fix an invalid cast to widget for an GtkTreeSelection object in the initial
+  states interface.
+- Use the new svg/png-based icons for gtk3 DUECA interface
+
+### Added
+
+- Some more documentation on replay recorder.
+- A new doc page on ddff logging, record and replay.
+- Package build config for Ubuntu 26.04, move away for cdbs.
+- Add tests for PolynomialN, Steps, Circular, CircularWithPoly from extra.
+- Option to use multiple files in button or word recognition for the test runner.
+
+### Removed
+
+- The gtk2 interface is not available for Ubuntu 26.04 and Debian 13
+
+## [4.2.7] - 2026-03-25
+
+### Changed
+
+- Fix test case for replay with gtk4
+- Correct offset calculation for runtest generation
+- Build python packages on ubuntu 22.04 with old setup.py
+- Clean up and add comments to dueca-gproject script
+- Use {fmt} instead of boost::format
+
+### Added
+
+- Enable batch conversion with `ddff-convert`
+- Test case for ddff-convert multiple file conversion
+- Possibility to edit an initial state set (gtk3+4)
+- Documentation on editing initial state
+
 ## [4.2.6] - 2026-03-14
 
 ### Changed

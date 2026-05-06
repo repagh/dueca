@@ -88,4 +88,24 @@ void gtk_dueca_emergency_load_image(GtkWidget *btn, unsigned imno)
   gtk_picture_set_paintable(img, emergency_icons[imno]);
 }
 
+namespace {
+
+struct UnLoad
+{
+  UnLoad(){}
+  ~UnLoad()
+  {
+    g_object_unref(emergency_icons[0]);
+    g_object_unref(emergency_icons[1]);
+    g_object_unref(button_icons[0]);
+    g_object_unref(button_icons[1]);
+    g_object_unref(button_icons[2]);
+    g_object_unref(button_icons[3]);
+    g_object_unref(button_icons[4]);
+  }
+};
+
+static UnLoad unloader;
+} // namespace
+
 DUECA_NS_END;

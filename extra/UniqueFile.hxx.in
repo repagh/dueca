@@ -29,9 +29,9 @@
 #cmakedefine01 NAMESPACE_IOS
 #endif
 
-#if NAMESPACE_IOS_BASE
+#if defined(NAMESPACE_IOS_BASE)
 // no default
-#elif NAMESPACE_IOS
+#elif defined(NAMESPACE_IOS)
 #define ios_base ios
 #else
 #define ios_base

@@ -28,9 +28,7 @@ int main()
 #include <IntervalCalculation.hxx>
 #include <list>
 #include <cmath>
-#include <mtl/mtl.h>
 #include <dueca_ns.h>
-using namespace mtl;
 USING_DUECA_NS
 
 #define EPS 1e-5

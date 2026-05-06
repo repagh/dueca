@@ -11,6 +11,7 @@
         license         : EUPL-1.2
 */
 
+#include "gtk/gtk.h"
 #define ReplayMasterGtk3_cxx
 #include "ReplayMasterGtk3.hxx"
 
@@ -215,6 +216,12 @@ bool ReplayMasterGtk3::complete()
       switch(mode) {
       case ReplayMaster::Idle:
         gtk_label_set_text(GTK_LABEL(this->window["replay_rec_status"]), "--");
+
+        if (gtk_tree_selection_count_selected_rows(GTK_TREE_SELECTION(this->window.getObject("replay_recording_selection")))) {
+          // sending initial if there is an initial selected
+          gtk_widget_set_sensitive
+            (GTK_WIDGET(window["replay_sendinitial"]), TRUE);
+        }
 
         // sending a new recording only after re-loading the matching initial
         gtk_widget_set_sensitive

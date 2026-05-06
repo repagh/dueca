@@ -10,7 +10,6 @@
 
 # virtual framebuffer x server
 find_program(XVFB NAMES Xvfb)
-find_program(XNEST NAMES Xnest)
 find_program(NESTSERVER NAMES ${RUNTEST_SERVER})
 find_program(WINDOWMANAGER NAMES openbox)
 find_program(WMCTRL NAMES wmctrl)
@@ -172,7 +171,10 @@ if (PYTHON_HAVE_PIL EQUAL 0 AND
     set(NESTEXTRAARGS "-screen ${DISPLAYSIZE} +extension GLX")
   endif()
 
+  set(GTKVARIANT gtk3)
   configure_file(createrun.in createrun @ONLY)
+  set(GTKVARIANT gtk4)
+  configure_file(createrun.in createrun_gtk4 @ONLY)
   execute_process(COMMAND chmod +x ${CMAKE_CURRENT_BINARY_DIR}/createrun)
   configure_file(viewrun.in viewrun @ONLY)
   execute_process(COMMAND chmod +x ${CMAKE_CURRENT_BINARY_DIR}/viewrun)
@@ -190,8 +192,12 @@ if(NOT XMLSTARLET MATCHES ".*-NOTFOUND")
       COMMAND ${XMLSTARLET} edit -N x="https://dueca.tudelft.nl/testscenario"
       --delete 'x:scenario/x:actions/x:snap'
       --delete 'x:scenario/x:actions/x:click'
+      --delete 'x:scenario/x:actions/x:check-image'
+      --delete 'x:scenario/x:actions/x:check-word'
+      --delete 'x:scenario/x:actions/x:check-color'
       --delete 'x:scenario/x:actions/x:check'
       --delete 'x:scenario/x:actions/x:key'
+      --delete 'x:scenario/x:offset'
       ${SCN}.xml > ${CMAKE_BINARY_DIR}/${SCN}-clean.xml
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
       DEPENDS ${SCN}.xml)

@@ -22,7 +22,7 @@
 #include <iomanip>
 #include <cstring>
 
-#define DEBPRINTLEVEL -1
+#define DEBPRINTLEVEL -2
 #include <debprint.h>
 
 DDFF_NS_START
@@ -60,6 +60,7 @@ void FileStreamWrite::initBuffers(size_t bufsize)
   buffers.init_list(3);
   current_buffer = get_list_spare(buffers);
   current_buffer->data.fill = control_block_size;
+  current_buffer->data.stream_id = stream_id;
 
   // at this point, the stream is ready for use. When continuing data
   // from a file, the accessBuffer call will be used to plant the
@@ -95,27 +96,32 @@ void FileStreamWrite::closeOff(bool intermediate)
     // copy the back-end current buffer
     typename AQMTMessageBufferAlloc::element_ptr tmp_buffer{ get_list_spare(
       buffers) };
+
+    // copies the data over to a temporary
     tmp_buffer->data = current_buffer->data;
 
-    // and zero any remaining data, so the file stays clean
+    // zero any remaining data, so the file stays clean
     tmp_buffer->data.zeroUnused();
 
-    // adjust the offset on the current buffer to indicate where the new data is
-    // current_buffer->data.offset = current_buffer->data.fill;
     DEB("FileStreamWrite, intermediate close-off stream "
         << stream_id << " at " << current_buffer->data.fill << " buffer id "
         << current_buffer->data.creation_id);
-    DEB("Transferred data to buffer id " << tmp_buffer->data.creation_id);
+
     // append to the list of buffers to write to file
+    DEB("S" << tmp_buffer->data.stream_id << " buffer to write list "
+            << tmp_buffer->data.creation_id << " (closeoff i)");
     write_list_back(buffers, tmp_buffer);
   }
   else {
 
+    // zero remaining data
     if (current_buffer->data.partial()) {
       current_buffer->data.zeroUnused();
     }
 
     // take the current buffer and append to list of buffers to write
+    DEB("S" << current_buffer->data.stream_id << " buffer to write list "
+            << current_buffer->data.creation_id << " (closeoff)");
     write_list_back(buffers, current_buffer);
     DEB("FileStreamWrite, final close-off stream "
         << stream_id << " at " << current_buffer->data.fill << " buffer id "
@@ -151,6 +157,8 @@ FileStreamWrite::increment(FileStreamWrite::Iterator::pointer m_ptr)
   }
 
   // buffer full, add to the list to save to file
+  DEB("S" << current_buffer->data.stream_id << " buffer to write list "
+          << current_buffer->data.creation_id << " (increment)");
   write_list_back(buffers, current_buffer);
 
   // at this point, somehow trigger the FileHandler
@@ -159,6 +167,7 @@ FileStreamWrite::increment(FileStreamWrite::Iterator::pointer m_ptr)
   // get a new buffer to write from the spares
   current_buffer = get_list_spare(buffers);
   current_buffer->data.fill = control_block_size;
+  current_buffer->data.stream_id = stream_id;
   DEB1("FileStreamWrite, new buffer upon increment");
 
   // update pointer location
@@ -205,12 +214,15 @@ void FileStreamWrite::write(const char *data, std::size_t nbytes)
                                     << " bytes, excess=" << excess);
 
     // process the full buffer
+    DEB("S" << current_buffer->data.stream_id << " buffer to write list "
+            << current_buffer->data.creation_id << " (write)");
     write_list_back(buffers, current_buffer);
     handler->requestWrite(this);
 
     // get a new buffer to write from the spares
     current_buffer = get_list_spare(buffers);
     current_buffer->data.fill = control_block_size;
+    current_buffer->data.stream_id = stream_id;
 
     // write the remainder, recursively, so spanning multiple buffers
     // is supported
@@ -276,15 +288,22 @@ bool FileStreamWrite::markItemStart(TimeTickType &start_stretch,
 
 bool FileStreamWrite::markItemStart()
 {
-  if (current_buffer->data.object_offset) {
-    DEB3("FileStreamWrite, object mark stream=" << stream_id
-                                                << " already marked");
-    return false;
+#if DEBPRINTLEVEL >= 0
+  if (auto res = current_buffer->data.markOffsets()) {
+    DEB("FileStreamWrite, S"
+        << stream_id << " offsets mark=" << res << " start 0x" << std::hex
+        << current_buffer->data.start_offset << " object 0x"
+        << current_buffer->data.object_offset << std::dec);
   }
-  DEB1("FileStreamWrite, marking start of an object, stream="
-       << stream_id << " at " << current_buffer->data.fill);
-  current_buffer->data.object_offset = current_buffer->data.fill;
+#else
+  current_buffer->data.markOffsets();
+#endif
   return true;
+}
+
+void FileStreamWrite::markNewSegment()
+{
+  current_buffer->data.start_offset = 0U;
 }
 
 void FileStreamWrite::recordOffsetForRewrite(uint64_t offset)

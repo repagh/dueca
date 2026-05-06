@@ -31,13 +31,14 @@ class FileHandler;
 
     A "stream" is a series of linked blocks in a data file with the
     DelftDataFormat file format. This class reads such a stream, and can
-    can produce an iterator that can be used to read data from this
-    stream.
+    can produce an iterator that can be used to read data (bytes) from
+    this stream.
 
-    The FileStreamRead objects (actually, ref-counted pointers) can
-    only be obtained from a FileHandler or class derived from
-    FileHandler. Depending on how you access the file, the
-    FileStreamRead objects become usable:
+    Typically, the iterator is used with the msgpack protocol.
+
+    The FileStreamRead objects can only be obtained from a FileHandler
+    or class derived from FileHandler. Depending on how you access the
+    file, the FileStreamRead objects become usable:
 
     - After a FileHandler or FileWithInventory with an existing file
       has run its checkIndices method, the FileStreamRead object is
@@ -46,12 +47,12 @@ class FileHandler;
     - With a FileWithSegments handler, with existing file a replay
       segment needs to be selected with its spoolForReplay method.
 
-    - With a new file, the FileStreamRead only becomes usable after 
+    - With a new file, the FileStreamRead only becomes usable after
       a corresponding FileStreamWrite object has written data.
 
     @todo Make this more robust for interleaving with writing; when
     a corresponding write stream has been updated, the (partial) buffers
-    loaded here may no longer represent the data. 
+    loaded here may no longer represent the data.
 */
 class FileStreamRead:
   public boost::intrusive_ref_counter<FileStreamRead>
@@ -180,6 +181,11 @@ public:
     { auto tmp = *this; m_ptr = stream->increment(m_ptr); return tmp; }
   private:
     friend class FileStreamRead;
+    friend class FileWithSegments;
+    friend class DDFFDataRecorder;
+
+    /// set the startpoint of the iterator
+    void setStart(unsigned b_offset);
 
     /// remember the stream provider
     FileStreamRead::pointer stream;
@@ -208,7 +214,7 @@ private:
   /** Access the next buffer for loading */
   AQMTMessageBufferAlloc::element_ptr getBufferToLoad();
 
-  /** Insert a freshly loaded buffer */
+  /** Insert a freshly loaded buffer, called by FileHandler */
   void appendBuffer(AQMTMessageBufferAlloc::element_ptr buffer,
                     pos_type offset, pos_type next_offset,
                     unsigned buffer_num, unsigned cycle);
@@ -237,7 +243,7 @@ private:
   Iterator::const_pointer increment(Iterator::const_pointer m_ptr);
 
   /// get first element of a buffer
-  Iterator::const_pointer current();
+  Iterator::const_pointer current(unsigned custom_offset = 0U);
 
 public:
 
@@ -259,7 +265,8 @@ public:
                      be done.
    */
   void setReadRange(pos_type offset=pos_type(0),
-                    pos_type end_off=std::numeric_limits<pos_type>::max());
+                    pos_type end_off=std::numeric_limits<pos_type>::max(),
+                    unsigned blockstart = 0U);
 
   /** Return a pointer for the file handler */
   boost::intrusive_ptr<FileHandler> getHandler() const;
@@ -282,6 +289,7 @@ private:
   // debugging set-up for the iterator, check how many levels deep
   // iterators are copied
   friend struct Iterator;
+  friend class FileWithSegments;
 
   /** Claim access to the buffers */
   void claim();

@@ -128,6 +128,10 @@ class DDFFTagIndex:
         """
         return self.tagdict.keys()
 
+    def items(self):
+        """Return dict items"""
+        return self.tagdict.items()
+
 
 class DDFFTagStream:
     """Tagged data stream.

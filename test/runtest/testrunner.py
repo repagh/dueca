@@ -6,16 +6,23 @@ Created on Mon Sep 27 20:32:23 2021
 @author: repa
 """
 
-from PIL import ImageGrab, ImageDraw
+from PIL import ImageGrab
+import aggdraw
+import pytesseract
+import numpy as np
+import re
+import cv2
 import pynput
 from pynput.keyboard import Key
 from wmctrl import Window
+from math import sqrt
 import subprocess
 import os
 import asyncio
 import time
 import argparse
 import pathlib
+import glob
 import sys
 from lxml import etree
 from duecautils.xmlutil import XML_comment, XML_tag, XML_interpret_bool
@@ -25,7 +32,145 @@ x11display = os.environ.get("DISPLAY")
 
 the_mouse = pynput.mouse.Controller()
 the_keyboard = pynput.keyboard.Controller()
+templates = {}
+imgkeys = {Key.f4: 48, Key.f5: 64, Key.f6: 96, Key.f7: 140}
+wordkeys = {Key.f8: 48, Key.f9: 64, Key.f10: 96}
+lastxy = 0, 0
+lastpress = 0, 0
+lastrelease = 0, 0
+test_relative = True
+criterion = 0.995
+offset_max = 30
+max_cnt = 20
+template_pattern = "/gtk3/*.png"
+templates_folder = ""
+clickdebug = False
 
+_TMPLATE_MATCH = re.compile(r"^([a-zA-Z-]+)(_[0-9a-zA-Z]+)?\.png$")
+
+
+def _load_templates(tpattern: str):
+    print("Loading templates from", tpattern)
+    for f in glob.glob(tpattern):
+        tm = _TMPLATE_MATCH.match(os.path.basename(f))
+        if tm:
+            basename = tm.group(1)
+            filename = tm.group(0)
+        else:
+            print(f"File {f} not recognized as template, doing crude split")
+            basename = ".".join(f.split(os.sep)[-1].split(".")[:-1])
+            filename = basename
+
+        if basename in templates:
+            templates[basename][filename] = cv2.imread(f)
+        else:
+            templates[basename] = {filename: cv2.imread(f)}
+
+def _drawCircle(dr, xy, r, p):
+    dr.ellipse((xy[0] - r, xy[1] - r, xy[0] + r, xy[1] + r), p)
+
+
+def _best_match_alt(candidates: dict, area, threshold: float = 0.9, basename=""):
+    match = threshold
+    filename = ""
+    location = None
+    candidate = None
+    ah, aw, _ = area.shape
+
+    for ix, (fname, c) in enumerate(candidates.items()):
+        th, tw, _ = c.shape
+        if th <= ah and tw <= aw:
+            res = cv2.matchTemplate(area, c, cv2.TM_CCORR_NORMED)
+            _, max_val, _, max_loc = cv2.minMaxLoc(res)
+            if basename:
+                print(f"template {basename}({fname}) val={max_val} at {max_loc}")
+            if max_val > match:
+                match = max_val
+                filename = fname
+                candidate = c
+                location = max_loc
+        elif basename:
+            print(f"template {basename}({fname}) too large {tw},{th} for {aw},{ah}")
+
+    return match, location, filename, candidate
+
+
+def _best_match(area, debug=False):
+    best = None
+    basename = None
+    _match = 0.0
+
+    for base, candidates in templates.items():
+        res = _best_match_alt(candidates, area, _match, debug and base or "")
+        if res[0] > _match:
+            best = res
+            basename = base
+            _match = res[0]
+
+    return basename, *best
+
+def _find_word(area, criterion=40, dist=16):
+    ha, wa = area.shape
+    dev = dist**2
+    word = ''
+    bounds = 0,0,0,0
+
+    d = pytesseract.image_to_data(area, output_type=pytesseract.Output.DICT)
+    for wrd, x, y, conf, w, h in zip(d['text'], d['left'], d['top'], d['conf'], d['width'], d['height']):
+        if not wrd:
+            continue
+        xdev = x + w // 2 - wa // 2
+        ydev = y + h // 2 - ha // 2
+        if conf < criterion:
+            print(f"Rejecting word '{wrd}' at distance {xdev},{ydev} for conf={conf}({criterion})")
+            continue
+        if xdev ** 2 + ydev ** 2 > dev:
+            print(f"Rejecting word '{wrd}' for distance {xdev},{ydev}")
+            continue
+
+        if word:
+            print(f"Replacing word '{word}' with '{wrd}' at distance {xdev},{ydev}")
+        # new closest
+        dev = xdev ** 2 + ydev ** 2
+        word = wrd
+        bounds = x, y, x+w, y+h
+
+    if word:
+        print(f"Closest word found '{word}', distance {sqrt(dev):.2}")
+    return word, bounds
+
+def _match_word(area, matchword, criterion=40):
+
+    ha, wa = area.shape
+    dev = ha**2 + wa**2
+    word = ''
+    bounds = 0,0,0,0
+    d = pytesseract.image_to_data(area, output_type=pytesseract.Output.DICT)
+
+    for wrd, x, y, conf, w, h in zip(d['text'], d['left'], d['top'], d['conf'], d['width'], d['height']):
+
+        if not wrd or wrd != matchword:
+            continue
+
+        xdev = x + w // 2 - wa // 2
+        ydev = y + h // 2 - ha // 2
+        if conf < criterion:
+            print(f"Rejecting word '{wrd}' at distance {xdev},{ydev} for conf={conf}({criterion})")
+            continue
+
+        if word:
+            print(f"Multiple matches for word {word}, using closest")
+
+        if xdev ** 2 + ydev ** 2 > dev:
+            print(f"Rejecting word '{wrd}' for distance {xdev},{ydev}")
+            continue
+
+        # new closest
+        dev = xdev ** 2 + ydev ** 2
+        word = wrd
+        bounds = x, y, x+w, y+h
+
+    return word, bounds
 
 class Translation:
     def __init__(self, offset_x=0, offset_y=0, extra_y=0):
@@ -68,10 +213,14 @@ def findWindow(name: str):
     for w in Window.list():
         if w.wm_name not in known_windows:
             known_windows[w.wm_name] = (w.x, w.y)
-            print(f"Found window {w.wm_name} {w.wm_state} at {w.x},{w.y} size {w.w},{w.h}")
+            print(
+                f"Found window {w.wm_name} {w.wm_state} at {w.x},{w.y} size {w.w},{w.h}"
+            )
         elif known_windows[w.wm_name] != (w.x, w.y):
             known_windows[w.wm_name] = (w.x, w.y)
-            print(f"Window moved {w.wm_name} {w.wm_state} to {w.x},{w.y} size {w.w},{w.h}")
+            print(
+                f"Window moved {w.wm_name} {w.wm_state} to {w.x},{w.y} size {w.w},{w.h}"
+            )
         if w.wm_name == name:
             print(f"Matching window found")
             return w
@@ -79,7 +228,6 @@ def findWindow(name: str):
 
 
 def findWindowUnder(wlist, x: int, y: int, recording=False, margin=0):
-    global translation
     foundwin = None
     print(f"...Looking for the window under {x}, {y}")
 
@@ -104,15 +252,20 @@ def findWindowUnder(wlist, x: int, y: int, recording=False, margin=0):
             and "focused" in w.wm_state
             and translation.inWindow(x, y, w, margin)
         ):
-            # print(f"focus window {w.wm_name} at {w.x},{w.y} size {w.w}x{w.h}")
+            print(f"focus window {w.wm_name} at {w.x},{w.y} size {w.w}x{w.h}")
             foundwin = w
     if foundwin is not None:
         return w
 
+    # now without focus
     for w in Window.list():
         if translation.inWindow(x, y, w, margin):
-            # print(f"found window {w.wm_name} at {w.x},{w.y} size {w.w}x{w.h}")
+            print(f"found window {w.wm_name} at {w.x},{w.y} size {w.w}x{w.h}")
             foundwin = w
+    if foundwin is None:
+        print(f"no window found at {x},{y}")
+        for w in Window.list():
+            print(f"Tested {w.x},{w.y} size {w.w}x{w.h}, '{w.wm_name}'")
     return foundwin
 
 
@@ -137,7 +290,14 @@ class Project:
 
 
 class Execute:
-    def __init__(self, platform=None, node=None, command="./dueca_run.x", xmlnode=None, xmlroot=None):
+    def __init__(
+        self,
+        platform=None,
+        node=None,
+        command="./dueca_run.x",
+        xmlnode=None,
+        xmlroot=None,
+    ):
 
         if xmlroot is not None and platform and node:
             self.xmlnode = etree.SubElement(xmlroot, "execute")
@@ -164,19 +324,24 @@ class Execute:
             if self.platform is None or self.node is None:
                 raise ValueError("xml file incomplete")
 
+
 class Offset:
 
     def __init__(self, xmlroot=None, xmlnode=None, x=0, y=0):
 
-        global translation
+        global translation, criterion, template_pattern
         if xmlroot is not None:
             self.xmlnode = etree.SubElement(xmlroot, "offset")
             self.xmlnode.set("x", str(x))
             self.xmlnode.set("y", str(y))
+            self.xmlnode.set("criterion", str(criterion))
+            self.xmlnode.set("template-pattern", template_pattern)
         elif xmlnode is not None:
             self.xmlnode = xmlnode
             x = int(xmlnode.get("x", "0"))
             y = int(xmlnode.get("y", "0"))
+            criterion = float(xmlnode.get("criterion", 0.99))
+            template_pattern = xmlnode.get("template-pattern", "/gtk3/*.png")
 
         translation.adjust(x, y)
 
@@ -185,6 +350,10 @@ class Offset:
         self.xmlnode.set("y", str(y))
         translation.adjust(x, y)
 
+    def __repr__(self):
+        return f"Offset({self.xmlnode.get('x'), self.xmlnode.get('y')})"
+
+
 class Click:
     buttonmap = {
         "Button.left": pynput.mouse.Button.left,
@@ -192,24 +361,36 @@ class Click:
         "Button.middle": pynput.mouse.Button.middle,
     }
 
+    relcnt = 0
+    clickcnt = 0
+
     def __init__(
         self,
         xmlroot=None,
         xmlnode=None,
         x=0,
         y=0,
+        relative=False,
         window=None,
         button=None,
         pressed=False,
-        wait=0.2,
+        wait=0.3,
     ):
         if xmlroot is not None:
             xmlnode = etree.SubElement(xmlroot, "click")
-            if window is not None:
-                x, y = translation.toWindow(x, y, window)
+            if relative:
+                _x, _y = x - lastxy[0], y - lastxy[1]
+                print(f"Relative click, at {x},{y} last {lastxy}, becomes {_x},{_y}")
+                xmlnode.set("relative", str(relative).lower())
+            elif window is not None:
+                _x, _y = translation.toWindow(x, y, window)
+                print(f"RelWindow click, at {x},{y} relative {_x},{_y}")
                 xmlnode.set("window", window.wm_name)
-            xmlnode.set("x", str(x))
-            xmlnode.set("y", str(y))
+            else:
+                _x, _y = x, y
+                print(f"Absolute click at {x},{y}")
+            xmlnode.set("x", str(_x))
+            xmlnode.set("y", str(_y))
             xmlnode.set("button", str(button))
             xmlnode.set("pressed", str(pressed).lower())
             xmlnode.set("wait", str(wait))
@@ -217,17 +398,24 @@ class Click:
             self.window = xmlnode.get("window", "")
             self.x = int(xmlnode.get("x", "0"))
             self.y = int(xmlnode.get("y", "0"))
+            self.relative = XML_interpret_bool(xmlnode.get("relative", "false"))
             self.button = Click.buttonmap[xmlnode.get("button")]
-            self.wait = float(xmlnode.get("wait", 0.1))
+            self.wait = float(xmlnode.get("wait", 0.3))
             self.pressed = XML_interpret_bool(xmlnode.get("pressed", "false"))
 
     async def execute(self):
         global the_mouse
         global translation
+        global lastpress, lastrelease
 
-        print(f"...Try click {self.window} {self.x},{self.y} {self.button}, {self.pressed}")
+        print(
+            f"...Try click {self.window} {self.x},{self.y} {self.button}, {self.pressed}"
+        )
 
-        if self.window:
+        if self.relative:
+            x, y = lastxy[0] + self.x, lastxy[1] + self.y
+            the_mouse.position = x, y
+        elif self.window:
             w = findWindow(self.window)
             if w is None:
                 if self.pressed:
@@ -239,15 +427,39 @@ class Click:
             x, y = self.x, self.y
             the_mouse.position = x, y
 
+        # record last click position
+        if self.pressed:
+            lastpress = x, y
+        else:
+            lastrelease = x, y
+
+        print(f"Click position now {x, y}")
+
         if self.wait > 0.0:
             await asyncio.sleep(self.wait)
 
         if self.pressed:
             the_mouse.press(self.button)
             print("Mouse pressed")
+            Click.clickcnt += 1
         else:
             the_mouse.release(self.button)
             print("Mouse released")
+
+            if clickdebug:
+
+                # show where we clicked
+                img = ImageGrab.grab(xdisplay=x11display)
+                draw = aggdraw.Draw(img)
+                pen = aggdraw.Pen((0, 255, 255))
+                _drawCircle(draw, lastpress, 4, pen)
+                _drawCircle(draw, lastrelease, 3, pen)
+                draw.flush().save(
+                    sanitize(
+                        f"{scenario.name}-release{Click.relcnt:03d}-at{self.x},{self.y}.png"
+                    )
+                )
+            Click.relcnt += 1
 
 
 class KeyPress:
@@ -306,6 +518,7 @@ def sanitize(s: str):
         s = s.replace(ch, "_")
     return s
 
+
 class Check:
 
     errcnt = 0
@@ -314,10 +527,10 @@ class Check:
         self, xmlroot=None, xmlnode=None, x=0, y=0, timeout=10.0, window="", wait=0.5
     ):
 
-        global translation
+        global translation, lastxy
 
         if xmlroot is not None:
-            xmlnode = etree.SubElement(xmlroot, "check")
+            xmlnode = etree.SubElement(xmlroot, "check-color")
 
             if window:
                 _x, _y = translation.toWindow(x, y, window)
@@ -332,6 +545,7 @@ class Check:
             print(f"Found {col} at {x},{y}")
             if window:
                 print(f"rel to window {window.wm_name} at {_x},{_y}")
+            lastxy = x, y
 
             xmlnode.set("x", str(_x))
             xmlnode.set("y", str(_y))
@@ -367,6 +581,8 @@ class Check:
 
     async def execute(self):
 
+        global lastxy
+
         print(
             f"...Check {self.window} {self.x},{self.y} {self.wait}+{self.timeout} {self.color}"
         )
@@ -375,11 +591,13 @@ class Check:
         # move the mouse, since that may change color
         global the_mouse
 
-        if self.wait:
-            await asyncio.sleep(self.wait)
         moved = False
 
-        for cnt in range(20):
+        # initial wait
+        if self.wait:
+            await asyncio.sleep(self.wait)
+
+        for cnt in range(max_cnt):
 
             if not moved:
                 if self.window:
@@ -405,9 +623,17 @@ class Check:
                 the_mouse.position = x, y
                 moved = True
 
+            else:
+                # make sure some mouse movement is there, so the interface
+                # reacts as hovered
+                the_mouse.position = x + (cnt % 2), y - (cnt % 2)
+
             # wait part of the timeout, to see if the interface reacts
             if self.timeout > 0.0:
                 await asyncio.sleep(0.05 * self.timeout)
+
+            # for relative clicks
+            lastxy = x, y
 
             # exit when we found the requested color
             if self.color is not None:
@@ -428,20 +654,578 @@ class Check:
         img = ImageGrab.grab(xdisplay=x11display)
         if self.window and w is None:
             print(f"Failed to find window {self.window} after {cnt+1} checks")
-            img.save(sanitize(
-                f"{scenario.name}-error{Check.errcnt:03d}-no-win-{self.window}.png"
-                ))
+            img.save(
+                sanitize(
+                    f"{scenario.name}-error{Check.errcnt:03d}-no-win-{self.window}.png"
+                )
+            )
         elif self.color is not None:
-            draw = ImageDraw.Draw(img)
-            draw.rectangle(((x - 3, y - 3), (x, y)), outline=(255, 0, 0))
-            img.save(sanitize(
-                f'{scenario.name}-error{Check.errcnt:03d}-no-col-{",".join(map(str, self.color))}-at{self.x},{self.y}.png'
-            ))
+            draw = aggdraw.Draw(img)
+            pen1 = aggdraw.Pen((255, 0, 0))
+            draw.rectangle((x - 1, y - 1, x + 1, y + 1), pen1)
+            pen2 = aggdraw.Pen((0, 255, 255))
+            _drawCircle(draw, lastrelease, 1, pen2)
+            _drawCircle(draw, lastpress, 2, pen2)
+            draw.flush().save(
+                sanitize(
+                    f'{scenario.name}-error{Check.errcnt:03d}-no-col-{",".join(map(str, self.color))}-at{self.x},{self.y}.png'
+                )
+            )
             print(
                 f"Failed to find color {self.color} at "
                 f"{self.x}, {self.y} after {cnt+1} checks, found {col}"
             )
         if self.window is None and self.color is None:
+            print(f"Wait {self.wait}+{self.timeout} performed")
+            return True
+
+        Check.errcnt += 1
+        print("Check failed")
+        return False
+
+
+class CheckImage:
+
+    errcnt = 0
+
+    def __init__(
+        self,
+        xmlroot=None,
+        xmlnode=None,
+        x: int = 0,
+        y: int = 0,
+        timeout: float = 10.0,  # props
+        window="",
+        testsize: int = 140,
+        wait: float = 0.5
+    ):
+        """Retrieve or create an image check
+
+        Parameters
+        ----------
+        xmlroot : XMLNode, optional
+            Root of the newly created actions, if None, retrieve
+        xmlnode : XMLNode, optional
+            XML node with data, by default None
+        x : int, optional
+            X coordinate of mouse click, by default 0
+        y : int, optional
+            Y coordinate of mouse click, by default 0
+        timeout : float, optional
+            Timeout to use in waiting for image, by default 10.0
+        testsize : int, optional
+            Test area size to use for image, by default 140
+        wait : float, optional
+            Wait time to apply before moving to next action, by default 0.5
+
+        Raises
+        ------
+        ValueError
+            Cannot find a suitable image in the testsize region around the
+            cursor
+        """
+
+        global translation, lastxy
+
+        if xmlroot is not None:
+
+            # try to create a new image test
+            if window:
+                _x, _y = translation.toWindow(x, y, window)
+            else:
+                _x, _y = x, y
+
+            # grab an image region
+            under_cursor = cv2.cvtColor(
+                np.array(
+                    ImageGrab.grab(bbox=self._bbox(x, y, testsize), xdisplay=x11display)
+                ),
+                cv2.COLOR_RGB2BGR,
+            )
+
+            # find the best matching image
+            basename, max_val, max_loc, filename, template = _best_match(under_cursor)
+
+            # if we don't meet the start criterion
+            if max_val < criterion:
+                print(f"Did not find a matching image near {x}, {y}")
+                _best_match(under_cursor, True)
+                errimg = ImageGrab.grab(xdisplay=x11display)
+                draw = aggdraw.Draw(errimg)
+                pen = aggdraw.Pen((255, 0, 0))
+                draw.rectangle(self._bbox(x, y, testsize), pen)
+                draw.flush().save(sanitize(f"{scenario.name}-nocreate-no-img-at{x},{y}.png"))
+
+                raise ValueError("No image match")
+
+            # record last click position as center of image
+            xt, yt, _, _ = self._bbox(x, y, testsize)
+            th, tw, _ = template.shape
+            print(f"template shape {template.shape}")
+            lastxy = (xt + max_loc[0] + tw // 2, yt + max_loc[1] + th // 2)
+            print(f"click {x,y}, bb {self._bbox(x, y, testsize)}, found at {lastxy}")
+
+            xmlnode = etree.SubElement(xmlroot, "check-image")
+            if window:
+                xmlnode.set("window", window.wm_name)
+            xmlnode.set("x", str(_x))
+            xmlnode.set("y", str(_y))
+            xmlnode.set("template", basename)
+            xmlnode.set("testsize", str(testsize))
+            xmlnode.set("timeout", str(timeout))
+            xmlnode.set("wait", str(wait))
+            xmlnode.set("criterion", str(criterion))
+            (
+                self.x,
+                self.y,
+                self.timeout,
+                self.wait,
+                self.window,
+                self.template,
+                self.testsize,
+                self.criterion,
+            ) = (x, y, timeout, wait, window, basename, testsize, criterion)
+            print(
+                f"Add check for image {basename}({filename}) near {x},{y} window {window.wm_name}"
+            )
+
+        elif xmlnode is not None:
+
+            # read this test from its xml description
+            (
+                self.window,
+                self.x,
+                self.y,
+                self.timeout,
+                self.wait,
+                self.template,
+                self.testsize,
+                self.criterion,
+            ) = (
+                xmlnode.get("window", ""),
+                int(xmlnode.get("x", 1)),
+                int(xmlnode.get("y", 1)),
+                float(xmlnode.get("timeout", 0.0)),
+                float(xmlnode.get("wait", 0.0)),
+                xmlnode.get("template"),
+                int(xmlnode.get("testsize", 100)),
+                float(xmlnode.get("criterion", criterion)),
+            )
+
+    def _bbox(self, x: int, y: int, testsize: int):
+        return (
+            max(x - testsize // 2, 0),
+            max(y - testsize // 2, 0),
+            x + testsize // 2,
+            y + testsize // 2,
+        )
+
+    async def execute(self):
+        """Wait for the right image to appear
+
+        Returns
+        -------
+        bool
+            True if image found within timeout
+        """
+
+        print(
+            f"...Check {self.window} {self.x},{self.y} {self.wait}+{self.timeout} {self.template}"
+        )
+        # simply run in 100 sleep increments
+
+        # move the mouse, since that may change color
+        global the_mouse, lastxy
+
+        moved = False
+
+        # initial wait
+        if self.wait:
+            await asyncio.sleep(self.wait)
+
+        x, y = 0, 0
+
+        # run 20 tests in the timeout range
+        for cnt in range(max_cnt):
+
+            if not moved:
+                if self.window:
+
+                    # check the window is present
+                    w = findWindow(self.window)
+
+                    # when no window there, wait some more
+                    if w is None and self.timeout > 0.0:
+                        await asyncio.sleep(0.05 * self.timeout)
+                        continue
+
+                    # pull the window up and to focus if needed
+                    w.activate()
+
+                    # translate the coordinates for test to screen
+                    x, y = translation.toScreen(self.x, self.y, w)
+
+                else:
+                    # click without window, coordinates must absolute
+                    x, y = self.x, self.y
+
+                # set the mouse position
+                the_mouse.position = x, y
+                moved = True
+
+            else:
+                # make sure mouse movement is there, so the interface
+                # reacts as hovered
+                the_mouse.position = x + (cnt % 2), y - (cnt % 2)
+
+            # wait part of the timeout, to see if the interface reacts
+            if self.timeout > 0.0:
+                await asyncio.sleep(0.05 * self.timeout)
+
+            # look what is there now
+            under_cursor = cv2.cvtColor(
+                np.array(
+                    ImageGrab.grab(
+                        bbox=self._bbox(x, y, self.testsize), xdisplay=x11display
+                    )
+                ),
+                cv2.COLOR_RGB2BGR,
+            )
+
+            # analyse
+            max_val, max_loc, filename, template = _best_match_alt(
+                templates[self.template],
+                under_cursor,
+                0.0,
+                ((cnt + 1 == max_cnt) and self.template) or "",
+            )
+
+            if max_val < self.criterion:
+                # keep searching or exit
+                continue
+
+            # image size
+            h, w, _ = template.shape
+
+            # corrected position
+            xt, yt, _, _ = self._bbox(x, y, self.testsize)
+            xc = xt + max_loc[0] + w // 2
+            yc = yt + max_loc[1] + h // 2
+
+            # set the correction
+            lastxy = xc, yc
+
+            print(
+                f"Found template {self.template}({filename}), searched {x,y} found at {xc},{yc} {max_val}>={self.criterion}"
+            )
+            return True
+
+        # no window or color found, create a snapshot and increase errror count
+        img = ImageGrab.grab(xdisplay=x11display)
+        if self.window and w is None:
+            print(f"Failed to find window {self.window} after {cnt+1} checks")
+            img.save(
+                sanitize(
+                    f"{scenario.name}-error{Check.errcnt:03d}-no-win-{self.window}.png"
+                )
+            )
+            lastxy = x, y
+        else:
+            draw = aggdraw.Draw(img)
+            pen1 = aggdraw.Pen((255, 0, 0))
+            pen2 = aggdraw.Pen((0, 255, 255))
+            draw.rectangle(self._bbox(x, y, self.testsize), pen1)
+
+            # add last press and release, if not in the area
+            if (
+                abs(lastpress[0] - x) > self.testsize // 2
+                and abs(lastpress[1] - y) > self.testsize // 2
+            ):
+                _drawCircle(draw, lastpress, 2, pen2)
+                _drawCircle(draw, lastrelease, 1, pen2)
+
+            draw.flush().save(
+                sanitize(
+                    f"{scenario.name}-error{Check.errcnt:03d}-no-img-{self.template}-at{self.x},{self.y}.png"
+                )
+            )
+            print(
+                f"Failed to find image {self.template} near "
+                f"{x}, {y} after {cnt+1} checks, max_val={max_val} crit={self.criterion}"
+            )
+            lastxy = x, y
+        if self.window is None and self.template is None:
+            print(f"Wait {self.wait}+{self.timeout} performed")
+            return True
+
+        Check.errcnt += 1
+        print("Check failed")
+        return False
+
+class CheckWord:
+
+    errcnt = 0
+
+    def __init__(
+        self,
+        xmlroot=None,
+        xmlnode=None,
+        x: int = 0,
+        y: int = 0,
+        timeout: float = 10.0,  # props
+        window="",
+        testsize: int = 140,
+        wait: float = 0.5,
+        criterion: float = 40
+    ):
+        """Retrieve or create an image check
+
+        Parameters
+        ----------
+        xmlroot : XMLNode, optional
+            Root of the newly created actions, if None, retrieve
+        xmlnode : XMLNode, optional
+            XML node with data, by default None
+        x : int, optional
+            X coordinate of mouse click, by default 0
+        y : int, optional
+            Y coordinate of mouse click, by default 0
+        timeout : float, optional
+            Timeout to use in waiting for image, by default 10.0
+        testsize : int, optional
+            Test area size to use for image, by default 140
+        wait : float, optional
+            Wait time to apply before moving to next action, by default 0.5
+
+        Raises
+        ------
+        ValueError
+            Cannot find a suitable image in the testsize region around the
+            cursor
+        """
+
+        global translation, lastxy
+
+        if xmlroot is not None:
+
+            # try to create a new image test
+            if window:
+                _x, _y = translation.toWindow(x, y, window)
+            else:
+                _x, _y = x, y
+
+            # grab an image region
+            under_cursor = cv2.cvtColor(
+                np.array(
+                    ImageGrab.grab(bbox=self._bbox(x, y, testsize), xdisplay=x11display)
+                ),
+                cv2.COLOR_RGB2GRAY,
+            )
+
+            # find the most centric word
+            word, wbounds = _find_word(under_cursor, self.criterion)
+
+            # if we don't meet the start criterion
+            if not word:
+                print(f"Did not find a proper word near {x}, {y}")
+                errimg = ImageGrab.grab(xdisplay=x11display)
+                draw = aggdraw.Draw(errimg)
+                pen = aggdraw.Pen((255, 0, 0))
+                draw.rectangle(self._bbox(x, y, testsize), pen)
+                draw.flush().save(sanitize(f"{scenario.name}-nocreate-no-word-at{x},{y}.png"))
+
+                raise ValueError("No word match")
+
+            # record last click position as center of image
+            xt, yt, _, _ = self._bbox(x, y, testsize)
+            th, tw, _, _ = wbounds
+            print(f"word shape {wbounds}")
+            lastxy = (xt + (wbounds[0] + wbounds[2]) // 2, yt + (wbounds[1]+wbounds[3]) // 2)
+            print(f"click {x,y}, bb {self._bbox(x, y, testsize)}, found at {lastxy}")
+
+            xmlnode = etree.SubElement(xmlroot, "check-word")
+            if window:
+                xmlnode.set("window", window.wm_name)
+            xmlnode.set("x", str(_x))
+            xmlnode.set("y", str(_y))
+            xmlnode.set("word", word)
+            xmlnode.set("testsize", str(testsize))
+            xmlnode.set("timeout", str(timeout))
+            xmlnode.set("wait", str(wait))
+            (
+                self.x,
+                self.y,
+                self.timeout,
+                self.wait,
+                self.window,
+                self.word,
+                self.testsize,
+                self.criterion
+            ) = (x, y, timeout, wait, window, word, testsize, criterion)
+            print(
+                f"Add check for word '{word}' near {x},{y} window {window.wm_name}"
+            )
+
+        elif xmlnode is not None:
+
+            # read this test from its xml description
+            (
+                self.window,
+                self.x,
+                self.y,
+                self.timeout,
+                self.wait,
+                self.word,
+                self.testsize,
+                self.criterion
+            ) = (
+                xmlnode.get("window", ""),
+                int(xmlnode.get("x", 1)),
+                int(xmlnode.get("y", 1)),
+                float(xmlnode.get("timeout", 0.0)),
+                float(xmlnode.get("wait", 0.0)),
+                xmlnode.get("word"),
+                int(xmlnode.get("testsize", 100)),
+                float(xmlnode.get("criterion", 40))
+            )
+
+    def _bbox(self, x: int, y: int, testsize: int):
+        dx = max(testsize // 2 - x, 0)
+        dy = max(testsize // 2 - y, 0)
+        return (
+            x - testsize // 2 + dx,
+            y - testsize // 2 + dy,
+            x + testsize // 2 + dx,
+            y + testsize // 2 + dy,
+        )
+
+    async def execute(self):
+        """Wait for the right image to appear
+
+        Returns
+        -------
+        bool
+            True if image found within timeout
+        """
+
+        print(
+            f"...Check {self.window} {self.x},{self.y} {self.wait}+{self.timeout} '{self.word}'"
+        )
+        # simply run in 100 sleep increments
+
+        # move the mouse, since that may change color
+        global the_mouse, lastxy
+
+        moved = False
+
+        # initial wait
+        if self.wait:
+            await asyncio.sleep(self.wait)
+
+        x, y = 0, 0
+
+        # run 20 tests in the timeout range
+        for cnt in range(max_cnt):
+
+            if not moved:
+                if self.window:
+
+                    # check the window is present
+                    w = findWindow(self.window)
+
+                    # when no window there, wait some more
+                    if w is None and self.timeout > 0.0:
+                        await asyncio.sleep(0.05 * self.timeout)
+                        continue
+
+                    # pull the window up and to focus if needed
+                    w.activate()
+
+                    # translate the coordinates for test to screen
+                    x, y = translation.toScreen(self.x, self.y, w)
+
+                else:
+                    # click without window, coordinates must absolute
+                    x, y = self.x, self.y
+
+                # set the mouse position
+                the_mouse.position = x, y
+                moved = True
+
+            else:
+                # make sure mouse movement is there, so the interface
+                # reacts as hovered
+                the_mouse.position = x + (cnt % 2), y - (cnt % 2)
+
+            # wait part of the timeout, to see if the interface reacts
+            if self.timeout > 0.0:
+                await asyncio.sleep(0.05 * self.timeout)
+
+            # look what is there now
+            under_cursor = cv2.cvtColor(
+                np.array(
+                    ImageGrab.grab(
+                        bbox=self._bbox(x, y, self.testsize), xdisplay=x11display
+                    )
+                ),
+                cv2.COLOR_RGB2GRAY,
+            )
+
+            # analyse
+            word, wbounds = _match_word(under_cursor, self.word, self.criterion)
+
+            if not word:
+                # keep searching or exit
+                continue
+
+            # corrected position
+            xt, yt, _, _ = self._bbox(x, y, self.testsize)
+            xc = xt + (wbounds[0] + wbounds[2]) // 2
+            yc = yt + (wbounds[1] + wbounds[3]) // 2
+
+            # set the correction
+            lastxy = xc, yc
+
+            print(
+                f"Found word '{self.word}', searched {x,y} found at {xc},{yc}"
+            )
+            return True
+
+        # no window or color found, create a snapshot and increase errror count
+        img = ImageGrab.grab(xdisplay=x11display)
+        if self.window and w is None:
+            print(f"Failed to find window {self.window} after {cnt+1} checks")
+            img.save(
+                sanitize(
+                    f"{scenario.name}-error{Check.errcnt:03d}-no-win-{self.window}.png"
+                )
+            )
+            lastxy = x, y
+        else:
+            draw = aggdraw.Draw(img)
+            pen1 = aggdraw.Pen((255, 0, 0))
+            pen2 = aggdraw.Pen((0, 255, 255))
+            draw.rectangle(self._bbox(x, y, self.testsize), pen1)
+
+            # add last press and release, if not in the area
+            if (
+                abs(lastpress[0] - x) > self.testsize // 2
+                and abs(lastpress[1] - y) > self.testsize // 2
+            ):
+                _drawCircle(draw, lastpress, 2, pen2)
+                _drawCircle(draw, lastrelease, 1, pen2)
+
+            draw.flush().save(
+                sanitize(
+                    f"{scenario.name}-error{Check.errcnt:03d}-no-word-{self.word}-at{self.x},{self.y}.png"
+                )
+            )
+            print(
+                f"Failed to find image {self.word} near "
+                f"{x}, {y} after {cnt+1} checks"
+            )
+            lastxy = x, y
+        if self.window is None and self.word is None:
             print(f"Wait {self.wait}+{self.timeout} performed")
             return True
 
@@ -457,6 +1241,9 @@ class Snap:
             xmlnode = etree.SubElement(xmlroot, "snap")
             xmlnode.set("name", name)
             self.name = name
+            print(f"Inserting snapshot {name}")
+            img = ImageGrab.grab(xdisplay=x11display)
+            img.save(sanitize(self.name))
 
         elif xmlnode is not None:
             self.name = xmlnode.get("name")
@@ -472,10 +1259,10 @@ class Scenario:
         self.clean = None
         self.fname = fname
         basename = fname.split(os.sep)[-1]
-        if basename.endswith('-clean.xml'):
-            self.basename = basename[:-len('clean.xml')]
+        if basename.endswith("-clean.xml"):
+            self.basename = basename[: -len("clean.xml")]
         else:
-            self.basename = basename[:-len('.xml')]
+            self.basename = basename[: -len(".xml")]
         self.name = (fname and pathlib.Path(fname).stem) or "anonymous"
         self._sync()
 
@@ -483,8 +1270,12 @@ class Scenario:
         for node in actionroot:
             if XML_comment(node):
                 pass
-            elif XML_tag(node, "check"):
+            elif XML_tag(node, "check-color") or XML_tag(node, "check"):
                 self.actions.append(Check(xmlnode=node))
+            elif XML_tag(node, "check-image"):
+                self.actions.append(CheckImage(xmlnode=node))
+            elif XML_tag(node, "check-word"):
+                self.actions.append(CheckWord(xmlnode=node))
             elif XML_tag(node, "click"):
                 self.actions.append(Click(xmlnode=node))
             elif XML_tag(node, "snap"):
@@ -562,14 +1353,16 @@ class Scenario:
         self.clean = True
 
     def pass_click(self, x, y, button, pressed):
+        global test_relative
 
-        window = findWindowUnder(self.project.windows, x, y, True)
+        window = findWindowUnder(self.project.windows, x, y, True, margin=10)
         self.actions.append(
             Click(
                 xmlroot=self.actionnode,
                 window=window,
                 x=x,
                 y=y,
+                relative=test_relative,
                 button=button,
                 pressed=pressed,
             )
@@ -580,11 +1373,14 @@ class Scenario:
         self.x, self.y = x, y
 
     def pass_key(self, key):
+        global test_relative
         print(f"Key press {key}")
         if key in (Key.f1,):
 
             # get color spot here
-            window = findWindowUnder(self.project.windows, self.x, self.y, True)
+            window = findWindowUnder(
+                self.project.windows, self.x, self.y, True, margin=10
+            )
             self.actions.append(
                 Check(xmlroot=self.actionnode, x=self.x, y=self.y, window=window)
             )
@@ -593,23 +1389,90 @@ class Scenario:
         elif key in (Key.f2,):
 
             self.actions.append(
-                Snap(xmlroot=self.actionnode, name=f"{self.basename}{self.snapnum:03d}.png")
+                Snap(
+                    xmlroot=self.actionnode,
+                    name=f"{self.basename}{self.snapnum:03d}.png",
+                )
             )
             self.snapnum += 1
             return True
 
         elif key in (Key.f3,):
-            window = findWindowUnder(self.project.windows, self.x, self.y, True, margin=40)
+            window = findWindowUnder(
+                self.project.windows, self.x, self.y, True, margin=80
+            )
             print(f"press {self.x},{self.y}, window {window.x},{window.y}")
-            if self.offset is None:
-                self.offset = Offset(xmlroot=self.xmltree, x=self.x-window.x, y=self.y-window.y)
+            if (
+                abs(window.x - self.x) > offset_max
+                or abs(window.y - self.y) > offset_max
+            ):
+                print(f"Ignoring excessive offset")
+                return True
+            self.offset = Offset(
+                xmlroot=self.xmltree, x=window.x - self.x, y=window.y - self.y
+            )
+            print(f"new offset {self.offset}")
+            return True
+
+        elif key in imgkeys:
+
+            # locate image here
+            window = findWindowUnder(
+                self.project.windows, self.x, self.y, True, margin=10
+            )
+
+            try:
+                self.actions.append(
+                    CheckImage(
+                        xmlroot=self.actionnode,
+                        x=self.x,
+                        y=self.y,
+                        window=window,
+                        testsize=imgkeys[key],
+                    )
+                )
+            except ValueError:
+                pass
+            return True
+
+        elif key in wordkeys:
+
+            # locate image here
+            window = findWindowUnder(
+                self.project.windows, self.x, self.y, True, margin=10
+            )
+
+            try:
+                self.actions.append(
+                    CheckWord(
+                        xmlroot=self.actionnode,
+                        x=self.x,
+                        y=self.y,
+                        window=window,
+                        testsize=wordkeys[key],
+                    )
+                )
+            except ValueError:
+                pass
             return True
 
         elif key in (Key.esc,):
             return False
 
+        elif key in (Key.f11,):
+            test_relative = True
+            print("Clicks are relative to latest color/image test")
+            return True
+
+        elif key in (Key.f12,):
+            test_relative = False
+            print("Clicks are absolute")
+            return True
+
         else:
-            window = findWindowUnder(self.project.windows, self.x, self.y, True)
+            window = findWindowUnder(
+                self.project.windows, self.x, self.y, True, margin=10
+            )
             self.actions.append(
                 KeyPress(
                     xmlroot=self.actionnode, key=key, x=self.x, y=self.y, window=window
@@ -650,7 +1513,8 @@ class Scenario:
 
             pynput.mouse.Listener(on_click=pass_click, on_move=pass_move).start()
 
-            while True:
+            collecting = True
+            while collecting:
                 val = await queue.get()
                 # print(f"Have queue value {val}")
                 if isinstance(val, tuple) and len(val) == 2:
@@ -659,7 +1523,7 @@ class Scenario:
                     self.pass_click(*val)
                 else:
                     if not self.pass_key(val):
-                        break
+                        collecting = False
             self._sync()
 
 
@@ -745,7 +1609,7 @@ class DuecaRunner:
                 )
 
             c1 = subprocess.run(
-                ["dueca-gproject",  "build"] + self.buildoptions,
+                ["dueca-gproject", "build"] + self.buildoptions,
                 cwd=f"{self.pdir}",
                 stderr=subprocess.PIPE,
             )
@@ -782,21 +1646,17 @@ class DuecaRunner:
                 stderr=subprocess.PIPE,
             )
             if c1.returncode != 0:
-                raise RuntimeError(
-                    f"Failing clean for {self.project}:\n{c1.stderr}"
-                )
+                raise RuntimeError(f"Failing clean for {self.project}:\n{c1.stderr}")
 
             c1 = subprocess.run(
                 ["dueca-gproject", "build"] + self.buildoptions,
                 cwd=f"{self.pdir}",
                 stderr=subprocess.PIPE,
-                text=True
+                text=True,
             )
 
             if c1.returncode != 0:
-                raise RuntimeError(
-                    f"Failing build for {self.project}:\n{c1.stderr}"
-                )
+                raise RuntimeError(f"Failing build for {self.project}:\n{c1.stderr}")
 
     async def _runDueca(self, platform="solo", node="solo", command="./dueca_run.x"):
         print(f"runDueca for project {self.project}, p:{platform} n:{node}")
@@ -846,9 +1706,7 @@ class DuecaRunner:
             env=envdict,
         )
         stdout, stderr = await duecaprocess.communicate()
-        print(
-            f"Run task for {self.project} on {node} ended, {duecaprocess.returncode}"
-        )
+        print(f"Run task for {self.project} on {node} ended, {duecaprocess.returncode}")
         print(f"\nNormal out {node}\n{stdout.decode()}")
         print(f"\nError out {node}\n{stderr.decode()}")
 
@@ -901,6 +1759,11 @@ parser.add_argument(
     "--learn", action="store_true", help="Learning mode, record mouse clicks"
 )
 parser.add_argument(
+    "--action-debug",
+    action="store_true",
+    help="Provide screenshots to show action locations",
+)
+parser.add_argument(
     "--offset-x",
     default=0,
     type=int,
@@ -927,18 +1790,39 @@ parser.add_argument(
 parser.add_argument(
     "--timelimit", default=3600, type=int, help="Time limit for running the test"
 )
+parser.add_argument(
+    "--template-folder",
+    type=str,
+    nargs="?",
+    help="Base folder for image template matches",
+)
+parser.add_argument(
+    "--template-pattern",
+    type=str,
+    default=template_pattern,
+    help="filename pattern for image template matches",
+)
 pres = parser.parse_args(sys.argv[1:])
 
 t0 = time.time()
 
 translation = Translation(pres.offset_x, pres.offset_y, pres.extra_y)
+template_pattern = pres.template_pattern
+clickdebug = pres.action_debug
 
-# read the scenario
+# read the scenario, might override pattern, offset
 scenario = Scenario(fname=pres.control)
+
+if pres.template_folder:
+    _load_templates(pres.template_folder + template_pattern)
 
 # prepare the executable
 runner = DuecaRunner(
-    scenario.project.name, pres.base, scenario.repository, scenario.version, scenario.buildoptions
+    scenario.project.name,
+    pres.base,
+    scenario.repository,
+    scenario.version,
+    scenario.buildoptions,
 )
 runner.prepare()
 
@@ -957,4 +1841,4 @@ async def main():
 
 asyncio.run(main())
 
-sys.exit(Check.errcnt)
+sys.exit(Check.errcnt + CheckImage.errcnt)

@@ -1,7 +1,6 @@
-(Type double)
-(Type fixvector<4,double> "#include <fixvector.hxx>")
+(Type dueca::fixvector<4,double> "#include <dueca/fixvector.hxx>")
 
 (Stream Object2
   (Option msgpack)
-  (fixvector<4,double> a (Default 1.0))
+  (dueca::fixvector<4,double> a (Default 1.0))
 )

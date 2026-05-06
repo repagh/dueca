@@ -90,6 +90,10 @@ private:
   /** Directly access the object pointer, for example when using a
       functor */
   inline void *getObjectPtr() { return obj; }
+
+  /** Directly access the object pointer, for example when using a
+      functor, const variant */
+  inline const void *getObjectPtr() const { return obj; }
 };
 
 /** Introspective access to data in a channel.

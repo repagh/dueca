@@ -1,7 +1,7 @@
 /* ------------------------------------------------------------------   */
 /*      item            : @Module@.cxx
         made by         : @author@
-        from template   : DuecaModuleTemplate.cxx (2022.06)
+        from template   : DuecaModuleTemplate.cxx (2026.04)
         date            : @date@
         category        : body file
         description     :
@@ -20,13 +20,14 @@
 
 // the standard package for DUSIME, including template source
 #define DO_INSTANTIATE
-#include <dueca.h>
+#include <dueca/dueca.h>
+using namespace dueca;
 
 // include the debug writing header, by default, write warning and
 // error messages
 #define W_MOD
 #define E_MOD
-#include <debug.h>
+#include <dueca/debug.h>
 
 // class/module name
 const char* const @Module@::classname = "@smodule@";
@@ -203,4 +204,3 @@ void @Module@::doCalculation(const TimeSpec& ts)
 // will check in with the script code, and enable the
 // creation of modules of this type
 static TypeCreator<@Module@> a(@Module@::getMyParameterTable());
-

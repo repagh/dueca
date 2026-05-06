@@ -14,21 +14,15 @@ execute_process(COMMAND ${Python_EXECUTABLE} -c
 execute_process(COMMAND ${Python_EXECUTABLE} -c
   "import sys; print(sys.version_info[0],end='')"
   OUTPUT_VARIABLE PYTHON_MAJOR)
-execute_process(COMMAND bash "-c"
-  "${Python_EXECUTABLE} -m pip help install | grep '[-]-system'"
-  RESULT_VARIABLE PYTHON_PIP_WITHSYSTEM)
-if(PYTHON_PIP_WITHSYSTEM EQUAL 0)
-  set(PIP_SYSTEM "--system")
-endif()
 
+# list all python modules and files that create the package
 set(DEPS
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/__init__.py
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/ddff_convert.py
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/ddffbase.py
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/ddffinventoried.py
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/ddfftagged.py
+  ${CMAKE_CURRENT_SOURCE_DIR}/pyddff/__init__.py
+  ${CMAKE_CURRENT_SOURCE_DIR}/pyddff/ddff_convert.py
+  ${CMAKE_CURRENT_SOURCE_DIR}/pyddff/ddffbase.py
+  ${CMAKE_CURRENT_SOURCE_DIR}/pyddff/ddffinventoried.py
+  ${CMAKE_CURRENT_SOURCE_DIR}/pyddff/ddfftagged.py
   ${CMAKE_CURRENT_SOURCE_DIR}/README.md
-  ${CMAKE_CURRENT_SOURCE_DIR}/setup.cfg
   ${CMAKE_CURRENT_SOURCE_DIR}/pyproject.toml
 )
 
@@ -53,6 +47,9 @@ endif()
 
 set(PYMOD_INSTALL_TYPE bdist_wheel)
 
+# create folder for install if needed
+install(DIRECTORY DESTINATION ${PYSITEDIR})
+
 # install the python package, note that "DESTDIR" needs to be kept intact
 # for modification at install stage. The flags are:
 # --isolated prevents downloads
@@ -64,7 +61,7 @@ set(PYMOD_INSTALL_TYPE bdist_wheel)
 # --root=\$ENV{DESTDIR} --prefix=${CMAKE_INSTALL_PREFIX}
 # This does not work on debian-based (install will be in /usr/local)
 # but would add any executable scripts
-install(CODE "execute_process(COMMAND bash -c \"${Python_EXECUTABLE} -m pip install --isolated --no-index --no-deps --target=\$ENV{DESTDIR}${PYSITEDIR} --find-links=${CMAKE_CURRENT_BINARY_DIR}/dist --upgrade pyddff \")")
+install(CODE "execute_process(COMMAND bash -c \"${Python_EXECUTABLE} -m pip install --isolated --no-index --no-deps --target=\$ENV{DESTDIR}${PYSITEDIR} --find-links=${CMAKE_CURRENT_BINARY_DIR}/dist --upgrade pyddff\")")
 
 # because we use --target, and not --root and --prefix, the script configured
 # in pyproject.toml is not automatically installed. need manual version.
@@ -82,29 +79,10 @@ if(PYTHON_HAVE_PYPABUILD EQUAL 0)
     dist/pyddff-${DDFFVERSION}-py${PYTHON_MAJOR}-none-any.whl
 
     BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/timestamp
-
-    COMMAND ${CMAKE_COMMAND} -E create_symlink
-    ${CMAKE_CURRENT_SOURCE_DIR}/setup.cfg
-    ${CMAKE_CURRENT_BINARY_DIR}/setup.cfg
-
-    COMMAND ${CMAKE_COMMAND} -E create_symlink
-    ${CMAKE_CURRENT_SOURCE_DIR}/README.md
-    ${CMAKE_CURRENT_BINARY_DIR}/README.md
-
-    COMMAND ${CMAKE_COMMAND} -E create_symlink
-    ${CMAKE_CURRENT_SOURCE_DIR}/pyproject.toml
-    ${CMAKE_CURRENT_BINARY_DIR}/pyproject.toml
-
-    COMMAND ${CMAKE_COMMAND} -E create_symlink
-    ${CMAKE_CURRENT_SOURCE_DIR}/src
-    ${CMAKE_CURRENT_BINARY_DIR}/src
-
-    COMMAND ${CMAKE_COMMAND} -E create_symlink
-    "${CMAKE_SOURCE_DIR}/LICENSES/EUPL-1.2 EN.txt"
-    "${CMAKE_CURRENT_BINARY_DIR}/EUPL-1.2 EN.txt"
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/dist
-    COMMAND ${Python_EXECUTABLE} -m build --no-isolation
+    COMMAND ${Python_EXECUTABLE} -m build --no-isolation --outdir ${CMAKE_CURRENT_BINARY_DIR}/dist
     COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/timestamp
     DEPENDS ${DEPS}
   )
@@ -125,8 +103,8 @@ else()
     ${CMAKE_CURRENT_BINARY_DIR}/README.md
 
     COMMAND ${CMAKE_COMMAND} -E create_symlink
-    ${CMAKE_CURRENT_SOURCE_DIR}/src
-    ${CMAKE_CURRENT_BINARY_DIR}/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/pyddff
+    ${CMAKE_CURRENT_BINARY_DIR}/pyddff
 
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/dist
     COMMAND ${Python_EXECUTABLE} setup.py bdist_wheel
@@ -139,6 +117,3 @@ else()
 endif()
 
 # ddff-convert should have been installed by python install?
-
-# create folder for install
-install(DIRECTORY DESTINATION ${PYSITEDIR})

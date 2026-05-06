@@ -49,6 +49,7 @@ INPUT = mainpage-api.md \
         @CMAKE_CURRENT_SOURCE_DIR@/vscode.md \
         @CMAKE_CURRENT_SOURCE_DIR@/gtk4interface.md \
         @CMAKE_CURRENT_SOURCE_DIR@/channelpatterns.md \
+        @CMAKE_CURRENT_SOURCE_DIR@/ddff-log.md \
         @apifiles@
 
 INCLUDE_PATH=@CMAKE_SOURCE_DIR@/dueca \

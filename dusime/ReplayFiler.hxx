@@ -53,9 +53,9 @@ struct ReplayCommand;
     - A stream with the inventory of the file (stream 0), inherited from
       the FileWithInventory
 
-    - A stream with data on recordings (Tag data, stream 1, not labeled in 
-      the inventory). This tag data includes some metadata, and records at 
-      which offset in the file, the data from each of the following 
+    - A stream with data on recordings (Tag data, stream 1, not labeled in
+      the inventory). This tag data includes some metadata, and records at
+      which offset in the file, the data from each of the following
       streams starts.
 
     - Further streams, labeled in the inventory
@@ -99,9 +99,6 @@ public:
   /** Channel for sending back status updates */
   ChannelWriteToken                  w_replayresult;
 
-  /** Clock for turning recording on and off */
-  DataTimeSpec                       ts_switch;
-
   /** React to command */
   void runCommand(const TimeSpec& ts);
 
@@ -131,7 +128,7 @@ public:
 
   /** Parametertable */
   static const ParameterTable* getParameterTable();
-  
+
 private:
 
   /** DataRecorder passes opening parameters. */

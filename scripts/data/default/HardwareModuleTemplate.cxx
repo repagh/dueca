@@ -1,7 +1,7 @@
 /* ------------------------------------------------------------------   */
 /*      item            : @Module@.cxx
         made by         : @author@
-        from template   : HardwareModuleTemplate.cxx (2022.06)
+        from template   : HardwareModuleTemplate.cxx (2026.04)
         date            : @date@
         category        : body file
         description     :
@@ -19,14 +19,15 @@
 
 // the standard package for DUSIME, including template source
 #define DO_INSTANTIATE
-#include <dusime.h>
+#include <dusime/dusime.h>
+using namespace dueca;
 
 // include the debug writing header. Warning and error messages
 // are on by default, debug and info can be selected by
 // uncommenting the respective defines
 //#define D_MOD
 //#define I_MOD
-#include <debug.h>
+#include <dueca/debug.h>
 
 // class/module name
 const char* const @Module@::classname = "@smodule@";
@@ -437,4 +438,3 @@ void @Module@::trimCalculation(const TimeSpec& ts, const TrimMode& mode)
 // will check in with the scheme-interpreting code, and enable the
 // creation of modules of this type
 static TypeCreator<@Module@> a(@Module@::getMyParameterTable());
-

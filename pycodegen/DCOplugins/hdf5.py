@@ -76,7 +76,10 @@ class AddOn(object):
 #ifdef DUECA_CONFIG_HDF5
 #include <H5Cpp.h>
 #include <hdf5utils/HDF5DCOMetaFunctor.hxx>
-#endif"""
+#ifndef DUECA_HDF_CODEGEN_VERSION
+#define DUECA_HDF_CODEGEN_VERSION %(dueca_hdf_version)s
+#endif
+#endif""" % dict(dueca_hdf_version=self.dueca_hdf_version)
 
 
     def printBodyInclude(self):
@@ -97,7 +100,6 @@ class AddOn(object):
         """
 
         return r"""
-#define DUECA_HDF_CODEGEN_VERSION %(dueca_hdf_version)s
 #if defined(%(customdefines)s)
 #ifndef __CUSTOM_COMPATLEVEL_HDF_%(dueca_hdf_version)s
 #error "Verify custom hdf code compatibility with version %(dueca_hdf_version)s.\

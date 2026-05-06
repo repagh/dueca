@@ -23,12 +23,17 @@ KEEPTMP=
 OSCDIR="${HOME}/rpmbuild/home:repabuild/${NAME}"
 OSCDIRV="${HOME}/rpmbuild/tu/home:repabuild/dueca-versioned"
 
+# ubuntu versions with trimmed files
+TRIMUBUNTU="18.04 20.04 22.04 26.04"
+# debian/raspbian versions with trim
+TRIMDEBIAN="11 12 13"
+TRIMRASPBIAN="11 12"
+
+
 # root of the repository with source
 GITSERVER=git@github.com:dueca/dueca.git
 
 # by default, pull from the official dueca remote
-#GITREMOTE="--remote=${GITSERVER}"
-
 
 # process input arguments
 while getopts "khH:s:" optname
@@ -59,45 +64,50 @@ function trimversion()
                 s/python3-xlwt/python-xlwt/
                 s/python3-build,//
                 s/libgtk-4-dev,//
+                s/libmsgpack-cxx-dev,//
+                s/librsvg2-bin/inkscape/
                 s/libgtkmm-4.0-dev,//
                 s/debian\.tar/debian-xUbuntu_18.04.tar/' $1 > $2
     elif [ "$3" = '20.04' ]; then
         sed -e 's/guile-2\.2-dev/guile-2\.0-dev/
                 s/libgtk-4-dev,//
                 s/python3-build,//
+                s/libmsgpack-cxx-dev,//
                 s/libgtkmm-4.0-dev,//
+                s/librsvg2-bin/inkscape/
                 s/debian\.tar/debian-xUbuntu_20.04.tar/' $1 > $2
     elif [ "$3" = '22.04' ]; then
         sed -e 's/libgtkmm-4.0-dev,//
+                s/python3-build,//
+                s/libmsgpack-cxx-dev,//
                 s/debian\.tar/debian-xUbuntu_22.04.tar/' $1 > $2
+    elif [ "$3" = '26.04' ]; then
+        sed -e 's/libglade2-dev,//
+                s/libgtkglext1-dev,//
+                s/debian\.tar/debian-xUbuntu_26.04.tar/' $1 > $2
     elif [ "$3" = '11' ]; then
         sed -e 's/libgtk-4-dev,//
                 s/python3-build,//
+                s/libmsgpack-cxx-dev,//
                 s/libgtkmm-4.0-dev,//
                 s/debian\.tar/debian-Debian_11.tar/' $1 > $2
     elif [ "$3" = '13' ]; then
         sed -e 's/libglade2-dev,//
                 s/libgtkglext1-dev,//
                 s/libgtkmm-2.4-dev,//
-                s/libmsgpack-dev,/libmsgpack-dev, libmsgpack-cxx-dev,/
                 s/debian\.tar/debian-Debian_13.tar/' $1 > $2
     elif [ "$3" = 'R10' ]; then
         sed -e 's/libgtk-4-dev,//
+                s/python3-build,//
+                s/libmsgpack-cxx-dev,//
                 s/libgtkmm-4.0-dev,//
                 s/debian\.tar/debian-Raspbian_10.tar/' $1 > $2
     elif [ "$3" = 'R11' ]; then
         sed -e 's/libgtk-4-dev,//
+                s/python3-build,//
+                s/libmsgpack-cxx-dev,//
                 s/libgtkmm-4.0-dev,//
                 s/debian\.tar/debian-Raspbian_11.tar/' $1 > $2
-    fi
-}
-
-function trimversionrules()
-{
-    if [ "$3" = '13' ]; then
-        # gtk2 and gtkmm are removed from support
-        sed -e 's/-DBUILD_GTK2=ON/-DBUILD_GTK2=OFF/
-                s/-DBUILD_GTKMM=ON/-DBUILD_GTKMM=OFF/' $1 > $2
     fi
 }
 
@@ -195,7 +205,7 @@ function create_debfiles()
     popd
 
     # and for xUbuntu 20.04
-    for VER in 18.04 20.04 22.04; do
+    for VER in $TRIMUBUNTU; do
 
         # base version debian folder
         pushd obs
@@ -217,12 +227,11 @@ function create_debfiles()
     done
 
     # Debian 11 and 13
-    for VER in 11 13; do
+    for VER in $TRIMDEBIAN; do
 
         # base version debian folder
         pushd obs
         trimversion debian/control.bak debian/control ${VER}
-        trimversionrules debian/rules.bak debian/rules ${VER}
         tar cvf ../../debian-Debian_${VER}.tar debian
         popd
         pushd build/obs
@@ -232,7 +241,7 @@ function create_debfiles()
     done
 
     # Raspbian 10, 11
-    for VER in 10 11; do
+    for VER in $TRIMRASPBIAN; do
 
         # base version debian folder
         pushd obs
@@ -277,7 +286,7 @@ function create_debfiles()
         mv -f debian-versioned.tar ${OSCDIRV}/debian.tar
         mv -f dueca-versioned.dsc ${OSCDIRV}
         mv -f dueca-versioned.spec ${OSCDIRV}
-        for VER in 18.04 20.04 22.04; do
+        for VER in $TRIMUBUNTU; do
             mv -f dueca-versioned-xUbuntu_${VER}.dsc ${OSCDIRV}
             mv -f debian-versioned-xUbuntu_${VER}.tar \
                ${OSCDIRV}/debian-xUbuntu_${VER}.tar
@@ -302,17 +311,17 @@ function create_debfiles()
         mv -f debian.tar ${OSCDIR}/debian.tar
         mv -f dueca.dsc ${OSCDIR}
         mv -f dueca.spec ${OSCDIR}
-        for VER in 18.04 20.04 22.04; do
+        for VER in $TRIMUBUNTU; do
             mv -f dueca-xUbuntu_${VER}.dsc ${OSCDIR}
             mv -f debian-xUbuntu_${VER}.tar \
                ${OSCDIR}/debian-xUbuntu_${VER}.tar
         done
-        for VER in 11 13; do
+        for VER in $TRIMDEBIAN; do
             mv -f dueca-Debian_${VER}.dsc ${OSCDIR}
             mv -f debian-Debian_${VER}.tar \
                ${OSCDIR}/debian-Debian_${VER}.tar
         done
-        for VER in 10 11; do
+        for VER in $TRIMRASPBIAN; do
             mv -f dueca-Raspbian_${VER}.dsc ${OSCDIR}
             mv -f debian-Raspbian_${VER}.tar \
                ${OSCDIR}/debian-Raspbian_${VER}.tar

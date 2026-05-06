@@ -480,7 +480,7 @@ void DusimeController::takeSnapshot()
   sc.data().command = EntityCommand::PrepareSnapshot;
 
   // schedule collection of the snapshot
-  tick += min_notification;
+  tick += 2*min_notification;
 
   waker.requestAlarm(tick);
 }

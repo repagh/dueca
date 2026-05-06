@@ -14,7 +14,7 @@
 
 
 ;; basic type is normally an uint32_t, defined in above header
-(Type TimeTickType)
+(Type TimeTickType "using namespace dueca;")
 
 ;; DataTimeSpec is a special bare-bones version of TimeSpec. It is
 ;; used for storage of the time specification with the data in
@@ -38,4 +38,3 @@ DUECA_NS_END;
                 ;; The time interval ends <em>before</em> this
                 (TimeTickType validity_end (Default 0))
                 )
-

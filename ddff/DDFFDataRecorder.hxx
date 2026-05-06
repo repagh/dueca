@@ -18,7 +18,7 @@
 #include <dueca_ns.h>
 #include "FileStreamWrite.hxx"
 #include "FileStreamRead.hxx"
-#include "FileWithInventory.hxx"
+#include <dueca-conf.h>
 #include "SegmentedRecorderBase.hxx"
 #include <dueca/CommObjectWriter.hxx>
 #include <boost/scoped_ptr.hpp>
@@ -34,6 +34,7 @@
 #include <exception>
 #include <map>
 #include <list>
+#define DEBPRINTLEVEL -1
 #include <debprint.h>
 #include <dueca/debug.h>
 
@@ -101,85 +102,130 @@ DDFF_NS_START
     or directly when writing (note, do not record in HoldCurrent:
     @code
       DataWriter<MyObject> dw(w_mytoken, ts);
-      // write the data to dw.data() ...
+      // write the data to dw.data() as normal ...
+
+      // only when in advance, use the written data for the recording
       if (getCurrentState() == SimulationState::Advance) {
         my_recorder.record(ts, dw.data());
       }
     @endcode
 
-    If you need to record the data from an event (and you only now and then write),
-    use the markRecord() function to indicate that you passed the given time:
+    If you need to record the data from an event (which you will normally only
+    now and then write, or even repeatedly in a single time span), make sure
+    that the time span you specify when recording is 0, and use the
+    markRecord() function in each cycle to indicate that you passed the
+    given time:
 
     @code
-    if (writing_my_event) {
+    while (writing_my_event) {
       DataWriter<MyObject> dw(w_mytoken, ts);
-      // write the data to dw.data() ...
+      // write the data to dw.data(), etc. ...
       if (getCurrentState() == SimulationState::Advance) {
-        my_recorder.record(ts, dw.data());
+        my_recorder.record(ts.getValidityStart(), dw.data());
       }
-    } 
-    else if getCurrentState() == SimulationState::Advance) {
+    }
+
+    // make sure that the recording is marked as complete for this
+    // update
+    if (getCurrentState() == SimulationState::Advance) {
       my_recorder.markRecord(ts);
     }
     @endcode
 
     When in the "Replay" mode, the recorder's "replay" method can be used to
-    retrieve the previously stored data.
+    explicitly retrieve the previously stored data. In the following example,
+    we assume an event object, when there is an event for the given time span,
+    the replay call returns true.
+
+    @code
+    if (getCurrentState() == SimulationState::Replay) {
+      MyObject obj;
+      DataTimeSpec ts2;
+      while (my_recorder.replay(ts, obj, ts2)) {
+
+        // an event was sent in the recording, resend it in the replay
+        DataWriter<MyObject> dw(w_mytoken, ts2);
+        dw.data() = obj;
+
+        // and do whatever else you want with obj, flashing lights
+        // auditory feedback, or whatever you did during the recording
+        ....
+      }
+    }
+    @endcode
+
+    Of course, if you wrote and recorded a stream channel, you may assume that
+    the data is there during replay, ignore the returned boolean, and call
+    replay only once.
+
+    If you only want to write the data to the channel again, and you don't
+    need to access the data in the module, you can use the channelReplay
+    method. This handles event or stream channels in the proper fashion, and
+    simplifies your work:
+
+    @code
+    if (getCurrentState() == SimulationState::Replay) {
+      my_recorder.channelReplay(ts, w_mytoken);
+    }
+    @endcode
 */
-class DDFFDataRecorder: public SegmentedRecorderBase //: public boost::intrusive_ref_counter<DataRecorder>
+class DDFFDataRecorder :
+  public SegmentedRecorderBase //: public boost::intrusive_ref_counter<DataRecorder>
 {
 public:
   /** Pointer type */
-  typedef DDFFDataRecorder*                     pointer;
+  typedef DDFFDataRecorder *pointer;
 
 private:
   /** entity to which the recorder belongs */
-  std::string                                   entity;
+  std::string entity;
 
   /** key of the entry stream */
-  std::string                                   key;
+  std::string key;
 
   /** class of the data */
-  std::string                                   data_class;
-
-  /** Offset location for a stretch of data in the file stream */
-  ddff::FileHandler::pos_type                   stretch_offset;
+  std::string data_class;
 
   /** Same file stream, but now for reading */
-  ddff::FileStreamRead::pointer                 r_stream;
+  ddff::FileStreamRead::pointer r_stream;
 
   /** Functor - if applicable, for recording/reading written data */
-  boost::scoped_ptr<ddff::DDFFDCOReadFunctor>   record_functor;
+  boost::scoped_ptr<ddff::DDFFDCOReadFunctor> record_functor;
 
   /** Functor - if applicable, for re-writing the data */
-  boost::scoped_ptr<ddff::DDFFDCOWriteFunctor>  replay_functor;
+  boost::scoped_ptr<ddff::DDFFDCOWriteFunctor> replay_functor;
 
   /** Metafunctor, for getting the above functors from the channel token */
-  const ChannelWriteToken                      *w_token_ptr;
-  
+  const ChannelWriteToken *w_token_ptr;
+
   /** Pointer to the replay filer. */
-  FileWithSegments::pointer                     filer;
+  FileWithSegments::pointer filer;
 
   /** Value used for replay  timing */
-  TimeTickType                                  replay_tick;
+  TimeTickType replay_tick;
 
   /** Value used for replay timing */
-  TimeTickType                                  replay_span;
+  TimeTickType replay_span;
 
   /** Value used for replay timing */
-  TimeTickType                                  replay_start_tick;
+  TimeTickType replay_start_tick;
+
+  /** Value in the file for the replay start */
+  TimeTickType replay_record_tick;
 
   /** Iterator for reading the data */
-  ddff::FileStreamRead::Iterator                rit0;
+  ddff::FileStreamRead::Iterator rit0;
+
+  /** Remember offset in blocks */
+  unsigned block_offset;
 
 public:
   /** Type to organize all DataRecorder objects in a node */
-  typedef std::map<std::string, std::list<pointer> > recordermap_t;
+  typedef std::map<std::string, std::list<pointer>> recordermap_t;
 
 private:
-
   /** Add to the map with recorders */
-  static void checkIn(pointer rec, const std::string& entity);
+  static void checkIn(pointer rec, const std::string &entity);
 
 #if 0
   /** Retrieve the attached inventory */
@@ -211,8 +257,8 @@ public:
                         persistent across simulation runs.
       @returns          True, if connection correct.
   */
-  bool complete(const std::string& entity, const ChannelWriteToken& w_token,
-                const std::string& key=std::string(""));
+  bool complete(const std::string &entity, const ChannelWriteToken &w_token,
+                const std::string &key = std::string(""));
 
   /** Complete; i.e., connect to the file storage.
 
@@ -228,8 +274,8 @@ public:
       @param   data_class Class of data to be written/read
       @returns          True, if connection correct.
   */
-  bool complete(const std::string& entity, const std::string& key,
-                const std::string& data_class=std::string(""));
+  bool complete(const std::string &entity, const std::string &key,
+                const std::string &data_class = std::string(""));
 
   /** Replay "stream" data into a DCO object.
 
@@ -242,22 +288,31 @@ public:
                         false is returned.
    */
   template <typename DCO>
-  bool replay(const DataTimeSpec& ts, DCO& object, DataTimeSpec& object_ts) {
+  bool replay(const DataTimeSpec &ts, DCO &object, DataTimeSpec &object_ts)
+  {
     //auto rit0 = r_stream->iterator();
 
     // check not exhausted
-    if (rit0 == r_stream->end()) return false;
-
-    try {
+    if (rit0 == r_stream->end()) {
+      DEB("Replay stream " << r_stream->getStreamId() << " exhausted at "
+                           << ts);
+      return false;
+    }
+#if !defined(DDFF_NOCATCH)
+    try
+#endif
+    {
       // max timetick is flag for tick not yet read
       if (replay_tick == MAX_TIMETICK) {
         unsigned sz =
-          msgunpack::unstream<ddff::FileStreamRead::Iterator>::unpack_arraysize
-          (rit0, r_stream->end());
+          msgunpack::unstream<ddff::FileStreamRead::Iterator>::unpack_arraysize(
+            rit0, r_stream->end());
         assert(sz == 3);
         msgunpack::msg_unpack(rit0, r_stream->end(), replay_tick);
         msgunpack::msg_unpack(rit0, r_stream->end(), replay_span);
-        replay_tick += replay_start_tick;
+        replay_tick = replay_tick - replay_record_tick + replay_start_tick;
+        DEB1("S" << r_stream->getStreamId() << " new timing " << replay_tick
+                 << "-" << replay_span);
       }
 
       // event-type data, span=0, keep returning while the event happened
@@ -265,6 +320,7 @@ public:
       if (replay_span == 0) {
         if (replay_tick <= ts.getValidityStart()) {
           msgunpack::msg_unpack(rit0, r_stream->end(), object);
+          DEB1("S" << r_stream->getStreamId() << " event");
           object_ts.validity_start = replay_tick;
           object_ts.validity_end = replay_tick;
           replay_tick = MAX_TIMETICK;
@@ -278,10 +334,11 @@ public:
         // this should match!
         if (replay_tick != ts.getValidityStart() ||
             ts.getValiditySpan() != replay_span) {
-          throw(replay_synchronization
-                (entity.c_str(), r_stream->getStreamId(),
-                 ts.getValidityStart(), ts.getValidityEnd(),
-                 replay_tick, replay_tick + replay_span));
+          DEB("S" << r_stream->getStreamId() << " replay timing mismatch at "
+                  << ts << " start tick " << replay_start_tick);
+          throw(replay_synchronization(
+            entity.c_str(), r_stream->getStreamId(), ts.getValidityStart(),
+            ts.getValidityEnd(), replay_tick, replay_tick + replay_span));
         }
         msgunpack::msg_unpack(rit0, r_stream->end(), object);
         object_ts.validity_start = replay_tick;
@@ -290,13 +347,20 @@ public:
         return true;
       }
     }
-    catch (const std::exception& e) {
+#if !defined(DDFF_NOCATCH)
+    catch (const std::exception &e) {
       if (replay_tick == MAX_TIMETICK) {
-        DEB("Error in replay, could not decode new tick after " <<
-            ts.getValidityStart() - replay_start_tick);
+        // end of data event
+        std::cerr << "Error in replay, could not decode new tick after "
+                  << ts.getValidityStart() - replay_start_tick << std::endl;
         return false;
       }
+      else {
+        std::cerr << "Error decoding ddff replay" << ts.getValidityStart()
+                  << " data tick " << replay_tick << std::endl;
+      }
     }
+#endif
     return true;
   }
 
@@ -311,8 +375,8 @@ public:
                         available for the same time; repeat reading until
                         false is returned.
    */
-  template <typename DCO>
-  bool replay(const DataTimeSpec& ts, DCO& object) {
+  template <typename DCO> bool replay(const DataTimeSpec &ts, DCO &object)
+  {
     static DataTimeSpec object_ts;
     return replay(ts, object, object_ts);
   }
@@ -322,11 +386,13 @@ public:
       @tparam DCO    A packable (with msgpack) object.
       @param ts      Time for which data is recorded; the end of the
                      period is also used to mark until when recording is
-                     complete.
+                     complete. If you are recording event data, and want that
+                     read back as event data, use a span of 0, and call
+                     markRecord in each cycle.
       @param object  DCO object to save.
    */
-  template <typename DCO>
-  void record(const DataTimeSpec& ts, const DCO& object) {
+  template <typename DCO> void record(const DataTimeSpec &ts, const DCO &object)
+  {
 
     if (ts.getValidityStart() >= record_start_tick) {
 
@@ -342,9 +408,12 @@ public:
 
       // record as an array, with tick start, and the object
       pk.pack_array(3);
-      pk.pack(ts.getValidityStart() - record_start_tick);
+      pk.pack(ts.getValidityStart());
       pk.pack(ts.getValiditySpan());
-      pk.pack(object);
+      pk.pack(mark_for_dco_msgpack(object));
+
+      DEB1("S " << r_stream->getStreamId() << " packed for "
+                << ts.getValidityStart() << "-" << ts.getValiditySpan());
 
       // record end tick, for later determining whether a recording is
       // complete
@@ -355,8 +424,8 @@ public:
 
          Recording start is not aligned with data time spans; adjust
          your intervals when starting the Environment. */
-      W_XTR("Omitting partial data span for recording, span=" << ts <<
-            " recording start=" << record_start_tick);
+      W_XTR("Omitting partial data span for recording, span="
+            << ts << " recording start=" << record_start_tick);
     }
   }
 
@@ -367,7 +436,7 @@ public:
                      complete.
       @param writer  Communication object writer.
  */
-  void channelRecord(const DataTimeSpec& ts, CommObjectWriter& writer);
+  void channelRecord(const DataTimeSpec &ts, const CommObjectWriter &writer);
 
   /** Replay previously recorded data into a write channel. The replay
       considers the requested replay time, in combination with the
@@ -376,7 +445,7 @@ public:
 
       @param ts      Time for which data is to be replayed.
       @param w_token Channel write token.
-      
+
       @returns       Number of replayed data points; the replay looks at the
                      given time specification and replays all data
                      corresponding to this specification. In case of
@@ -386,7 +455,7 @@ public:
                      recording, so typically one data point is
                      replayed.
    */
-  unsigned channelReplay(const DataTimeSpec& ts, ChannelWriteToken& w_token);
+  unsigned channelReplay(const DataTimeSpec &ts, ChannelWriteToken &w_token);
 
   /** Mark until where data recording is complete. Use this for recording
       of event data. When recording stream data, the record or channelRecord
@@ -394,8 +463,10 @@ public:
 
       @param ts      Time for which recording is complete
   */
-  inline void markRecord(const DataTimeSpec& ts)
-  { marked_tick = ts.getValidityEnd(); }
+  inline void markRecord(const DataTimeSpec &ts)
+  {
+    marked_tick = ts.getValidityEnd();
+  }
 
   /** Destructor */
   ~DDFFDataRecorder();
@@ -417,7 +488,7 @@ private:
 
 public:
   /** Get the map with recorders */
-  static recordermap_t& allRecorders();
+  static recordermap_t &allRecorders();
 
   /** Control spooling replay position.
 
@@ -425,15 +496,16 @@ public:
       @param end_offset Location in file where data ends.
    */
   void spoolReplay(ddff::FileHandler::pos_type offset,
-                   ddff::FileHandler::pos_type end_offset) final;
-
+                   ddff::FileHandler::pos_type end_offset,
+                   TimeTickType replay_record_tick,
+                   unsigned inblock_offset) final;
 
 private:
   /** Prevent copying */
-  DDFFDataRecorder(const DDFFDataRecorder&);
+  DDFFDataRecorder(const DDFFDataRecorder &);
 
   /** Prevent assignment */
-  DDFFDataRecorder& operator=(const DDFFDataRecorder&);
+  DDFFDataRecorder &operator=(const DDFFDataRecorder &);
 };
 
 /** Exception, improper use of the recorder.
@@ -441,11 +513,13 @@ private:
     Exception thrown when the second form of
     dueca::DataRecorder::complete() is combined with calls to directly
     access the channel */
-struct channel_access_not_available: public std::exception
+struct channel_access_not_available : public std::exception
 {
   /** Re-implementation of std:exception what. */
-  const char* what() const throw()
-  { return "Cannot directly access the channel, use alternative complete()"; }
+  const char *what() const throw()
+  {
+    return "Cannot directly access the channel, use alternative complete()";
+  }
 };
 
 DDFF_NS_END

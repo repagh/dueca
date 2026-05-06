@@ -105,7 +105,11 @@ SimulationState::Type HardwareModule::getAndCheckState(const TimeSpec &ts)
     case SimulationState::HoldCurrent_Inactive:
     case SimulationState::Advance:
     case SimulationState::Replay:
-      consistent = (current_state == SimulationState::HoldCurrent);
+      consistent = (current_state == SimulationState::HoldCurrent ||
+                    current_state == SimulationState::Replay);
+      break;
+    case dueca::SimulationState::Replay_HoldCurrent:
+      consistent = (current_state == SimulationState::Replay);
       break;
     default:
       consistent = false;
@@ -184,7 +188,7 @@ void HardwareModule::processEntityCommands(const TimeSpec &ts)
   if (!t_entity_commands.isValid())
     return;
 
-  while (t_entity_commands.haveVisibleSets()) {
+  while (t_entity_commands.getNumVisibleSets()) {
     DataReader<EntityCommand> r(t_entity_commands);
 
     switch (r.data().command) {
@@ -196,6 +200,15 @@ void HardwareModule::processEntityCommands(const TimeSpec &ts)
 
     case EntityCommand::SendSnapshot:
     case EntityCommand::SendIncoSnapshot:
+      if (snap_state != SnapshotState::SnapTaken) {
+        /* DUSIME system.
+
+           No snapshot can be sent. Problem with timing?
+        */
+        W_MOD("Snapshot not yet taken, sim at " << last_check << " snap for "
+                                                << future_snap_time << " cmd "
+                                                << ts.getValidityStart());
+      }
       localSendSnapshot(ts,
                         r.data().command == EntityCommand::SendIncoSnapshot);
       break;
@@ -212,6 +225,7 @@ void HardwareModule::processEntityCommands(const TimeSpec &ts)
                       << " too late for snapshot at "
                       << r.timeSpec().getValidityStart());
       }
+      snap_state = SnapshotState::SnapPrepared;
       future_snap_time = r.timeSpec().getValidityStart();
       break;
 

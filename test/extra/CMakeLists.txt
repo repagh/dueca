@@ -1,4 +1,8 @@
 add_test(INTERPOLATOR InterpTest.x)
+add_test(STEPS StepsTest.x)
+add_test(POLYNOMIALN PolynomialNTest.x)
+add_test(CIRCULARPOLY CircularWithPolyTest.x)
+add_test(CIRCULAR CircularTest.x)
 
 include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
@@ -16,3 +20,11 @@ include_directories(
 
 add_executable(InterpTest.x InterpTest.cxx)
 target_link_libraries(InterpTest.x dueca-extra${STATICSUFFIX})
+add_executable(StepsTest.x StepsTest.cxx)
+target_link_libraries(StepsTest.x dueca-extra${STATICSUFFIX})
+add_executable(PolynomialNTest.x PolynomialNTest.cxx)
+target_link_libraries(PolynomialNTest.x dueca-extra${STATICSUFFIX})
+add_executable(CircularWithPolyTest.x CircularWithPolyTest.cxx)
+target_link_libraries(CircularWithPolyTest.x dueca-extra${STATICSUFFIX})
+add_executable(CircularTest.x CircularTest.cxx)
+target_link_libraries(CircularTest.x dueca-extra${STATICSUFFIX})

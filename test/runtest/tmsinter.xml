@@ -1,7 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<scenario xmlns="https://dueca.tudelft.nl/testscenario"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="https://dueca.tudelft.nl/testscenario https://dueca.tudelft.nl/schemas/testscenario.xsd">
+<scenario xmlns="https://dueca.tudelft.nl/testscenario" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://dueca.tudelft.nl/testscenario https://dueca.tudelft.nl/schemas/testscenario.xsd">
   <project name="DuecaTestCommunication">
     <window>DUECA/DUSIME control panel</window>
     <window>Are you serious?</window>
@@ -43,464 +41,234 @@
     <node>five</node>
     <command>./runscript</command>
   </execute>
-  <offset x="1" y="-5" />
+  <offset x="0" y="17" criterion="0.995"/>
   <actions>
-    <check window="TEAM 5 control panel" x="476" y="37" r="65" g="255" b="11" timeout="50.0"
-      wait="0.5" />
-    <snap name="tmsinter-000.png" />
-    <check window="DUECA/DUSIME control panel" x="474" y="82" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="DUECA/DUSIME control panel" x="474" y="82" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="DUECA/DUSIME control panel" x="474" y="82" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="DUECA/DUSIME control panel" x="474" y="82" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <check window="DUECA/DUSIME control panel" x="476" y="123" r="104" g="104" b="104"
-      timeout="10.0" wait="0.5" />
-    <click window="DUECA/DUSIME control panel" x="476" y="123" button="Button.left" pressed="true"
-      wait="5.2" />
-    <click window="DUECA/DUSIME control panel" x="476" y="123" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="DUECA/DUSIME control panel" x="476" y="123" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <check window="DUECA/DUSIME control panel" x="476" y="168" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <check window="DUECA/DUSIME control panel" x="476" y="209" r="104" g="104" b="104"
-      timeout="10.0" wait="0.5" />
-    <check window="TEAM 1 control panel" x="473" y="81" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 1 control panel" x="473" y="81" button="Button.left" pressed="true"
-      wait="10.2" />
-    <click window="TEAM 1 control panel" x="473" y="81" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 1 control panel" x="473" y="81" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <check window="TEAM 1 control panel" x="473" y="122" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 1 control panel" x="473" y="122" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 1 control panel" x="473" y="122" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 1 control panel" x="473" y="122" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <check window="TEAM 1 control panel" x="477" y="169" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <check window="TEAM 1 control panel" x="475" y="210" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 1 control panel" x="475" y="210" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 1 control panel" x="475" y="210" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 1 control panel" x="475" y="210" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <check window="TEAM 1 control panel" x="422" y="206" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 1 control panel" x="422" y="206" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 1 control panel" x="422" y="206" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 1 control panel" x="475" y="252" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 1 control panel" x="475" y="252" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 1 control panel" x="475" y="252" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 1 control panel" x="475" y="252" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <check window="TEAM 2 control panel" x="474" y="79" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 2 control panel" x="474" y="79" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 2 control panel" x="474" y="79" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 2 control panel" x="474" y="80" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <check window="TEAM 2 control panel" x="475" y="124" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 2 control panel" x="475" y="124" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 2 control panel" x="475" y="124" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 2 control panel" x="475" y="124" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <check window="TEAM 2 control panel" x="476" y="206" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 2 control panel" x="476" y="206" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 2 control panel" x="476" y="206" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 2 control panel" x="476" y="206" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <check window="TEAM 2 control panel" x="424" y="209" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 2 control panel" x="424" y="208" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 2 control panel" x="424" y="208" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 2 control panel" x="477" y="250" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 2 control panel" x="477" y="250" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 2 control panel" x="477" y="250" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 2 control panel" x="477" y="250" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <check window="TEAM 3 control panel" x="474" y="82" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 3 control panel" x="474" y="82" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 3 control panel" x="474" y="82" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 3 control panel" x="474" y="82" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <check window="TEAM 3 control panel" x="478" y="126" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 3 control panel" x="478" y="126" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 3 control panel" x="478" y="126" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 3 control panel" x="478" y="126" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <check window="TEAM 3 control panel" x="476" y="206" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 3 control panel" x="476" y="206" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 3 control panel" x="476" y="206" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 3 control panel" x="476" y="206" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <check window="TEAM 3 control panel" x="422" y="209" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 3 control panel" x="422" y="209" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 3 control panel" x="423" y="209" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 3 control panel" x="476" y="251" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 3 control panel" x="476" y="251" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 3 control panel" x="476" y="251" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 3 control panel" x="476" y="251" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <check window="TEAM 4 control panel" x="477" y="85" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 4 control panel" x="477" y="85" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 4 control panel" x="477" y="85" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 4 control panel" x="477" y="85" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <check window="TEAM 4 control panel" x="475" y="125" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 4 control panel" x="475" y="125" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 4 control panel" x="475" y="125" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 4 control panel" x="476" y="126" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <check window="TEAM 4 control panel" x="474" y="209" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 4 control panel" x="474" y="209" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 4 control panel" x="474" y="209" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 4 control panel" x="474" y="209" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <check window="TEAM 4 control panel" x="424" y="206" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 4 control panel" x="424" y="206" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 4 control panel" x="424" y="206" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 4 control panel" x="475" y="248" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 4 control panel" x="475" y="248" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 4 control panel" x="475" y="248" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 4 control panel" x="475" y="248" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <check window="TEAM 5 control panel" x="475" y="80" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 5 control panel" x="475" y="80" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 5 control panel" x="475" y="81" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 5 control panel" x="475" y="81" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <check window="TEAM 5 control panel" x="476" y="124" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 5 control panel" x="476" y="124" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 5 control panel" x="476" y="124" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 5 control panel" x="476" y="124" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <check window="TEAM 5 control panel" x="475" y="209" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 5 control panel" x="475" y="209" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 5 control panel" x="475" y="209" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 5 control panel" x="475" y="209" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <check window="TEAM 5 control panel" x="420" y="206" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 5 control panel" x="420" y="206" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 5 control panel" x="420" y="206" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 5 control panel" x="473" y="250" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 5 control panel" x="473" y="250" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 5 control panel" x="473" y="250" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 5 control panel" x="473" y="250" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <snap name="tmsinter-running.png" />
-    <check window="TEAM 1 control panel" x="473" y="210" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 1 control panel" x="473" y="210" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 1 control panel" x="473" y="210" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 1 control panel" x="477" y="165" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 1 control panel" x="477" y="165" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 1 control panel" x="477" y="165" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 1 control panel" x="478" y="82" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 1 control panel" x="478" y="82" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 1 control panel" x="478" y="82" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 1 control panel" x="478" y="82" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <check window="TEAM 1 control panel" x="476" y="41" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 1 control panel" x="476" y="41" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 1 control panel" x="476" y="41" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 1 control panel" x="476" y="41" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <click x="580" y="45" button="Button.left" pressed="true" wait="0.2" />
-    <click x="580" y="45" button="Button.left" pressed="false" wait="0.2" />
-    <check window="TEAM 1 control panel" x="69" y="41" r="53" g="132" b="228" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 1 control panel" x="69" y="41" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 1 control panel" x="69" y="41" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="Are you serious?" x="35" y="23" r="248" g="248" b="247" timeout="10.0" wait="0.5" />
-    <click window="Are you serious?" x="35" y="23" button="Button.left" pressed="true" wait="0.2" />
-    <click window="Are you serious?" x="35" y="23" button="Button.left" pressed="false" wait="0.2" />
-    <check window="TEAM 3 control panel" x="473" y="209" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 3 control panel" x="473" y="209" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 3 control panel" x="473" y="209" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 3 control panel" x="473" y="209" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <check window="TEAM 3 control panel" x="475" y="164" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 3 control panel" x="475" y="164" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 3 control panel" x="475" y="164" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 3 control panel" x="475" y="164" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <check window="TEAM 3 control panel" x="477" y="80" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 3 control panel" x="477" y="80" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 3 control panel" x="477" y="80" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 3 control panel" x="477" y="80" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <check window="TEAM 3 control panel" x="476" y="43" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 3 control panel" x="475" y="38" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 3 control panel" x="475" y="38" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 3 control panel" x="475" y="38" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <snap name="tmsinter-000.png" />
-    <click x="579" y="393" button="Button.left" pressed="true" wait="0.2" />
-    <click x="579" y="393" button="Button.left" pressed="false" wait="0.2" />
-    <check window="TEAM 3 control panel" x="62" y="38" r="53" g="132" b="228" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 3 control panel" x="62" y="38" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 3 control panel" x="62" y="38" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="Are you serious?" x="11" y="35" r="248" g="248" b="247" timeout="10.0" wait="0.5" />
-    <click window="Are you serious?" x="11" y="35" button="Button.left" pressed="true" wait="0.2" />
-    <click window="Are you serious?" x="11" y="35" button="Button.left" pressed="false" wait="0.2" />
-    <check window="TEAM 5 control panel" x="478" y="209" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 5 control panel" x="478" y="209" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 5 control panel" x="478" y="209" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 5 control panel" x="478" y="209" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <check window="TEAM 5 control panel" x="475" y="168" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 5 control panel" x="475" y="168" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 5 control panel" x="475" y="168" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 5 control panel" x="475" y="168" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <check window="TEAM 5 control panel" x="478" y="81" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 5 control panel" x="478" y="81" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 5 control panel" x="478" y="81" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 5 control panel" x="476" y="80" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <check window="TEAM 5 control panel" x="478" y="41" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 5 control panel" x="478" y="41" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 5 control panel" x="478" y="41" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 5 control panel" x="478" y="41" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <click x="575" y="737" button="Button.left" pressed="true" wait="0.2" />
-    <click x="575" y="737" button="Button.left" pressed="false" wait="0.2" />
-    <check window="TEAM 5 control panel" x="71" y="43" r="53" g="132" b="228" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 5 control panel" x="71" y="43" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 5 control panel" x="71" y="43" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="Are you serious?" x="17" y="38" r="248" g="248" b="247" timeout="10.0" wait="0.5" />
-    <click window="Are you serious?" x="17" y="38" button="Button.left" pressed="true" wait="0.2" />
-    <click window="TEAM 5 control panel" x="149" y="167" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 4 control panel" x="471" y="207" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 4 control panel" x="471" y="207" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 4 control panel" x="471" y="207" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 4 control panel" x="472" y="208" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <check window="TEAM 4 control panel" x="477" y="165" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 4 control panel" x="477" y="165" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 4 control panel" x="477" y="165" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 4 control panel" x="477" y="165" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <check window="TEAM 4 control panel" x="474" y="84" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 4 control panel" x="474" y="84" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 4 control panel" x="474" y="84" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 4 control panel" x="474" y="84" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <check window="TEAM 4 control panel" x="476" y="42" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 4 control panel" x="476" y="42" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 4 control panel" x="476" y="42" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 4 control panel" x="475" y="41" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <click x="30" y="742" button="Button.left" pressed="true" wait="0.2" />
-    <click x="30" y="742" button="Button.left" pressed="false" wait="0.2" />
-    <check window="TEAM 4 control panel" x="64" y="38" r="53" g="132" b="228" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 4 control panel" x="64" y="38" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 4 control panel" x="64" y="38" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="Are you serious?" x="13" y="29" r="248" g="248" b="247" timeout="10.0" wait="0.5" />
-    <click window="Are you serious?" x="13" y="29" button="Button.left" pressed="true" wait="0.2" />
-    <click window="TEAM 4 control panel" x="145" y="158" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 2 control panel" x="476" y="203" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 2 control panel" x="476" y="203" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 2 control panel" x="476" y="203" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 2 control panel" x="473" y="206" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <check window="TEAM 2 control panel" x="475" y="168" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 2 control panel" x="475" y="168" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 2 control panel" x="475" y="168" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 2 control panel" x="475" y="168" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <check window="TEAM 2 control panel" x="477" y="83" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 2 control panel" x="477" y="83" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 2 control panel" x="477" y="83" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 2 control panel" x="477" y="83" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <check window="TEAM 2 control panel" x="476" y="42" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 2 control panel" x="476" y="42" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 2 control panel" x="476" y="42" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="TEAM 2 control panel" x="476" y="42" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <click x="21" y="390" button="Button.left" pressed="true" wait="0.2" />
-    <click x="21" y="390" button="Button.left" pressed="false" wait="0.2" />
-    <check window="TEAM 2 control panel" x="69" y="36" r="53" g="132" b="228" timeout="10.0"
-      wait="0.5" />
-    <click window="TEAM 2 control panel" x="69" y="36" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="TEAM 2 control panel" x="69" y="36" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="Are you serious?" x="13" y="32" r="248" g="248" b="247" timeout="10.0" wait="0.5" />
-    <click window="Are you serious?" x="13" y="32" button="Button.left" pressed="true" wait="0.2" />
-    <click window="Are you serious?" x="13" y="32" button="Button.left" pressed="false" wait="0.2" />
-    <check window="DUECA/DUSIME control panel" x="476" y="83" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="DUECA/DUSIME control panel" x="476" y="83" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="DUECA/DUSIME control panel" x="476" y="83" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="DUECA/DUSIME control panel" x="476" y="83" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <check window="DUECA/DUSIME control panel" x="477" y="37" r="104" g="104" b="104" timeout="10.0"
-      wait="0.5" />
-    <click window="DUECA/DUSIME control panel" x="477" y="37" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="DUECA/DUSIME control panel" x="477" y="37" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="DUECA/DUSIME control panel" x="476" y="38" r="65" g="255" b="11" timeout="10.0"
-      wait="0.5" />
-    <click x="15" y="42" button="Button.left" pressed="true" wait="0.2" />
-    <click x="15" y="42" button="Button.left" pressed="false" wait="0.2" />
-    <check window="DUECA/DUSIME control panel" x="68" y="44" r="53" g="132" b="228" timeout="10.0"
-      wait="0.5" />
-    <click window="DUECA/DUSIME control panel" x="68" y="44" button="Button.left" pressed="true"
-      wait="0.2" />
-    <click window="DUECA/DUSIME control panel" x="68" y="44" button="Button.left" pressed="false"
-      wait="0.2" />
-    <check window="Are you serious?" x="33" y="20" r="248" g="248" b="247" timeout="10.0" wait="0.5" />
-    <click window="Are you serious?" x="33" y="20" button="Button.left" pressed="true" wait="0.2" />
-    <click window="Are you serious?" x="33" y="20" button="Button.left" pressed="false" wait="0.2" />
+    <check-image window="DUECA/DUSIME control panel" x="462" y="58" template="buttongreensel" testsize="48" timeout="20.0" wait="0.5"/>
+    <check-image window="DUECA/DUSIME control panel" x="465" y="92" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="1" y="-2" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="1" y="-2" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 1 control panel" x="462" y="57" template="buttongreensel" testsize="48" timeout="10.0" wait="0.5"/>
+    <check-image window="TEAM 1 control panel" x="463" y="98" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="-1" y="4" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="-1" y="4" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 2 control panel" x="465" y="56" template="buttongreensel" testsize="48" timeout="10.0" wait="0.5"/>
+    <check-image window="TEAM 2 control panel" x="461" y="92" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="-3" y="-2" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="-3" y="-2" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 3 control panel" x="463" y="94" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="-1" y="0" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="-1" y="0" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 4 control panel" x="463" y="91" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="-1" y="-3" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="-1" y="-3" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 5 control panel" x="462" y="92" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="-2" y="-2" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="-2" y="-2" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="DUECA/DUSIME control panel" x="466" y="127" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="2" y="-1" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="2" y="-1" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 1 control panel" x="466" y="127" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="2" y="-1" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="2" y="-1" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 2 control panel" x="463" y="127" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="-1" y="-1" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="-1" y="-1" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 3 control panel" x="463" y="126" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="-1" y="-2" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="-1" y="-2" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 4 control panel" x="461" y="127" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="-3" y="-1" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="-3" y="-1" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 5 control panel" x="464" y="128" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="0" y="0" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="0" y="0" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="DUECA/DUSIME control panel" x="464" y="195" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="0" y="-1" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="0" y="-1" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 1 control panel" x="465" y="192" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="1" y="-4" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="1" y="-4" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 2 control panel" x="464" y="193" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="0" y="-3" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="0" y="-3" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 3 control panel" x="464" y="194" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="0" y="-2" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="0" y="-2" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 4 control panel" x="464" y="196" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="0" y="0" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="0" y="0" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 5 control panel" x="465" y="194" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="-1" y="-2" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="-1" y="-2" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="DUECA/DUSIME control panel" x="420" y="194" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="0" y="-2" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="0" y="-2" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 1 control panel" x="420" y="192" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="0" y="-4" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="0" y="-4" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 2 control panel" x="417" y="194" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="-3" y="-2" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="-3" y="-2" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 3 control panel" x="417" y="195" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="-3" y="-1" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="-3" y="-1" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 4 control panel" x="420" y="193" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="0" y="-3" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="0" y="-3" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 5 control panel" x="416" y="192" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="-4" y="-4" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="-4" y="-4" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="DUECA/DUSIME control panel" x="464" y="228" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="0" y="-2" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="0" y="-2" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 1 control panel" x="461" y="228" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="-3" y="-2" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="-3" y="-2" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 2 control panel" x="463" y="229" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="-1" y="-1" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="-1" y="-1" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 3 control panel" x="465" y="230" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="1" y="0" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="1" y="0" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 4 control panel" x="466" y="230" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="2" y="0" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="2" y="0" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 5 control panel" x="463" y="227" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="-1" y="-3" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="-1" y="-3" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 5 control panel" x="463" y="227" template="buttongreensel" testsize="48" timeout="10.0" wait="10.5"/>
+    <snap name="tmsinter000.png" />
+    <check-image window="TEAM 5 control panel" x="462" y="197" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="-2" y="1" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="-2" y="1" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 4 control panel" x="465" y="193" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="1" y="-3" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="1" y="-3" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 3 control panel" x="466" y="195" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="2" y="-1" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="2" y="-1" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 2 control panel" x="464" y="195" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="0" y="-1" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="1" y="-1" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 1 control panel" x="468" y="194" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="4" y="-2" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="4" y="-2" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="DUECA/DUSIME control panel" x="463" y="195" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="-1" y="-1" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="-1" y="-1" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="DUECA/DUSIME control panel" x="463" y="160" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="-1" y="-2" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="-1" y="-2" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 5 control panel" x="464" y="159" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="0" y="-3" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="0" y="-3" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 4 control panel" x="463" y="162" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="-1" y="0" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="-1" y="0" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 3 control panel" x="467" y="164" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="3" y="2" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="3" y="2" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 2 control panel" x="464" y="160" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="0" y="-2" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="0" y="-2" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 1 control panel" x="469" y="158" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="5" y="-4" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="5" y="-4" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 5 control panel" x="463" y="92" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="-1" y="-2" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="-1" y="-2" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 4 control panel" x="464" y="95" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="0" y="1" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="0" y="1" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 3 control panel" x="463" y="94" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="-1" y="0" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="-1" y="0" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 2 control panel" x="466" y="94" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="2" y="0" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="2" y="0" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 1 control panel" x="465" y="93" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="1" y="-1" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="1" y="-1" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 5 control panel" x="465" y="59" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="1" y="-1" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="1" y="-1" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 4 control panel" x="466" y="57" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="2" y="-3" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="2" y="-3" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 3 control panel" x="464" y="62" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="0" y="2" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="0" y="2" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 2 control panel" x="464" y="59" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="0" y="-1" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="0" y="-1" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 1 control panel" x="460" y="57" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="-4" y="-3" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="-4" y="-3" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="TEAM 1 control panel" x="465" y="56" template="buttongreensel" testsize="48" timeout="10.0" wait="0.5"/>
+    <check-word window="TEAM 1 control panel" x="14" y="11" word="File" testsize="64" timeout="10.0" wait="0.5"/>
+    <click relative="true" x="-1" y="-1" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="-1" y="-1" button="Button.left" pressed="false" wait="0.3"/>
+    <check-image window="TEAM 1 control panel" x="29" y="66" template="quit-blue" testsize="96" timeout="10.0" wait="0.5"/>
+    <click relative="true" x="1" y="-1" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="1" y="-1" button="Button.left" pressed="false" wait="0.3"/>
+    <check-word window="Are you serious?" x="25" y="51" word="Yes," testsize="64" timeout="10.0" wait="0.5"/>
+    <click relative="true" x="-2" y="-4" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="-2" y="-4" button="Button.left" pressed="false" wait="0.3"/>
+    <check-image window="TEAM 2 control panel" x="466" y="57" template="buttongreensel" testsize="48" timeout="10.0" wait="0.5"/>
+    <check-word window="TEAM 2 control panel" x="14" y="11" word="File" testsize="64" timeout="10.0" wait="0.5"/>
+    <click relative="true" x="-1" y="-1" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="-1" y="-1" button="Button.left" pressed="false" wait="0.3"/>
+    <check-image window="TEAM 2 control panel" x="29" y="66" template="quit-blue" testsize="96" timeout="10.0" wait="0.5"/>
+    <click relative="true" x="1" y="-1" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="1" y="-1" button="Button.left" pressed="false" wait="0.3"/>
+    <check-word window="Are you serious?" x="25" y="51" word="Yes," testsize="64" timeout="10.0" wait="0.5"/>
+    <click relative="true" x="-2" y="-4" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="-2" y="-4" button="Button.left" pressed="false" wait="0.3"/>
+    <check-image window="TEAM 3 control panel" x="464" y="57" template="buttongreensel" testsize="48" timeout="10.0" wait="0.5"/>
+    <check-word window="TEAM 3 control panel" x="14" y="11" word="File" testsize="64" timeout="10.0" wait="0.5"/>
+    <click relative="true" x="-1" y="-1" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="-1" y="-1" button="Button.left" pressed="false" wait="0.3"/>
+    <check-image window="TEAM 3 control panel" x="29" y="66" template="quit-blue" testsize="96" timeout="10.0" wait="0.5"/>
+    <click relative="true" x="1" y="-1" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="1" y="-1" button="Button.left" pressed="false" wait="0.3"/>
+    <check-word window="Are you serious?" x="25" y="51" word="Yes," testsize="64" timeout="10.0" wait="0.5"/>
+    <click relative="true" x="-2" y="-4" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="-2" y="-4" button="Button.left" pressed="false" wait="0.3"/>
+    <check-image window="TEAM 4 control panel" x="463" y="57" template="buttongreensel" testsize="48" timeout="10.0" wait="0.5"/>
+    <check-word window="TEAM 4 control panel" x="14" y="11" word="File" testsize="64" timeout="10.0" wait="0.5"/>
+    <click relative="true" x="-1" y="-1" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="-1" y="-1" button="Button.left" pressed="false" wait="0.3"/>
+    <check-image window="TEAM 4 control panel" x="29" y="66" template="quit-blue" testsize="96" timeout="10.0" wait="0.5"/>
+    <click relative="true" x="1" y="-1" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="1" y="-1" button="Button.left" pressed="false" wait="0.3"/>
+    <check-word window="Are you serious?" x="25" y="51" word="Yes," testsize="64" timeout="10.0" wait="0.5"/>
+    <click relative="true" x="-2" y="-4" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="-2" y="-4" button="Button.left" pressed="false" wait="0.3"/>
+    <check-image window="TEAM 5 control panel" x="465" y="58" template="buttongreensel" testsize="48" timeout="10.0" wait="0.5"/>
+    <check-word window="TEAM 5 control panel" x="14" y="11" word="File" testsize="64" timeout="10.0" wait="0.5"/>
+    <click relative="true" x="-1" y="-1" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="-1" y="-1" button="Button.left" pressed="false" wait="0.3"/>
+    <check-image window="TEAM 5 control panel" x="29" y="66" template="quit-blue" testsize="96" timeout="10.0" wait="0.5"/>
+    <click relative="true" x="1" y="-1" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="1" y="-1" button="Button.left" pressed="false" wait="0.3"/>
+    <check-word window="Are you serious?" x="25" y="51" word="Yes," testsize="64" timeout="10.0" wait="0.5"/>
+    <click relative="true" x="-2" y="-4" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="-2" y="-4" button="Button.left" pressed="false" wait="0.3"/>
+    <check-image window="DUECA/DUSIME control panel" x="464" y="94" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="0" y="0" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="0" y="0" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="DUECA/DUSIME control panel" x="466" y="58" template="buttongraysel" testsize="48" timeout="10.0" wait="0.5"/>
+    <click x="2" y="-2" relative="true" button="Button.left" pressed="true" wait="0.2"/>
+    <click x="2" y="-2" relative="true" button="Button.left" pressed="false" wait="0.2"/>
+    <check-image window="DUECA/DUSIME control panel" x="466" y="58" template="buttongreensel" testsize="48" timeout="10.0" wait="0.5"/>
+    <check-word window="DUECA/DUSIME control panel" x="14" y="11" word="File" testsize="64" timeout="10.0" wait="0.5"/>
+    <click relative="true" x="-1" y="-1" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="-1" y="-1" button="Button.left" pressed="false" wait="0.3"/>
+    <check-image window="DUECA/DUSIME control panel" x="29" y="66" template="quit-blue" testsize="96" timeout="10.0" wait="0.5"/>
+    <click relative="true" x="1" y="-1" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="1" y="-1" button="Button.left" pressed="false" wait="0.3"/>
+    <check-word window="Are you serious?" x="25" y="51" word="Yes," testsize="64" timeout="10.0" wait="0.5"/>
+    <click relative="true" x="-2" y="-4" button="Button.left" pressed="true" wait="0.3"/>
+    <click relative="true" x="-2" y="-4" button="Button.left" pressed="false" wait="0.3"/>
   </actions>
 </scenario>

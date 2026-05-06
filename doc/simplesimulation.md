@@ -83,7 +83,7 @@ repository. If you have access to a gitlab, github or similar site,
 you can create a completely empty repository there. If you want to
 play around locally, create an empty "upstream" repository by typing
 in the terminal (I am using the prompt `[enter]$` here, your prompt
-might look a little different:
+might look a little different):
 
 ~~~{.bash}
 [enter]$ mkdir gitrepos
@@ -418,7 +418,7 @@ package manager to install that software.
 To simplify these steps a bit, you can also ask the `dueca-gproject` script
 to configure and build your code for you. When using this, you do not need
 to enter the `build` folder first, simply call this from any folder in your
-project. To get, as in the above example, 
+project. To get, as in the above example,
 support for the debugger in your executable, just add a `--debug` flag:
 
     # alternative for cmake and make calls:
@@ -1685,6 +1685,24 @@ bit of data.
 When you re-load the initial state, by pressing the up arrow or caret
 (^) next to the name of the selected state in the menubar, the data is
 being loaded into the model.
+
+If you want to play around with your model state, you can also try to
+edit it. In this case, we have chosen to code our snapshot as a list
+of "double" values, in the fillSnapshot routine:
+
+~~~~{.cxx}
+  snap.coding = Snapshot::Doubles;
+~~~~
+
+By clicking on edit with a selected snapshot, a new window will open:
+
+![Initial state editing window](simpsim/initial-edit.png)
+
+Here you can edit the initial state. If you have (as I have done in the
+example) added a file for labels named after the module class, in this case
+`ufo-dynamics-labels.txt`, the lines in this file are used to label the
+elements of the snapshot. If you haven't done that, the lines are simply
+numbered.
 
 When a snapshot has been taken or re-loaded, it will also be possible
 to record the inputs to the flexi-stick module, and replay these

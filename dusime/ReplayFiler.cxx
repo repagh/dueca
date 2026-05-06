@@ -191,7 +191,7 @@ void ReplayFiler::runCommand(const TimeSpec &ts)
     case ReplayCommand::Command::FlushAndCollect:
 
       // check whether the recording is complete
-      if (filer->completeStretch(ts_switch.validity_end)) {
+      if (filer->completeStretch(filer->ts_switch.validity_end)) {
         DataWriter<ReplayReport> res(w_replayresult, ts);
         res.data().status = ReplayReport::Status::TagInformation;
         res.data().label = filer->next_tag.label;

@@ -59,6 +59,20 @@ public:
   cannot_find_snapshot_file(const char* fname);
 };
 
+/** thrown when named snapshots cannot be found */
+class cannot_find_snapshot: public std::exception
+{
+  /** Error string */
+  char str[128];
+
+public:
+  /** Re-implementation of std:exception what. */
+  const char* what() const throw() {return str; }
+
+  /** Constructor */
+  cannot_find_snapshot(const char* fname);
+};
+
 /** Problem in the initial condition file */
 class initial_file_mismatch: public std::exception
 {
@@ -71,6 +85,20 @@ public:
 
   /** Constructor */
   initial_file_mismatch(const char* originator);
+};
+
+/** Problem in the initial condition file */
+class cannot_convert_snap_coding: public std::exception
+{
+  /** Error string */
+  char str[128];
+
+public:
+  /** Re-implementation of std:exception what. */
+  const char* what() const throw() {return str; }
+
+  /** Constructor */
+  cannot_convert_snap_coding(const char* originator, const char* coding);
 };
 
 

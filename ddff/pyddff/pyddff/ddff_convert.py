@@ -160,6 +160,7 @@ as a struct.""",
         parser.add_argument(
             "--outfile",
             type=str,
+            nargs="+",
             default="",
             help="Filename for output file, if not specified, created from\n"
             "the input filename",
@@ -170,7 +171,9 @@ as a struct.""",
             default=1000,
             help="Expected data size, for pre-allocating numpy arrays",
         )
-        parser.add_argument("filename", type=str, help="File name to be analysed")
+        parser.add_argument(
+            "filename", type=str, nargs="+", help="File name(s) to be converted"
+        )
         parser.set_defaults(handler=ToHdf5)
 
     def __call__(self, ns: argparse.Namespace):
@@ -182,63 +185,75 @@ as a struct.""",
             Parsed command line arguments
         """
 
+        if len(ns.outfile) and (len(ns.outfile) != len(ns.filename)):
+            print(
+                "Number of output filenames does not match number of files to convert",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+
         if ns.compress:
             compressargs = {"compression": ns.compress}
         else:
             compressargs = {}
-
-        if ns.inventory:
-            f = DDFFInventoried(ns.filename)
-        else:
-            f = DDFFTagged(ns.filename)
 
         if ns.period:
             pargs = dict(period=ns.period)
         else:
             pargs = dict()
 
-        vprint("Opened file", ns.filename)
-
-        # either all stream id's, or just the selected ones
-        if not ns.streamids:
-            ns.streamids = list(f.keys())
-
         # hdf5 file name
         if not ns.outfile:
-            if ns.filename.endswith(".ddff"):
-                ns.outfile = os.path.basename(ns.filename[:-4] + "hdf5")
+            ns.outfile = []
+            for fn in ns.filename:
+                if fn.endswith(".ddff"):
+                    ns.outfile.append(os.path.basename(fn[:-4] + "hdf5"))
+                else:
+                    ns.outfile.append(os.path.basename(fn + ".hdf5"))
+            vprint("output files", ns.outfile)
+
+        for filename, outfile in zip(ns.filename, ns.outfile):
+
+            if ns.inventory:
+                f = DDFFInventoried(filename)
             else:
-                ns.outfile = os.path.basename(ns.filename + ".hdf5")
-        vprint("output file", ns.outfile)
+                f = DDFFTagged(filename)
 
-        # create the file
-        hf = h5py.File(ns.outfile, "w")
+            vprint("Opened file", filename)
 
-        for streamid in ns.streamids:
-            vprint("Processing stream", streamid)
-            gg = hf.create_group(streamid)
-
-            if streamid in ns.as_event:
-                time, data = f[streamid].get_events(**pargs, icount=ns.expected_size)
-                gg.create_dataset("data", data=data, **compressargs)
+            # either all stream id's, or just the selected ones
+            if not ns.streamids:
+                streamids = list(f.keys())
             else:
-                dg = gg.create_group("data")
-                time, _, values = f[streamid].get_data(**pargs, icount=ns.expected_size)
-                for m, v in values.items():
-                    dg.create_dataset(m, data=v, **compressargs)
-            vprint(f"number of data points {time.shape[0]}")
-            gg.create_dataset("tick", data=time, **compressargs)
+                streamids = ns.streamids
 
-        hf.close()
+            # create the file
+            hf = h5py.File(outfile, "w")
 
+            for streamid in streamids:
+                vprint("Processing stream", streamid)
+                gg = hf.create_group(streamid)
+
+                if streamid in ns.as_event:
+                    time, data = f[streamid].get_events(**pargs, icount=ns.expected_size)
+                    gg.create_dataset("data", data=data, **compressargs)
+                else:
+                    dg = gg.create_group("data")
+                    time, _, values = f[streamid].get_data(**pargs, icount=ns.expected_size)
+                    for m, v in values.items():
+                        dg.create_dataset(m, data=v, **compressargs)
+                vprint(f"number of data points {time.shape[0]}")
+                gg.create_dataset("tick", data=time, **compressargs)
+
+            hf.close()
 
 ToHdf5.args(subparsers)
 
 argcomplete.autocomplete(parser)
 
+
 def main():
-    """Execute a conversion or info action
-    """
+    """Execute a conversion or info action"""
 
     # parse arguments
     pres = parser.parse_args(sys.argv[1:])
@@ -257,6 +272,7 @@ def main():
     # create and run the handler
     handler = hclass()
     handler(pres)
+
 
 if __name__ == "__main__":
     main()

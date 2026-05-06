@@ -96,6 +96,11 @@ macro(DUECACODEGEN_TARGET)
           ${CMAKE_SOURCE_DIR}/pycodegen/dco_template.c.jinja
           ${CMAKE_SOURCE_DIR}/pycodegen/enum_template.h.jinja
           ${CMAKE_SOURCE_DIR}/pycodegen/enum_template.c.jinja
+          ${CMAKE_SOURCE_DIR}/pycodegen/DCOplugins/hdf5.py
+          ${CMAKE_SOURCE_DIR}/pycodegen/DCOplugins/hdf5nest.py
+          ${CMAKE_SOURCE_DIR}/pycodegen/DCOplugins/msgpack.py
+          ${CMAKE_SOURCE_DIR}/pycodegen/EnumPlugins/hdf5.py
+          ${CMAKE_SOURCE_DIR}/pycodegen/EnumPlugins/msgpack.py
           COMMENT "[DuecaCodegen][${DCG_OUTPUT}] Code generation ${DCO}"
           WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
       else()

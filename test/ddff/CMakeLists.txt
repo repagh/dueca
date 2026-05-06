@@ -4,7 +4,7 @@ add_test(DDFF_INVENTORY ddff-inventory.x)
 add_test(DDFF_SEGMENTS ddff-segments.x)
 find_package(Python3 COMPONENTS Interpreter)
 
-if (Python3_Interpreter_FOUND)
+if(Python3_Interpreter_FOUND)
   add_test(NAME DDFF_PYTHON
     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/ddff-pyddff.py)
 
@@ -39,6 +39,9 @@ if (Python3_Interpreter_FOUND)
   add_test(NAME DDFF_CONVERT_HDF3z
     COMMAND ${DDFF_CONVERT} hdf5 ${DATAFILE} --compress=gzip
     --outfile=convert6.hdf5 "--streamid=WriteUnified:first blip")
+  add_test(NAME DDFF_CONVERT_HDFmulti
+    COMMAND ${DDFF_CONVERT} hdf5 --outfile convertm1.hdf5 convertm2.hdf5
+    --compress=gzip ${DATAFILE} ${DATAFILE})
 
 endif()
 
@@ -58,7 +61,7 @@ include_directories(
   ${CMAKE_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
-  )
+)
 
 target_link_libraries(ddff.x dueca-ddff${STATICSUFFIX})
 target_link_libraries(ddff-msgpack.x dueca-ddff${STATICSUFFIX})
