@@ -62,7 +62,7 @@
     <click relative="true" x="-1" y="0" button="Button.left" pressed="true" wait="0.3"/>
     <click relative="true" x="-1" y="0" button="Button.left" pressed="false" wait="0.3"/>
     <snap name="tmssolo000.png"/>
-    <check-image window="DUECA/DUSIME control panel" x="458" y="201" template="buttongraysel" testsize="64" timeout="10.0" wait="8.5"/>
+    <check-image window="DUECA/DUSIME control panel" x="458" y="201" template="buttongraysel" testsize="64" timeout="10.0" wait="300.5"/>
     <click relative="true" x="-2" y="0" button="Button.left" pressed="true" wait="0.3"/>
     <click relative="true" x="-2" y="0" button="Button.left" pressed="false" wait="0.3"/>
     <check-image window="DUECA/DUSIME control panel" x="463" y="167" template="buttongraysel" testsize="64" timeout="10.0" wait="0.5"/>
