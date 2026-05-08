@@ -10,6 +10,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
   large arrays.
 - Make msgpack unstream including consistent, deprecate msgpack-unstream.hxx
   force msgpack-unstream-iter.hxx/ixx
+- Fix peer counting and removal in NetCommunicatorMaster
+
+### Added
+
+- Test for the CycleCounter logic
 
 ## [4.2.8] - 2026-05-01
 
