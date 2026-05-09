@@ -23,37 +23,39 @@ DUECA_NS_START;
 class WebsockCommunicatorConfig;
 
 /** Master in the communication */
-class NetCommunicatorMaster: public NetCommunicator
+class NetCommunicatorMaster : public NetCommunicator
 {
 protected:
   /** @defgroup configurationmaster Configuration value for master
       @{ */
 
   /** Interval for checking socket completion */
-  unsigned                            connect_check_interval;
+  unsigned connect_check_interval;
+
+  /** Keepalive interval for websocket */
+  unsigned keepalive_interval;
 
   /** URL for configuration messages */
-  std::string                         config_url;
+  std::string config_url;
 
   /** Optional override for data message URL */
-  std::string                         public_data_url;
+  std::string public_data_url;
   /** @} */
 
 private:
-
   /** Is communication active? */
-  volatile bool                       communicating;
+  volatile bool communicating;
 
   /** Is the config socket completed? */
-  unsigned                            server_needsconnect;
+  unsigned server_needsconnect;
 
   /** Connection for configuration messages */
-  std::shared_ptr<WebsockCommunicatorConfig>
-                                      conf_comm;
-protected:
+  std::shared_ptr<WebsockCommunicatorConfig> conf_comm;
 
+protected:
   /** Information about communication peer */
-  struct CommPeer {
+  struct CommPeer
+  {
 
     /** Remember state of peer */
     enum PeerState {
@@ -64,66 +66,64 @@ protected:
     };
 
     /** State of this peer */
-    PeerState                         state;
+    PeerState state;
 
     /** filtered time difference */
-    double                            delta_time;
+    double delta_time;
 
     /** peer sender ID */
-    uint32_t                          send_id;
+    uint32_t send_id;
 
     /** peer sender ID */
-    uint32_t                          follow_id;
+    uint32_t follow_id;
 
     /** Communication buffer, one per peer */
-    ConfigBuffer                      commbuf;
+    ConfigBuffer commbuf;
 
     /** Peer's internet address, for confirmation */
-    std::string                       address;
+    std::string address;
 
     /** Constructor */
-    CommPeer(unsigned sendid, unsigned previd,
-             const std::string& address);
+    CommPeer(unsigned sendid, unsigned previd, const std::string &address);
 
     /** Destructor, closes the socket. */
-   ~CommPeer();
+    ~CommPeer();
   };
 
   /** Type for list of peers */
-  typedef std::list<std::shared_ptr<CommPeer> >  peerlist_type;
+  typedef std::list<std::shared_ptr<CommPeer>> peerlist_type;
 
   /** Map for communication peers */
-  peerlist_type                       peers;
+  peerlist_type peers;
 
 private:
-
   /** The node id that sends the last message */
-  unsigned                            next_peer_id;
+  unsigned next_peer_id;
 
   /** Number of peers change plan cycle information */
-  struct ChangeCycle {
+  struct ChangeCycle
+  {
 
     /** Cycle when number of peers changes */
-    uint32_t                          change_cycle;
+    uint32_t change_cycle;
 
     /** Involved peer */
-    uint16_t                          peer;
+    uint16_t peer;
 
     /** Add or remove */
-    bool                              addition;
+    bool addition;
 
     /** Constructor */
     ChangeCycle(uint32_t change_cycle, uint16_t peers, bool add);
   };
 
   /** List type, for FIFO. */
-  typedef std::list<ChangeCycle>     peerchange_type;
+  typedef std::list<ChangeCycle> peerchange_type;
 
   /** The list, used as FIFO */
-  peerchange_type                    peer_changes;
+  peerchange_type peer_changes;
 
 protected:
-
   /** Estimate of time per byte, usecs */
   double net_perbyte;
 
@@ -160,13 +160,12 @@ protected:
   ~NetCommunicatorMaster();
 
 private:
-
   /** Configure data connections and assign peer ID
 
       @param address   The network address as detected by websock server
       @return          The assigned peer id
    */
-  int assignPeerId(const std::string& address);
+  int assignPeerId(const std::string &address);
 
   /** For the master node, decode and process connect requests
 
@@ -174,7 +173,7 @@ private:
 
       @param ts    TimeSpec for the current cycle
   */
-  void checkNewConnections(const TimeSpec& ts);
+  void checkNewConnections(const TimeSpec &ts);
 
   /** Send the configuration as is now
 
@@ -183,18 +182,17 @@ private:
       @param peer   Information on the peer.
       @param join_cycle Cycle at which the communication is to be joined.
    */
-  void sendCurrentConfigToPeer(const CommPeer& peer,
-                               TimeTickType join_cycle);
+  void sendCurrentConfigToPeer(const CommPeer &peer, TimeTickType join_cycle);
 
   /** modify which sender to follow */
-  void changeFollowId(const CommPeer& peer, uint32_t target_cycle=0U);
+  void changeFollowId(const CommPeer &peer, uint32_t target_cycle = 0U);
 
   /** check configuration requests from peers */
-  void checkAndUpdatePeerStates(const TimeSpec& ts);
+  void checkAndUpdatePeerStates(const TimeSpec &ts);
 
 protected:
   /** send config to all peers */
-  void distributeConfig(AmorphStore& s);
+  void distributeConfig(AmorphStore &s);
 
 private:
   /** instruct a following peer when one in the middle drops out
@@ -211,12 +209,11 @@ private:
   void stopServer();
 
   /** Decode configuration data from a peer */
-  void decodeConfigData(CommPeer& peer);
+  void decodeConfigData(CommPeer &peer);
 
 protected:
-
   /** helper function, sends out set of data over TCP connection */
-  void flushStore(AmorphStore& s, unsigned peer_id);
+  void flushStore(AmorphStore &s, unsigned peer_id);
 
   /** @defgroup clientcalls Calls for using this class, except for data
       pack/unpack, defined in NetCommunication.hxx
@@ -225,11 +222,11 @@ protected:
   */
 
   /** Information on events for descendants */
-  virtual void clientInfoPeerJoined(const std::string& address, unsigned id,
-                                    const TimeSpec& ts);
+  virtual void clientInfoPeerJoined(const std::string &address, unsigned id,
+                                    const TimeSpec &ts);
 
   /** Information on events for descendants */
-  virtual void clientInfoPeerLeft(unsigned id, const TimeSpec& ts);
+  virtual void clientInfoPeerLeft(unsigned id, const TimeSpec &ts);
 
   /** Additional peer data to add to welcome message
 
@@ -239,7 +236,7 @@ protected:
       @param id     Numeric send id for the peer
       @param tcp_socket  Socket for flushing full stores
  */
-  virtual void clientWelcomeConfig(AmorphStore& s, unsigned id) = 0;
+  virtual void clientWelcomeConfig(AmorphStore &s, unsigned id) = 0;
 
   /** decode configuration payload.
 
@@ -248,7 +245,7 @@ protected:
       @param s      Buffer with config data
       @param id     Id for the sending client
   */
-  virtual void clientDecodeConfig(AmorphReStore&s, unsigned send_id) = 0;
+  virtual void clientDecodeConfig(AmorphReStore &s, unsigned send_id) = 0;
 
   /** encode configuration payload.
 
@@ -260,7 +257,7 @@ protected:
       @param s      Buffer with config data
       @param id     ID for the target, if 0, send to all connected
  */
-  virtual void clientSendConfig(const TimeSpec& ts, unsigned id) = 0;
+  virtual void clientSendConfig(const TimeSpec &ts, unsigned id) = 0;
 
   /** Vet peer joining */
   enum VettingResult {
@@ -272,8 +269,7 @@ protected:
   /** Approve or decline peer joining.
 
       @param id  Peer ID */
-  virtual VettingResult clientAuthorizePeer(CommPeer& peer,
-                                            const TimeSpec& ts);
+  virtual VettingResult clientAuthorizePeer(CommPeer &peer, const TimeSpec &ts);
 
   /** @} end of the group */
 
@@ -281,13 +277,13 @@ protected:
 
       @param act    activity, used for signaling blocking actions
   */
-  void doCycle(const TimeSpec& ts, Activity& act);
+  void doCycle(const TimeSpec &ts, Activity &act);
 
   /** Unpack the data
 
       @param buffer Buffer with data
    */
-  void unpackPeerData(MessageBuffer::ptr_type& buffer);
+  void unpackPeerData(MessageBuffer::ptr_type &buffer);
 
   /** Break links */
   void breakCommunication();

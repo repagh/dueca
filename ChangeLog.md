@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 ### Added
 
 - Test for the CycleCounter logic
+- Add ping/pong keepalive messages on the udp/inter config websocket
 
 ## [4.2.8] - 2026-05-01
 

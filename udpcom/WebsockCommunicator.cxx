@@ -48,7 +48,7 @@ WSConnectionData &WSConnectionData::operator=(
 // -----------------------------------------------------------------
 WebsockCommunicatorConfig::WebsockCommunicatorConfig(
   const std::string &url, double timeout, callback_type assign_peer_id,
-  size_t buffer_size, unsigned nbuffers) :
+  size_t buffer_size, unsigned nbuffers, unsigned checkup_interval) :
   url(url),
   timeout(int(round(1000000 * timeout))),
   runcontext(new boost::asio::io_context),
@@ -58,7 +58,9 @@ WebsockCommunicatorConfig::WebsockCommunicatorConfig(
   incoming(10, "websock config"),
   assign_peer_id(assign_peer_id),
   messagebuffers(nbuffers, "Config spare message buffers"),
-  buffer_size(buffer_size)
+  buffer_size(buffer_size),
+  checkup_interval(checkup_interval),
+  checkup_counter(checkup_interval)
 {
   for (int ii = nbuffers; ii--;) {
     returnBuffer(new MessageBuffer(buffer_size));
@@ -239,6 +241,30 @@ WebsockCommunicatorConfig::WebsockCommunicatorConfig(
       w.data() = buffer;
     };
 
+#if DEBPRINTLEVEL >= 0
+  endpoint.on_ping =
+    [this](std::shared_ptr<typename S::Connection> connection) {
+      auto cconn = peers.find(reinterpret_cast<void *>(connection.get()));
+      if (cconn == peers.end()) {
+        DEB("UNKOWN CONNECTION ping");
+      }
+      else {
+        DEB("Ping received from peer " << cconn->second.peer_id);
+      }
+    };
+
+  endpoint.on_pong =
+    [this](std::shared_ptr<typename S::Connection> connection) {
+      auto cconn = peers.find(reinterpret_cast<void *>(connection.get()));
+      if (cconn == peers.end()) {
+        DEB("UNKOWN CONNECTION");
+      }
+      else {
+        DEB("Pong received from peer " << cconn->second.peer_id);
+      }
+    };
+#endif
+
   // specify my own io_service
   server->io_service = runcontext;
 
@@ -305,6 +331,7 @@ void WebsockCommunicatorConfig::sendConfig(const AmorphStore &s,
 
 void WebsockCommunicatorConfig::sendConfig(const AmorphStore &s)
 {
+  checkup_counter = checkup_interval;
   DEB2("Websock master config sending to all " << s.getSize());
   for (auto &p : peers) {
     if (p.second.connection) {
@@ -313,6 +340,22 @@ void WebsockCommunicatorConfig::sendConfig(const AmorphStore &s)
       outmessage->flush();
       p.second.connection->send(outmessage);
     }
+  }
+}
+
+void WebsockCommunicatorConfig::checkAlive()
+{
+  if (!--checkup_counter) {
+
+    // dummymsg
+    std::shared_ptr<S::OutMessage> outmessage(new S::OutMessage(0));
+    // send a ping to all peers
+    for (auto &p : peers) {
+      if (p.second.connection) {
+        p.second.connection->send(outmessage, nullptr, 9);
+      }
+    }
+    checkup_counter = checkup_interval;
   }
 }
 
@@ -850,6 +893,16 @@ WebsockCommunicatorPeerConfig::WebsockCommunicatorPeerConfig(
     latest_received = 0;
     returnBuffer(buffer);
   };
+
+#if DEBPRINTLEVEL >= 0
+  client->on_ping = [](std::shared_ptr<typename S::Connection> connection) {
+    DEB("Ping received from master");
+  };
+
+  client->on_pong = [](std::shared_ptr<typename S::Connection> connection) {
+    DEB("Pong received from master");
+  };
+#endif
 
   // add the client run to the run context
 #ifdef BOOST1_65
