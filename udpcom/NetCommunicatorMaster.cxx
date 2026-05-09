@@ -14,7 +14,6 @@
 #define NetCommunicatorMaster_cxx
 #include "NetCommunicatorMaster.hxx"
 
-#include <exception>
 #include <algorithm>
 
 #include <boost/lexical_cast.hpp>
@@ -24,7 +23,6 @@
 #include <arpa/inet.h>
 #include <sys/types.h>
 #include <sys/socket.h>
-#include <errno.h>
 #include <fcntl.h>
 #include <ifaddrs.h>
 #include <net/if.h>
@@ -53,6 +51,7 @@ NetCommunicatorMaster::NetCommunicatorMaster() :
   NetCommunicator(),
 
   connect_check_interval(1),
+  keepalive_interval(100),
   config_url(""),
   public_data_url(""),
   communicating(false),
@@ -142,7 +141,7 @@ bool NetCommunicatorMaster::startServer()
     conf_comm.reset(new WebsockCommunicatorConfig(
       config_url, timeout,
       common_callback(this, &NetCommunicatorMaster::assignPeerId),
-      config_buffer_size, 3));
+      config_buffer_size, 3, keepalive_interval));
   }
 
   // also create the data connection
@@ -430,6 +429,9 @@ void NetCommunicatorMaster::checkAndUpdatePeerStates(const TimeSpec &ts)
     msgbuf = conf_comm->receiveConfig(false);
   }
 
+  // check up with a keepalive target
+  conf_comm->checkAlive();
+
   // the anychanges flag ensures that peer vetting is re-checked when
   // a peer is approved, so all peers can be approved for the same cycle
   // and given their proper order
@@ -456,6 +458,7 @@ void NetCommunicatorMaster::checkAndUpdatePeerStates(const TimeSpec &ts)
           correctFollowId((*pp)->send_id, (*pp)->follow_id);
           clientInfoPeerLeft((*pp)->send_id, ts);
           pp = peers.erase(pp);
+          npeers--;
           continue;
         }
         case Accept: {
@@ -665,7 +668,7 @@ void NetCommunicatorMaster::doCycle(const TimeSpec &ts, Activity &activity)
   if (npeers < peer_cycles.size()) {
     for (peer_cycles_type::iterator pp = peer_cycles.begin();
          pp != peer_cycles.end();) {
-      if (message_cycle.cycleIsCurrentOrPast(pp->second)) {
+      if (!pp->second.cycleIsUpToDate(message_cycle)) {
         peer_cycles_type::iterator toerase = pp;
         /* DUECA network.
 
@@ -798,6 +801,14 @@ void NetCommunicatorMaster::unpackPeerData(MessageBuffer::ptr_type &buffer)
         clientUnpackPayload(buffer, i_.peer_id, current_tick, i_.peertick,
                             i_.usecs_offset);
         peer_cycles[i_.peer_id] = message_cycle;
+
+        /* DUECA network.
+
+           Information message, a peer will be added at the specified
+           cycle.
+        */
+        W_NET("Adding peer " << i_.peer_id << " to tracking, at cycle "
+                             << i_.cycle);
       }
       else {
         /* DUECA network.

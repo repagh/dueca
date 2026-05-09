@@ -41,6 +41,15 @@ inline bool cycleIsNext(uint32_t cycle) const
 inline bool cycleIsPrevious(uint32_t cycle) const
 { return (cycle_counter & ~0xf) == (cycle & ~0xf) + 0x10; }
 
+/** Verify that the counters are equivalent.
+
+    @param cycle   Cycle to be tested
+    @returns       True if the given to-be-tested cycle is on par with
+                   the current one.
+*/
+inline bool cycleIsCurrent(uint32_t cycle) const
+{ return (cycle_counter & ~0xf) == (cycle & ~0xf); }
+
 /** Verify that this counter is equal to the given cycle, or at most two ahead.
 
     @param cycle   Cycle to be tested
@@ -48,9 +57,12 @@ inline bool cycleIsPrevious(uint32_t cycle) const
                    two behind to the current one.
 */
 inline bool cycleIsCurrentOrPast(uint32_t cycle) const
-{ return (cycle & ~0xf) == (cycle_counter & ~0xf) ||
-    (cycle & ~0xf) + 0x10 == (cycle_counter & ~0xf) ||
-    (cycle & ~0xf) + 0x20 == (cycle_counter & ~0xf); }
+{
+  return
+    (cycle & ~0xf) == (cycle_counter & ~0xf) ||         // current
+    (cycle & ~0xf) + 0x10 == (cycle_counter & ~0xf) ||  // one in the past
+    (cycle & ~0xf) + 0x20 == (cycle_counter & ~0xf);    // two in the past (max)
+}
 
 /** To check whether sufficient data has been received.
 
@@ -63,26 +75,21 @@ inline bool cycleIsCurrentOrPast(uint32_t cycle) const
     been correctly confirmed, so the master may also flag/repeat cycle
     n-1, while n has already been received by some nodes.
 
-    @param cycle    Cycle from the master, as reference
+    @param mcycle   Cycle from the master, as reference
     @returns        true, if the peer's cycle is one lower than the master's
                     (normal case), equal to the master's (repeated data),
                     or even one higher than the master (when master
                     backtracked).
 */
-inline bool cycleIsUpToDate(uint32_t cycle) const
+inline bool cycleIsUpToDate(uint32_t mcycle) const
 {
   return
-    (cycle & ~0xf) == (cycle_counter & ~0xf) + 0x10 || // master backtracked
-    (cycle & ~0xf) == (cycle_counter & ~0xf) ||        // a repeated cycle
-    (cycle & ~0xf) + 0x10 == (cycle_counter & ~0xf);   // normal progress
+    (mcycle & ~0xf) == (cycle_counter & ~0xf) + 0x10 || // normal progress
+    (mcycle & ~0xf) == (cycle_counter & ~0xf) ||        // a repeated cycle
+    (mcycle & ~0xf) + 0x10 == (cycle_counter & ~0xf);   // master back-tracks
 }
 
-/** See if this cycle has been processed */
-//bool cycleHasBeenProcessed(uint32_t cycle) const;
 
-/** Count cycle as current */
-inline bool cycleIsCurrent(uint32_t cycle) const
-{ return (cycle & ~0xf) == (cycle_counter & ~0xf); }
 
 /** Increment cycle counter.
 

@@ -20,7 +20,6 @@
 
 // include the definition of the module class
 #include "ChannelReplicatorMaster.hxx"
-#include "ReplicatorExceptions.hxx"
 #include "ReplicatorInfo.hxx"
 #include <udpcom/UDPPeerConfig.hxx>
 
@@ -37,7 +36,6 @@
 #include <sys/socket.h>
 #include "EntryWriter.hxx"
 #include "EntryReader.hxx"
-#include <errno.h>
 #include <fcntl.h>
 #include <boost/lexical_cast.hpp>
 #include <boost/swap.hpp>
@@ -141,6 +139,10 @@ const ParameterTable *ChannelReplicatorMaster::getMyParameterTable()
       new VarProbe<_ThisClass_, unsigned>(&_ThisClass_::ts_interval),
       "Interval on which data time translation is rounded. Default ticker's\n"
       "time interval." },
+
+    { "keepalive-interval",
+      new VarProbe<_ThisClass_, unsigned>(&_ThisClass_::keepalive_interval),
+      "Interval counter for websocket connection pings." },
 
     /* You can extend this table with labels and MemberCall or
        VarProbe pointers to perform calls or insert values into your

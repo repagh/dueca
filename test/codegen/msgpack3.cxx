@@ -20,18 +20,21 @@
 #include <AmorphStore.hxx>
 #include <dueca/MessageBuffer.hxx>
 #include <dueca/msgpack.hxx>
-#include <dueca/msgpack-unstream.hxx>
+#include <dueca/msgpack-unstream-iter.ixx>
 
 USING_DUECA_NS;
 
 int main()
 {
-#if 0
+#if 1
   dueca::MessageBuffer buf(200);
   int ii = 1;
-  msgpack::v1::adaptor::pack<dueca::MessageBuffer>(buf, ii);
+  msgpack::packer<dueca::MessageBuffer> pk(buf);
+  pk.pack(ii);
   int i2 = 0;
-  dueca::msgunpack::msg_unpack(buf.data(), buf.data()+buf.size(), i2);
+  auto i0 = buf.begin();
+  auto iend = buf.end();
+  msgunpack::msg_unpack(i0, iend, i2);
   assert(ii == i2);
 #endif
 

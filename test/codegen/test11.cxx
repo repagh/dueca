@@ -1,5 +1,5 @@
 /* ------------------------------------------------------------------   */
-/*      item            : test9.cxx
+/*      item            : test11.cxx
         made by         : Rene' van Paassen
         date            : 121230
         category        : body file
@@ -11,12 +11,10 @@
         license         : EUPL-1.2
 */
 
-#define test9_cxx
 #include <cassert>
 
 //#define MSGPACK_USE_DEFINE_MAP
-#define DUECA_CONFIG_MSGPACK
-#include <vector>
+//#define DUECA_CONFIG_MSGPACK
 #include "Object11.hxx"
 #include <AmorphStore.hxx>
 #include <dueca/msgpack.hxx>

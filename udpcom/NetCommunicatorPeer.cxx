@@ -347,7 +347,7 @@ void NetCommunicatorPeer::unpackPeerData(MessageBuffer::ptr_type &buffer)
           if (npeers < peer_cycles.size()) {
             for (peer_cycles_type::iterator pp = peer_cycles.begin();
                  pp != peer_cycles.end();) {
-              if (pp->second + 1 < i_.cycle) {
+              if (!pp->second.cycleIsUpToDate(i_.cycle)) {
                 peer_cycles_type::iterator toerase = pp;
                 /* DUECA network.
 

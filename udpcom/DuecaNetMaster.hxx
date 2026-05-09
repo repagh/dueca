@@ -26,7 +26,7 @@ struct NetCapacityLog;
 
     Uses netcommunicator to implement standard node-to-node
     communication for a DUECA process. The master node implements a
-    TCP/IP server for handing out configuration data. Peer nodes
+    websocket server for handing out configuration data. Peer nodes
     connect to the master, then receive instructions on data
     connection, with either UDP or WebSockets.
 
@@ -56,9 +56,15 @@ class DuecaNetMaster:
       sequence of the other peers. */
   std::vector<int> peer_nodeids;
 
+  /** Additional peer information */
   struct PeerMeta {
+    /** DUECA node id */
     uint32_t nodeid;
+
+    /** Send order */
     uint32_t send_order;
+
+    /** Name of the device */
     std::string name;
     PeerMeta(uint32_t nodeid = 0, const std::string& name = "",
              uint32_t sendorder = 0);

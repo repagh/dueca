@@ -27,7 +27,7 @@ OSCDIRV="${HOME}/rpmbuild/tu/home:repabuild/dueca-versioned"
 TRIMUBUNTU="18.04 20.04 22.04 26.04"
 # debian/raspbian versions with trim
 TRIMDEBIAN="11 12 13"
-TRIMRASPBIAN="11 12"
+TRIMRASPBIAN="11 13"
 
 
 # root of the repository with source
@@ -60,6 +60,8 @@ fi
 function trimversion()
 {
     if [ "$3" = '18.04' ]; then
+        # old guile, no xlwt, so no logmessage list, no python-build
+        # remove gtk4, use inkscape for svg
         sed -e 's/guile-2\.2-dev/guile-1\.8-dev/
                 s/python3-xlwt/python-xlwt/
                 s/python3-build,//
@@ -77,37 +79,49 @@ function trimversion()
                 s/librsvg2-bin/inkscape/
                 s/debian\.tar/debian-xUbuntu_20.04.tar/' $1 > $2
     elif [ "$3" = '22.04' ]; then
+        # no gtkmm4m use old python build
         sed -e 's/libgtkmm-4.0-dev,//
                 s/python3-build,//
                 s/libmsgpack-cxx-dev,//
                 s/debian\.tar/debian-xUbuntu_22.04.tar/' $1 > $2
     elif [ "$3" = '26.04' ]; then
+        # remove gtk2
         sed -e 's/libglade2-dev,//
                 s/libgtkglext1-dev,//
                 s/debian\.tar/debian-xUbuntu_26.04.tar/' $1 > $2
     elif [ "$3" = '11' ]; then
+        # remove gtk4
         sed -e 's/libgtk-4-dev,//
                 s/python3-build,//
                 s/libmsgpack-cxx-dev,//
                 s/libgtkmm-4.0-dev,//
                 s/debian\.tar/debian-Debian_11.tar/' $1 > $2
     elif [ "$3" = '13' ]; then
+        # remove gtk2
         sed -e 's/libglade2-dev,//
                 s/libgtkglext1-dev,//
                 s/libgtkmm-2.4-dev,//
                 s/debian\.tar/debian-Debian_13.tar/' $1 > $2
     elif [ "$3" = 'R10' ]; then
+        # remove gtk4
         sed -e 's/libgtk-4-dev,//
                 s/python3-build,//
                 s/libmsgpack-cxx-dev,//
                 s/libgtkmm-4.0-dev,//
                 s/debian\.tar/debian-Raspbian_10.tar/' $1 > $2
     elif [ "$3" = 'R11' ]; then
+        # remove gtk4
         sed -e 's/libgtk-4-dev,//
                 s/python3-build,//
                 s/libmsgpack-cxx-dev,//
                 s/libgtkmm-4.0-dev,//
                 s/debian\.tar/debian-Raspbian_11.tar/' $1 > $2
+    elif [ "$3" = 'R13' ]; then
+        # remove gtk2
+        sed -e 's/libglade2-dev,//
+                s/libgtkglext1-dev,//
+                s/libgtkmm-2.4-dev,//
+                s/debian\.tar/debian-Raspbian_13.tar/' $1 > $2
     fi
 }
 
@@ -240,7 +254,7 @@ function create_debfiles()
 
     done
 
-    # Raspbian 10, 11
+    # Raspbian 11, 13
     for VER in $TRIMRASPBIAN; do
 
         # base version debian folder

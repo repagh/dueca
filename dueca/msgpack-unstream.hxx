@@ -14,6 +14,10 @@
 #ifndef msgpack_unstream_hxx
 #define msgpack_unstream_hxx
 
+#warning "This header is deprecated, use msgpack-unstream-iter.hxx/ixx"
+
+#if 0
+
 #include <dueca_ns.h>
 #include <msgpack.hpp>
 
@@ -30,7 +34,6 @@
   if (S .size() < ( O )) \
     throw msgpack_unpack_mismatch("buffer too small");
 
-DUECA_NS_START;
 MSGPACKUS_NS_START;
 
 /** Specific exception to indicate unpacking failure */
@@ -408,6 +411,9 @@ void msg_unpack(S& s, O& o, dueca::fixvector<N,T> & i)
   for (unsigned ii = 0; ii < len; ++ii)
     msg_unpack(s, o, i[ii]);
 }
+#endif
+
+#ifdef fixvector_withdefault_hxx
 
 template <typename S, typename O, size_t N, typename T, int DEFLT, unsigned BASE>
 void msg_unpack(S& s, O& o, dueca::fixvector_withdefault<N,T,DEFLT,BASE>& i)
@@ -474,7 +480,7 @@ void msg_unpack(S& s, O& o, std::map<K,T> & i)
 
 
 MSGPACKUS_NS_END;
-DUECA_NS_END;
+#endif
 
 #include <undebprint.h>
 

@@ -157,7 +157,7 @@ public:
   /** Size of control block */
   static const size_t                 control_size;
 
-  /** Group magic number, to reduce the chance that multiple DUECA 
+  /** Group magic number, to reduce the chance that multiple DUECA
       processes interfere. */
   uint32_t                            group_magic;
 
