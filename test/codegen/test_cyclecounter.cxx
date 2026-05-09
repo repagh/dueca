@@ -22,11 +22,32 @@ int main()
   CycleCounter c1;
   CycleCounter c2 = c1;
   CycleCounter cnext = c1.cycleIncrement();
+  CycleCounter cnext2 = cnext.cycleIncrement();
   assert(cnext.cycleIsCurrent(cnext));
   assert(cnext.cycleIsCurrentOrPast(cnext));
   assert(cnext.cycleIsPrevious(c1));
+  assert(cnext2.cycleIsCurrentOrPast(c1));
+  assert(!cnext2.cycleIsCurrent(c1));
+  assert(!cnext2.cycleIsPrevious(c1));
   cnext.cycleRepeatIncrement();
-  assert(cnext.cycleCount() == c1.cycleCount()+1);
+  assert(cnext.cycleCount() == c1.cycleCount() + 1);
+
+  // set-up for wrap-around
+  CycleCounter clast;
+  clast.cycle_counter = 0xfffffff0;
+  c2 = clast;
+  c1 = clast;
+
+  cnext = c1.cycleIncrement();
+  cnext2 = cnext.cycleIncrement();
+  assert(cnext.cycleIsCurrent(cnext));
+  assert(cnext.cycleIsCurrentOrPast(cnext));
+  assert(cnext.cycleIsPrevious(c1));
+  assert(cnext2.cycleIsCurrentOrPast(c1));
+  assert(!cnext2.cycleIsCurrent(c1));
+  assert(!cnext2.cycleIsPrevious(c1));
+  cnext.cycleRepeatIncrement();
+  assert(cnext.cycleCount() == 0U);
 
   return 0;
 }
