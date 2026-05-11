@@ -29,6 +29,10 @@ from collections import ChainMap
 import socket
 from datetime import date
 from lxml import etree
+
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+
 import duecautils
 from duecautils.modules import Modules, projectSplit, checkGitUrl, RootMap, MainOrMaster
 from duecautils.machinemapping import NodeMachineMapping

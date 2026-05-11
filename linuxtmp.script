@@ -60,6 +60,9 @@ PYVERSION=`python3 -c "import sys; print('.'.join(map(str,sys.version_info[:2]))
 echo "Python version ${PYVERSION}"
 
 pkg-config gtkmm-4.0 && GTKMM4SEL="-DBUILD_GTKMM4=ON"
+pkg-config gtkmm-2.0 && GTKMM2SEL="-DBUILD_GTKMM=ON"
+pkg-config gtk4 && GTK4SEL="-DBUILD_GTK4=ON"
+pkg-config gtk2 && GTK2SEL="-DBUILD_GTK2=ON"
 
 cmake $BUILDER \
       -DCMAKE_CXX_FLAGS="-DGLIB_VERSION_MIN_REQUIRED=GLIB_VERSION_2_30" \
@@ -72,9 +75,9 @@ cmake $BUILDER \
       -DBUILD_UDP=ON \
       -DBUILD_WEBSOCK=ON \
       -DSCRIPT_PYTHON=ON \
-      -DBUILD_GTK2=ON -DBUILD_GTKMM=ON \
+      ${GTK2SEL} ${GTKMM2SEL} \
       -DBUILD_GTK3=ON -DBUILD_GTKMM3=ON \
-      -DBUILD_GTK4=ON ${GTKMM4SEL} \
+      ${GTK4SEL} ${GTKMM4SEL} \
       -DBUILD_GLUT=ON -DBUILD_GLUTGUI=ON \
       -DBUILD_X11GL=ON -DRTC_RATE=1024 \
       -DNEW_LOGGING=ON -DBUILD_MOREWARN=ON \

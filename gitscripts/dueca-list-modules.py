@@ -9,6 +9,9 @@ Created on Mon Feb 22 15:38:47 2021
 import argparse
 import sys
 
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+
 from duecautils.modules import Modules
 from duecautils import verboseprint
 
@@ -23,7 +26,7 @@ parser.add_argument(
     '--machineclass', type=str,
     help="Project folder")
 parser.add_argument(
-    '--compact', action='store_true', 
+    '--compact', action='store_true',
     help="Compact listing output")
 parser.add_argument(
     '--only-active', action='store_true',

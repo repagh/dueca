@@ -18,6 +18,9 @@
 
 from __future__ import print_function
 
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+
 from pyparsing import Literal, Regex, QuotedString, ZeroOrMore, Word, \
     Optional, nestedExpr, Combine, OneOrMore, CharsNotIn, ParserElement, Or, \
     White
