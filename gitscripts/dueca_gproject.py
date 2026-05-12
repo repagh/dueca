@@ -18,20 +18,17 @@ license         : EUPL-1.2
 
 import sys
 import os
-import git
-import re
+import warnings
+from datetime import date
 import subprocess
+import re
 import argparse
-import argcomplete
-import tempfile
 from argparse import Namespace
 from collections import ChainMap
-import socket
-from datetime import date
+import tempfile
+import git
+import argcomplete
 from lxml import etree
-
-import warnings
-warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 import duecautils
 from duecautils.modules import Modules, projectSplit, checkGitUrl, RootMap, MainOrMaster
@@ -41,15 +38,18 @@ from duecautils.verboseprint import dprint
 from duecautils.policy import Policies
 from duecautils.xmlutil import XML_interpret_bool, XML_tag, XML_comment
 
+# suppress argparse warnings for now, remove this once Ubuntu 18.04 and 20.04 are no longer
+# supported, and argparse calls can be fixed
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 
-"""
-Git interaction with dueca-project
+# """
+# Git interaction with dueca-project
 
-When using 'git' as back-end for dueca-project, each project is housed
-in its own git repository. The dueca-project interface handles one
-remote repository for the current project, and can accept different
-repositories for borrowed modules.
-"""
+# When using 'git' as back-end for dueca-project, each project is housed
+# in its own git repository. The dueca-project interface handles one
+# remote repository for the current project, and can accept different
+# repositories for borrowed modules.
+# """
 
 helptext = """
 Project script for adapting a DUECA project.

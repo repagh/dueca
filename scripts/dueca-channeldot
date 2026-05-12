@@ -5,6 +5,7 @@ import sys
 import argparse
 import argcomplete
 
+
 ap = argparse.ArgumentParser()
 ap.add_argument('-l', '--layout', metavar='layout', nargs=1, type=str,
                 choices = ('dot', 'neato', 'twopi', 'circo', 'fdp', 'nop'),

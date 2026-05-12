@@ -10,10 +10,11 @@ import argparse
 import sys
 
 import warnings
-warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 from duecautils.modules import Modules
 from duecautils import verboseprint
+
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 parser = argparse.ArgumentParser(
     description="""List modules of a DUECA project
