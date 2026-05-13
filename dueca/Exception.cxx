@@ -16,6 +16,8 @@
 #include "DataClassRegistryPredef.hxx"
 #include <iostream>
 #include <cstring>
+using namespace std;
+
 DUECA_NS_START
 
 Exception::
@@ -91,4 +93,3 @@ template class MsgException<128>;
 #include "Exception.ixx"
 #include "all_exceptions.h"
 DUECA_NS_END
-

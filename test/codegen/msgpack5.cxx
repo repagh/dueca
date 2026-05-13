@@ -28,6 +28,7 @@
 
 // last, to include code for the implementations
 #include <dueca/msgpack-unstream-iter.ixx>
+using namespace std;
 
 #define TEST_STRINGS 1
 #define TEST_ARRAYS 1

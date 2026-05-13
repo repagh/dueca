@@ -21,6 +21,7 @@
 
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
+using namespace std;
 
 DDFF_NS_START
 

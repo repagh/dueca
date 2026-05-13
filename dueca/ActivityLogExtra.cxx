@@ -17,6 +17,8 @@
 #define __CUSTOM_COMPATLEVEL_110
 #define __CUSTOM_COMPATLEVEL_111
 
+using namespace std;
+
 // these constructors will not be used
 #define __CUSTOM_FULL_CONSTRUCTOR
 ActivityLog::ActivityLog(const uint8_t& node_id,

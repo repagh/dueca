@@ -32,7 +32,6 @@
 #include <iostream>
 #include <cstring>
 #include <string>
-using namespace std;
 
 #include <dueca_ns.h>
 DUECA_NS_START

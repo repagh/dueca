@@ -73,7 +73,7 @@ union ActivityContext
   /** prints the ActivityContext to a stream.
       \todo Print descriptive information using activity description
       lists. */
-  ostream & print(ostream& s) const;
+  std::ostream & print(std::ostream& s) const;
 
   /** inequality */
   inline bool operator != (const ActivityContext& other) const

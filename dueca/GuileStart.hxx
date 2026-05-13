@@ -70,7 +70,7 @@ template<class T>
 GuileStart<T>::GuileStart()
 {
   if (!DuecaEnv::scriptSpecific()) {
-    cout << "adding object (" << SchemeClassData<T>::single()->getName() << ")" << endl;
+    std::cout << "adding object (" << SchemeClassData<T>::single()->getName() << ")" << std::endl;
   }
   ScriptInterpret::addInitFunction(SchemeClassData<T>::single()->getName(), NULL, ifunct<T>);
 }

@@ -24,6 +24,7 @@
 #include <dassert.h>
 //#define DEBPRINTLEVEL -1
 #include <debprint.h>
+using namespace std;
 
 DUECA_NS_START
 

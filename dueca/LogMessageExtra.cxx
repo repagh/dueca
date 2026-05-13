@@ -16,6 +16,7 @@ DUECA_NS_END
 #include <ActivityDescriptions.hxx>
 #include <iomanip>
 #include <sstream>
+using namespace std;
 DUECA_NS_START
 
 // code originally written for this codegen version

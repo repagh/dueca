@@ -19,6 +19,7 @@
 #include "GlobalId.hxx"
 #include "Ticker.hxx"
 #include "Trigger.hxx"
+using namespace std;
 
 DUECA_NS_START;
 

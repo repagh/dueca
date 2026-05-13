@@ -16,6 +16,7 @@
 
 #include "TrimView.hxx"
 #include "IncoTable.hxx"
+using namespace std;
 
 DUECA_NS_START
 

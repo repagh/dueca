@@ -15,7 +15,6 @@
 #define GenericStatus_hxx
 
 #include <iostream>
-using namespace std;
 #include <dueca_ns.h>
 DUECA_NS_START
 

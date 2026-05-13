@@ -17,7 +17,6 @@
 
 #include <iostream>
 #include <inttypes.h>
-using namespace std;
 #include <dueca_ns.h>
 #include <CommObjectTraits.hxx>
 

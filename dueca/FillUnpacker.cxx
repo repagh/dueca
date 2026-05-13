@@ -37,6 +37,7 @@
 #include <dueca/Callback.hxx>
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
+using namespace std;
 
 DUECA_NS_START
 
@@ -327,14 +328,14 @@ void FillUnpacker::despatch(const TimeSpec& t)
 		  << " from " << sender << " bcount " << countcheck[sender]
 		  << " expected size " << next_size
 		  << " real size " <<
-		  old_size - amorph_store[sender].getSize() 
+		  old_size - amorph_store[sender].getSize()
 		  << " at index " << current_idx);
             CriticalActivity::criticalErrorNodeWide();
           }
         }
         catch (const AmorphReStoreEmpty& e) {
 	  /* DUECA network.
-	     
+
 	     Failed to unpack the store by the fill unpacker. Verify that
 	     the DUECA versions you use are compatible.
 	   */

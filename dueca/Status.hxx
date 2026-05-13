@@ -54,7 +54,7 @@ public:
   GenericStatus* clone() const;
 
   /** Print in a nice format to some stream. */
-  ostream& print(ostream& os) const;
+  std::ostream& print(std::ostream& os) const;
 };
 
 DUECA_NS_END

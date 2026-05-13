@@ -20,6 +20,7 @@
 #include "debug.h"
 #include <algorithm>
 #include <dueca-conf.h>
+using namespace std;
 
 #define DEBPRINTLEVEL -1
 #define DEBA(A)

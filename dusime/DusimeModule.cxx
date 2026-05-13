@@ -233,7 +233,7 @@ void DusimeModule::localIncoCalculation(const TimeSpec& ts)
 
          Received a trim command that exceeds the inco table, probably
          an error in DUSIME trim code. */
-      W_MOD("Index " << ii->index << " exceeds inco table size" << endl);
+      W_MOD("Index " << ii->index << " exceeds inco table size" << std::endl);
     }
   }
 
@@ -263,9 +263,9 @@ void DusimeModule::localIncoCalculation(const TimeSpec& ts)
       inco_table[ii].probe->peek(this, f);
       break;
     default:
-      cerr << "Cannot use type " << inco_table[ii].probe->getType()
+      std::cerr << "Cannot use type " << inco_table[ii].probe->getType()
            << " in inco calculation for "
-           << inco_table[ii].incovar->getName() << endl;
+           << inco_table[ii].incovar->getName() << std::endl;
       f = 0.0;
     }
     result->appendPair(ii, f);

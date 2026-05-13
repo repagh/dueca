@@ -49,9 +49,9 @@ static SCM make_object(SCM name, SCM arglist)
      SchemeClassData<Entity>::single()->getMakeName());
 
   // create an empty (C++) list of modulecreator objects
-  list<ModuleCreator*> foetae;
+  std::list<ModuleCreator*> foetae;
   // and an empty list of scheme objects that must be kept alive
-  list<SchemeObject*> refs;
+  std::list<SchemeObject*> refs;
 
   // the list should only contain lists of modules, or empty
   // lists, or SCM_UNSPECIFIED values, those result from an "imploded"
@@ -125,7 +125,7 @@ static SCM make_object(SCM name, SCM arglist)
     obj->setSCM(fob);
 
     // link any supplied modules
-    for (list<SchemeObject*>::iterator ii = refs.begin();
+    for (std::list<SchemeObject*>::iterator ii = refs.begin();
          ii!= refs.end(); ii++) {
       obj->addReferred((*ii)->getSCM());
     }

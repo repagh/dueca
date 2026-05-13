@@ -97,11 +97,11 @@ class ScriptInterpret: public NamedObject
 
   /** A list of all the functions that have to be added to scheme. The
       method addInitFunct can be used to add a function to this list. */
-  list<const InitFunction*>     init_functions;
+  std::list<const InitFunction*>     init_functions;
 
   /** A list of all the functions that have to be added to scheme. The
       method addInitFunct can be used to add a function to this list. */
-  list<const InitFunction*>     unsorted_functions;
+  std::list<const InitFunction*>     unsorted_functions;
 
   /** Script init function */
   voidfunc       scriptinit;
@@ -115,7 +115,7 @@ class ScriptInterpret: public NamedObject
   bool model_copied;
 
   /** Vector that contains all confirmation status. */
-  vector<int> confirmation_count;
+  std::vector<int> confirmation_count;
 
   /** My number of received sets of scheme lines for model */
   uint16_t   received_sets;

@@ -16,7 +16,7 @@
 #include <vector>
 #include "Object8.hxx"
 #include <AmorphStore.hxx>
-
+using namespace std;
 
 USING_DUECA_NS;
 

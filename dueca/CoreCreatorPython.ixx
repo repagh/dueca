@@ -90,7 +90,7 @@ template <typename P> struct printarg
       first = false;
     }
     else {
-      res << "," << endl << "            ";
+      res << "," << std::endl << "            ";
     }
     if (opt) {
       res << "[<" << getProbeType(typeflag<P>()) << ">]";
@@ -158,13 +158,13 @@ CoreCreator<T, B, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10>::single(
     _single = singleton;
   }
   else if (singleton == NULL && _single == NULL) {
-    cerr << "Attempt to use CoreCreator singleton before initialization"
-         << endl;
+    std::cerr << "Attempt to use CoreCreator singleton before initialization"
+         << std::endl;
   }
   else if (singleton != NULL && _single != NULL) {
-    cerr << "Double initialization of CoreCreator singleton \""
+    std::cerr << "Double initialization of CoreCreator singleton \""
          << _single->getName() << "\" vs. \"" << singleton->getName() << "\""
-         << endl;
+         << std::endl;
   }
   return _single;
 }
@@ -187,15 +187,15 @@ CoreCreator<T, B, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10>::CoreCreator(
   single(this);
 
   if (DuecaEnv::scriptInstructions(this->name)) {
-    printCoreCreationCall(cout, this->name,
+    printCoreCreationCall(std::cout, this->name,
                           printargs<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10>());
   }
   else if (!DuecaEnv::scriptSpecific()) {
-    cout << "Adding object (" << this->name;
+    std::cout << "Adding object (" << this->name;
 #ifdef DUECA_GITHASH
-    cout << ", githash=" << _tc_xstr(DUECA_GITHASH);
+    std::cout << ", githash=" << _tc_xstr(DUECA_GITHASH);
 #endif
-    cout << ")" << endl;
+    std::cout << ")" << std::endl;
   }
   ScriptInterpret::addInitFunction(core_creator_name<T>(name),
                                    core_creator_name<B>(name), ifunct);
@@ -214,11 +214,11 @@ CoreCreator<T, B, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10>::CoreCreator(
   single(this);
 
   if (DuecaEnv::scriptInstructions(this->name)) {
-    printCoreCreationCall(cout, this->name,
+    printCoreCreationCall(std::cout, this->name,
                           printargs<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10>());
   }
   else if (!DuecaEnv::scriptSpecific()) {
-    cout << "Adding virt   (" << this->name << ")" << endl;
+    std::cout << "Adding virt   (" << this->name << ")" << std::endl;
   }
   ScriptInterpret::addInitFunction(core_creator_name<T>(name),
                                    core_creator_name<B>(name), ifunct0);
@@ -238,15 +238,15 @@ CoreCreator<T, B, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10>::CoreCreator(
   single(this);
 
   if (DuecaEnv::scriptInstructions(this->name)) {
-    printCoreCreationCall(cout, this->name,
+    printCoreCreationCall(std::cout, this->name,
                           printargs<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10>());
   }
   else if (!DuecaEnv::scriptSpecific()) {
-    cout << "Adding object (" << this->name;
+    std::cout << "Adding object (" << this->name;
 #ifdef DUECA_GITHASH
-    cout << ", githash=" << _tc_xstr(DUECA_GITHASH);
+    std::cout << ", githash=" << _tc_xstr(DUECA_GITHASH);
 #endif
-    cout << ")" << endl;
+    std::cout << ")" << std::endl;
   }
   ScriptInterpret::addInitFunction(core_creator_name<T>(name),
                                    core_creator_name<B>(name), ifunct);

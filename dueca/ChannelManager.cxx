@@ -49,6 +49,7 @@
 #endif
 
 #define NUM_LOCAL_CHANNELS 2
+using namespace std;
 DUECA_NS_START
 
 ChannelManager *ChannelManager::singleton = NULL;

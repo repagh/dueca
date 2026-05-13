@@ -19,15 +19,15 @@ IncoVariable* IncoVariable::forMode(IncoMode mode, IncoRole r)
 {
   // some sanity checks. Only warn however.
   if (vartype == IncoInt && r != Constraint) {
-    cerr << "Inco variable \"" << name << "\" is Int, cannot be used as "
-         << r << endl;
+    std::cerr << "Inco variable \"" << name << "\" is Int, cannot be used as "
+         << r << std::endl;
   }
   else if (r == Target && fabs(tolerance) < 1e-14) {
-    cerr << "Tolerance for Inco target \"" << name << '\"' << endl;
+    std::cerr << "Tolerance for Inco target \"" << name << '\"' << std::endl;
   }
   else if (findRole(mode) != Unspecified) {
-    cerr << "Mode " << mode << "already has role " << findRole(mode)
-         << endl;
+    std::cerr << "Mode " << mode << "already has role " << findRole(mode)
+         << std::endl;
   }
   else {
     // add the new role
@@ -64,6 +64,5 @@ bool IncoVariable::queryInsertForThisMode(IncoMode mode) const
 bool IncoVariable::isUserControllable(IncoMode mode) const
 {
   return findRole(mode) == Constraint ||
-    (findRole(mode) == Target && fabs(max_value - min_value) > 1e-10);
+    (findRole(mode) == Target && std::fabs(max_value - min_value) > 1e-10);
 }
-

@@ -73,7 +73,7 @@ class IncoCollaborator
       may come in in a block, before these are needed (several
       calculations can be requested in one go). Therefore a list of
       results is kept. */
-  list< vector<double> > results;
+  std::list< std::vector<double> > results;
 
   /** Access token for receiving trim calculation results. */
   ChannelReadToken                t_inco_feedback;

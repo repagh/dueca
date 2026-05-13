@@ -32,7 +32,7 @@ class LogPoints
   EasyId* id;
 
   /** Storage for the descriptions. */
-  vector<vector<LogPoint> > all_points;
+  std::vector<std::vector<LogPoint> > all_points;
 
   /** The default description. */
   const LogPoint deflt;

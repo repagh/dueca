@@ -23,6 +23,8 @@
 #include <cstring>
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
+using namespace std;
+
 DUECA_NS_START
 
 map<vstring, ModuleId::Index> ModuleId::name_map;

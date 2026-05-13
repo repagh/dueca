@@ -39,7 +39,7 @@
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
 
-#define CDEBUG(A) std::cerr << A << endl
+#define CDEBUG(A) std::cerr << A << std::endl
 #include "dueca-guile.h"
 #include "dueca_assert.h"
 DUECA_NS_START
@@ -81,13 +81,13 @@ CoreCreator<T, B, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10>::single
     _single = singleton;
   }
   else if (singleton == NULL && _single == NULL) {
-    cerr << "Attempt to use CoreCreator singleton before initialization"
-         << endl;
+    std::cerr << "Attempt to use CoreCreator singleton before initialization"
+         << std::endl;
   }
   else if (singleton != NULL && _single != NULL) {
-    cerr << "Double initialization of CoreCreator singleton \""
+    std::cerr << "Double initialization of CoreCreator singleton \""
          << _single->getName() << "\" vs. \"" << singleton->getName() << "\""
-         << endl;
+         << std::endl;
   }
   return _single;
 }
@@ -212,11 +212,11 @@ CoreCreator(const ParameterTable* table,
   startIOStream();
 
   if (DuecaEnv::scriptInstructions(SchemeClassData<T>::single()->getName())) {
-    cout << "(" << callName() << endl;
-    printArgumentList(cout);
+    std::cout << "(" << callName() << std::endl;
+    printArgumentList(std::cout);
   }
   else if (!DuecaEnv::scriptSpecific()) {
-    cout << "Adding object (" << &(callName()[5]) << ")" << endl;
+    std::cout << "Adding object (" << &(callName()[5]) << ")" << std::endl;
   }
   ScriptInterpret::addInitFunction(SchemeClassData<T>::single()->getName(), NULL, ifunct);
 
@@ -239,11 +239,11 @@ CoreCreator(const ParameterTable* table,
   startIOStream();
 
   if (DuecaEnv::scriptInstructions(&(callName()[5]))) {
-    cout << "(" << callName() << endl;
-    printArgumentList(cout);
+    std::cout << "(" << callName() << std::endl;
+    printArgumentList(std::cout);
   }
   else if (!DuecaEnv::scriptSpecific()) {
-    cout << "Adding object (" << &(callName()[5]) << ")" << endl;
+    std::cout << "Adding object (" << &(callName()[5]) << ")" << std::endl;
   }
   ScriptInterpret::addInitFunction(SchemeClassData<T>::single()->getName(), NULL, ifunct);
 
@@ -376,7 +376,7 @@ template<> STATIC bool getSCMVar<int>(SCM& current, int& var)
 {
   // current must contain an integer
   if (!scm_is_exact_integer(SCM_CAR(current))) {
-    cerr << "expect integer" << endl;
+    std::cerr << "expect integer" << std::endl;
     return false;
   }
 
@@ -391,7 +391,7 @@ template<> STATIC bool getSCMVar<bool>(SCM& current, bool& var)
 {
   // current must contain a boolean
   if (!SCM_BOOLP(SCM_CAR(current))) {
-    cerr << "expect bool" << endl;
+    std::cerr << "expect bool" << std::endl;
     return false;
   }
 
@@ -408,7 +408,7 @@ template<> STATIC bool getSCMVar<double>(SCM& current, double& var)
 
   // current must contain an integer or refer to a double
   if (!(scm_is_exact_integer(data) || scm_is_real(data))) {
-    cerr << "expect a double or int" << endl;
+    std::cerr << "expect a double or int" << std::endl;
     return false;
   }
 
@@ -427,7 +427,7 @@ template<> STATIC bool getSCMVar<float>(SCM& current, float& var)
 
   // current must contain an integer or refer to a double
   if (!(scm_is_exact_integer(data) || scm_is_real(data))) {
-    cerr << "expect a double or int" << endl;
+    std::cerr << "expect a double or int" << std::endl;
     return false;
   }
 
@@ -447,7 +447,7 @@ template<> STATIC bool getSCMVar<vstring>(SCM& current, vstring& var)
   // current must be a pair in the list, the data it points to must be
   // not immediate, and it must contain an string
   if (!(SCM_NIMP(data) && scm_is_string(data)) ) {
-    cerr << "expect a string" << endl;
+    std::cerr << "expect a string" << std::endl;
     return false;
   }
 

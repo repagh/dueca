@@ -40,6 +40,7 @@
 #define DO_INSTANTIATE
 #define NO_TYPE_CREATION
 #include <dueca.h>
+using namespace std;
 
 DDFF_NS_START;
 

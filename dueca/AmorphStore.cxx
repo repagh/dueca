@@ -21,6 +21,7 @@
 #endif
 #include <string>
 #include <cstring>
+using namespace std;
 
 #ifndef htonll
 // for 64 bit types

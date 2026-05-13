@@ -37,6 +37,7 @@
 #include <cstring>
 #include "MemberCall.hxx"
 #include <iomanip>
+using namespace std;
 
 DUECA_NS_START
 

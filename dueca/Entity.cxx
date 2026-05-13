@@ -27,6 +27,8 @@
 #define E_MOD
 #include <debug.h>
 #include "dueca_assert.h"
+using namespace std;
+
 DUECA_NS_START
 
 Entity::Entity(const char* ename, const list<ModuleCreator*>& foetae) :
@@ -154,4 +156,3 @@ ostream& Entity::print (ostream& os) const
 }
 
 DUECA_NS_END
-

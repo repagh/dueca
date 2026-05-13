@@ -16,7 +16,6 @@
 #define GenericCallback_hh
 
 #include<iostream>
-using namespace std;
 
 #include <dueca_ns.h>
 DUECA_NS_START
@@ -33,7 +32,7 @@ public:
   virtual void operator() (const TimeSpec &t) = 0;
 
   /** print to stream, for debugging. */
-  virtual void print(ostream& os) const = 0;
+  virtual std::ostream& print(std::ostream& os) const = 0;
 
   /// Constructor.
   GenericCallback();
@@ -49,8 +48,10 @@ private:
   GenericCallback& operator = (const GenericCallback&);
 };
 
-extern ostream& operator << (ostream& os, const GenericCallback& callback);
-
 DUECA_NS_END
+
+PRINT_NS_START;
+extern ostream& operator << (ostream& os, const dueca::GenericCallback& callback);
+PRINT_NS_END;
 
 #endif

@@ -21,6 +21,8 @@
 #include "debug.h"
 #define DO_INSTANTIATE
 #include "VarProbe.hxx"
+using namespace std;
+
 DUECA_NS_START
 #include <debprint.h>
 

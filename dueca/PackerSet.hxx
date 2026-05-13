@@ -71,9 +71,8 @@ public:
   GenericPacker* getPacker(TransportClass tclass) const;
 
   /** Print to stream, debugging. */
-  friend ostream& operator << (ostream& os, const PackerSet& a);
+  friend std::ostream& operator << (std::ostream& os, const PackerSet& a);
 };
 
 DUECA_NS_END
 #endif
-

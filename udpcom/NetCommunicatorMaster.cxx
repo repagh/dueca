@@ -39,6 +39,7 @@
 
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
+using namespace std;
 
 #ifdef BUILD_TESTOPT
 static const double test_failprob = 0.0001;

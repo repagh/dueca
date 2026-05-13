@@ -22,6 +22,8 @@
 //#define I_STS
 #include "debug.h"
 #include <debprint.h>
+
+using namespace std;
 DUECA_NS_START
 #if 0
 ActivityLister::ActivityLister(const ActivityWeaver* weaver,
@@ -359,4 +361,3 @@ bool ActivityWeaver::checkValidity(uint32_t key) const
   return key == current_key;
 }
 DUECA_NS_END
-

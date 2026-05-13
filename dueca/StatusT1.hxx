@@ -107,7 +107,7 @@ public:
   void clear();
 
   /** Print to stream, debugging. */
-  ostream& print (ostream& os) const;
+  std::ostream& print (std::ostream& os) const;
 };
 
 DUECA_NS_END

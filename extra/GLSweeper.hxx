@@ -192,7 +192,7 @@ private: // member functions for cooperation with DUECA
   bool setTimeSpec(const TimeSpec& ts);
 
   /** Request check on the timing. */
-  bool checkTiming(const vector<int>& i);
+  bool checkTiming(const std::vector<int>& i);
 
   /** Specify a certain windowing protocol */
   bool setProtocol(ScriptCreatable& prot, bool dir_in);
@@ -226,9 +226,6 @@ public:
   /** get minimum stencil buffer size.
       \returns The number of bits in the stencil buffer */
   inline int getStencilBufferSize() const { return depth_buffer_size; }
-
-
-
 
 };
 

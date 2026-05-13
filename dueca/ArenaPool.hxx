@@ -16,7 +16,6 @@
 
 #include <map>
 #include <sys/types.h>
-using namespace std;
 
 // forward declaration
 #include <dueca_ns.h>
@@ -43,7 +42,7 @@ class ArenaPool
 {
 
   /** Array with a pool of arenas. */
-  map<size_t,Arena*> pool;
+  std::map<size_t,Arena*> pool;
 
   /** Maximum size available in the arenas. */
   size_t             max_size;

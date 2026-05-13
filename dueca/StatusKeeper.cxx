@@ -19,6 +19,8 @@
 #include <ModuleState.hxx>
 #include <StatusT1.hxx>
 #include <DuecaView.hxx>
+using namespace std;
+
 DUECA_NS_START
 
 //template<class S, class V>

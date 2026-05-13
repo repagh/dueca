@@ -49,6 +49,7 @@ static const double prob = 0.01/6.0;
 #include <MemberCall.hxx>
 #include <MemberCall2Way.hxx>
 #include <debprint.h>
+using namespace std;
 
 DUECA_NS_START
 

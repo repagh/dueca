@@ -20,8 +20,6 @@
 #include "ScriptCreatable.hxx"
 #include <boost/intrusive_ptr.hpp>
 
-using namespace std;
-
 #include <dueca_ns.h>
 DUECA_NS_START
 class Module;
@@ -43,17 +41,17 @@ protected:
 
   /** List of module creators. These can be used to create the actual
       modules. */
-  list<boost::intrusive_ptr<ModuleCreator>> foetae;
+  std::list<boost::intrusive_ptr<ModuleCreator>> foetae;
 
   /** A list of all models locally to this node. */
-  list<Module *> local_modules;
+  std::list<Module *> local_modules;
 
 public:
   /** Objects of this class can be created from scheme. */
   SCM_FEATURES_DEF;
 
   /** Constructor. */
-  Entity(const char *ename, const list<ModuleCreator *> &foetae);
+  Entity(const char *ename, const std::list<ModuleCreator *> &foetae);
 
   /** Constructor. */
   Entity(const std::string &ename);
@@ -87,7 +85,7 @@ public:
   ObjectType getObjectType() const { return O_Entity; }
 
   /** Print to stream, for debugging purposes. */
-  ostream &print(ostream &os) const;
+  std::ostream &print(std::ostream &os) const;
 };
 
 DUECA_NS_END

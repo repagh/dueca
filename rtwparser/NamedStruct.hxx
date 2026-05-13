@@ -16,7 +16,6 @@
 #include <list>
 #include <string>
 #include "TypeNameDef.hxx"
-using namespace std;
 
 
 class NamedStruct: public BaseObject

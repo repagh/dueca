@@ -12,6 +12,7 @@
 */
 
 #define __CUSTOM_COMPATLEVEL_110
+using namespace std;
 
 XmlSnapshot::XmlSnapshot(size_t data_size,
                          const NameSet& originator) :

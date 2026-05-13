@@ -37,6 +37,7 @@
 #error "Have not found glui.h"
 #endif
 #include <Environment.hxx>
+using namespace std;
 
 #ifdef TEST_OPTIONS
 #define CHECKGL \
@@ -314,4 +315,3 @@ GLWindowHelper* GlutGuiOpenGLHelper::newWindow()
 }
 
 DUECA_NS_END;
-

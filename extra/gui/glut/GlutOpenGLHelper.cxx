@@ -30,6 +30,7 @@
 #include "GLSweeper.hxx"
 
 #include <Environment.hxx>
+using namespace std;
 
 #ifdef TEST_OPTIONS
 #define CHECKGL \
@@ -280,4 +281,3 @@ GLWindowHelper* GlutOpenGLHelper::newWindow()
 }
 
 DUECA_NS_END;
-

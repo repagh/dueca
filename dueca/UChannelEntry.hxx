@@ -256,8 +256,8 @@ public:
       @param span    Minimum duration to keep data, in ticks
       @param depth   Minimum number of copies to keep. */
   void setMinimumSpanAndDepth(TimeTickType span, unsigned depth)
-  { this->span = max(span, this->span);
-    this->depth = max(depth, this->depth); }
+  { this->span = std::max(span, this->span);
+    this->depth = std::max(depth, this->depth); }
 
   /** Return the label */
   inline const std::string& getLabel() const { return entrylabel; }

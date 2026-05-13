@@ -36,6 +36,7 @@
 #define NO_TYPE_CREATION
 #include <dusime.h>
 #include <HDF5Exceptions.hxx>
+using namespace std;
 
 STARTHDF5LOG;
 
@@ -388,7 +389,7 @@ void HDF5Replayer::reSpool(const TimeTickType& tick)
          correctly calculated. */
       W_XTR("replay needs stream data for timing adjustment");
 
-      // salvate by assuming replay starts at 0 
+      // salvate by assuming replay starts at 0
       replay_off = tick;
     }
 

@@ -66,7 +66,7 @@ template<class UD> class registry;
 
 /** Print to stream. */
 template<class UD>
-ostream& operator<< (ostream& o, const registry<UD> &reg);
+std::ostream& operator<< (std::ostream& o, const registry<UD> &reg);
 
 /** A Functor, a class that implements one function. It decides
     whether one pointer is "less" than another one, on the basis of
@@ -101,7 +101,7 @@ class registry: public StateGuard
 {
 private:
   /** This is a map of pointers to the indexes in the array. */
-  map<const UD*, int, less_ptr<const UD*> > index;
+  std::map<const UD*, int, less_ptr<const UD*> > index;
 
   /** This vector is the primary vector for the objects. Objects must,
       in their constructor, initialise to a default, void, value */
@@ -199,7 +199,7 @@ public:
 
   /** important for debug purposes: ability to dump the registry to a
       stream. */
-  friend ostream& operator<< <> (ostream& o, const registry<UD> &reg);
+  friend std::ostream& operator<< <> (std::ostream& o, const registry<UD> &reg);
 };
 
 DUECA_NS_END
@@ -219,7 +219,6 @@ DUECA_NS_END
 #include <dueca_ns.h>
 
 DUECA_NS_START
-using namespace std;
 
 template<class UD> registry<UD>::
 registry(int initialsize, const char* name) :
@@ -254,7 +253,7 @@ void registry<UD>::insert(unsigned int place, const UD &ud)
   const UD *udptr = &ud;
 
   // Is this entry already present?? It should not be.
-  typename map<const UD*, int, less_ptr<const UD*> >::const_iterator
+  typename std::map<const UD*, int, less_ptr<const UD*> >::const_iterator
     ii = index.find(udptr);
   if (ii != index.end()) {
     throw(ObjectAlreadyInRegistry(GlobalId(0,1),
@@ -322,13 +321,13 @@ void registry<UD>::remove(unsigned int i)
 {
   if (!locked) throw RegistryNotLocked();
   if (use_primary) {
-    typename map<const UD*, int, less_ptr<const UD*> >::iterator
+    typename std::map<const UD*, int, less_ptr<const UD*> >::iterator
       ii = index.find(&(v1[i]));
     if (ii != index.end()) index.erase(ii);
     v1[i] = empty_ud;
   }
   else {
-    typename map<const UD*, int, less_ptr<const UD*> >::iterator
+    typename std::map<const UD*, int, less_ptr<const UD*> >::iterator
       ii = index.find(&(v2[i]));
     if (ii != index.end()) index.erase(ii);
     v2[i] = empty_ud;
@@ -361,7 +360,7 @@ UD& registry<UD>::find(const UD &ud) const
   if (!locked) throw RegistryNotLocked();
   const UD *udptr = &ud;
 
-  typename map<const UD*, int, less_ptr<const UD*> >::const_iterator
+  typename std::map<const UD*, int, less_ptr<const UD*> >::const_iterator
     ii = index.find(udptr);
   if (ii != index.end()) {
     unsigned int i = ii->second;
@@ -402,7 +401,7 @@ bool registry<UD>::contains(unsigned int idx) const
 }
 
 template<class UD>
-ostream& operator << (ostream& o, const registry<UD> &reg)
+std::ostream& operator << (std::ostream& o, const registry<UD> &reg)
 {
   o << "registry dump:" << reg.highest_index << '\n';
   for (unsigned int ii = 0; ii <= reg.highest_index ; ii++) {
@@ -419,7 +418,3 @@ DUECA_NS_END
 
 #endif
 #endif
-
-
-
-

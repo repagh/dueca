@@ -22,9 +22,9 @@
 #include "debug.h"
 #include <cstdio>
 #include <debprint.h>
+using namespace std;
 
 DUECA_NS_START
-
 
 ActivityLine::ActivityLine(Type t, int x0, int x1) :
   type(t),

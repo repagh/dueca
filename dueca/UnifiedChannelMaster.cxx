@@ -240,7 +240,7 @@ void UnifiedChannelMaster::process(AsyncQueueMT<UChannelCommRequest>& req,
           /* DUECA channel.
 
              The channel configuration is not compatible, an additional entry
-             is requested, but the channel has a configuration for a single, 
+             is requested, but the channel has a configuration for a single,
              unique entry. */
         W_CHN("Cannot add to unique entry, chan id=" << chanid <<
               " orig=" << (req.front().data1 & 0xff) << " class=" <<
@@ -253,16 +253,16 @@ void UnifiedChannelMaster::process(AsyncQueueMT<UChannelCommRequest>& req,
         assert(!entries[newid].active);
         entries[newid] = record;
         assert(entries[newid].active);
-        DEB(chanid << "reused entry #" << newid << " tmp #" << hex <<
-            req.front().data1 << dec);
+        DEB(chanid << "reused entry #" << newid << " tmp #" << std::hex <<
+            req.front().data1 << std::dec);
         reusable.pop_front();
       }
       else {
         if (entries.size() < entry_bylabel - 1) {
           newid = entries.size();
           entries.push_back(record);
-          DEB(chanid << " new entry #" << newid << " tmp #" << hex <<
-              req.front().data1 << dec);
+          DEB(chanid << " new entry #" << newid << " tmp #" << std::hex <<
+              req.front().data1 << std::dec);
         }
         else {
           /* DUECA channel.
@@ -302,7 +302,7 @@ void UnifiedChannelMaster::process(AsyncQueueMT<UChannelCommRequest>& req,
                history in the channel is available to the new
                reader. */
             W_CHN(chanid << " no reservations left, entry#" << newid <<
-                  " clientid=" << cc->origin << dec);
+                  " clientid=" << cc->origin);
           }
         }
       }
@@ -335,7 +335,7 @@ void UnifiedChannelMaster::process(AsyncQueueMT<UChannelCommRequest>& req,
       bool found = false;
       for (entryid_type handle = entries.size(); handle--; ) {
         if (entries[handle].origin == provisional_id) {
-          DEB(chanid << " delete tmp #" << hex << provisional_id << dec <<
+          DEB(chanid << " delete tmp #" << std::hex << provisional_id << std::dec <<
               " found entry #" << handle);
           assert(entries[handle].active);
           {
@@ -351,7 +351,7 @@ void UnifiedChannelMaster::process(AsyncQueueMT<UChannelCommRequest>& req,
         }
       }
       if (!found) {
-        DEB(chanid << " delete tmp #" << hex << provisional_id << dec <<
+        DEB(chanid << " delete tmp #" << std::hex << provisional_id << std::dec <<
               " no entry found");
       }
     }
@@ -477,7 +477,7 @@ void UnifiedChannelMaster::process(AsyncQueueMT<UChannelCommRequest>& req,
                  history in the channel is available to the new
                  reader. */
               W_CHN(chanid << " no reservations left, entry #" << handle <<
-                    " clientid=" << hex << record.origin << dec);
+                    " clientid=" << std::hex << record.origin << std::dec);
             }
           }
         }
@@ -531,4 +531,3 @@ void UnifiedChannelMaster::sweep(AsyncQueueMT<UChannelCommRequest>& com)
 }
 
 DUECA_NS_END
-

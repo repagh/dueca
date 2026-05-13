@@ -18,6 +18,7 @@
 #include <dueca/msgpack.hxx>
 #include <AmorphStore.hxx>
 #include <dueca/MessageBuffer.hxx>
+using namespace std;
 
 USING_DUECA_NS;
 
@@ -32,10 +33,10 @@ int main()
   assert(o1.f2.valid == true);
   assert(o1.v3.valid == false);
   assert(o1.i1.value == 2);
-  
+
   // pack the object
   packData(st, o1);
-  
+
   // create a second, resembling
   Object12 o2(1);
   packDataDiff(st, o2, o1);

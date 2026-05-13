@@ -62,7 +62,7 @@ public:
 
   /** Overloaded operator for printing of the event to a stream. This
       is mainly used for debugging purposes. */
-  ostream & print (ostream& s) const;
+  std::ostream & print (std::ostream& s) const;
 
   /** Insert the corresponding data into the event object.
       @param data       DCO object pointer
@@ -155,7 +155,7 @@ template <class T> Event<T>::
 }
 
 template<class T>
-ostream&  Event<T>::print (ostream& s) const
+std::ostream&  Event<T>::print (std::ostream& s) const
 {
   return s << "Event<T>(" << *static_cast<const GenericEvent*>(this)
            << ",data=" << *(data) << ')';
@@ -173,8 +173,3 @@ void Event<T>::setData(const T* data, const GlobalId& sender_id, const TimeTickT
 DUECA_NS_END
 #endif
 #endif
-
-
-
-
-

@@ -31,7 +31,7 @@ class PackerManager:
   public ScriptCreatable
 {
   /** Defines a mapping of packers for the transport to other nodes. */
-  typedef vector<PackerSet*> PackerMapping;
+  typedef std::vector<PackerSet*> PackerMapping;
 
   /** The mapping. */
   PackerMapping packer_set;
@@ -66,7 +66,7 @@ public:
   /** Returns the single instance of this object. */
   inline static PackerManager* single() {
     if (singleton == NULL) {
-      cerr << "PackerManager says: Check your dueca.cnf" << endl;
+      std::cerr << "PackerManager says: Check your dueca.cnf" << std::endl;
       std::exit(1); // configuration error
     }
     return singleton;
@@ -82,7 +82,7 @@ public:
                                                        Channel::TransportClass tclass);
 
   /** Print a description to stream. */
-  friend ostream& operator << (ostream& os, const
+  friend std::ostream& operator << (std::ostream& os, const
                                PackerManager& a);
 
   /** Stop all packers. Called at destruction time. */

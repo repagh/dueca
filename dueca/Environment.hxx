@@ -26,8 +26,6 @@
 #include "ScriptConfirm.hxx"
 #include <boost/scoped_ptr.hpp>
 
-using namespace std;
-
 #include <dueca_ns.h>
 DUECA_NS_START;
 
@@ -87,7 +85,7 @@ private:
   };
 
   /** Scheduling priorities for the different activity managers. */
-  list<SchedPriority> sched_priorities;
+  std::list<SchedPriority> sched_priorities;
 
   /** dummy parameter. */
   int rt_mode;
@@ -99,7 +97,7 @@ private:
   EntityManager *entity_manager;
 
   /** the vector with the activity managers. */
-  vector<ActivityManager*> activity_manager;
+  std::vector<ActivityManager*> activity_manager;
 
   /** the cat checking that all nodes are up. */
   NodeManager *node_manager;
@@ -277,7 +275,7 @@ public:
   /** the function that returns the sole instance of this singleton. */
   inline static Environment *getInstance() {
     if (instance == NULL) {
-      cerr << "Environment says: Check your dueca.cnf" << endl;
+      std::cerr << "Environment says: Check your dueca.cnf" << std::endl;
       assert(0);
       std::exit(1);      // configuration wrong
     }
@@ -364,19 +362,19 @@ public:
   bool setRunMode(const vstring& mode);
 
   /** Call to add non-real-time threads. */
-  bool setAMNice(const vector<int>& levels);
+  bool setAMNice(const std::vector<int>& levels);
 
   /** Call to add real-time threads with RR scheduling. */
-  bool setAMRoundRobin(const vector<int>& levels);
+  bool setAMRoundRobin(const std::vector<int>& levels);
 
   /** Call to add real-time threads with FIFO scheduling. */
-  bool setAMFiFo(const vector<int>& levels);
+  bool setAMFiFo(const std::vector<int>& levels);
 
   /** Call to add real-time threads with RTAI scheduling. */
-  bool setAMRTAI(const vector<int>& levels);
+  bool setAMRTAI(const std::vector<int>& levels);
 
   /** Call to add real-time threads with XENOMAI scheduling. */
-  bool setAMXENO(const vector<int>& levels);
+  bool setAMXENO(const std::vector<int>& levels);
 
   /** Get the current gui handler. */
   inline GuiHandler* getActiveGuiHandler() {return gui_handler; }

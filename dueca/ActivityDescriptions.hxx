@@ -43,7 +43,7 @@ class ActivityDescriptions
   boost::scoped_ptr<ChannelReadToken> r_description;
 
   /** File for dumping activity description information. */
-  ofstream                       activity_dump;
+  std::ofstream    activity_dump;
 
   /** Callback object. */
   Callback<ActivityDescriptions> cb;

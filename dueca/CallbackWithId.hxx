@@ -52,7 +52,7 @@ public:
   void operator() (const TimeSpec &t);
 
   /// Print to stream, for debugging.
-  void print(ostream& os) const;
+  std::ostream& print(std::ostream& os) const;
 
 public:
   /// Constructor.
@@ -82,10 +82,10 @@ operator() (const TimeSpec &t)
   ((*obj) .* h) (t, id);
 }
 
-template <class T, class I> void CallbackWithId<T,I>::
-print(ostream& os) const
+template <class T, class I> std::ostream& CallbackWithId<T,I>::
+print(std::ostream& os) const
 {
-  os << "CallbackWithId(obj=" << obj->getId() << ')';
+  return os << "CallbackWithId(obj=" << obj->getId() << ')';
 }
 
 template <class T, class I> CallbackWithId<T,I>::

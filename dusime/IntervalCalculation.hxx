@@ -19,7 +19,6 @@
 
 #include <vector>
 #include <Interval.hxx>
-using namespace std;
 #include <dueca_ns.h>
 DUECA_NS_START
 
@@ -45,7 +44,7 @@ class IntervalCalculation
   int n_out;
 
   /** The intervals themselves. */
-  vector<Interval> intervals;
+  std::vector<Interval> intervals;
 
 public:
   /** Constructor. */

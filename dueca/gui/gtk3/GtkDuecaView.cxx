@@ -39,6 +39,7 @@
 #include "MemberCall.hxx"
 #include "Callback.hxx"
 #include "VarProbe.hxx"
+using namespace std;
 
 enum {
   ENT_COL_NAME = 0,

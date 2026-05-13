@@ -160,7 +160,7 @@ protected:
 
     /** Set the writer, perform actions for reader if present */
     void setWriter(FileHandler *handler,
-                   unsigned sid, size_t bufsize, fstream& file);
+                   unsigned sid, size_t bufsize, std::fstream& file);
 
     /** First existing block information; reader and writer are
         initialised with buffer size, and a reader will be informed

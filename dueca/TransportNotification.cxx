@@ -17,6 +17,8 @@
 #include <GenericPacker.hxx>
 #include <UnifiedChannel.hxx>
 #include <dassert.h>
+using namespace std;
+
 DUECA_NS_START
 
 TransportNotification::

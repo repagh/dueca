@@ -148,7 +148,7 @@ DuecaNetMaster::DuecaNetMaster() :
   NetCommunicatorMaster(),
   priority(0, 0),
   time_spec(0, Ticker::single()->getCompatibleIncrement()),
-  fill_minimum(max(uint32_t(32), buffer_size / 8)),
+  fill_minimum(std::max(uint32_t(32), buffer_size / 8)),
   peer_nodeids(),
   metainfo(),
   send_order_counter(1),

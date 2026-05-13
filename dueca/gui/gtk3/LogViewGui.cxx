@@ -22,6 +22,7 @@
 #include "GtkDuecaView.hxx"
 
 #include <debug.h>
+using namespace std;
 
 DUECA_NS_START
 

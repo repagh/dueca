@@ -14,6 +14,7 @@
 DUECA_NS_END;
 
 #include <iomanip>
+using namespace std;
 
 DUECA_NS_START;
 
@@ -48,4 +49,3 @@ void ChannelWriteInfo::printline(std::ostream& s) const
     << std::setw(30) << dataclass << " \""
     << label << '"' << std::endl;
 }
-

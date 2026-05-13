@@ -17,7 +17,6 @@
 #include <dueca/GlobalId.hxx>
 #include <exception>
 #include <dueca/visibility.h>
-using namespace std;
 // class names
 #include <iostream>
 
@@ -69,7 +68,7 @@ public:
   virtual const char * const getName() const = 0;
 
   /** Print to a stream. */
-  ostream& print(ostream& os) const;
+  std::ostream& print(std::ostream& os) const;
 };
 
 #ifndef _NOEXCEPT

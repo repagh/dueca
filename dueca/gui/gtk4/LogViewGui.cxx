@@ -24,6 +24,7 @@
 #include "GtkDuecaView.hxx"
 #include <fmt/format.h>
 #include <debug.h>
+using namespace std;
 
 DUECA_NS_START
 

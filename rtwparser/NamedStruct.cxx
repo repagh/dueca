@@ -5,7 +5,7 @@ NamedStruct::NamedStruct(const char* name, ObjectList* objs, const char* comm) :
   BaseObject("struct", name),
   child_list(objs)
 {
-  if (string(comm) != "")
+  if (std::string(comm) != "")
     addComment(comm);
 }
 

@@ -33,6 +33,7 @@
 #include <X11/Xlib.h>
 #endif
 #include <dassert.h>
+using namespace std;
 
 
 //#ifdef HAVE_SETJMP_H
@@ -153,5 +154,3 @@ void GlutHandler::returnControl()
 
 
 DUECA_NS_END
-
-

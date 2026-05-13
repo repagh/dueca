@@ -53,6 +53,7 @@
 
 #define DEBPRINTLEVEL 1
 #include <debprint.h>
+using namespace std;
 
 extern "C" {
 void read_md2_file(GtkWidget *widget, gpointer user_data);

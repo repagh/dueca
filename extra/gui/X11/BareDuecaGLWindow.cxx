@@ -33,6 +33,7 @@
 #include <X11/Xatom.h>
 #include <GL/glut.h>
 #include <X11/extensions/XInput2.h>
+using namespace std;
 
 DUECA_NS_START;
 

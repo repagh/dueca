@@ -16,7 +16,6 @@
 
 #include "BaseObject.hxx"
 
-using namespace std;
 
 class TypeNameDef: public BaseObject
 {
@@ -46,7 +45,7 @@ class TypeNameDef: public BaseObject
     /// Simulink subsystem depth of this item
     int     syslevel;
     /// Simulink blockname, block internal variable name, or MATLAB expression
-    string  block, var, expr;
+    std::string  block, var, expr;
 
     /// Parse the attached comment
     int     parseComment();

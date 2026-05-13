@@ -24,6 +24,8 @@
 #define E_STS
 #include <debug.h>
 #include <debprint.h>
+using namespace std;
+
 DUECA_NS_START
 
 template<class LI, class S, class V>

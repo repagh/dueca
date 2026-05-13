@@ -161,7 +161,7 @@ template <> const char *core_creator_name<ScriptCreatable>(const char *);
     \param  B   Warning message. */
 #define SCRIPTSTART_CHECK2(A, B)                                               \
   if (!(A)) {                                                                  \
-    cerr << "WARN:" << DuecaClockTime() << getId() << '/' << B << endl;        \
+    std::cerr << "WARN:" << DuecaClockTime() << getId() << '/' << B << std::endl;        \
     res = false;                                                               \
   }
 

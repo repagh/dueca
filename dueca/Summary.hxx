@@ -16,7 +16,6 @@
 
 #include <list>
 #include <iostream>
-using namespace std;
 #include <dueca_ns.h>
 #include <dueca/visibility.h>
 
@@ -24,7 +23,7 @@ DUECA_NS_START
 
 template<class LI, class S, class V> class Summary;
 template<class LI, class S, class V>
-ostream& operator << (ostream& os, const Summary<LI,S,V>& o);
+std::ostream& operator << (std::ostream& os, const Summary<LI,S,V>& o);
 
 /** This is a nested tree of objects that hold zero, one or more
     Status reports. Each object either has status reports, then it is
@@ -47,11 +46,11 @@ class Summary
   typedef Summary<LI,S,V>*    SummaryPtr;
 
   /** Shorthand for traversing over lists of summaries. */
-  typename list<SummaryPtr>::iterator SPI;
+  typename std::list<SummaryPtr>::iterator SPI;
 
   /** A list of branches, subsidiary to this node. If the size of the
       list is zero, then this is a leaf node. */
-  list <SummaryPtr>         branches;
+  std::list <SummaryPtr>         branches;
 
   /** A flag to determine whether status is correct. */
   bool dirty;
@@ -133,12 +132,12 @@ class Summary
   LI& getLink() { return *link_id; }
 
   /** print to stream. */
-  ostream& print(ostream& os) const;
+  std::ostream& print(std::ostream& os) const;
   //friend ostream& operator << <> (ostream& os, const Summary<LI,S,V> & o);
 };
 
 /** An exception to be thrown when the tree is traversed. */
-class LNK_PUBLIC NotFound: public exception
+class LNK_PUBLIC NotFound: public std::exception
 {
   /** Message. */
   static const char* msg;

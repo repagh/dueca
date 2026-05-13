@@ -14,6 +14,8 @@
 
 #define StoreInformation_cxx
 #include "StoreInformation.hxx"
+using namespace std;
+
 DUECA_NS_START
 
 ReflectiveStoreInformation::
@@ -53,4 +55,3 @@ ostream& operator << (ostream& os, const
 }
 
 DUECA_NS_END
-

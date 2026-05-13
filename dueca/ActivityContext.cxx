@@ -17,6 +17,7 @@
 #include "Arena.hxx"
 #include "ArenaPool.hxx"
 #include "NodeManager.hxx"
+using namespace std;
 
 DUECA_NS_START
 

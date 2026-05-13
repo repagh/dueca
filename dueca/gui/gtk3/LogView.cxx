@@ -25,12 +25,12 @@
 #include <newlog.hxx>
 #include <NodeManager.hxx>
 #include <iostream>
-using namespace std;
 
 // the standard package for DUSIME, including template source
 #define DO_INSTANTIATE
 #define NO_TYPE_CREATION
 #include <dueca.h>
+using namespace std;
 
 DUECA_NS_START
 

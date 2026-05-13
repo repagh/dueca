@@ -38,6 +38,7 @@
 #include <Callback.hxx>
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
+using namespace std;
 
 // WARNING. This code may not use normal notification/logging facilities
 // Since that would lead to recursive loops!

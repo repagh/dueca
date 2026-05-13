@@ -22,7 +22,6 @@
 #include <stringoptions.h>
 #include <GlobalId.hxx>
 #include <IncoMode.hxx>
-using namespace std;
 #include <dueca_ns.h>
 #include <IncoVariableWork.hxx>
 DUECA_NS_START
@@ -79,7 +78,7 @@ class TrimId
   static std::vector<vpernode> module_id_map;
 
   /** Constructor, using a name */
-  TrimId(const vector<vstring>& nameparts,
+  TrimId(const std::vector<vstring>& nameparts,
          int calculator, int tvariable);
 
   /** Copy constructor, private, not implemented. Should never copy */
@@ -100,7 +99,7 @@ public:
   static TrimId& find(int calculator, int tvariable);
 
   /** Create a new TrimId. */
-  static TrimId& create(const vector<vstring>& nameparts,
+  static TrimId& create(const std::vector<vstring>& nameparts,
                         int calculator, int tvariable);
 
   /** Create a new TrimId with a limited number of parts. */
@@ -151,7 +150,7 @@ private:
   Index findName(const vstring& name, Index level);
 
   /** print to stream */
-  friend ostream& operator << (ostream& os, const TrimId& o);
+  friend std::ostream& operator << (std::ostream& os, const TrimId& o);
 };
 DUECA_NS_END
 #endif

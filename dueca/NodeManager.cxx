@@ -40,6 +40,7 @@
 #define DO_INSTANTIATE
 #include "Callback.hxx"
 #include <CriticalActivity.hxx>
+using namespace std;
 
 DUECA_NS_START
 
@@ -320,12 +321,12 @@ NodeControlMessage::NodeState NodeManager::getNodeState(int i)
 const vstring NodeManager::getNodeName(query_iterator i) const
 {
 #ifdef HAVE_SSTREAM
-  ostringstream st;
+  std::ostringstream st;
   st << "node " << i << std::ends;
   return vstring(st.str());
 #else
   char cbuf[10];
-  ostrstream st(cbuf, 10);
+  std::ostrstream st(cbuf, 10);
   st << "node " << i << '\000';
   return vstring(cbuf);
 #endif

@@ -63,7 +63,7 @@ class GtkTrimView: public TrimView
   Summary<TrimId, TrimLink, TrimView> *root;
 
   /** List of calculators that checked in. */
-  vector<IncoCalculator*> calculators;
+  std::vector<IncoCalculator*> calculators;
 
   /** Present mode. */
   TrimMode mode;
@@ -130,9 +130,9 @@ public:
   void removeEntity(const std::string& name);
 
   /** Add a single variable to this view. */
-  bool addVariable(const vector<vstring>& names,
+  bool addVariable(const std::vector<vstring>& names,
                    int cal, int tvar,
-                   const IncoVariableWork& ivar);
+                   const IncoVariableWork& ivar) final;
   /// \endgroup
 
   /** Update the external view. */

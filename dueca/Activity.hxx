@@ -245,7 +245,7 @@ public:
   void changePriority(const PrioritySpec& s);
 
   /** Print to stream, for debugging purposes. */
-  void print(ostream& os);
+  std::ostream& print(std::ostream& os) const;
 
   /** Find out how many more instances of this activity are
       scheduled. This can be used in display drawing modules, to exit

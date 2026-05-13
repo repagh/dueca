@@ -163,14 +163,14 @@ TICK ReflectoryLocal<TICK>::update(const TICK& tick, unsigned nodeid)
     }
   }
   if (this->planned_config.notEmpty()) {
-    nxt = min(this->planned_config.front().target_time, nxt);
+    nxt = std::min(this->planned_config.front().target_time, nxt);
   }
 
   // cycle through to the children
   for (typename ReflectoryBase<TICK>::childvec_type::iterator cc = this->slots.begin();
        cc != this->slots.end(); cc++) {
     if (cc->get()) {
-      nxt = min((*cc)->update(tick, 0), nxt);
+      nxt = std::min((*cc)->update(tick, 0), nxt);
     }
   }
 

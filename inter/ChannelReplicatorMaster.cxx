@@ -50,6 +50,7 @@
 #include <dueca.h>
 
 #include <debprint.h>
+using namespace std;
 
 STARTNSREPLICATOR;
 

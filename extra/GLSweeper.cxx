@@ -40,7 +40,7 @@
 #define NO_TYPE_CREATION
 #include <dueca.h>
 #include <MemberCall2Way.hxx>
-
+using namespace std;
 
 DUECA_NS_START;
 

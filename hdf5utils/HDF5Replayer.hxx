@@ -208,7 +208,7 @@ public: // construction and further specification
   bool setTimeSpec(const TimeSpec& ts);
 
   /** Request check on the timing. */
-  bool checkTiming(const vector<int>& i);
+  bool checkTiming(const std::vector<int>& i);
 
   /** Specify a channel for receiving configuration/reprogram events */
   bool setConfigChannel(const std::string& cname);

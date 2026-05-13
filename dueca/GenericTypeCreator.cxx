@@ -18,6 +18,7 @@
 #include <dueca/DuecaEnv.hxx>
 #include <dueca/ModuleCreator.hxx>
 #include <debug.h>
+using namespace std;
 
 DUECA_NS_START
 GenericTypeCreator::GenericTypeCreator(const std::string& type_name, const char* vhash) :
@@ -62,4 +63,3 @@ createModuleCreator(const std::string& part,
 }
 
 DUECA_NS_END
-

@@ -43,7 +43,7 @@
 #include "TypeCreator.hxx"
 #include "MemberCall.hxx"
 #include "MemberCall2Way.hxx"
-
+using namespace std;
 
 DUECA_NS_START
 

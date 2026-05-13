@@ -58,6 +58,8 @@
 #define _GNU_SOURCE
 #include <fenv.h>
 #endif
+using namespace std;
+
 
 DUECA_NS_START
 

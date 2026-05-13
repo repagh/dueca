@@ -84,10 +84,10 @@ public:
   inline int getSender() const {return sender; }
 
   /** print to stream. */
-  ostream& print(ostream& os) const;
+  std::ostream& print(std::ostream& os) const;
 };
 
-inline ostream& operator << (ostream& os, const HeadInfo& hi)
+inline std::ostream& operator << (std::ostream& os, const HeadInfo& hi)
 { return hi.print(os); }
 
 /** This class can unpack data coming in on reflective or shared
@@ -225,7 +225,7 @@ private:
                          unsigned int size, int sender);
 
   /** Print to a stream. */
-  friend ostream& operator << (ostream& os, const ReflectiveUnpacker& p);
+  friend std::ostream& operator << (std::ostream& os, const ReflectiveUnpacker& p);
 };
 
 DUECA_NS_END

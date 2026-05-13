@@ -354,11 +354,11 @@ void NetCommunicator::ControlBlockWriter::markTimeOffset
 {
   int64_t usecpast = Ticker::single()->getUsecsSinceTick(tick);
   int32_t usecpred =
-    int32_t(limit(double(numeric_limits<int32_t>::min()),
+    int32_t(limit(double(std::numeric_limits<int32_t>::min()),
                   double(usecpast +
                          net_permessage +
                          net_perbyte * buffer->fill),
-                  double(numeric_limits<int32_t>::max()) ));
+                  double(std::numeric_limits<int32_t>::max()) ));
   s.finishMark(usecsoffset_mark, usecpred);
 }
 

@@ -34,6 +34,8 @@
 #define DO_INSTANTIATE
 #include <dueca/DataSetSubsidiary.hxx>
 #endif
+using namespace std;
+
 
 // getclassname implementation, always namespace dueca
 namespace dueca {
@@ -54,7 +56,7 @@ static ::dueca::CommObjectMemberAccess
 
 // assemble the above entries into a table in the order in which they
 // appear in the LogCategory object
-static const ::dueca::CommObjectDataTable entriestable[] = { 
+static const ::dueca::CommObjectDataTable entriestable[] = {
   { &LogCategory_member_name },
    { NULL }
 };

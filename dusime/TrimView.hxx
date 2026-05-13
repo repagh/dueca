@@ -67,7 +67,7 @@ public:
   virtual void removeEntity(const std::string& s);
 
   /** Add a single variable to this view. */
-  virtual bool addVariable(const vector<vstring>& names,
+  virtual bool addVariable(const std::vector<vstring>& names,
                            int cal, int tvar,
                            const IncoVariableWork& ivar);
 

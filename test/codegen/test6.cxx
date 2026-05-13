@@ -15,6 +15,7 @@
 #include <cassert>
 #include "Object6.hxx"
 #include <AmorphStore.hxx>
+using namespace std;
 
 USING_DUECA_NS;
 

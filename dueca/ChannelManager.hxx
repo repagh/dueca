@@ -68,7 +68,7 @@ class ChannelManager: public ScriptCreatable,
   ObjectId channel_id_count;
 
   /// temporary storage space for channels that await the global-id
-  map<NameSet,UnifiedChannel*> channel_waitroom;
+  std::map<NameSet,UnifiedChannel*> channel_waitroom;
 
   /** Define a collection of information for the locally present
       channel ends */
@@ -144,7 +144,7 @@ class ChannelManager: public ScriptCreatable,
 
   /** A stream, for debugging purposes, on which the list of channels
       is written. */
-  ofstream channel_dump;
+  std::ofstream channel_dump;
 
   /** A flag to indicate that the next channel that is made is a local
       channel. */

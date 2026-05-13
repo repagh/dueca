@@ -26,7 +26,7 @@ ReflectoryBase<TICK>::ReflectoryBase() :
   path("/"),
   parent(NULL)
 {
-  cerr << "Creating root reflectory " << reinterpret_cast<void*>(this) << endl;
+  std::cerr << "Creating root reflectory " << reinterpret_cast<void*>(this) << std::endl;
   // only root node
 }
 
@@ -36,8 +36,8 @@ ReflectoryBase(const std::string& path) :
   state(Created),
   path(path)
 {
-  cerr << "Creating reflectory " << path << " "
-       << reinterpret_cast<void*>(this) << endl;
+  std::cerr << "Creating reflectory " << path << " "
+       << reinterpret_cast<void*>(this) << std::endl;
 }
 
 template <typename TICK>
@@ -47,11 +47,11 @@ void ReflectoryBase<TICK>::registerWithParent(ref_pointer root)
 
   // check for name correct
   if (!path.size() || idx == 0 ||
-      (idx != string::npos && path.size() - idx <= 1)) {
+      (idx != std::string::npos && path.size() - idx <= 1)) {
     throw(reflectory_incorrectname());
   }
 
-  if (idx == string::npos) {
+  if (idx == std::string::npos) {
 
     // register with the root
     selfid = root->addChild
@@ -80,7 +80,7 @@ boost::intrusive_ptr<const ReflectoryBase<TICK> >
 ReflectoryBase<TICK>::operator [] (const std::string& path) const
 {
   size_t idx = path.find("/");
-  if (idx == string::npos) {
+  if (idx == std::string::npos) {
     for (typename childvec_type::iterator ii = slots.begin(); ii != slots.end(); ii++) {
       if ((*ii)->getName() == path) return *ii;
     }
@@ -108,8 +108,8 @@ template<typename TICK>
 ReflectoryBase<TICK>::~ReflectoryBase()
 {
   //assert(slots.size() == 0);
-  cerr << "Deleting reflectory " << name << " "
-       << reinterpret_cast<void*>(this) << endl;
+  std::cerr << "Deleting reflectory " << name << " "
+            << reinterpret_cast<void*>(this) << std::endl;
 }
 
 template<typename TICK>

@@ -19,7 +19,6 @@
 
 #include <inttypes.h>
 #include <iostream>
-using namespace std;
 #include <dueca_ns.h>
 
 DUECA_NS_START
@@ -79,7 +78,7 @@ public:
                              int node_id);
 
   /** Print to a stream. */
-  friend ostream& operator << (ostream& os, const
+  friend std::ostream& operator << (std::ostream& os, const
                                ReflectiveStoreInformation& o);
 };
 

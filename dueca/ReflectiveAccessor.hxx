@@ -76,7 +76,7 @@ protected:
 private:
 
   /// print a comstate to stream
-  friend ostream& operator << (ostream& os, const ComState& o);
+  friend std::ostream& operator << (std::ostream& os, const ComState& o);
 
   /** A sequence number, so different accessors get unique names. */
   static int sequence;
@@ -246,7 +246,7 @@ private:
 public:
   /** Write a ReflectiveAccessor to a stream. Mainly for debugging
       purposes. */
-  friend ostream& operator << (ostream& os, const ReflectiveAccessor& r);
+  friend std::ostream& operator << (std::ostream& os, const ReflectiveAccessor& r);
 
   /** Return the object type, indicates that this is an object
       belonging to dueca itself. */
@@ -259,8 +259,3 @@ public:
 
 DUECA_NS_END
 #endif
-
-
-
-
-

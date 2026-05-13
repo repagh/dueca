@@ -28,8 +28,6 @@
 
 DUECA_NS_START;
 
-using namespace std;
-
 /**
  * \defgroup StringUtils String manipulation functions
  */
@@ -43,9 +41,9 @@ using namespace std;
   * \return Reference to string lhs
   */
 template <typename T>
-    string& operator<<(string& lhs, const T& rhs)
+    std::string& operator<<(std::string& lhs, const T& rhs)
 {
-  ostringstream os;
+  std::ostringstream os;
   os <<  rhs;
   lhs+=os.str();
   return lhs;
@@ -57,11 +55,11 @@ template <typename T>
   * \param num The variable to output the converted numeric to
   * \return Reference to parameter num
   */
-template <class T> T& s2num(const string& s, T& num)
+template <class T> T& s2num(const std::string& s, T& num)
 {
-  istringstream stm;
+  std::istringstream stm;
   stm.str(s);
-  stm >> skipws; // skip whitespace!
+  stm >> std::skipws; // skip whitespace!
   stm >> num;
   return num;
 };
@@ -73,11 +71,11 @@ template <class T> T& s2num(const string& s, T& num)
   * \return Newly created string containing textual representation of parameter num
   */
 template <typename T>
-    string num2s(const T& num, int width = -1)
+    std::string num2s(const T& num, int width = -1)
 {
-  ostringstream os;
+  std::ostringstream os;
   if (width > 0) {
-    os.setf(ios::right);
+    os.setf(std::ios::right);
     os.fill('0');
     os.width(width);
   }
@@ -91,11 +89,11 @@ template <typename T>
  * \param num Value to convert to a string
  * \return Newly created string containing textual representation of parameter num
  */
-template <class T> string real2s(const T &num)
+template <class T> std::string real2s(const T &num)
 {
-  ostringstream os;
-  os << scientific;
-  os << setprecision(DOUBLE_PRECISION) << num;
+  std::ostringstream os;
+  os << std::scientific;
+  os << std::setprecision(DOUBLE_PRECISION) << num;
   return os.str();
 };
 
@@ -106,7 +104,7 @@ template <class T> string real2s(const T &num)
   * \param repl Replacement string
   * \return The new string
   */
-string replaceAll(string s, const string & search, const string & repl);
+std::string replaceAll(std::string s, const std::string & search, const std::string & repl);
 
 /** \brief Split strings into pieces
   *
@@ -115,7 +113,7 @@ string replaceAll(string s, const string & search, const string & repl);
   * \param separators Character(s) to recognise as separator between pieces
   * \return The amount of generated pieces
   */
-unsigned int split(const string & input, vector<string> & output, const string & separators=" \t\n\015");
+unsigned int split(const std::string & input, std::vector<std::string> & output, const std::string & separators=" \t\n\015");
 
 /** \brief Strip definable characters from both ends of a string
   *
@@ -123,7 +121,7 @@ unsigned int split(const string & input, vector<string> & output, const string &
   * \param pattern Characters that should be trimmed from the string
   * \return The trimmed string
   */
-string trim(const string& s, const string & pattern=", \t\n\015");
+std::string trim(const std::string& s, const std::string & pattern=", \t\n\015");
 /*@}*/
 
 DUECA_NS_END;

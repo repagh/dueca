@@ -234,13 +234,13 @@ private:
   bool setTimeSpec(const TimeSpec &ts);
 
   /** Request check on the timing. */
-  bool checkTiming(const vector<int> &i);
+  bool checkTiming(const std::vector<int> &i);
 
   /** Log a specific targeted entry in a channel */
-  bool logChannel(const vector<string> &i);
+  bool logChannel(const std::vector<std::string> &i);
 
   /** Watch all entries in a channel */
-  bool watchChannel(const vector<string> &i);
+  bool watchChannel(const std::vector<std::string> &i);
 
   /** Set reduction on the log rate */
   bool setReduction(const TimeSpec &red);

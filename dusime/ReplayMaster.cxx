@@ -37,6 +37,7 @@
 #define NO_TYPE_CREATION
 #include <dueca.h>
 #include <dueca/debug.h>
+using namespace std;
 
 DUECA_NS_START;
 

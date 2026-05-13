@@ -24,8 +24,6 @@
 #include <exception>
 #include <dueca/visibility.h>
 
-using namespace std;
-
 #include <dueca_ns.h>
 DUECA_NS_START
 
@@ -249,7 +247,7 @@ public:
   friend class PeriodicTimeSpec;
 
   /// Write to stream, mainly for debugging purposes
-  ostream& print (ostream& os) const;
+  std::ostream& print (std::ostream& os) const;
 };
 
 
@@ -341,7 +339,7 @@ public:
   inline void setPeriod(TimeTickType p) {period = p;}
 
   /// Write to stream, mainly for debugging purposes
-  ostream& print (ostream& os) const;
+  std::ostream& print (std::ostream& os) const;
 public:
   /** Call macro to give this class connection to the script
       language. */

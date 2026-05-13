@@ -25,7 +25,7 @@ DUECA_NS_START
 struct SchemeScripting: public ScriptHelper
 {
   /** scratch file */
- ofstream to_scheme;
+  std::ofstream to_scheme;
 
   /** Constructor */
   SchemeScripting();

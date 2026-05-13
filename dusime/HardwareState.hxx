@@ -19,7 +19,6 @@
 #endif
 
 #include <iostream>
-using namespace std;
 #include <dueca_ns.h>
 DUECA_NS_START
 class AmorphStore;
@@ -44,6 +43,6 @@ inline void unPackData(AmorphReStore &s, HardwareState& o)
   o = HardwareState(tmp);
 }
 
-ostream& operator << (ostream& os, const HardwareState& o);
+std::ostream& operator << (std::ostream& os, const HardwareState& o);
 DUECA_NS_END
 #endif

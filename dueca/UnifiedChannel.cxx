@@ -1150,7 +1150,7 @@ void UnifiedChannel::addRemoteDestination(const LocationId &location_id)
     PackerManager::findMatchingTransport(location_id, transport_class);
   // bool firsttransport = transporters.size() == 0;
   transporters_type::iterator t2 =
-    find(transporters.begin(), transporters.end(), t);
+    std::find(transporters.begin(), transporters.end(), t);
   if (t2 == transporters.end()) {
     ScopeLock l(entries_lock);
     config_version++;

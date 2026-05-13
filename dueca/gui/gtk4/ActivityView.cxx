@@ -41,6 +41,7 @@
 
 #define DEBPRINTLEVEL -2
 #include <debprint.h>
+using namespace std;
 
 DUECA_NS_START
 

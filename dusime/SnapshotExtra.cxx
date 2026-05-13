@@ -116,7 +116,7 @@ Snapshot::Snapshot(const toml::value &coded, const std::string &path)
   case BinaryFile: {
     std::ifstream snfile(
       (path + toml::find<std::string>(coded, "file")).c_str(),
-      ios::binary | ios::ate);
+      std::ios::binary | std::ios::ate);
     if (!snfile.good())
       throw cannot_find_snapshot_file(
         toml::find<std::string>(coded, "file").c_str());
@@ -127,7 +127,7 @@ Snapshot::Snapshot(const toml::value &coded, const std::string &path)
   } break;
   case Base64File: {
     std::ifstream snfile(
-      (path + toml::find<std::string>(coded, "file")).c_str(), ios::ate);
+      (path + toml::find<std::string>(coded, "file")).c_str(), std::ios::ate);
     if (!snfile.good())
       throw cannot_find_snapshot_file(
         toml::find<std::string>(coded, "file").c_str());
@@ -266,14 +266,14 @@ toml::value Snapshot::tomlCode(const std::string &fname,
     }
   } break;
   case BinaryFile: {
-    ofstream ofile((path + fname).c_str(), ios::binary);
+    std::ofstream ofile((path + fname).c_str(), std::ios::binary);
     ofile.write(data.c_str(), data.size());
   }
     result["file"] = fname;
     break;
   case FloatFile: {
     AmorphReStore store(accessData(), getDataSize());
-    ofstream ofile((path + fname).c_str());
+    std::ofstream ofile((path + fname).c_str());
     while (!store.isExhausted()) {
       float tmp(store);
       ofile << std::setprecision(8) << tmp << std::endl;
@@ -282,7 +282,7 @@ toml::value Snapshot::tomlCode(const std::string &fname,
   } break;
   case DoubleFile: {
     AmorphReStore store(accessData(), getDataSize());
-    ofstream ofile((path + fname).c_str());
+    std::ofstream ofile((path + fname).c_str());
     while (!store.isExhausted()) {
       double tmp(store);
       ofile << std::setprecision(15) << tmp << std::endl;
@@ -291,12 +291,12 @@ toml::value Snapshot::tomlCode(const std::string &fname,
   } break;
   case JSONFile:
   case XMLFile: {
-    ofstream ofile((path + fname).c_str());
+    std::ofstream ofile((path + fname).c_str());
     ofile << data;
     result["file"] = fname;
   } break;
   case Base64File: {
-    ofstream ofile((path + fname).c_str());
+    std::ofstream ofile((path + fname).c_str());
     ofile << encode64(data);
     result["file"] = fname;
   } break;

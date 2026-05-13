@@ -15,6 +15,8 @@
 #define TransportClass_cc
 #include "TransportClass.hxx"
 #include <iostream>
+using namespace std;
+
 DUECA_NS_START
 
 const char* names[] = {

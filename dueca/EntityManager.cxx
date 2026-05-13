@@ -40,6 +40,7 @@
 
 #define DO_INSTANTIATE
 #include "Callback.hxx"
+using namespace std;
 
 #define CHECK_TOKEN(A) \
   if (! ( A ) .isValid() ) return;

@@ -24,7 +24,6 @@
 #include <Callback.hxx>
 #include <Activity.hxx>
 #include <EasyId.hxx>
-using namespace std;
 #include <dueca_ns.h>
 DUECA_NS_START
 class ReflectiveAccessor;
@@ -150,7 +149,7 @@ public:
   int changeCurrentStore(int& store_no);
 
   /** Print the packer, for debugging purposes. */
-  friend ostream& operator << (ostream& os, const ReflectivePacker& p);
+  friend std::ostream& operator << (std::ostream& os, const ReflectivePacker& p);
 
 private:
   /** Check the status of all reading nodes, and calculate how much

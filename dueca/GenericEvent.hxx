@@ -78,7 +78,7 @@ public:
   }
 
   /** Print the generic event to stream. */
-  ostream& print(ostream& os) const;
+  std::ostream& print(std::ostream& os) const;
 
   /** Returns true if this event is earlier than another one. */
   inline bool operator < (const GenericEvent& e2) const
@@ -116,7 +116,3 @@ inline ostream & operator << (ostream& s, const
 PRINT_NS_END
 
 #endif
-
-
-
-

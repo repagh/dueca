@@ -25,8 +25,6 @@
 #include <dueca/ChannelReadToken.hxx>
 #include <dueca/ChannelWriteToken.hxx>
 
-using namespace std;
-
 #include <dueca_ns.h>
 DUECA_NS_START
 class Entity;
@@ -85,13 +83,13 @@ class EntityManager: public NamedObject
   bool state_has_changed;
 
   /** A map which relates all names to a pointer to the local entity. */
-  map<std::string,Entity*> local_entities;
+  std::map<std::string,Entity*> local_entities;
 
   /** Convenience iterator type, for iteration over the map. */
-  typedef map<std::string,Entity*>::iterator local_entity_iterator;
+  typedef std::map<std::string,Entity*>::iterator local_entity_iterator;
 
   /** A list of all main entity names. */
-  list<std::string>    entities;
+  std::list<std::string>    entities;
 
   /** Pointer to a GUI class. */
   DuecaView            *duecaview;
@@ -190,11 +188,3 @@ public:
 DUECA_NS_END
 
 #endif
-
-
-
-
-
-
-
-

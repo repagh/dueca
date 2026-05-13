@@ -142,7 +142,7 @@ public: // construction and further specification
   bool setTimeSpec(const TimeSpec& ts);
 
   /** Request check on the timing. */
-  bool checkTiming(const vector<int>& i);
+  bool checkTiming(const std::vector<int>& i);
 
 protected:
   /** update view */

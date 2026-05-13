@@ -26,7 +26,6 @@
 #include "AperiodicAlarm.hxx"
 #include <list>
 #include <fstream>
-using namespace std;
 
 #include <dueca_ns.h>
 DUECA_NS_START
@@ -76,7 +75,7 @@ protected:
   /** A vector with the current logs. ActivityWeaver objects assemble
       and interpret the raw logs, and can be queried to obtain a nice
       time-line. Each node needs one weaver. */
-  vector<ActivityWeaver>                      current_logs;
+  std::vector<ActivityWeaver>                 current_logs;
 
   /** Callback object 1, for processing log reports from local node. */
   Callback<ActivityViewBase>                      cb1;
@@ -127,7 +126,7 @@ protected:
   double                                      vspan;
 
   /** File for dumping activity logs. */
-  ofstream                                    activity_log;
+  std::ofstream                                    activity_log;
 
   /** Highlighted and listed area. */
   struct HighLight {
@@ -197,7 +196,7 @@ public:
 
   /** Pre-define a position and size for the window */
   virtual bool setPositionAndSize(const std::vector<int>& ps);
-  
+
   /** Change the look-ahead time. */
   bool setLookAhead(const double& ahead);
 

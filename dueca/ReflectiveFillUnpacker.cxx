@@ -36,6 +36,8 @@
 #define DO_INSTANTIATE
 #include "VarProbe.hxx"
 #include <debprint.h>
+using namespace std;
+
 DUECA_NS_START
 
 int ReflectiveFillUnpacker::unique = 0;

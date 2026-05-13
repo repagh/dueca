@@ -42,6 +42,7 @@
 
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
+using namespace std;
 
 DUECA_NS_START
 
@@ -158,5 +159,3 @@ void GtkHandler::returnControl()
   //gtk_main_quit();
 }
 DUECA_NS_END
-
-

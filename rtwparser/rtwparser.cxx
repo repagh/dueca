@@ -8,8 +8,8 @@
 #include "NamedStruct.hxx"
 #include "TypeNameDef.hxx"
 #include <DuecaPath.ixx>
-
 using namespace std;
+
 extern "C" {
   int yywrap();
   void yyerror(const char* c);

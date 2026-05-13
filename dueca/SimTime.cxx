@@ -14,6 +14,8 @@
 #define SimTime_cc
 
 #include "SimTime.hxx"
+using namespace std;
+
 DUECA_NS_START
 
 TimeTickType SimTime::base_tick = 1;

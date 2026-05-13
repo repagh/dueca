@@ -60,6 +60,7 @@
 #define EXPECTED_QUEUE_SIZE 256
 #endif
 #define EXCESSIVE_QUEUE_SIZE 500
+using namespace std;
 
 DUECA_NS_START
 

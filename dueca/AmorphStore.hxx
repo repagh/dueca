@@ -338,7 +338,7 @@ public:
   void packData(const char* c, const unsigned length);
 
   /** Print to stream, just for debugging purposed. */
-  ostream& print(ostream& o) const;
+  std::ostream& print(std::ostream& o) const;
 };
 
 DUECA_NS_END
@@ -382,7 +382,7 @@ void packData(DUECA_NS ::AmorphStore& s, const timeval& tv);
 template<class D>
 void packDataDiff(DUECA_NS:: AmorphStore, const D& d, const D& r);
 
-inline ostream& operator << (ostream& o, const DUECA_NS ::AmorphStore &s)
+inline std::ostream& operator << (std::ostream& o, const DUECA_NS ::AmorphStore &s)
 { return s.print(o); }
 
 DUECA_NS_START
@@ -573,7 +573,7 @@ public:
   inline operator timeval() { timeval tv; unPackData(tv); return tv;}
 
   /// Print to stream, for debugging purposes
-  ostream& print(ostream& o) const;
+  std::ostream& print(std::ostream& o) const;
 };
 
 
@@ -618,10 +618,10 @@ template<class D>
 void unPackDataDiff(DUECA_NS:: AmorphReStore, D& d);
 
 /** Print a timeval to stream. */
-ostream& operator << (ostream& o, const timeval& tv);
+std::ostream& operator << (std::ostream& o, const timeval& tv);
 
 /** Print a restore to stream */
-inline ostream& operator << (ostream& o, const DUECA_NS ::AmorphReStore &s)
+inline std::ostream& operator << (std::ostream& o, const DUECA_NS ::AmorphReStore &s)
 { return s.print(o); }
 
 #endif

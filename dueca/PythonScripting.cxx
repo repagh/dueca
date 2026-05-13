@@ -21,7 +21,7 @@
 #include <fstream>
 #include <dueca-conf.h>
 #include <boost/python/module.hpp>
-
+using namespace std;
 
 DUECA_NS_START
 
@@ -331,7 +331,7 @@ bool PythonScripting::writeline(const std::string& line)
     running = false;
     return false;
   }
-  scratchfile << line << endl;
+  scratchfile << line << std::endl;
   return false;
 }
 

@@ -121,7 +121,7 @@ public:
   void packData(AmorphStore& s) const;
 
   /// prints the ActivityBit to a stream
-  ostream& print (ostream& os) const;
+  std::ostream& print (std::ostream& os) const;
 
   /// indicates when an ActivityBit logs the (re-)start of something
   inline bool goesActive() const
@@ -196,4 +196,3 @@ inline void packData(DUECA_NS :: AmorphStore& s,
 {::packData(s, uint8_t(o));}
 
 #endif
-

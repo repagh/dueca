@@ -50,6 +50,7 @@
 #include "MemberCall2Way.hxx"
 #include "VarProbe.hxx"
 #include "MemberCall.hxx"
+using namespace std;
 
 DUECA_NS_START
 

@@ -22,6 +22,7 @@
 
 #define DO_INSTANTIATE
 #include <Callback.hxx>
+using namespace std;
 
 DUECA_NS_START
 

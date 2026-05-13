@@ -15,8 +15,6 @@
 #ifndef TransportClass_hh
 #define TransportClass_hh
 
-#include <iostream>
-using namespace std;
 #include <dueca_ns.h>
 #include <ChannelDef.hxx>
 

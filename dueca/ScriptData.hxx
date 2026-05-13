@@ -18,9 +18,6 @@
 #include <list>
 #include "dueca-guile.h"
 #include <sstream>
-
-
-using namespace std;
 #include <dueca_ns.h>
 DUECA_NS_START
 

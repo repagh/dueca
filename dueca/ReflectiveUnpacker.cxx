@@ -40,6 +40,7 @@
 
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
+using namespace std;
 
 /** Macros for calculating check number. */
 #define ROTATE_RIGHT(c) \
@@ -417,5 +418,3 @@ ostream& HeadInfo::print(ostream& os) const
 }
 
 DUECA_NS_END
-
-

@@ -68,7 +68,7 @@ class ReflectiveFillUnpacker:
 
   /** For convenience, a pair of store no and pointer to a channel
       acces token. */
-  typedef pair<int, ChannelReadToken*> SenderInfo;
+  typedef std::pair<int, ChannelReadToken*> SenderInfo;
 
   /** Priority of unpacking, default */
   PrioritySpec unpack_prio;
@@ -78,9 +78,9 @@ class ReflectiveFillUnpacker:
 
   /** Activities that checks whether there is stuff to send, and sends
       it. */
-  list<ActivityCallback*>               all_receive_stuff;
+  std::list<ActivityCallback*>               all_receive_stuff;
 
-  list<ChannelReadToken*>               all_tokens;
+  std::list<ChannelReadToken*>               all_tokens;
 
 public:
   /** This class can be created from scheme */

@@ -65,6 +65,7 @@
 #include <Callback.hxx>
 #include <InformationStash.ixx>
 #include <debprint.h>
+using namespace std;
 
 /* PRIORITY_BASE is a base number of priority levels that is
    added to the minimum priority level, and at that level the

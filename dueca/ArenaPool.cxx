@@ -16,6 +16,8 @@
 #include "ArenaPool.hxx"
 #include "Arena.hxx"
 #include <dassert.h>
+using namespace std;
+
 DUECA_NS_START
 
 ArenaPool& ArenaPool::single()

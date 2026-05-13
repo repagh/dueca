@@ -25,6 +25,7 @@
 #include <dueca/MessageBuffer.hxx>
 #include <limits>
 #include <cmath>
+using namespace std;
 
 USING_DUECA_NS;
 

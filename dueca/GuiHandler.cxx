@@ -21,6 +21,7 @@
 #include <dassert.h>
 #include "StartIOStream.hxx"
 #include "DuecaEnv.hxx"
+using namespace std;
 
 DUECA_NS_START
 

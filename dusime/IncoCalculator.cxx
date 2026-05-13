@@ -39,6 +39,8 @@
 #include <SimTime.hxx>
 
 #include <debprint.h>
+using namespace std;
+
 DUECA_NS_START
 
 const char* const IncoCalculator::classname = "inco-calculator";

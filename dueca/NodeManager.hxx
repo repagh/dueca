@@ -25,7 +25,6 @@
 #include <dueca/ChannelReadToken.hxx>
 #include <dueca/ChannelWriteToken.hxx>
 #include <vector>
-using namespace std;
 #include <dueca_ns.h>
 DUECA_NS_START
 
@@ -42,7 +41,7 @@ class NodeManager: public NamedObject
   int no_of_nodes;
 
   /** We keep a tab on the state of each node. */
-  vector<NodeControlMessage::NodeState> node_state;
+  std::vector<NodeControlMessage::NodeState> node_state;
 
   /** The interval (in integer time) with which other nodes are
       interrogated by node 0. */

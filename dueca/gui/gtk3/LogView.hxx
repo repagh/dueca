@@ -55,7 +55,7 @@ private: // simulation data
   int                                  n_lines;
 
   /** File for dumping message logs. */
-  ofstream                             message_log;
+  std::ofstream                        message_log;
 
 private: // channel access
   /** Callback on token completion */

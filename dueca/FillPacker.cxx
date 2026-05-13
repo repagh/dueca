@@ -36,6 +36,7 @@
 #include <debprint.h>
 #define E_CNF
 #include "debug.h"
+using namespace std;
 
 DUECA_NS_START
 

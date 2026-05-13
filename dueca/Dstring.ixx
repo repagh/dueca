@@ -147,8 +147,8 @@ size_t Dstring<mxsize>::size() const
 template<unsigned mxsize>
 void Dstring<mxsize>::assign(const char*d, size_t size)
 {
-  strncpy(_data, d, min(unsigned(size), mxsize-1U));
-  _data[min(unsigned(size), mxsize-1U)] = '\0';
+  strncpy(_data, d, std::min(unsigned(size), mxsize-1U));
+  _data[std::min(unsigned(size), mxsize-1U)] = '\0';
 }
 
 struct stringsize_exceeded: public std::exception
@@ -175,7 +175,7 @@ void Dstring<mxsize>::packData(AmorphStore& s) const
 template<unsigned mxsize>
 void Dstring<mxsize>::unPackData(AmorphReStore& s)
 {
-  
+
   // read the first character
   int8_t c; unsigned data_size;
   ::unPackData(s, c);

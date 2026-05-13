@@ -26,10 +26,10 @@ operator() (const TimeSpec &t)
   ((*obj) .* h) (t);
 }
 
-template <class T> void Callback<T>::
-print(ostream& os) const
+template <class T> std::ostream& Callback<T>::
+print(std::ostream& os) const
 {
-  os << "Callback of " << obj->getId();
+  return os << "Callback of " << obj->getId();
 }
 
 template <class T> Callback<T>::
@@ -48,6 +48,3 @@ template <class T> Callback<T>::
 DUECA_NS_END
 
 #endif
-
-
-

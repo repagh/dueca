@@ -42,6 +42,7 @@
 #include <CallbackWithId.hxx>
 #define NO_TYPE_CREATION
 #include <dueca.h>
+using namespace std;
 
 DUECA_NS_START
 

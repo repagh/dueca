@@ -295,7 +295,7 @@ public: // construction and further specification
   bool setTimeSpec(const TimeSpec &ts);
 
   /** Request check on the timing. */
-  bool checkTiming(const vector<int> &i);
+  bool checkTiming(const std::vector<int> &i);
 
 public: // member functions for cooperation with DUECA
   /** indicate that everything is ready. */

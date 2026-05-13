@@ -26,7 +26,6 @@
 #include <nodes.h>
 #include <bitset>
 #include "TimeSpec.hxx"
-using namespace std;
 
 
 // Forward declarations
@@ -133,7 +132,7 @@ protected:
 
   /** Combination of a target, someone to pull if requested, and the
       index that target needs to identify this puller. */
-  typedef list<TargetData>            targetlist_type;
+  typedef std::list<TargetData>       targetlist_type;
 
   /** List of targets and indices. */
   targetlist_type                     targets;
@@ -276,7 +275,7 @@ protected:
   };
 
   /** Type definition for the collection of objects affecting this target */
-  typedef vector<PullerData> pullers_type;
+  typedef std::vector<PullerData> pullers_type;
 
   /** The list of all pullers that affect this target. */
   pullers_type pullers;

@@ -77,7 +77,7 @@ public:
   void trigger(UChannelEntry *entry, TimeTickType t);
 
   /** Print to stream, for debugging purposes. */
-  friend ostream& operator << (ostream& s, const TransportNotification& o);
+  friend std::ostream& operator << (std::ostream& s, const TransportNotification& o);
 };
 
 DUECA_NS_END

@@ -40,6 +40,7 @@
 #define DO_INSTANTIATE
 #include <Callback.hxx>
 #include <debprint.h>
+using namespace std;
 
 DUECA_NS_START
 
@@ -740,5 +741,3 @@ ostream& operator << (ostream& os,
 
 
 DUECA_NS_END
-
-

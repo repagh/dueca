@@ -20,6 +20,7 @@
 #define E_MOD
 #define W_MOD
 #include "debug.h"
+using namespace std;
 
 #ifdef ACTIV_NOCATCH
 #define EXCEPTION NeverThrown

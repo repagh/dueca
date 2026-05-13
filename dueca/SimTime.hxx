@@ -66,7 +66,7 @@ public:
 
 
   /** Print to stream, debugging purposes. */
-  ostream & print (ostream& s) const;
+  std::ostream & print (std::ostream& s) const;
 
   /** Returns true if the second time is smaller than this one. */
   inline bool operator < (const SimTime& t2) const
@@ -110,7 +110,7 @@ DUECA_NS_END
 PRINT_NS_START
 /// prints the SimTime to a stream
 inline ostream & operator << (ostream& s, const
-                              DUECA_NS ::SimTime& o)
+                              dueca::SimTime& o)
 { return o.print(s); }
 PRINT_NS_END
 

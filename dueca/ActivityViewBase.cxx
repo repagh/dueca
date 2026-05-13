@@ -42,6 +42,7 @@
 // localized development debugging
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
+using namespace std;
 
 /** Pixel distance between activity lines on the display. */
 #define LINESPACE 8

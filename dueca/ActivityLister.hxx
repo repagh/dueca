@@ -110,11 +110,11 @@ class ActivityLister
       As a log is traversed, the ActivityLister spools down all the
       different ActivityBits, these are the ones currently under
       attention */
-  vector<const ActivityBit*> bit_index;
+  std::vector<const ActivityBit*> bit_index;
 
   /** Indicates which ActivityManagers were active (but possibly
       interrupted). */
-  vector<bool> activity_on;
+  std::vector<bool> activity_on;
 
   /** Indexes for traversing the log. */
   int current_locus;
@@ -155,7 +155,7 @@ public:
   vstring reportVerbal();
 
   /** returns the relevant ActivityBit */
-  pair<int,int> reportWithBit(const ActivityBit*& bit);
+  std::pair<int,int> reportWithBit(const ActivityBit*& bit);
 
   /** Return a line piece for plotting.
       \param prio        Priority level to plot.
