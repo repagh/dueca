@@ -1,0 +1,12 @@
+/*      item            : ArenaOptions.hxx
+        made by         : Rene' van Paassen
+        date            : 260513
+        category        : header file
+        description     :
+        changes         : 260513 first version
+        language        : C++
+        copyright       : (c) 2026 René van Paassen
+        license         : EUPL-1.2
+*/
+
+#cmakedefine USE_BOOST_LOCKFREE

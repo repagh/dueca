@@ -11,18 +11,15 @@
         license         : EUPL-1.2
 */
 
-#ifndef Arena_hh
-#define Arena_hh
+#pragma once
 
 #include <iostream>
 #include <sys/types.h>
-using namespace std;
 #include <dueca_ns.h>
 #include <iostream>
 #include <inttypes.h>
 #include <DAtomics.hxx>
-
-#define USE_BOOST_LOCKFREE
+#include <ArenaOptions.hxx>
 
 #ifdef USE_BOOST_LOCKFREE
 #include <boost/lockfree/stack.hpp>
@@ -124,5 +121,3 @@ DUECA_NS_END
 void* operator new(size_t sz, DUECA_NS ::Arena *a);
 
 std::ostream& operator << (std::ostream& os, DUECA_NS ::Arena& a);
-
-#endif

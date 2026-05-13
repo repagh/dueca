@@ -17,10 +17,9 @@
 #include "LockFreeLIFO.hxx"
 
 #include "dueca-conf.h"
-#ifdef TEST_OPTIONS
-#define I_MEM
-#endif
-#include "debug.h"
+#define DEBPRINTLEVEL -1
+#include <debprint.h>
+
 #include <dassert.h>
 #include <iostream>
 #include <cstdlib>
@@ -78,7 +77,7 @@ void Arena::extendStorage()
 
      Information on additional memory needed for reclaimable objects
      of a specific size. */
-  I_MEM("Extended the \"" << size_mult*sizeof(PlaceHolder) <<
+  DEB("Extended the \"" << size_mult*sizeof(PlaceHolder) <<
           "\" arena to " << memtotal_alloc);
 #endif
 }

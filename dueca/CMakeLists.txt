@@ -175,6 +175,7 @@ set(INSTALLHEADERS
   ListElementAllocator.hxx DCOtypeJSON.hxx undebug.h
   AssociateObject.hxx EasyId.hxx dcoprint.hxx fix_optional.hxx
   ManualTriggerPuller.hxx ReferenceHolder.hxx ReferenceHolderPython.hxx
+  ArenaOptions.hxx
 )
 # fix_optional.hxx
 
@@ -189,6 +190,7 @@ configure_file(DuecaPath.ixx.in DuecaPath.ixx @ONLY)
 
 # handle the boost versions
 configure_file(dueca-conf-intrusive.h.in dueca-conf-intrusive.h)
+configure_file(ArenaOptions.hxx.in ArenaOptions.hxx)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/dueca-conf-intrusive.h
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/dueca/dueca)
 

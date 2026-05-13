@@ -112,6 +112,7 @@ set(UNREAD_DATAPOINTS_THRESHOLD 1000 CACHE STRING
   "Threshold for warning about unread data in channels")
 set(RUNTEST_SERVER "Xephyr" CACHE STRING
                            "Nested X server to use for runtest")
+option(USE_BOOST_LOCKFREE  "Use the boost lockfree stack for memory arena" ON)
 
 if (APPLE)
   set(CMAKE_FIND_FRAMEWORK LAST)
