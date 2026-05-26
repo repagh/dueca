@@ -40,9 +40,9 @@
 #include <memory>
 #include <boost/scoped_ptr.hpp>
 
-STARTHDF5LOG;
+namespace dueca { namespace hdf5log {
 
-USING_DUECA_NS;
+
 
 /** Generic HDF5 file format logging.
 
@@ -315,5 +315,5 @@ private: // the member functions that are called for activities
   void setLoggingActive(bool act);
 };
 
-ENDHDF5LOG;
+} } // namespace dueca namespace hdf5log
 #endif

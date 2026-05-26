@@ -21,7 +21,7 @@
 /*# forward declaration */
 class GLUI;
 
-DUECA_NS_START;
+namespace dueca {
 
 /*# forward declaration */
 class DuecaGLWindow;
@@ -95,6 +95,6 @@ public:
   ~GlutGuiOpenGLHelper();
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

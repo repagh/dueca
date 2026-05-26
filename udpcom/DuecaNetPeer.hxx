@@ -15,7 +15,7 @@
 #include <dueca/ScriptCreatable.hxx>
 #include <dueca/Accessor.hxx>
 
-DUECA_NS_START;
+namespace dueca {
 
 class DuecaNetPeer:
   public Accessor,
@@ -127,6 +127,6 @@ private:
 
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

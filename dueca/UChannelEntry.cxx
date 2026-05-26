@@ -31,7 +31,7 @@
 
 #include "debprint.h"
 
-DUECA_NS_START
+namespace dueca {
 
 /** Constructor for a non-local entry */
 UChannelEntry::UChannelEntry(UnifiedChannel* channel,
@@ -1389,4 +1389,4 @@ UChannelEntry::PackerClient::~PackerClient()
   delete handle;
 }
 
-DUECA_NS_END;
+} // namespace dueca

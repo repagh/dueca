@@ -20,7 +20,7 @@
 #include <Trigger.hxx>
 #include <TransportClass.hxx>
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 class UnifiedChannel;
 class UChannelEntry;
@@ -80,5 +80,5 @@ public:
   friend std::ostream& operator << (std::ostream& s, const TransportNotification& o);
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

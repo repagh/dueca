@@ -45,7 +45,7 @@
 #include "MemberCall2Way.hxx"
 using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 // ScriptCreatable has no parent, and is therefore special in instantiation
 template<>
@@ -58,7 +58,7 @@ SchemeClassData<ScriptCreatable> * SchemeClassData<ScriptCreatable>::single()
 
 SCHEME_CLASS_SINGLE(PrioritySpec,ScriptCreatable,"priority-spec");
 
-DUECA_NS_END
+} // namespace dueca
 
 #include "Entity_Scheme.hxx"
 #include "CreationCenter_Scheme.hxx"
@@ -66,7 +66,7 @@ DUECA_NS_END
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
 
-DUECA_NS_START
+namespace dueca {
 
 bool reflective_components_init_done = false;
 bool copying_components_init_done = false;
@@ -200,4 +200,4 @@ static void init_dueca_scheme(void)
 
 static SetScriptInitFunction sc(init_dueca_scheme);
 
-DUECA_NS_END
+} // namespace dueca

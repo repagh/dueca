@@ -22,7 +22,7 @@
 #include <dusime/SnapshotInventory.hxx>
 #include <dueca/gui/gtk3/GtkGladeWindow.hxx>
 
-DUECA_NS_START;
+namespace dueca {
 
 /** Gui for handling the snapshots of a single entity. This uses the
     helper object SnapshotInventory to read and manage a collection of
@@ -200,6 +200,6 @@ public:
   void cbEditChange(GtkTextBuffer *tb);
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

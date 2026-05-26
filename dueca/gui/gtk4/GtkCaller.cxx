@@ -20,7 +20,7 @@
 #include <dueca_ns.h>
 #include "GtkCaller.hxx"
 
-DUECA_NS_START
+namespace dueca {
 
 GtkCaller::GtkCaller() : gp(NULL) { }
 
@@ -31,5 +31,5 @@ void GtkCaller::setGPointer(gpointer g)
   gp = g;
 }
 
-DUECA_NS_END
+} // namespace dueca
 

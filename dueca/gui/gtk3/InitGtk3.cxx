@@ -29,7 +29,7 @@
 #define DO_INSTANTIATE
 #include "TypeCreator.hxx"
 
-DUECA_NS_START
+namespace dueca {
 
 extern "C"
 LNK_PUBLICC void InitGtk3()
@@ -48,4 +48,4 @@ LNK_PUBLICC void InitGtk3()
 }
 
 
-DUECA_NS_END
+} // namespace dueca

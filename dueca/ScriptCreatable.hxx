@@ -26,7 +26,7 @@
 #include "ReferenceHolder.hxx"
 #include "ClockTime.hxx"
 
-DUECA_NS_START
+namespace dueca {
 
 /** Obsolete object.
 
@@ -165,5 +165,5 @@ template <> const char *core_creator_name<ScriptCreatable>(const char *);
     res = false;                                                               \
   }
 
-DUECA_NS_END
+} // namespace dueca
 #endif

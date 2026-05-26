@@ -52,7 +52,7 @@
 #include <debprint.h>
 using namespace std;
 
-STARTNSREPLICATOR;
+namespace dueca {
 
 // class/module name
 const char *const ChannelReplicatorMaster::classname =
@@ -971,7 +971,7 @@ void ChannelReplicatorMaster::clientUnpackPayload(
                                           peer_timing[peer_id]);
 }
 
-ENDNSREPLICATOR
+} // namespace dueca
 
 // Make a TypeCreator object for this module, the TypeCreator
 // will check in with the script code, and enable the

@@ -26,7 +26,7 @@
 
     Conversion routines to code DCO type information into JSON */
 
-DUECA_NS_START;
+namespace dueca {
 
 /** Print the type information on a DCO defined type to JSON
 
@@ -69,6 +69,6 @@ void DCOtypeJSON(rapidjson::Writer<rapidjson::StringBuffer> &writer,
 void DCOtypeJSON(rapidjson::StringBuffer &doc,
                  const char* dcoclass);
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

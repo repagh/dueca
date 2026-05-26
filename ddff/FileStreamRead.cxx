@@ -21,7 +21,7 @@
 #define DEBPRINTLEVEL -2
 #include <debprint.h>
 
-DDFF_NS_START
+namespace dueca { namespace ddff {
 
 FileStreamRead::FileStreamRead(FileHandler *fh, unsigned stream_id,
                                unsigned num_cache, bool slice_indexed) :
@@ -437,4 +437,4 @@ DDFFMessageBuffer::ptr_type FileStreamRead::currentBuffer()
   return NULL;
 }
 
-DDFF_NS_END
+} } // namespace ddff namespace dueca

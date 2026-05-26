@@ -18,7 +18,7 @@
 #include <ChannelWriteToken.hxx>
 #include <DataClassRegistry.hxx>
 
-DUECA_NS_START;
+namespace dueca {
 
 CommObjectWriter::CommObjectWriter(const char* classname, void* obj) :
   CommObjectReaderWriter(classname),
@@ -90,4 +90,4 @@ DCOWriter::~DCOWriter()
   }
 }
 
-DUECA_NS_END;
+} // namespace dueca

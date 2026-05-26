@@ -61,16 +61,16 @@
 using namespace std;
 
 
-DUECA_NS_START
+namespace dueca {
 
 
 //extern void init_dueca_scheme(void);
 int* p_argc;
 char*** p_argv;
 
-DUECA_NS_END
+} // namespace dueca
 
-USING_DUECA_NS
+using namespace dueca;
 
 LNK_PUBLIC int main(int argc, char* argv[])
 {

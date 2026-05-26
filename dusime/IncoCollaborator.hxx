@@ -40,7 +40,7 @@ typedef Eigen::VectorXd Vector;
 typedef Eigen::Map<Eigen::VectorXd> VectorE;
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 /** Objects of this class acts as a specification for a "player" in
     the trim condition calculation.
@@ -152,5 +152,5 @@ public:
       triggering conditions of the IncoCalculator. */
   TriggerPuller& getTrigger() { return t_inco_feedback; }
 };
-DUECA_NS_END
+} // namespace dueca
 #endif

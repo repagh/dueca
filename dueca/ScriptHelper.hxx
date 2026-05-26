@@ -17,7 +17,7 @@
 #include <string>
 #include <dueca/dueca_ns.h>
 
-DUECA_NS_START
+namespace dueca {
 
 /** Helper class processing script-specific actions */
 struct ScriptHelper
@@ -58,6 +58,6 @@ struct ScriptHelper
   virtual ~ScriptHelper();
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

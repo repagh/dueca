@@ -19,7 +19,7 @@
 #include <cstddef>
 #include <dueca_ns.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 class Activity;
 class GenericCallback;
@@ -89,4 +89,4 @@ public:
   inline operator bool() const { return act != NULL || cb != NULL; }
 };
 
-DUECA_NS_END;
+} // namespace dueca

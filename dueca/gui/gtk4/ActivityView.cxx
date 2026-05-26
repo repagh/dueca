@@ -43,7 +43,7 @@
 #include <debprint.h>
 using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 struct ActivityViewGui
 {
@@ -166,12 +166,12 @@ bool ActivityView::complete()
   gtk_column_view_set_model(aclist, GTK_SELECTION_MODEL(selection));
 
   // add canvases for the different nodes
-  gui.canvas = new GtkWidget *[DUECA_NS::NodeManager::single()->getNoOfNodes()];
+  gui.canvas = new GtkWidget *[dueca::NodeManager::single()->getNoOfNodes()];
 
   // GestureClick ?
 
   for (unsigned ii = 0;
-       ii < unsigned(DUECA_NS ::NodeManager::single()->getNoOfNodes()); ii++) {
+       ii < unsigned(dueca ::NodeManager::single()->getNoOfNodes()); ii++) {
 
     // create the canvas
     GtkGesture *controller = gtk_gesture_click_new();
@@ -239,7 +239,7 @@ bool ActivityView::complete()
 
 ActivityView::~ActivityView()
 {
-  for (int ii = 0; ii < DUECA_NS ::NodeManager::single()->getNoOfNodes();
+  for (int ii = 0; ii < dueca ::NodeManager::single()->getNoOfNodes();
        ii++) {
     g_object_unref(gui.canvas[ii]);
   }
@@ -678,4 +678,4 @@ void ActivityView::cbBindName(GtkSignalListItemFactory *f, GtkListItem *item,
   gtk_label_set_text(GTK_LABEL(label), act->act.activity);
 }
 
-DUECA_NS_END
+} // namespace dueca

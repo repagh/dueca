@@ -22,7 +22,7 @@
 #include <dueca.h>
 #include <PeriodicAlarm.hxx>
 
-DUECA_NS_START;
+namespace dueca {
 
 /*# Forward declaration */
 class WindowingProtocol;
@@ -232,4 +232,4 @@ public:
 
 #endif
 
-DUECA_NS_END
+} // namespace dueca

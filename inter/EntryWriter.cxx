@@ -26,7 +26,7 @@
 #define W_INT
 #include <debug.h>
 
-STARTNSREPLICATOR;
+namespace dueca {
 
 
 EntryWriter::EntryWriter(const GlobalId& master_id,
@@ -132,4 +132,4 @@ void EntryWriter::writeChannel(AmorphReStore& s,
   }
 }
 
-ENDNSREPLICATOR;
+} // namespace dueca

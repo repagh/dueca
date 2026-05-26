@@ -49,7 +49,7 @@ using namespace std;
 /** If defined, also give an alphanumeric output on the log. */
 #undef DO_PRINT
 
-DUECA_NS_START
+namespace dueca {
 
 const char* const ActivityViewBase::classname = "activity-view";
 ActivityViewBase* ActivityViewBase::singleton = NULL;
@@ -345,4 +345,4 @@ const string32& ActivityViewBase::getActivityName(int node, int acno)
   }
 }
 
-DUECA_NS_END
+} // namespace dueca

@@ -20,7 +20,7 @@
 #include "FileStreamWrite.hxx"
 #include <dueca/DataTimeSpec.hxx>
 
-DDFF_NS_START
+namespace dueca { namespace ddff {
 
 /** Base class for writing DCO data to file. */
 class DDFFDCOReadFunctor: public ::dueca::DCOFunctor
@@ -41,6 +41,6 @@ public:
   ~DDFFDCOReadFunctor();
 };
 
-DDFF_NS_END
+} } // namespace ddff namespace dueca
 
 #endif

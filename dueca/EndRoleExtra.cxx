@@ -32,5 +32,5 @@ EndRole operator & (const EndRole& e1, const EndRole& e2)
 
 const char* const EndRole::getString() const
 {
-  return DUECA_NS::getString(this->t);
+  return dueca::getString(this->t);
 }

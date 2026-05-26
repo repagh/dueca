@@ -21,7 +21,7 @@ typedef GtkGLArea DuecaGLWidgetArea;
 
 #include "DuecaGtkInteraction.hxx"
 
-DUECA_NS_START;
+namespace dueca {
 
 /** Provides a DUECA shell around a Gtk3 GtkGlarea. If Gtk3 does not
     have GtkGLarea, tough luck (GTK3 < 3.16).
@@ -66,6 +66,6 @@ public:
   virtual void initGL();
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

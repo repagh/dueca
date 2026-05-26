@@ -24,7 +24,7 @@
 #include <IncoVariable.hxx>
 #include <dassert.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 /** This struct is helpful in constructing a table of pointers to
     IncoVariable objects, combined with pointers to GenericVarIO
@@ -73,6 +73,6 @@ void process_inco_notice(IncoNotice& notice, const IncoTable* table, O* obj)
   }
 }
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

@@ -14,11 +14,11 @@
 // code originally written for this codegen version
 #define __CUSTOM_COMPATLEVEL_110
 
-DUECA_NS_END;
+} // namespace dueca
 #include <SimTime.hxx>
 #include <Ticker.hxx>
 #include <cmath>
-DUECA_NS_START;
+namespace dueca {
 #include <dassert.h>
 
 DataTimeSpec::DataTimeSpec(const TimeSpec& time_spec) :

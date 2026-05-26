@@ -14,7 +14,7 @@
 #define HDF5Templates_cxx
 #include "HDF5Templates.hxx"
 
-DUECA_NS_START;
+namespace dueca {
 
 template<> const H5::DataType* get_hdf5_type(const double& t)
 { return get_hdf5_type<double>(); }
@@ -224,4 +224,4 @@ const H5::DataType* get_hdf5_elt_type(dueca::smartstring& d)
 }
 
 
-DUECA_NS_END;
+} // namespace dueca

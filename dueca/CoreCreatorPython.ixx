@@ -39,7 +39,7 @@
 
 namespace bpy = boost::python;
 
-DUECA_NS_START
+namespace dueca {
 
 class ScriptDataError
 {
@@ -371,7 +371,7 @@ void CoreCreator<T, B, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10>::ifunct0()
   DEB("CoreCreator, virtual " << single()->name);
 }
 
-DUECA_NS_END
+} // namespace dueca
 
 #include <undebprint.h>
 #include <dueca/undebug.h>

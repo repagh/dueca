@@ -18,7 +18,7 @@
 #include "ReflectoryRemote.hxx"
 #include "ReflectoryData.hxx"
 
-DUECA_NS_START;
+namespace dueca {
 
 template<typename TICK>
 reflectory_id ReflectoryLocal<TICK>::addChild
@@ -188,6 +188,6 @@ void ReflectoryLocal<TICK>::extendJoinRequest(unsigned nid)
   this->planned_config.push_back(d);
 }
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

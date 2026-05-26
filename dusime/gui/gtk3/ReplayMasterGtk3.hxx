@@ -24,7 +24,7 @@
 #include <dusime/SnapshotInventory.hxx>
 #include <dueca/gui/gtk3/GtkGladeWindow.hxx>
 
-DUECA_NS_START;
+namespace dueca {
 
 /** Interface for replay and snapshot information
 
@@ -139,6 +139,6 @@ private:
   void cbRecordName(GtkWidget* text, gpointer gp);
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

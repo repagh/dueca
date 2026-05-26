@@ -19,7 +19,7 @@
 #define W_CNF
 #include "debug.h"
 
-DUECA_NS_START;
+namespace dueca {
 
 //extern GdkGLContext *DUECA_GTK4GL_common_gc;
 
@@ -88,4 +88,4 @@ void DuecaGLWidget::initGL()
   // default implementation; noop
 }
 
-DUECA_NS_END;
+} // namespace dueca

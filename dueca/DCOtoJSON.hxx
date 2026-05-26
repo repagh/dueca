@@ -28,7 +28,7 @@
 
     Conversion routines for DCO to JSON */
 
-DUECA_NS_START;
+namespace dueca {
 class CommObjectReader;
 
 /** Convert the data from a DCO object to a JSON stringbuffer
@@ -130,6 +130,6 @@ void dco_to_json(WR &writer, const DCO& object)
   DCOtoJSONstrict(writer, reader);
 }
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

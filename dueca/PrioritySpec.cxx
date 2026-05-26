@@ -23,7 +23,7 @@
 #include "VarProbe.hxx"
 using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 #include <debprint.h>
 
 // The parameter table describes the optional parameters that may be
@@ -89,4 +89,4 @@ PrioritySpec::~PrioritySpec()
   //
 }
 
-DUECA_NS_END
+} // namespace dueca

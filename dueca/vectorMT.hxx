@@ -21,7 +21,7 @@
 #include <algorithm>
 #include <inttypes.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 /** Declare the iterator for this class */
 template<class T> class vectorMTiter;
@@ -209,6 +209,6 @@ public:
 
 
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

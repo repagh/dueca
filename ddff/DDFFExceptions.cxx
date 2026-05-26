@@ -15,7 +15,7 @@
 #include "DDFFExceptions.hxx"
 #include <stdio.h>
 
-DDFF_NS_START
+namespace dueca { namespace ddff {
 
 file_read_error::file_read_error(unsigned long offset) :
   std::exception()
@@ -73,4 +73,4 @@ tag_information_not_matching_recorders::tag_information_not_matching_recorders
 }
 
 
-DDFF_NS_END
+} } // namespace ddff namespace dueca

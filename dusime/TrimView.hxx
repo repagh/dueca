@@ -21,7 +21,7 @@
 #include <TrimLink.hxx>
 #include "IncoVariableWork.hxx"
 
-DUECA_NS_START
+namespace dueca {
 
 class IncoCalculator;
 struct IncoVariable;
@@ -90,6 +90,6 @@ public:
                                             unsigned int variable);
 
 };
-DUECA_NS_END
+} // namespace dueca
 
 #endif

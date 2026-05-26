@@ -21,7 +21,7 @@
 #include <gtk/gtk.h>
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 /** This encapsulates the top-level handling of cooperation with the
     Gtk interface library */
 class GtkHandler: public GuiHandler
@@ -48,5 +48,5 @@ public:
   inline static GtkApplication *application() { return app; }
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

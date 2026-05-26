@@ -13,7 +13,7 @@
 
 #include "PythonCorrectedName.hxx"
 
-DUECA_NS_START
+namespace dueca {
 
 
 PythonCorrectedName::PythonCorrectedName(const char* given) : name(given)
@@ -29,5 +29,5 @@ PythonCorrectedName::PythonCorrectedName(const char* given) : name(given)
   }
 }
 
-DUECA_NS_END
+} // namespace dueca
 

@@ -29,7 +29,7 @@
 #include "dueca_assert.h"
 using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 Entity::Entity(const char* ename, const list<ModuleCreator*>& foetae) :
   NamedObject(NameSet(ename, "Entity",
@@ -155,4 +155,4 @@ ostream& Entity::print (ostream& os) const
   return os << "Entity(" << getEntity() << ',' << getPart() << ')';
 }
 
-DUECA_NS_END
+} // namespace dueca

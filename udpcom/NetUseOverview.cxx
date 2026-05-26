@@ -40,7 +40,7 @@
 #define NO_TYPE_CREATION
 #include <dueca.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 // class/module name
 const char* const NetUseOverview::classname = "net-use-overview";
@@ -214,7 +214,7 @@ void NetUseOverview::updateLoad(const NetCapacityLog& data)
 }
 
 
-DUECA_NS_END;
+} // namespace dueca
 
 // Make a TypeCreator object for this module, the TypeCreator
 // will check in with the script code, and enable the

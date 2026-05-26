@@ -19,10 +19,12 @@
 
 #include <dueca-conf.h>
 
+#if 0
 #define STARTNSREPLICATOR namespace dueca {
 #define ENDNSREPLICATOR };
+#endif
 
-STARTNSREPLICATOR;
+namespace dueca {
 class ChannelReplicator;
 class EntryWatcher;
 class EntryReader;
@@ -34,11 +36,6 @@ class EntryWriter;
 static const double test_failprob = 0.0001;
 #endif
 
-ENDNSREPLICATOR;
-
-//#define REP_DEBUG(A) std::cerr << A << std::endl;
-#ifndef REP_DEBUG
-#define REP_DEBUG(A)
-#endif
+} // namespace dueca
 
 #endif

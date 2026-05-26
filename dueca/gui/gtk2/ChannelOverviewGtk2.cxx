@@ -40,7 +40,7 @@
 #define NO_TYPE_CREATION
 #include <dueca/dueca.h>
 
-DUECA_NS_START
+namespace dueca {
 
 // class/module name
 const char* const ChannelOverviewGtk2::classname = "channel-view";
@@ -871,7 +871,7 @@ void ChannelOverviewGtk2::monitorToggle(GtkCellRendererToggle *cell,
   showChanges();
 }
 
-DUECA_NS_END
+} // namespace dueca
 
 
 

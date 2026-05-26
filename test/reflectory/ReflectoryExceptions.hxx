@@ -18,7 +18,7 @@
 #include <exception>
 #include <dueca_ns.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 /** reflectory_notfound, exception
 
@@ -66,6 +66,6 @@ public:
   const char* what() const throw();
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

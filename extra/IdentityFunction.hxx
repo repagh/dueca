@@ -19,7 +19,7 @@
 #endif
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 /** Base class for simple (one parameter) double precision
     functions. */
@@ -36,6 +36,6 @@ public:
   inline double operator () (const double x) const {return x;}
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

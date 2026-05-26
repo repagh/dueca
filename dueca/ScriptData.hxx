@@ -19,7 +19,7 @@
 #include "dueca-guile.h"
 #include <sstream>
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 /** \file
     Header with classes and macros to make a class accessible from Scheme. */
@@ -29,5 +29,5 @@ DUECA_NS_START
 /* #define SCM_FEATURES_DEF
    _Pragma ("GCC warning \"'SCM_FEATURES_DEF' macro is deprecated\"" */
 
-DUECA_NS_END
+} // namespace dueca
 #endif

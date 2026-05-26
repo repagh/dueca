@@ -44,7 +44,7 @@ static const double test_failprob = 0.001;
 
 #include <debprint.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 const size_t NetCommunicator::control_size = 22;
 
@@ -401,10 +401,10 @@ void NetCommunicator::communicatorAddTiming(ControlBlockWriter &cb)
   cb.markSendTime();
 }
 
-DUECA_NS_END;
+} // namespace dueca
 
 std::ostream& operator << (std::ostream& os,
-                           const DUECA_NS::NetCommunicator::SendState& x)
+                           const dueca::NetCommunicator::SendState& x)
 {
   const char* names[] = { "Normal", "Stasis", "Recover", "AfterNormal" };
   return os << names[unsigned(x)];

@@ -21,7 +21,7 @@
 #include <debprint.h>
 #include <dueca/DataTimeSpec.hxx>
 
-STARTNSREPLICATOR;
+namespace dueca {
 
 typedef TimeTickType T;
 
@@ -175,4 +175,4 @@ bool PeerTiming::translate(DataTimeSpec& theirtime) const
 }
 
 
-ENDNSREPLICATOR;
+} // namespace dueca

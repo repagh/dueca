@@ -21,7 +21,7 @@
 #include <Object.hxx>
 using namespace std;
 
-USING_DUECA_NS;
+using namespace dueca;
 
 struct cchange
 {

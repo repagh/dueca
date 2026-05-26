@@ -30,7 +30,7 @@
 
 int main(int argc, char* argv[]);
 
-DUECA_NS_START
+namespace dueca {
 class GenericCallback;
 struct ScriptLine;
 struct ScriptConfirm;
@@ -318,5 +318,5 @@ struct SetScriptInitFunction
 
 
 
-DUECA_NS_END
+} // namespace dueca
 #endif

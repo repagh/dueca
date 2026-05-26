@@ -15,17 +15,11 @@
 #ifndef HdfLogNamespace_hxx
 #define HdfLogNamespace_hxx
 
-#define STARTHDF5LOG namespace dueca { namespace hdf5log {
-#define ENDHDF5LOG } }
-
-STARTHDF5LOG;
+namespace dueca {
+namespace hdf5log {
 class HDF5Logger;
 class EntryWatcher;
-ENDHDF5LOG;
-
-//#define REP_DEBUG(A) std::cerr << A << std::endl;
-#ifndef REP_DEBUG
-#define REP_DEBUG(A)
-#endif
+} // namespace hdf5log
+} // namespace dueca
 
 #endif

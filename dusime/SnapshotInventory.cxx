@@ -41,7 +41,7 @@
 #include <dueca/dueca.h>
 using namespace std;
 
-DUECA_NS_START;
+namespace dueca {
 
 std::string decode64(const std::string &val)
 {
@@ -432,4 +432,4 @@ SnapshotInventory::editSnapshot(const std::string &snapname)
   throw cannot_find_snapshot(snapname.c_str());
 }
 
-DUECA_NS_END;
+} // namespace dueca

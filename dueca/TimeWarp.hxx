@@ -21,7 +21,7 @@
 #include "Trigger.hxx"
 #include "dueca_ns.h"
 
-DUECA_NS_START
+namespace dueca {
 
 /** Time warp for a triggering device. Say that you want to calculate
     your turbulence/wind field or whatever property that does not rely
@@ -141,5 +141,5 @@ private:
   void setTriggerName() override;
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

@@ -36,7 +36,7 @@
 #include <debprint.h>
 using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 
 IncoCollaborator::IncoCollaborator(const IncoSpec& spec,
@@ -205,4 +205,4 @@ IncoVariableWork& IncoCollaborator::getIncoVariable(unsigned int variable)
   assert(variable < offset + noVariables());
   return table[variable - offset];
 }
-DUECA_NS_END
+} // namespace dueca

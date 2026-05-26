@@ -20,7 +20,7 @@
 
 #include "AmorphStore.hxx"
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 typedef uint32_t TimeTickType;
 
@@ -105,13 +105,13 @@ public:
   inline bool past() const {return tick < base_tick;}
 };
 
-DUECA_NS_END
+} // namespace dueca
 
-PRINT_NS_START
+namespace std {
 /// prints the SimTime to a stream
 inline ostream & operator << (ostream& s, const
                               dueca::SimTime& o)
 { return o.print(s); }
-PRINT_NS_END
+} // namespace std
 
 #endif

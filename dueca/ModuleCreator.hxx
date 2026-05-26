@@ -24,7 +24,7 @@
 #include <ScriptCreatable.hxx>
 #include <memory>
 
-DUECA_NS_START
+namespace dueca {
 
 class GenericTypeCreator;
 class Entity;
@@ -139,5 +139,5 @@ public:
   std::shared_ptr<ReferenceHolder> getHolder();
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

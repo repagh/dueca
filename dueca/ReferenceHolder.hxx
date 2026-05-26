@@ -11,7 +11,7 @@
 
 #pragma once
 #include "dueca_ns.h"
-DUECA_NS_START
+namespace dueca {
 
 /** May keep references to script-created objects */
 struct ReferenceHolder
@@ -24,4 +24,4 @@ struct ReferenceHolder
 };
 
 
-DUECA_NS_END
+} // namespace dueca

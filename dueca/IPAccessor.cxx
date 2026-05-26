@@ -63,7 +63,7 @@
 #include "Callback.hxx"
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
-DUECA_NS_START
+namespace dueca {
 
 
 int IPAccessor::sequence = 0;
@@ -1246,4 +1246,4 @@ bool IPAccessor::adjustPriority(const PrioritySpec &p)
 }
 
 
-DUECA_NS_END
+} // namespace dueca

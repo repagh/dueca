@@ -18,7 +18,7 @@
 #include <DuecaGLCanvas.hxx>
 //#include "GtkGLWidgetHelper.hxx"
 
-DUECA_NS_START;
+namespace dueca {
 
 class GtkGLWidgetHelper;
 
@@ -43,5 +43,5 @@ public:
   void InitArea();
 };
 
-DUECA_NS_END;
+} // namespace dueca
 #endif

@@ -22,7 +22,7 @@
 #include <dueca_ns.h>
 #include <iostream>
 #include <algorithm>
-DUECA_NS_START
+namespace dueca {
 
 /** Implementation of a scaling/converting device, using a polynomial
     function. This class is a functor, with a double as input and
@@ -72,10 +72,10 @@ public:
   std::ostream &print(std::ostream &os) const;
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 inline std::ostream &operator<<(std::ostream &os,
-                                const DUECA_NS::PolynomialN &o)
+                                const dueca::PolynomialN &o)
 {
   return o.print(os);
 }

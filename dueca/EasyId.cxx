@@ -15,7 +15,7 @@
 #define EasyId_cxx
 #include "EasyId.hxx"
 
-DUECA_NS_START
+namespace dueca {
 
 ObjectType EasyId::getObjectType() const
 {
@@ -30,4 +30,4 @@ EasyId::EasyId(const char* entity,
   //
 }
 
-DUECA_NS_END
+} // namespace dueca

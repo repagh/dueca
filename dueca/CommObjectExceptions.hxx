@@ -18,7 +18,7 @@
 #include <dueca_ns.h>
 #include <dueca/visibility.h>
 
-DUECA_NS_START;
+namespace dueca {
 class LNK_PUBLIC TypeCannotBeIterated: public std::exception
 {
   /** Message. */
@@ -75,5 +75,5 @@ public:
   const char* what() const throw() {return msg;}
 };
 
-DUECA_NS_END;
+} // namespace dueca
 #endif

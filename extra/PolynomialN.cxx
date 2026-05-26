@@ -17,7 +17,7 @@
 
 #include "PolynomialN.hxx"
 
-DUECA_NS_START
+namespace dueca {
 PolynomialN::PolynomialN() :
   n(0),
   a(new double[1])
@@ -74,5 +74,5 @@ std::ostream& PolynomialN::print(std::ostream& os) const
   return os << ")";
 }
 
-DUECA_NS_END
+} // namespace dueca
 

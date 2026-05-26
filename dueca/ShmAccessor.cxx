@@ -51,7 +51,7 @@ static const double prob = 0.01/6.0;
 #include <debprint.h>
 using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 const ParameterTable* ShmAccessor::getParameterTable()
 {
@@ -421,4 +421,4 @@ void ShmAccessor::prepareToStop(TimeTickType tick)
   stopwork.switchOn(TimeSpec(0,0));
 }
 
-DUECA_NS_END
+} // namespace dueca

@@ -20,7 +20,7 @@
 #include <string>
 #include <vector>
 
-DUECA_NS_START;
+namespace dueca {
 
 /** Provides a DUECA shell around a window with a glfw
 
@@ -201,4 +201,4 @@ public:
   virtual void mouse(int button, int state, int x, int y);
 };
 
-DUECA_NS_END;
+} // namespace dueca

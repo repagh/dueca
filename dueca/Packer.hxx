@@ -18,7 +18,7 @@
 #include "UnifiedChannel.hxx"
 #include <list>
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 class TimeSpec;
 struct ParameterTable;
 class AmorphStore;
@@ -82,5 +82,5 @@ public:
   friend std::ostream& operator << (std::ostream& os, const Packer& p);
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

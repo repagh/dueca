@@ -25,7 +25,7 @@
 #include "GtkGladeWindow.hxx"
 
 
-DUECA_NS_START
+namespace dueca {
 
 /** A view on the DUECA channels
 
@@ -177,6 +177,6 @@ public:
   void monitorToggle(GtkCellRendererToggle *cell, gchar *path_str);
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

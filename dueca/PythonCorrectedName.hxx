@@ -19,7 +19,7 @@
 #include <string>
 #include <exception>
 
-DUECA_NS_START
+namespace dueca {
 
 /** Alert to a condition where the classname has not been given */
 class creationexception : public std::exception
@@ -71,6 +71,6 @@ template <class T> const char *core_creator_name(const char *given)
   return name.c_str();
 }
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

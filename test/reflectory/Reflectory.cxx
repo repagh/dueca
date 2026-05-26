@@ -23,8 +23,8 @@
 
 #include "ReflectoryView.hxx"
 
-DUECA_NS_START;
+namespace dueca {
 
 
-DUECA_NS_END;
+} // namespace dueca
 

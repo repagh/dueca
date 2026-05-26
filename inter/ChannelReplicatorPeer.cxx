@@ -57,7 +57,7 @@
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
 
-STARTNSREPLICATOR;
+namespace dueca {
 
 // class/module name
 const char *const ChannelReplicatorPeer::classname = "channel-replicator-peer";
@@ -564,7 +564,7 @@ void ChannelReplicatorPeer::clientUnpackPayload(MessageBuffer::ptr_type buffer,
   ChannelReplicator::_clientUnpackPayload(buffer, id, timing->second);
 }
 
-ENDNSREPLICATOR;
+} // namespace dueca
 
 // Make a TypeCreator object for this module, the TypeCreator
 // will check in with the script code, and enable the

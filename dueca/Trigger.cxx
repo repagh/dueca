@@ -44,7 +44,7 @@ using namespace std;
 #endif
 #endif
 
-DUECA_NS_START
+namespace dueca {
 
 CODE_REFCOUNT(TriggerTarget);
 
@@ -699,4 +699,4 @@ ConditionAndPtr operator&&(TriggerPuller &c1, ConditionAndPtr c2)
   return c2;
 }
 
-DUECA_NS_END
+} // namespace dueca

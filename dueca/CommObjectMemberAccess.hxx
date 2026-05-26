@@ -19,7 +19,7 @@
 #include <CommObjectElementReader.hxx>
 #include <CommObjectElementWriter.hxx>
 
-DUECA_NS_START;
+namespace dueca {
 
 /** Helper template to fudge look into members of members.
     Not a standard implementation, only used for LogLevelCommand for now.
@@ -286,6 +286,6 @@ struct CommObjectDataTable
   const CommObjectMemberAccessBasePtr access;
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

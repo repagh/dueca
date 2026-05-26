@@ -18,13 +18,13 @@
 #include <Eigen/Dense>
 
 #ifdef DEBUG_AXIS
-#define DUECA_NS_START namespace dueca {
-#define DUECA_NS_END }
+#define dueca_START namespace dueca {
+#define dueca_END }
 #else
 #include <dueca_ns.h>
 #endif
 
-DUECA_NS_START;
+namespace dueca {
 
 #define USING_EIGEN3
 /// a normal matrix, allocates its own storage
@@ -216,7 +216,7 @@ public:
   Orientation toNorthUp(const Orientation& o) const;
 };
 
-DUECA_NS_END;
+} // namespace dueca
 namespace std {
 
   /** Print an EulerAngles object. */

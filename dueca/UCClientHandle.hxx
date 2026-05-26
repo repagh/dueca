@@ -24,7 +24,7 @@
 #include "GlobalId.hxx"
 
 
-DUECA_NS_START;
+namespace dueca {
 
 // advance definitions
 class UChannelEntryData;
@@ -262,4 +262,4 @@ typedef UCWriterHandle* UCWriterHandlePtr;
 
 
 
-DUECA_NS_END;
+} // namespace dueca

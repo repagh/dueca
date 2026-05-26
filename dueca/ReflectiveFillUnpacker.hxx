@@ -24,7 +24,7 @@
 #include <AmorphStore.hxx>
 #include <dueca_ns.h>
 #include "ScriptCreatable.hxx"
-DUECA_NS_START
+namespace dueca {
 class ChannelManager;
 class ReflectiveStoreInformation;
 class ChannelReadToken;
@@ -114,5 +114,5 @@ public:
   //friend ostream& operator << (ostream& os, const ReflectiveFillUnpacker& p);
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

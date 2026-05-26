@@ -45,7 +45,7 @@ using namespace std;
 static const double test_failprob = 0.0001;
 #endif
 
-DUECA_NS_START;
+namespace dueca {
 
 NetCommunicatorMaster::NetCommunicatorMaster() :
   // base class implementing the generic part of communication
@@ -1060,4 +1060,4 @@ void NetCommunicatorMaster::communicatorAddTiming(ControlBlockWriter &cb)
   cb.markTimeOffset(net_permessage, net_perbyte);
 }
 
-DUECA_NS_END;
+} // namespace dueca

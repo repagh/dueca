@@ -23,7 +23,7 @@
 #include "ScriptCreatable.hxx"
 #include <boost/intrusive_ptr.hpp>
 
-DUECA_NS_START
+namespace dueca {
 class GenericPacker;
 struct ParameterTable;
 
@@ -74,5 +74,5 @@ public:
   friend std::ostream& operator << (std::ostream& os, const PackerSet& a);
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

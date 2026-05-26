@@ -19,7 +19,7 @@
 #include <DataTimeSpec.hxx>
 #include <ChannelReadToken.hxx>
 
-DUECA_NS_START;
+namespace dueca {
 
 /** Base class for the DataReader derived templates.
 
@@ -111,6 +111,6 @@ protected:
   { return b.token.isSequential(); }
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

@@ -24,7 +24,7 @@
 #include <string>
 #include <boost/scoped_ptr.hpp>
 
-DUECA_NS_START
+namespace dueca {
 
 struct ParameterTable;
 class ScriptCreatable;
@@ -216,11 +216,11 @@ struct ArgListProcessor_Private
 {};
 #endif
 
-DUECA_NS_END
+} // namespace dueca
 
-PRINT_NS_START
+namespace std {
 /** Print to stream, that is, the call and the argument list. */
-ostream &operator<<(ostream &os, const DUECA_NS::ArgListProcessor &p);
-PRINT_NS_END
+ostream &operator<<(ostream &os, const dueca::ArgListProcessor &p);
+} // namespace std
 
 #endif

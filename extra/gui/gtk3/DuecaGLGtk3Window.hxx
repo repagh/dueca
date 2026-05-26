@@ -23,7 +23,7 @@
 
 #include "DuecaGtkInteraction.hxx"
 
-DUECA_NS_START;
+namespace dueca {
 
 /** Provides a DUECA shell around a window with a Gtk3 GtkGlarea.
     If Gtk3 does not have GtkGLarea, tough luck (GTK3 < 3.16).
@@ -147,12 +147,12 @@ public:
   virtual void initGL();
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #else
 #warning "Cannot compile DuecaGLGtk3Window for gtk3"
-DUECA_NS_START;
-DUECA_NS_END;
+namespace dueca {
+} // namespace dueca
 #endif
 
 #endif

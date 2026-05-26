@@ -19,7 +19,7 @@
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
 
-DUECA_NS_START
+namespace dueca {
 
 InformationStash<LogPoint> &Logpoint_stash()
 {
@@ -67,4 +67,4 @@ void Logger::showType(std::ostream &os) const
   os << LogLevel_to_letter(this->level) << this->category;
 }
 
-DUECA_NS_END
+} // namespace dueca

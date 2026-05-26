@@ -32,7 +32,7 @@ namespace Gtk {
 /** \file gtk2/GtkGladeWindow.hxx
     Gtk GUI facilities. */
 
-DUECA_NS_START
+namespace dueca {
 
 /** creation of a caller, 1 parameter and the gpointer parameter. */
 template<class T, typename RET, typename P1>
@@ -336,6 +336,6 @@ template<typename T>
 }
 #endif
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

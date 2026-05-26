@@ -40,7 +40,7 @@
 #define I_SYS
 #include <debug.h>
 
-DUECA_NS_START
+namespace dueca {
 
 #if GTK_MAJOR_VERSION != 2
 #error "Wrong GTK version headers!"
@@ -123,5 +123,5 @@ void GtkHandler::returnControl()
   I_SYS("Calling gtk_main_quit()");
   gtk_main_quit();
 }
-DUECA_NS_END
+} // namespace dueca
 

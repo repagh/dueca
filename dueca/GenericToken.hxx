@@ -32,7 +32,7 @@
 #include <DataClassRegistryPredef.hxx>
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 class UnifiedChannel;
 class ScheduleCondition;
 class DataSetConverter;
@@ -165,5 +165,5 @@ public:
   }
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

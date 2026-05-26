@@ -24,7 +24,7 @@
 #define DEBPRINTLEVEL -1
 #include "debprint.h"
 
-DUECA_NS_START
+namespace dueca {
 
 void* UChannelEntryData::operator new(size_t size)
 {
@@ -229,4 +229,4 @@ void UChannelEntryData::assumeData(UCClientHandlePtr client)
        " seq #" << seq_id << " assume data, decrement to " << ra);
 }
 
-DUECA_NS_END
+} // namespace dueca

@@ -48,7 +48,7 @@
 //#define DEBUG_MEM
 #endif
 
-DUECA_NS_START
+namespace dueca {
 
 /** An exception object, to throw when the registry is used for
     critical tasks while not previously locked. */
@@ -202,7 +202,7 @@ public:
   friend std::ostream& operator<< <> (std::ostream& o, const registry<UD> &reg);
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif
 
 
@@ -218,7 +218,7 @@ DUECA_NS_END
 
 #include <dueca_ns.h>
 
-DUECA_NS_START
+namespace dueca {
 
 template<class UD> registry<UD>::
 registry(int initialsize, const char* name) :
@@ -414,7 +414,7 @@ std::ostream& operator << (std::ostream& o, const registry<UD> &reg)
   return o;
 }
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif
 #endif

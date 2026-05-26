@@ -14,8 +14,8 @@
 #define InformationStash_cxx
 #include "InformationStash.hxx"
 
-DUECA_NS_START
+namespace dueca {
 
 void InformationStash_do_nothing() {}
 
-DUECA_NS_END
+} // namespace dueca

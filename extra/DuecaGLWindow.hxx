@@ -30,19 +30,19 @@
 #if GTK_CHECK_VERSION(3, 16, 0)  && 0
 
 #include <extra/gui/gtk3/DuecaGLGtk3Window.hxx>
-//DUECA_NS_START;
+//namespace dueca {
 //typedef DuecaGLGtk3Window DuecaGLWindow;
 #define DuecaGLWindow DuecaGLGtk3Window
-//DUECA_NS_END;
+//} // namespace dueca
 //typedef DuecaGLGtk3Window DuecaGLWindow;
 #else
 #warning "Using compatibility BareDuecaGLWindow for GL under gtk+3"
 
 // gtk3 GL interfacing simplified with BareDuecaGLWindow
 #include <extra/gui/X11/BareDuecaGLWindow.hxx>
-//DUECA_NS_START;
+//namespace dueca {
 //typedef BareDuecaGLWindow DuecaGLWindow;
-//DUECA_NS_END;
+//} // namespace dueca
 #define DuecaGLWindow BareDuecaGLWindow
 #endif
 
@@ -55,7 +55,7 @@
 #include <vector>
 #include <dueca/visibility.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 /** A DuecaGLWindow is the interface between the DUECA world and
     OpenGL drawing. Independently of the windowing toolkit that is
@@ -176,6 +176,6 @@ public:
   inline bool passPassive() { return mouse_passive; }
 };
 
-DUECA_NS_END;
+} // namespace dueca
 #endif
 #endif

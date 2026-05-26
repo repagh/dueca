@@ -27,11 +27,11 @@
 #include <iomanip>
 #include <debprint.h>
 
-PRINT_NS_START
+namespace std {
 ostream& operator << (ostream& os, const Matrix& x);
-PRINT_NS_END
+} // namespace std
 
-DUECA_NS_START
+namespace dueca {
 
 Interval::Interval(double lowx, double highx, int ny, int query_offset) :
   lowx(lowx),
@@ -165,6 +165,6 @@ void Interval::getRange(Vector& yr)
         << "returning range " << std::setw(10) << yr[0]
         << std::setw(10) << yr[1] << std::setw(10) << yr[2]);
 }
-DUECA_NS_END
+} // namespace dueca
 
 #endif

@@ -18,7 +18,7 @@
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
 
-DUECA_NS_START
+namespace dueca {
 
 NamedObject::NamedObject(const NameSet& name_set) :
   is_copy(false)
@@ -93,4 +93,4 @@ const NameSet& NamedObject::getNameSet() const
 {
   return ObjectManager::single()->getNameSet(getId().getObjectId());
 }
-DUECA_NS_END
+} // namespace dueca

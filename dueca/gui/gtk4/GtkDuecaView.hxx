@@ -29,7 +29,7 @@
 #include <dueca_ns.h>
 #include <gtk/gtk.h>
 
-DUECA_NS_START
+namespace dueca {
 struct ParameterTable;
 
 // entity status, DUECA side
@@ -313,5 +313,5 @@ public:
   void syncNode(void *nid) override;
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

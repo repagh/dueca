@@ -16,7 +16,7 @@
 
 #include <iostream>
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 /** A base class for status objects. These can be queried, printed,
     and combined. */
@@ -55,11 +55,11 @@ class GenericStatus
   static inline GenericStatus* null() {return NULL;}
 };
 
-DUECA_NS_END
+} // namespace dueca
 
-PRINT_NS_START
-inline ostream& operator << (ostream& o, const DUECA_NS::GenericStatus& cl)
+namespace std {
+inline ostream& operator << (ostream& o, const dueca::GenericStatus& cl)
 { return cl.print(o); }
-PRINT_NS_END
+} // namespace std
 
 #endif

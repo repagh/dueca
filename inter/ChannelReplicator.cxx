@@ -58,7 +58,7 @@
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
 
-STARTNSREPLICATOR;
+namespace dueca {
 
 // class/module name
 const char* const ChannelReplicator::classname = "channel-replicator";
@@ -325,4 +325,4 @@ void ChannelReplicator::verifyDataClass(const ReplicatorConfig& cf, unsigned nod
   }
 }
 
-ENDNSREPLICATOR
+} // namespace dueca

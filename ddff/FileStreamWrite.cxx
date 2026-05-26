@@ -25,7 +25,7 @@
 #define DEBPRINTLEVEL -2
 #include <debprint.h>
 
-DDFF_NS_START
+namespace dueca { namespace ddff {
 
 FileStreamWrite::FileStreamWrite(FileHandler *fh, unsigned id, size_t bufsize) :
   buffers(0, "FileStreamWrite"),
@@ -354,4 +354,4 @@ FileStreamWrite::accessBuffer(pos_type offset, const ControlBlockRead &info)
   return current_buffer->data.data();
 }
 
-DDFF_NS_END
+} } // namespace ddff namespace dueca

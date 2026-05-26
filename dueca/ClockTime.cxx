@@ -16,7 +16,7 @@
 #include "ClockTime.hxx"
 
 #include <TimeKeeper.hxx>
-DUECA_NS_START
+namespace dueca {
 
 int64_t DuecaClockTime::time_zero = 0;
 
@@ -45,4 +45,4 @@ std::ostream& DuecaClockTime::print(std::ostream& o) const
   return o;
 }
 
-DUECA_NS_END
+} // namespace dueca

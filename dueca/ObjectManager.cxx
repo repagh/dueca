@@ -39,7 +39,7 @@
 #include <iomanip>
 using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 #if USING_BOOST_INHERIT == 0
 void intrusive_ptr_add_ref(const ObjectManager* t)
@@ -430,4 +430,4 @@ ostream& operator << (ostream& os, const
 {
   return os << "(ObjectManager(" << (int) a.location << "))";
 }
-DUECA_NS_END
+} // namespace dueca

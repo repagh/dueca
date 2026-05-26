@@ -54,7 +54,7 @@ using namespace std;
 #endif
 
 
-DUECA_NS_START;
+namespace dueca {
 
 inline void redraw_done(DuecaGLCanvas* gw)
 {
@@ -314,4 +314,4 @@ GLWindowHelper* GlutGuiOpenGLHelper::newWindow()
   return new GlutGuiGLWindowHelper();
 }
 
-DUECA_NS_END;
+} // namespace dueca

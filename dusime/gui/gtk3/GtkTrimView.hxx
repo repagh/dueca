@@ -27,7 +27,7 @@ class IncoCalculator;
 #include <TrimLink.hxx>
 #include <Summary.hxx>
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 class IncoCalculator;
 struct IncoVariable;
 
@@ -159,6 +159,6 @@ public:
   /** Return a pointer to the entry widget. */
   inline GtkSpinButton* getEntryWidget() { return entry_widget; }
 };
-DUECA_NS_END
+} // namespace dueca
 
 #endif

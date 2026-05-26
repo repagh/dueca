@@ -14,7 +14,7 @@
 #define ReflectoryExceptions_cxx
 #include "ReflectoryExceptions.hxx"
 
-DUECA_NS_START;
+namespace dueca {
 
 const char* reflectory_notfound::what() const throw()
 { return "reflectory not found"; }
@@ -28,4 +28,4 @@ const char* reflectory_incorrectname::what() const throw()
 const char* reflectory_nodata::what() const throw()
 { return "reflectory node does not have data"; }
 
-DUECA_NS_END;
+} // namespace dueca

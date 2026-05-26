@@ -21,7 +21,7 @@
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
 
-DDFF_NS_START;
+namespace dueca { namespace ddff {
 
 void control_block_write(DDFFMessageBuffer::ptr_type buffer,
                          uint16_t stream_id, unsigned buffer_num)
@@ -83,4 +83,4 @@ ControlBlockRead::ControlBlockRead(DDFFMessageBuffer& buffer,
 }
 
 
-DDFF_NS_END;
+} } // namespace ddff namespace dueca

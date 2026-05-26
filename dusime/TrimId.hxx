@@ -24,7 +24,7 @@
 #include <IncoMode.hxx>
 #include <dueca_ns.h>
 #include <IncoVariableWork.hxx>
-DUECA_NS_START
+namespace dueca {
 struct IncoVariable;
 
 /** Object for organising trim name information.
@@ -152,5 +152,5 @@ private:
   /** print to stream */
   friend std::ostream& operator << (std::ostream& os, const TrimId& o);
 };
-DUECA_NS_END
+} // namespace dueca
 #endif

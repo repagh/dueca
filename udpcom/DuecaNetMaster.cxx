@@ -47,7 +47,7 @@
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 int DuecaNetMaster::sequence = 0;
 
@@ -563,4 +563,4 @@ void DuecaNetMaster::clientWelcomeConfig(AmorphStore &s, unsigned peer_id)
   s.packData(group_magic);
 }
 
-DUECA_NS_END;
+} // namespace dueca

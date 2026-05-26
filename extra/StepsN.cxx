@@ -27,7 +27,7 @@ public:
   const char* what() const throw() {return "steps need 2 or more values"; }
 };
 
-DUECA_NS_START
+namespace dueca {
 
 static void StepsN_sort_and_copy(double *ui, double *yi,
                                  double *tp, double *y, int n)
@@ -127,4 +127,4 @@ std::ostream& StepsN::print(std::ostream& os) const
   return os << ")";
 }
 
-DUECA_NS_END
+} // namespace dueca

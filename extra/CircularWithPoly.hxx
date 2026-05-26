@@ -17,16 +17,16 @@
 
 #include "SimpleFunction.hxx"
 #ifdef UNITTEST
-#define DUECA_NS_START
-#define DUECA_NS_END
-#define DUECA_NS
+#define namespace dueca {
+#define } // namespace dueca
+#define dueca
 #else
 #include <dueca_ns.h>
 #endif
 #include <iostream>
 #include <algorithm>
 
-DUECA_NS_START
+namespace dueca {
 
 /** Implementation of a rotary scaling/converting device, using a
     polynomial for final correction and optionally tracking of the
@@ -117,11 +117,11 @@ public:
   std::ostream &print(std::ostream &os) const;
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 /** Print operator for CircularWithPoly */
 inline std::ostream &operator<<(std::ostream &os,
-                                const DUECA_NS::CircularWithPoly &o)
+                                const dueca::CircularWithPoly &o)
 {
   return o.print(os);
 }

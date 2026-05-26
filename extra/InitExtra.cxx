@@ -24,7 +24,7 @@
 #include <iostream>
 #include <dueca/visibility.h>
 
-USING_DUECA_NS;
+using namespace dueca;
 
 extern "C" LNK_PUBLICC void InitExtra()
 {

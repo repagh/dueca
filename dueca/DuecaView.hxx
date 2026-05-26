@@ -18,7 +18,7 @@
 #include <dueca_ns.h>
 #include <StatusT1.hxx>
 
-DUECA_NS_START
+namespace dueca {
 
 /** Base class for classes that produce visualisation of dueca and/or
     dusime parameters and controls. The base class is there to provide
@@ -81,5 +81,5 @@ public:
 
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

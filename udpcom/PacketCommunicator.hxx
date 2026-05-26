@@ -27,7 +27,7 @@
 #include <dueca/SharedPtrTemplates.hxx>
 #include <extra/ConglomerateFactory.hxx>
 
-DUECA_NS_START;
+namespace dueca {
 
 /** Specification for all needed information for the different
     packet communicators */
@@ -164,6 +164,6 @@ CFSingletonWrapper<
 PacketCommunicatorFactory;
 
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

@@ -276,7 +276,7 @@ static void hide_or_show_view(GSimpleAction *action, GVariant *variant)
 
 } // end anonymous namespace
 
-DUECA_NS_START
+namespace dueca {
 
 const char *const GtkDuecaView::classname = "dueca-view";
 
@@ -868,7 +868,7 @@ static void process_file_result(GObject *dialog, GAsyncResult *res,
 void GtkDuecaView::cbExtraModDialog(GSimpleAction *action, GVariant *arg,
                                     gpointer user_data)
 {
-  if (DUECA_NS::EntityManager::single()->stopIsOK()) {
+  if (dueca::EntityManager::single()->stopIsOK()) {
 #if GTK_CHECK_VERSION(4, 10, 0)
 
     gtk_file_dialog_open(GTK_FILE_DIALOG(window["additional_def"]),
@@ -1280,4 +1280,4 @@ void GtkDuecaView::requestToKeepRunning(bool keep_running)
   }
 }
 
-DUECA_NS_END;
+} // namespace dueca

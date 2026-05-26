@@ -18,7 +18,7 @@
 
 #include <Callback.hxx>
 
-DUECA_NS_START
+namespace dueca {
 
 template <class T> void Callback<T>::
 operator() (const TimeSpec &t)
@@ -45,6 +45,6 @@ template <class T> Callback<T>::
   // no more
 }
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

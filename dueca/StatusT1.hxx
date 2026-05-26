@@ -23,7 +23,7 @@
 #include <dueca_ns.h>
 
 
-DUECA_NS_START
+namespace dueca {
 
 class DuecaView;
 
@@ -110,11 +110,11 @@ public:
   std::ostream& print (std::ostream& os) const;
 };
 
-DUECA_NS_END
+} // namespace dueca
 
-PRINT_NS_START
-inline ostream& operator << (ostream& os, const DUECA_NS::StatusT1& o)
+namespace std {
+inline ostream& operator << (ostream& os, const dueca::StatusT1& o)
 { return o.print(os); }
-PRINT_NS_END
+} // namespace std
 
 #endif

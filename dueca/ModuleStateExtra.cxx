@@ -52,5 +52,5 @@ ModuleState& ModuleState::operator &= (const ModuleState& o)
 
 const char* ModuleState::getString() const
 {
-  return DUECA_NS::getString(t);
+  return dueca::getString(t);
 }

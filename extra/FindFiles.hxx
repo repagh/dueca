@@ -24,7 +24,7 @@
 #include <dueca_ns.h>
 
 
-DUECA_NS_START
+namespace dueca {
 
 /** Exception to be thrown by FindFiles when an error occurs. */
 class FindFilesError: public std::exception
@@ -90,6 +90,6 @@ public:
 
 
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

@@ -27,7 +27,7 @@
 #include <LogLevel.hxx>
 #include <dueca_ns.h>
 
-DUECA_NS_START
+namespace dueca {
 
 /// CNF: configuration messages
 const LogCategory& logcat_cnf();
@@ -56,7 +56,7 @@ const LogCategory& logcat_int();
 /// XTR: extra component messages (hdf5 logger, extra)
 const LogCategory& logcat_xtr();
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif
 

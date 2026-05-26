@@ -19,7 +19,7 @@
 
 #include <dueca_ns.h>
 
-DUECA_NS_START
+namespace dueca {
 
 class GenericTypeCreator;
 class ModuleCreator;
@@ -66,6 +66,6 @@ public:
 
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

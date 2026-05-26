@@ -28,5 +28,4 @@ add_executable(reflectory.x
   ${DCO_OUTPUT_HEADERS}
   ${SOURCES})
 
-target_link_libraries(reflectory.x dueca${STATICSUFFIX})
-
+target_link_libraries(reflectory.x dueca${STATICSUFFIX} fmt::fmt)

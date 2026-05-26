@@ -21,7 +21,7 @@
 #include <iostream>
 #include <dueca_ns.h>
 
-DUECA_NS_START
+namespace dueca {
 class ReflectiveAccessor;
 
 /** Set of information for initialisation of packers by their media
@@ -107,5 +107,5 @@ public:
 };
 #endif /* DELTED_BY_WEST */
 
-DUECA_NS_END
+} // namespace dueca
 #endif

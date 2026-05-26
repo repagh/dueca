@@ -19,7 +19,7 @@ DO_DSTATES
 extern "C" {
 #include "MODEL_NAME.h"
 }
-USING_DUECA_NS
+USING_dueca
 
 class XMLLOADER: public TiXmlDocument
 {

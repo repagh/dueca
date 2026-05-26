@@ -21,7 +21,7 @@
 #include <map>
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 struct NameSet;
 class NotFound;
 
@@ -143,10 +143,10 @@ private:
   static bool exists(const GlobalId& id);
 };
 
-DUECA_NS_END
+} // namespace dueca
 
-PRINT_NS_START
-inline ostream& operator << (ostream& o, const DUECA_NS::ModuleId& cl)
+namespace std {
+inline ostream& operator << (ostream& o, const dueca::ModuleId& cl)
 { return cl.print(o); }
-PRINT_NS_END
+} // namespace std
 #endif

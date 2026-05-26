@@ -824,9 +824,9 @@ struct %(master)s_checksize_%(name)s
   %(master)s_checksize_%(name)s()
   {
     if (int(%(name)s) != (%(size)i) /* NORMALLY DISABLED CODE */ ) {
-      cerr << "enum or define %(name)s changed size" << endl
-           << "declared as %(size)i, now " << int(%(name)s) << endl
-           << "check class %(master)s.dco and re-generate" << endl;
+      std::cerr << "enum or define %(name)s changed size" << std::endl
+                << "declared as %(size)i, now " << int(%(name)s) << std::endl
+                << "check class %(master)s.dco and re-generate" << std::endl;
       assert(0);
     }
   }

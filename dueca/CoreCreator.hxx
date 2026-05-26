@@ -27,7 +27,7 @@
 #include <boost/python.hpp>
 #endif
 
-DUECA_NS_START
+namespace dueca {
 
 /** A start-up mechanism for declaring new objects available to the
     scripting language(s) used in DUECA (currently Scheme and Python).
@@ -254,7 +254,7 @@ public:
   static void ifunct0();
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 #if defined(SCRIPT_SCHEME)
 
@@ -283,13 +283,13 @@ DUECA_NS_END
 
 #elif defined(SCRIPT_PYTHON)
 
-DUECA_NS_START
+namespace dueca {
 
 /** Specialization for void, returns NULL */
 template<>
 const char* core_creator_name<mpl_::void_>(const char*);
 
-DUECA_NS_END
+} // namespace dueca
 
 /** Declare an object type to the scripting system.
 
@@ -345,7 +345,7 @@ DUECA_NS_END
 #ifndef CoreCreator_hxx_instantiate
 #define CoreCreator_hxx_instantiate
 
-DUECA_NS_START
+namespace dueca {
 /** Templated new wrapper: 10 params */
 template<class T,
          class P1, class P2, class P3, class P4, class P5,
@@ -439,7 +439,7 @@ template<class T>
   *obj = new T();
 }
 
-DUECA_NS_END
+} // namespace dueca
 #endif
 
 #if defined(SCRIPT_SCHEME)

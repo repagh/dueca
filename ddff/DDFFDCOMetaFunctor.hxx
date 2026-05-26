@@ -19,7 +19,7 @@
 #include "DDFFDCOWriteFunctor.hxx"
 #include <dueca/DCOMetaFunctor.hxx>
 
-DDFF_NS_START
+namespace dueca { namespace ddff {
 
 /** MetaFunctor to access DCO DDFF facilities
 
@@ -63,6 +63,6 @@ public:
   getWriteFunctor(bool rtick) = 0;
 };
 
-DDFF_NS_END
+} } // namespace ddff namespace dueca
 
 #endif

@@ -37,7 +37,7 @@
 #include "TypeCreator.hxx"
 #endif
 
-DUECA_NS_START;
+namespace dueca {
 
 #if defined(SCRIPT_SCHEME)
 template<>
@@ -54,8 +54,8 @@ SCHEME_CLASS_SINGLE(IPTwoWay,Accessor,"ip-two-way");
 // defined in from main init
 
 
-DUECA_NS_END;
-USING_DUECA_NS;
+} // namespace dueca
+using namespace dueca;
 
 /** Static object that in its creation initializes the helpers for IP
     communication. */

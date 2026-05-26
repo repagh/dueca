@@ -41,7 +41,7 @@
 #include <debprint.h>
 using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 const char* const IncoCalculator::classname = "inco-calculator";
 
@@ -329,5 +329,5 @@ IncoVariableWork& IncoCalculator::getIncoVariable(unsigned int variable)
   assert(0);
   return dum;
 }
-DUECA_NS_END
+} // namespace dueca
 #endif

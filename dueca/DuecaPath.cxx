@@ -16,7 +16,7 @@
 #include "DuecaPath.hxx"
 #include <DuecaPath.ixx>
 #include <cstdlib>
-DUECA_NS_START
+namespace dueca {
 
 DuecaPath* DuecaPath::singleton = NULL;
 
@@ -47,4 +47,4 @@ vstring DuecaPath::prepend(const vstring& tail)
   return singleton->basepath + tail;
 }
 
-DUECA_NS_END
+} // namespace dueca

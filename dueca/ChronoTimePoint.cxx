@@ -16,7 +16,7 @@
 #include <sstream>
 #include <iomanip>
 
-DUECA_NS_START;
+namespace dueca {
 
 std::ostream& operator << (std::ostream& os,
                            const std::chrono::system_clock::time_point& tp)
@@ -44,5 +44,5 @@ timePointFromString(const std::string& date)
   return std::chrono::system_clock::from_time_t(std::mktime(&tm));
 }
 
-DUECA_NS_END;
+} // namespace dueca
 

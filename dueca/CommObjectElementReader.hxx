@@ -17,7 +17,7 @@
 
 #include "CommObjectElementReaderBase.hxx"
 
-DUECA_NS_START;
+namespace dueca {
 
 /** ElementReader  an object to read a member of a DCO object
 
@@ -129,6 +129,6 @@ public:
   inline size_t size() const { return base()->size(); }
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

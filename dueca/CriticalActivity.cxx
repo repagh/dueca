@@ -25,7 +25,7 @@
 #define E_SYS
 #include <debug.h>
 
-DUECA_NS_START
+namespace dueca {
 
 bool CriticalActivity::node_safe = true;
 
@@ -324,4 +324,4 @@ bool CriticalActivity::criticalErrorNodeWide()
 }
 
 
-DUECA_NS_END
+} // namespace dueca

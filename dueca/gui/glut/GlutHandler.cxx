@@ -39,7 +39,7 @@ using namespace std;
 //#ifdef HAVE_SETJMP_H
 //static jmp_buf env;
 //#endif
-DUECA_NS_START
+namespace dueca {
 
 GlutHandler::GlutHandler(const std::string& name) :
   GuiHandler(name)
@@ -153,4 +153,4 @@ void GlutHandler::returnControl()
 #endif
 
 
-DUECA_NS_END
+} // namespace dueca

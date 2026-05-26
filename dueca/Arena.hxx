@@ -27,7 +27,7 @@
 
 template <class E> class LockFreeLIFO;
 
-DUECA_NS_START
+namespace dueca {
 
 /** Implementation of a memory arena, for fast allocation of
     fixed-size data blocks.
@@ -116,8 +116,8 @@ public:
   friend class NoBody;
 };
 
-DUECA_NS_END
+} // namespace dueca
 
-void* operator new(size_t sz, DUECA_NS ::Arena *a);
+void* operator new(size_t sz, dueca ::Arena *a);
 
-std::ostream& operator << (std::ostream& os, DUECA_NS ::Arena& a);
+std::ostream& operator << (std::ostream& os, dueca ::Arena& a);

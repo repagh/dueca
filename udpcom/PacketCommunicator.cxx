@@ -17,7 +17,7 @@
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 CODE_REFCOUNT(PacketCommunicator)
 
@@ -94,4 +94,4 @@ void PacketCommunicator::flush()
 {
   // default action none
 }
-DUECA_NS_END;
+} // namespace dueca

@@ -31,7 +31,7 @@
 #include <fstream>
 #include <ChannelWatcher.hxx>
 
-DUECA_NS_START;
+namespace dueca {
 
 /** A module that gathers network usage statistics.
 
@@ -192,6 +192,6 @@ protected:
 };
 
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

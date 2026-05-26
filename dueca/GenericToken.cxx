@@ -43,7 +43,7 @@
 #include <debprint.h>
 
 
-DUECA_NS_START
+namespace dueca {
 
 GenericToken::GenericToken(const GlobalId &holder, const NameSet& name,
                            const std::string& dataclassname) :
@@ -84,4 +84,4 @@ GenericToken::getMetaFunctorBase(const std::string& fname) const
 }
 
 
-DUECA_NS_END
+} // namespace dueca

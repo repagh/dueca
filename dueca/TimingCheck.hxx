@@ -22,7 +22,7 @@
 #include "dueca_ns.h"
 #include "TimingResults.hxx"
 
-DUECA_NS_START
+namespace dueca {
 
 struct TimingResults;
 class Activity;
@@ -143,6 +143,6 @@ private:
   void after(const TimeSpec& ts);
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

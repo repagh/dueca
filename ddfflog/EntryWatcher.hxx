@@ -23,7 +23,7 @@
 #include <memory>
 #include <boost/scoped_ptr.hpp>
 
-DDFF_NS_START;
+namespace dueca { namespace ddff {
 
 class DDFFLogger;
 
@@ -120,6 +120,6 @@ public:
                       const std::string &prefix);
 };
 
-DDFF_NS_END;
+} } // namespace ddff namespace dueca
 
 #endif

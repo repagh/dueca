@@ -46,7 +46,7 @@ std::string encode64(const std::string &val)
 
 }
 
-DUECA_NS_START;
+namespace dueca {
 
 // locally added constructor
 Snapshot::Snapshot(size_t data_size, const NameSet &originator,

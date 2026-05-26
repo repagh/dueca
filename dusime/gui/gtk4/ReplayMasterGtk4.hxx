@@ -25,7 +25,7 @@
 #include <dueca/gui/gtk4/GtkGladeWindow.hxx>
 #include <gtk/gtk.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 /** Interface for replay and snapshot information
 
@@ -140,6 +140,6 @@ private:
                            gpointer user_data);
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

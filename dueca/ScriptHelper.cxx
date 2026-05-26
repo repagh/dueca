@@ -16,7 +16,7 @@
 #include <dueca/ScriptInterpret.hxx>
 #include <debug.h>
 
-DUECA_NS_START
+namespace dueca {
 
 ScriptHelper::ScriptHelper(const char* phase2, const char* phase3,
                            const char* quitline, const char* stopsign) :
@@ -40,5 +40,5 @@ void ScriptHelper::runCode(const char* code)
   throw (scriptexception());
 }
 
-DUECA_NS_END
+} // namespace dueca
 

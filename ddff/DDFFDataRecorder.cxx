@@ -27,7 +27,7 @@
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
 
-DDFF_NS_START
+namespace dueca { namespace ddff {
 
 DDFFDataRecorder::recordermap_t &DDFFDataRecorder::allRecorders()
 {
@@ -361,4 +361,4 @@ void DDFFDataRecorder::startReplay(TimeTickType tick)
       << tick << " bloff=" << block_offset);
 }
 
-DDFF_NS_END
+} } // namespace ddff namespace dueca

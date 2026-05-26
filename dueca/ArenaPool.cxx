@@ -18,7 +18,7 @@
 #include <dassert.h>
 using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 ArenaPool& ArenaPool::single()
 {
@@ -99,4 +99,4 @@ Arena* ArenaPool::findArena(size_t size) const
   // return a pointer to the proper arena
   return ii->second;
 }
-DUECA_NS_END
+} // namespace dueca

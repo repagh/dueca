@@ -12,7 +12,7 @@
 #if defined(SCRIPT_PYTHON)
 #include "ReferenceHolderPython.hxx"
 
-DUECA_NS_START
+namespace dueca {
 
 ReferenceHolderPython::ReferenceHolderPython() :
   _refs()
@@ -28,5 +28,5 @@ bpy::list &ReferenceHolderPython::refs()
 
 ReferenceHolderPython::~ReferenceHolderPython() {}
 
-DUECA_NS_END
+} // namespace dueca
 #endif

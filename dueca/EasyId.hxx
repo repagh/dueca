@@ -19,7 +19,7 @@
 #include <NamedObject.hxx>
 #include <NameSet.hxx>
 
-DUECA_NS_START
+namespace dueca {
 
 /** Internally in DUECA, some objects need an id, but cannot derive
     from NamedObject, because they could be initialized automatically
@@ -47,6 +47,6 @@ public:
   EasyId(const char* entity, const char* name, int part);
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

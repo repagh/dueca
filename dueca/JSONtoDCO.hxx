@@ -26,7 +26,7 @@
 
     Conversion routines for JSON to DCO */
 
-DUECA_NS_START;
+namespace dueca {
 class CommObjectWriter;
 
 /** Shorthand for the used JSON type */
@@ -60,5 +60,5 @@ void json_to_dco(RD &reader, DCO& object)
 }
 
 
-DUECA_NS_END;
+} // namespace dueca
 #endif

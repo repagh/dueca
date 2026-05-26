@@ -18,11 +18,11 @@
 #include "ReplicatorNamespace.hxx"
 #include <list>
 
-DUECA_NS_START;
+namespace dueca {
 struct DataTimeSpec;
-DUECA_NS_END;
+} // namespace dueca
 
-STARTNSREPLICATOR;
+namespace dueca {
 
 /** Maintain per-peer timing differences */
 class PeerTiming
@@ -69,6 +69,6 @@ public:
   bool translate(DataTimeSpec& ts) const;
 };
 
-ENDNSREPLICATOR;
+} // namespace dueca
 
 #endif

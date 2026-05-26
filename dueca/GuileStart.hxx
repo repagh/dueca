@@ -15,7 +15,7 @@
 #define GuileStart_hh
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 /** Templated function, needs to be instantiated */
 template<class T>
@@ -39,7 +39,7 @@ public:
   static void schemeInit();
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif
 
 
@@ -58,7 +58,7 @@ DUECA_NS_END
 #include <SchemeClassData.hxx>
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 template<class T>
 static void ifunct(void)
 {
@@ -86,7 +86,7 @@ void GuileStart<T>::schemeInit()
 {
   T::schemeInit();
 }
-DUECA_NS_END
+} // namespace dueca
 #endif
 #endif
 #endif

@@ -25,7 +25,7 @@
 #include "TimedServicer.hxx"
 #include <Callback.hxx>
 
-DUECA_NS_START
+namespace dueca {
 
 /** Placeholder function */
 void InformationStash_do_nothing();
@@ -161,6 +161,6 @@ public:
   }
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

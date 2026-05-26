@@ -20,7 +20,7 @@
 #include <CommObjectExceptions.hxx>
 #include <DataReader.hxx>
 
-DUECA_NS_START;
+namespace dueca {
 
 /* advance declaration*/
 class ElementReader;
@@ -196,5 +196,5 @@ private:
   void access();
 };
 
-DUECA_NS_END;
+} // namespace dueca
 #endif

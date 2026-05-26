@@ -44,7 +44,7 @@
 #include <dueca.h>
 using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 // class/module name
 const char* const ChannelOverview::classname = "channel-overview";
@@ -676,4 +676,4 @@ const std::string& ChannelOverview::getChannelName(unsigned channelno) const
 // creation of modules of this type
 //static TypeCreator<ChannelOverview> a(ChannelOverview::getMyParameterTable());
 
-DUECA_NS_END
+} // namespace dueca

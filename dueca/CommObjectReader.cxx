@@ -17,7 +17,7 @@
 #include <CommObjectMemberAccess.hxx>
 #include <DataClassRegistry.hxx>
 
-DUECA_NS_START;
+namespace dueca {
 
 CommObjectReader::CommObjectReader(const char* classname, const void* obj) :
   CommObjectReaderWriter(classname),
@@ -97,4 +97,4 @@ void DCOReader::access()
   if (!obj) throw(NoDataAvailable(token.getChannelId(), token.getClientId()));
 }
 
-DUECA_NS_END;
+} // namespace dueca

@@ -23,7 +23,7 @@
 #include "DuecaEnv.hxx"
 using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 bool GuiHandler::glut_initialised = false;
 bool GuiHandler::hooks_done = false;
@@ -97,4 +97,4 @@ void GuiHandler::runHooks()
   hooks_done = true;
 }
 
-DUECA_NS_END
+} // namespace dueca

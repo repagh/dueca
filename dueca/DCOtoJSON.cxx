@@ -33,7 +33,7 @@
 
 namespace json = rapidjson;
 
-DUECA_NS_START;
+namespace dueca {
 
 template<typename WRITER, class T>
 void writeAny(WRITER& writer, const boost::any& val);
@@ -466,4 +466,4 @@ void DCOtoJSONstrict(rapidjson::Writer<rapidjson::OStreamWrapper> &writer,
   DCOtoJSON<json::Writer<json::OStreamWrapper>, writefloatstrict<json::Writer<rapidjson::OStreamWrapper>,float>, writefloatstrict<json::Writer<json::OStreamWrapper>,double> >(writer, reader);
 }
 
-DUECA_NS_END;
+} // namespace dueca

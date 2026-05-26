@@ -25,7 +25,7 @@
 
 #include <GL/glut.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 inline void redraw_done(DuecaGLCanvas* gw)
 {
@@ -292,5 +292,5 @@ GLWindowHelper* FltkOpenGLHelper::newWindow()
   return new FltkGLWindowHelper();
 }
 
-DUECA_NS_END;
+} // namespace dueca
 

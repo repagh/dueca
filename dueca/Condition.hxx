@@ -18,7 +18,7 @@
 #include <stringoptions.h>
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 class ConditionData;
 
 /** Wait and resume object */
@@ -58,7 +58,7 @@ public:
   void signal();
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif
 
 

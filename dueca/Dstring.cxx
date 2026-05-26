@@ -14,7 +14,7 @@
 #include "Dstring.ixx"
 #include <dassert.h>
 
-DUECA_NS_START
+namespace dueca {
 
 template class Dstring<5>;
 template class Dstring<8>;
@@ -42,50 +42,50 @@ struct CheckDStringSize
 };
 static CheckDStringSize check;
 
-DUECA_NS_END
+} // namespace dueca
 
-PRINT_NS_START
+namespace std {
 // instantiate templated print
 template std::ostream &operator<<(std::ostream &os,
-                                  const DUECA_NS ::Dstring<5> &o);
+                                  const dueca ::Dstring<5> &o);
 template std::ostream &operator<<(std::ostream &os,
-                                  const DUECA_NS ::Dstring<8> &o);
+                                  const dueca ::Dstring<8> &o);
 template std::ostream &operator<<(std::ostream &os,
-                                  const DUECA_NS ::Dstring<16> &o);
+                                  const dueca ::Dstring<16> &o);
 template std::ostream &operator<<(std::ostream &os,
-                                  const DUECA_NS ::Dstring<32> &o);
+                                  const dueca ::Dstring<32> &o);
 template std::ostream &operator<<(std::ostream &os,
-                                  const DUECA_NS ::Dstring<40> &o);
+                                  const dueca ::Dstring<40> &o);
 template std::ostream &operator<<(std::ostream &os,
-                                  const DUECA_NS ::Dstring<64> &o);
+                                  const dueca ::Dstring<64> &o);
 template std::ostream &operator<<(std::ostream &os,
-                                  const DUECA_NS ::Dstring<128> &o);
-PRINT_NS_END
+                                  const dueca ::Dstring<128> &o);
+} // namespace std
 
 // instantiate templated pack and unpack
-//template void packData(DUECA_NS ::AmorphStore &s,
-//                       const DUECA_NS ::Dstring<5> &o);
-//template void unPackData(DUECA_NS ::AmorphReStore &s, DUECA_NS ::Dstring<5> &o);
-template void packData(DUECA_NS ::AmorphStore &s,
-                       const DUECA_NS ::Dstring<8> &o);
-template void unPackData(DUECA_NS ::AmorphReStore &s, DUECA_NS ::Dstring<8> &o);
-template void packData(DUECA_NS ::AmorphStore &s,
-                       const DUECA_NS ::Dstring<16> &o);
-template void unPackData(DUECA_NS ::AmorphReStore &s,
-                         DUECA_NS ::Dstring<16> &o);
-template void packData(DUECA_NS ::AmorphStore &s,
-                       const DUECA_NS ::Dstring<32> &o);
-template void unPackData(DUECA_NS ::AmorphReStore &s,
-                         DUECA_NS ::Dstring<32> &o);
-template void packData(DUECA_NS ::AmorphStore &s,
-                       const DUECA_NS ::Dstring<40> &o);
-template void unPackData(DUECA_NS ::AmorphReStore &s,
-                         DUECA_NS ::Dstring<40> &o);
-template void packData(DUECA_NS ::AmorphStore &s,
-                       const DUECA_NS ::Dstring<64> &o);
-template void unPackData(DUECA_NS ::AmorphReStore &s,
-                         DUECA_NS ::Dstring<64> &o);
-template void packData(DUECA_NS ::AmorphStore &s,
-                       const DUECA_NS ::Dstring<128> &o);
-template void unPackData(DUECA_NS ::AmorphReStore &s,
-                         DUECA_NS ::Dstring<128> &o);
+//template void packData(dueca ::AmorphStore &s,
+//                       const dueca ::Dstring<5> &o);
+//template void unPackData(dueca ::AmorphReStore &s, dueca ::Dstring<5> &o);
+template void packData(dueca ::AmorphStore &s,
+                       const dueca ::Dstring<8> &o);
+template void unPackData(dueca ::AmorphReStore &s, dueca ::Dstring<8> &o);
+template void packData(dueca ::AmorphStore &s,
+                       const dueca ::Dstring<16> &o);
+template void unPackData(dueca ::AmorphReStore &s,
+                         dueca ::Dstring<16> &o);
+template void packData(dueca ::AmorphStore &s,
+                       const dueca ::Dstring<32> &o);
+template void unPackData(dueca ::AmorphReStore &s,
+                         dueca ::Dstring<32> &o);
+template void packData(dueca ::AmorphStore &s,
+                       const dueca ::Dstring<40> &o);
+template void unPackData(dueca ::AmorphReStore &s,
+                         dueca ::Dstring<40> &o);
+template void packData(dueca ::AmorphStore &s,
+                       const dueca ::Dstring<64> &o);
+template void unPackData(dueca ::AmorphReStore &s,
+                         dueca ::Dstring<64> &o);
+template void packData(dueca ::AmorphStore &s,
+                       const dueca ::Dstring<128> &o);
+template void unPackData(dueca ::AmorphReStore &s,
+                         dueca ::Dstring<128> &o);

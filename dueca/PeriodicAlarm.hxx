@@ -23,7 +23,7 @@
 #include <TimeSpec.hxx>
 #include <AsyncList.hxx>
 
-DUECA_NS_START
+namespace dueca {
 
 /** This is a triggering device that can provide your activity with
     user-controlled, periodic triggering. Create a periodic
@@ -86,6 +86,6 @@ public:
   const std::string& getTargetName() const;
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

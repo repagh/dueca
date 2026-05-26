@@ -14,7 +14,7 @@
 #define NetCommunicatorExceptions_cxx
 #include "NetCommunicatorExceptions.hxx"
 
-DUECA_NS_START;
+namespace dueca {
 
 const char* configconnectionbroken::what() const throw()
 {
@@ -52,5 +52,5 @@ packetcommunicationfailure::packetcommunicationfailure(const char* reason):
 
 
 
-DUECA_NS_END;
+} // namespace dueca
 

@@ -18,7 +18,7 @@
 #include <cstddef>
 #include "dueca_ns.h"
 
-DUECA_NS_START;
+namespace dueca {
 
 class AmorphReStore;
 
@@ -95,6 +95,6 @@ public:
   AmorphReStore getStore();
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

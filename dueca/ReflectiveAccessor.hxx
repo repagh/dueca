@@ -27,7 +27,7 @@
 #include <stringoptions.h>
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 class ReflectivePacker;
 class ReflectiveFillPacker;
 class ReflectiveUnpacker;
@@ -257,5 +257,5 @@ public:
 
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

@@ -18,7 +18,7 @@
 #include <cstring>
 using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 Exception::
 Exception(const GlobalId& thrower, const GlobalId& client,
@@ -92,4 +92,4 @@ template class MsgException<128>;
 // this has the template definition
 #include "Exception.ixx"
 #include "all_exceptions.h"
-DUECA_NS_END
+} // namespace dueca

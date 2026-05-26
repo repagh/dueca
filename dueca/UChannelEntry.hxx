@@ -23,7 +23,7 @@
 #include "UChannelEntryData.hxx"
 #include "vectorMT.hxx"
 
-DUECA_NS_START
+namespace dueca {
 
 class DataSetConverter;
 class ChannelWriteToken;
@@ -640,6 +640,6 @@ struct entryinvalid: public std::exception
 
 
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

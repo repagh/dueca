@@ -19,7 +19,7 @@
 
 // include the dusime header
 #include <dueca.h>
-USING_DUECA_NS;
+
 
 // This includes headers for the objects that are sent over the channels
 #include "ReplicatorPeerInfo.hxx"
@@ -41,7 +41,7 @@ USING_DUECA_NS;
 #include <udpcom/NetCommunicator.hxx>
 #include "PeerTiming.hxx"
 
-STARTNSREPLICATOR;
+namespace dueca {
 
 // advance definition
 class PeerTiming;
@@ -216,7 +216,7 @@ protected:
 
 
 
-ENDNSREPLICATOR;
+} // namespace dueca
 
 #endif
 

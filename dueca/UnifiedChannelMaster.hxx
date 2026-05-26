@@ -22,7 +22,7 @@
 #include <UChannelCommRequest.hxx>
 #include <GlobalId.hxx>
 
-DUECA_NS_START;
+namespace dueca {
 
 /** Object that performs the management of a UnifiedChannel.
 
@@ -157,6 +157,6 @@ public:
 
 
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

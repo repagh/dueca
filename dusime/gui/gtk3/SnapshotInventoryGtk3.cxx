@@ -41,7 +41,7 @@
 #define NO_TYPE_CREATION
 #include <dueca/dueca.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 // class/module name
 const char *const SnapshotInventoryGtk3::classname = "initials-inventory";
@@ -627,4 +627,4 @@ bool SnapshotInventoryGtk3::setPositionAndSize(const std::vector<int> &p)
   return true;
 }
 
-DUECA_NS_END;
+} // namespace dueca

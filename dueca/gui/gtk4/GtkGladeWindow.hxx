@@ -36,7 +36,7 @@ class Widget;
 /** \file gtk4/GtkGladeWindow.hxx
     Gtk GUI facilities. */
 
-DUECA_NS_START
+namespace dueca {
 
 class CommObjectReader;
 class CommObjectWriter;
@@ -683,11 +683,11 @@ T *GtkGladeWindow::getWidgetDerived(const std::string &name, T *&w)
     }
   }
 }
-DUECA_NS_END;
+} // namespace dueca
 
 #include <dueca/debug.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 template <typename T>
 bool GtkGladeWindow::loadDropDownText(const char *name, const T &values)
@@ -800,6 +800,6 @@ unsigned GtkGladeWindow::setValues(DCO &dco, const char *format,
   return GtkGladeWindow::setValues(cor, format, arrformat, warn);
 }
 
-DUECA_NS_END
+} // namespace dueca
 #include <dueca/undebug.h>
 #endif

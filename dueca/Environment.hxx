@@ -27,7 +27,7 @@
 #include <boost/scoped_ptr.hpp>
 
 #include <dueca_ns.h>
-DUECA_NS_START;
+namespace dueca {
 
 // class names
 class ChannelManager;
@@ -392,5 +392,5 @@ public:
   inline int getExitCode() { return exitcode; }
 };
 
-DUECA_NS_END;
+} // namespace dueca
 #endif

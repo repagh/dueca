@@ -26,7 +26,7 @@
 #include <debprint.h>
 using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 
 map<vstring, TrimId::Index> TrimId::name_map;
@@ -234,4 +234,4 @@ const char* TrimId::getRoleString(IncoMode mode)
   return NULL;
 #endif
 }
-DUECA_NS_END
+} // namespace dueca

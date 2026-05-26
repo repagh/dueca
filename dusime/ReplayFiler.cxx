@@ -37,7 +37,7 @@
 #include <dueca/VarProbe.hxx>
 #include <dueca/debug.h>
 
-DUECA_NS_START
+namespace dueca {
 
 template <> const char *getclassname<ReplayFiler>() { return "ReplayFiler"; }
 
@@ -223,4 +223,4 @@ void ReplayFiler::runCommand(const TimeSpec &ts)
 #endif
 }
 
-DUECA_NS_END
+} // namespace dueca

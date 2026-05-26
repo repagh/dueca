@@ -21,7 +21,7 @@
 #include <Activity.hxx>
 #include <boost/scoped_ptr.hpp>
 
-DUECA_NS_START
+namespace dueca {
 
 class ChannelReadToken;
 
@@ -69,6 +69,6 @@ public:
   const GlobalId& getId() const;
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

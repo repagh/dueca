@@ -14,11 +14,11 @@
 #define StartIOStream_cxx
 #include "StartIOStream.hxx"
 #include <iostream>
-DUECA_NS_START;
+namespace dueca {
 
 void startIOStream()
 {
   // see  https://gcc.gnu.org/bugzilla/show_bug.cgi?id=26123
   static std::ios_base::Init initIostreams;
 }
-DUECA_NS_END;
+} // namespace dueca

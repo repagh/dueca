@@ -18,7 +18,7 @@
 #include <dueca_ns.h>
 #include <ChannelDef.hxx>
 
-DUECA_NS_START
+namespace dueca {
 
 /** \file TransportClass.hxx
     This file defines the TransportClass enumerated type. */
@@ -29,5 +29,5 @@ static const Channel::TransportClass Bulk = Channel::Bulk;
 static const Channel::TransportClass Regular = Channel::Regular;
 static const Channel::TransportClass HighPriority = Channel::HighPriority;
 
-DUECA_NS_END
+} // namespace dueca
 #endif

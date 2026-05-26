@@ -26,9 +26,9 @@
 #include <string>
 #include <map>
 
-STARTHDF5LOG;
+namespace dueca { namespace hdf5log {
 
-USING_DUECA_NS;
+
 
 /** For reading DCO objects elements from a HDF file. Elements can
     contain either scalars, fixed-length vectors or variable length
@@ -252,6 +252,6 @@ public:
   virtual ~HDF5DCOReadFunctor();
 };
 
-ENDHDF5LOG;
+} } // namespace dueca namespace hdf5log
 
 #endif

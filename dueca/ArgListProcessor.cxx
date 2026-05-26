@@ -39,7 +39,7 @@
 #include <debprint.h>
 using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 class ScriptDataError
 {
@@ -74,12 +74,12 @@ ostream &ScriptDataError::print (ostream& o) const
   return o << msg;
 }
 
-DUECA_NS_END
-PRINT_NS_START
-inline ostream& operator << (ostream& o, const DUECA_NS::ScriptDataError &e)
+} // namespace dueca
+namespace std {
+inline ostream& operator << (ostream& o, const dueca::ScriptDataError &e)
 { return e.print(o); }
-PRINT_NS_END
-DUECA_NS_START
+} // namespace std
+namespace dueca {
 
 
 // ------------------------------------------------------------------
@@ -375,9 +375,9 @@ const T& findSmob(SCM& current)
 
 #if defined(SCRIPT_PYTHON)
 
-DUECA_NS_END
+} // namespace dueca
 namespace bpy = boost::python;
-DUECA_NS_START
+namespace dueca {
 
 template<typename T>
 static vector<T> findValues(const bpy::object& current)
@@ -924,16 +924,16 @@ void ArgListProcessor::printArgumentList(ostream& os) const
 #endif
 }
 
-DUECA_NS_END
-PRINT_NS_START
-ostream& operator << (ostream& os, const DUECA_NS::ArgListProcessor& p)
+} // namespace dueca
+namespace std {
+ostream& operator << (ostream& os, const dueca::ArgListProcessor& p)
 {
   os << '(' << p.getName() << endl;
   p.printArgumentList(os);
   return os;
 }
-PRINT_NS_END
-DUECA_NS_START
+} // namespace std
+namespace dueca {
 
 #if defined(SCRIPT_SCHEME)
 bool ArgListProcessor::processStraight
@@ -1226,4 +1226,4 @@ bool ArgListProcessor::processValue(void* module, int idx,
 
 #endif
 
-DUECA_NS_END
+} // namespace dueca

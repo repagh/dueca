@@ -23,7 +23,7 @@
 #include <debug.h>
 #include <cstring>
 
-DUECA_NS_START
+namespace dueca {
 
 UniqueFile::UniqueFile() :
   std::ofstream(),
@@ -93,4 +93,4 @@ UniqueFileError::~UniqueFileError() throw()
   //
 }
 
-DUECA_NS_END
+} // namespace dueca

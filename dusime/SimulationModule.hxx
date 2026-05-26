@@ -30,7 +30,7 @@
 #include "Activity.hxx"
 #include <AsyncList.hxx>
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 class TimeSpec;
 struct IncoVariable;
@@ -129,6 +129,6 @@ protected:
                  Advance or Replay. */
   SimulationState::Type getCurrentState();
 };
-DUECA_NS_END
+} // namespace dueca
 #endif
 

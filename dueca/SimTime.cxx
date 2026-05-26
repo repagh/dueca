@@ -16,7 +16,7 @@
 #include "SimTime.hxx"
 using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 TimeTickType SimTime::base_tick = 1;
 
@@ -47,4 +47,4 @@ ostream & SimTime::print (ostream& s) const
   return s << "SimTime(tick=" << tick << ")";
 }
 
-DUECA_NS_END
+} // namespace dueca

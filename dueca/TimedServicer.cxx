@@ -17,7 +17,7 @@
 #include "Callback.ixx"
 #include <math.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 static void do_nothing() { }
 
@@ -110,4 +110,4 @@ void TimedServicer::_releaseService(unsigned svcid)
   }
 }
 
-DUECA_NS_END;
+} // namespace dueca

@@ -24,7 +24,7 @@
 #include "SimpleFunction.hxx"
 #include <iostream>
 
-DUECA_NS_START
+namespace dueca {
 
 /** Implementation of a scaling/converting device, that produces a
     discrete number of different output values depending on a
@@ -75,9 +75,9 @@ public:
   /** Print the object */
   std::ostream& print (std::ostream& os) const;
 };
-DUECA_NS_END
+} // namespace dueca
 
-inline std::ostream& operator << (std::ostream& os, const DUECA_NS::StepsN& o)
+inline std::ostream& operator << (std::ostream& os, const dueca::StepsN& o)
 { return o.print(os); }
 
 #endif

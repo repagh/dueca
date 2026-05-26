@@ -44,7 +44,7 @@
 #include <dueca/Callback.hxx>
 using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 InitFunction::InitFunction(const char* name, const char* parent, voidfunc func) :
   name(name), parent(parent), func(func)
@@ -426,4 +426,4 @@ SetScriptInitFunction::SetScriptInitFunction(voidfunc ifunct)
   ScriptInterpret::singleton->scriptinit = ifunct;
 }
 
-DUECA_NS_END
+} // namespace dueca

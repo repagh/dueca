@@ -18,7 +18,7 @@
 #include <iostream>
 #include <string>
 
-DUECA_NS_START;
+namespace dueca {
 
 class GladeException : public std::exception
 {
@@ -43,6 +43,6 @@ public:
   std::ostream& print(std::ostream& os) const;
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

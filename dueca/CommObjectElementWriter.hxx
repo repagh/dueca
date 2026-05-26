@@ -18,7 +18,7 @@
 #include "CommObjectElementWriterBase.hxx"
 
 
-DUECA_NS_START;
+namespace dueca {
 
 
 /** ElementWriter. An object to write members of DCO objects
@@ -181,5 +181,5 @@ public:
   }
 };
 
-DUECA_NS_END;
+} // namespace dueca
 #endif

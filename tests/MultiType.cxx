@@ -16,7 +16,7 @@ public:
   {}
 };
 
-DUECA_NS_START;
+namespace dueca {
 
 // companion class to contain print and size functions
 
@@ -347,8 +347,8 @@ struct DataTable {
   const char* name;
   AccessBase* ab;
 };
-DUECA_NS_END;
-USING_DUECA_NS;
+} // namespace dueca
+using namespace dueca;
 DataTable Some_table[] = {
   { "i", new AnyAccess<Some,int,double>(&Some::i) },
   { "v", new AnyAccess<Some,stdvector<

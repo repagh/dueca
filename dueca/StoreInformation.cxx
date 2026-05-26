@@ -16,7 +16,7 @@
 #include "StoreInformation.hxx"
 using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 ReflectiveStoreInformation::
 ReflectiveStoreInformation(ReflectiveAccessor* accessor,
@@ -54,4 +54,4 @@ ostream& operator << (ostream& os, const
             << o.no_parties << ", node_id=" << o.node_id << ")";
 }
 
-DUECA_NS_END
+} // namespace dueca

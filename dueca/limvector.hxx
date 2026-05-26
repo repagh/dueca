@@ -23,7 +23,7 @@
 #include <inttypes.h>
 #include <sstream>
 
-DUECA_NS_START;
+namespace dueca {
 
 /** Variable-sized vector of limited size; allocates all its memory in one go,
     requires a size of sizeof(size_t) +  sizeof(pointer) + N * sizeof(data)
@@ -291,12 +291,12 @@ struct dco_traits<limvector<N, D>> :
 template <size_t N, typename D>
 struct dco_nested<limvector<N, D>> : public dco_nested<D> {};
 
-DUECA_NS_END;
+} // namespace dueca
 
 #define limvector_hxx
 #include <msgpack.hxx>
 
-MSGPACKUS_NS_START;
+namespace msgunpack {
 template <typename S, size_t N, typename T>
 void msg_unpack(S &i0, const S &iend, dueca::limvector<N, T> &i);
-MSGPACKUS_NS_END;
+} // namespace msgunpack

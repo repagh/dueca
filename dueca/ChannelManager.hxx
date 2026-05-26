@@ -35,7 +35,7 @@
 #include <fstream>
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 struct ChannelDistribution;
 struct ParameterTable;
@@ -262,11 +262,11 @@ private:
 };
 
 
-DUECA_NS_END
+} // namespace dueca
 
-PRINT_NS_START
-//inline ostream& operator << (ostream& o, const DUECA_NS::ChannelManager& m)
+namespace std {
+//inline ostream& operator << (ostream& o, const dueca::ChannelManager& m)
 //{ return m.print(o); }
-PRINT_NS_END
+} // namespace std
 
 #endif

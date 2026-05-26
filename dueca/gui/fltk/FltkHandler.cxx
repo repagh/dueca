@@ -41,7 +41,7 @@
 #include <FL/Fl.H>
 #endif
 
-DUECA_NS_START
+namespace dueca {
 
 FltkHandler::FltkHandler(const std::string& name) :
   GuiHandler(name)
@@ -90,6 +90,6 @@ void FltkHandler::returnControl()
   in_gui = false;
 }
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

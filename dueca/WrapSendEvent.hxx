@@ -23,7 +23,7 @@
     functions for the older .sendEvent options of event write tokens */
 
 
-DUECA_NS_START;
+namespace dueca {
 
 /** @private Internal function for the wrapSendEvent */
 inline void _wrapSendEvent(ChannelWriteToken &t, const void* edata,
@@ -93,7 +93,7 @@ inline void wrapSendData(ChannelWriteToken &t, const void* edata,
 
 
 
-DUECA_NS_END;
+} // namespace dueca
 
 
 #endif

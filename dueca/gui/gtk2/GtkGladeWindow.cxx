@@ -30,7 +30,7 @@ extern "C" {
 #define W_CNF
 #include "debug.h"
 
-DUECA_NS_START
+namespace dueca {
 
 bool GtkGladeWindow::initialised_glade = false;
 bool GtkGladeWindow::initialised_gtkmm = false;
@@ -281,5 +281,5 @@ void GtkGladeWindow::hide()
   gtk_widget_hide(window);
 }
 
-DUECA_NS_END
+} // namespace dueca
 

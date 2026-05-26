@@ -17,7 +17,7 @@
 #include <dueca/dueca_ns.h>
 #include <dusime/IncoVariable.hxx>
 
-DUECA_NS_START;
+namespace dueca {
 
 class IncoVariableWork: public IncoVariable
 {
@@ -56,6 +56,6 @@ public:
   IncoVariableWork& operator = (const IncoVariable& );
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

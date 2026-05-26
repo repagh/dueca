@@ -20,7 +20,7 @@
 #include <vector>
 #include <Interval.hxx>
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 /** Class that implements a sort of pseudo interval technology,
     finding an optimum/zero for a function. */
@@ -76,5 +76,5 @@ public:
   /** Get the current results. */
   void getResult(Vector& y);
 };
-DUECA_NS_END
+} // namespace dueca
 #endif

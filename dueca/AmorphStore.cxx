@@ -34,7 +34,7 @@ inline uint64_t htonll(uint64_t n) {
 }
 #define ntohll(x) htonll(x)
 #endif
-DUECA_NS_START
+namespace dueca {
 
 AmorphStore::AmorphStore() :
   stor(NULL), capacity(0), index(0), self_claimed(0), choked(true)
@@ -713,8 +713,8 @@ void AmorphReStore::unPackData(timeval& tv)
   }
 }*/
 
-DUECA_NS_END
-USING_DUECA_NS
+} // namespace dueca
+using namespace dueca;
 
 void packData(AmorphStore& s, const timeval& tv)
 {
@@ -727,7 +727,7 @@ void unPackData(AmorphReStore& s, timeval& tv)
   s.unPackData(tv);
 }
 
-DUECA_NS_START
+namespace dueca {
 
 ostream& AmorphReStore::print(ostream& o) const
 {
@@ -753,7 +753,7 @@ ostream& AmorphReStore::print(ostream& o) const
   return o << ')' << endl;
 }
 
-DUECA_NS_END
+} // namespace dueca
 
 ostream& operator << (ostream& o, const timeval& tv)
 {

@@ -44,9 +44,9 @@
 #include <memory>
 #include <boost/scoped_ptr.hpp>
 
-DDFF_NS_START;
+namespace dueca { namespace ddff {
 
-USING_DUECA_NS;
+
 
 /** Generic DDFF file format logging.
 
@@ -292,5 +292,5 @@ private: // the member functions that are called for activities
   void setLoggingActive(bool act);
 };
 
-DDFF_NS_END;
+} } // namespace ddff namespace dueca
 #endif

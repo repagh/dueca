@@ -29,7 +29,7 @@
 #include "MemberCall.hxx"
 #include "MemberCall2Way.hxx"
 
-DUECA_NS_START
+namespace dueca {
 // -----------------------------------------------------------------
 
 PackerManager* PackerManager::singleton = NULL;
@@ -180,4 +180,4 @@ findMatchingTransport(int destination, Channel::TransportClass tclass)
   return (singleton->packer_set[destination])->getPacker(tclass);
 }
 
-DUECA_NS_END
+} // namespace dueca

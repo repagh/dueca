@@ -37,7 +37,7 @@ using namespace std;
 
 // only useful if interfaces present
 
-DUECA_NS_START
+namespace dueca {
 
 const char* const TimingView::classname = "timing-view";
 
@@ -222,4 +222,4 @@ void TimingView::readSync(const TimeSpec& ts)
   updateSync(node, r.data());
 }
 
-DUECA_NS_END
+} // namespace dueca

@@ -38,7 +38,7 @@
 #include "debug.h"
 using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 const int FillPacker::no_of_stores = 2;
 
@@ -259,4 +259,4 @@ int FillPacker::stuffMessage(char* buff, int size,
 #endif
 }
 
-DUECA_NS_END
+} // namespace dueca

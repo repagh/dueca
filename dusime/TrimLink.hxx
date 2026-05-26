@@ -20,7 +20,7 @@
 #include <iostream>
 #include <cmath>
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 /** This forms a link between a trim calculation variable, and the
     visual display -- and possibly manipulation -- of this variable. */
@@ -76,6 +76,6 @@ public:
   { }
 
 };
-DUECA_NS_END
+} // namespace dueca
 
 #endif

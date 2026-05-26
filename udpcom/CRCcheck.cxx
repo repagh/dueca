@@ -16,7 +16,7 @@
 
 #include <boost/crc.hpp>
 
-DUECA_NS_START;
+namespace dueca {
 
 uint16_t crc16_ccitt(const char* pbyte, size_t len)
 {
@@ -26,5 +26,5 @@ uint16_t crc16_ccitt(const char* pbyte, size_t len)
   // CRC-16-CCITT
 }
 
-DUECA_NS_END;
+} // namespace dueca
 

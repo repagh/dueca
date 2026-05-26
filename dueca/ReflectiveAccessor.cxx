@@ -42,7 +42,7 @@
 #include <debprint.h>
 using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 int ReflectiveAccessor::sequence = 0;
 
@@ -740,4 +740,4 @@ ostream& operator << (ostream& os,
 }
 
 
-DUECA_NS_END
+} // namespace dueca

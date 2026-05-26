@@ -38,7 +38,7 @@
 #include <debprint.h>
 using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 int ReflectiveFillUnpacker::unique = 0;
 
@@ -289,4 +289,4 @@ ostream& operator << (ostream& os, const ReflectiveFillUnpacker& o)
 }
 
 
-DUECA_NS_END
+} // namespace dueca

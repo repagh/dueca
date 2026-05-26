@@ -17,7 +17,7 @@
 #include "TimeSpec.hxx"
 #include "dueca_ns.h"
 
-DUECA_NS_START;
+namespace dueca {
 
 class TriggerTarget;
 
@@ -43,6 +43,6 @@ public:
   void propagate() const;
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

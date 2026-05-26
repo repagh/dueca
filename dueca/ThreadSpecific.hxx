@@ -18,7 +18,7 @@
 #endif
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 class ThreadSpecificData;
 
@@ -51,5 +51,5 @@ public:
   void setPtr(const void* newpt);
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

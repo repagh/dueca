@@ -19,7 +19,7 @@
 
 // include the dusime header
 #include <dueca.h>
-USING_DUECA_NS;
+
 
 // This includes headers for the objects that are sent over the channels
 #include "comm-objects.h"

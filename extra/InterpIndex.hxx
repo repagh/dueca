@@ -16,7 +16,7 @@
 
 #include <dueca_ns.h>
 
-DUECA_NS_START
+namespace dueca {
 
 /** This implements a single index (axis) for an interpolation into a
     table. */
@@ -65,4 +65,4 @@ public:
     return (frac >= 0.0 && frac <= 1.0);
   }
 };
-DUECA_NS_END
+} // namespace dueca

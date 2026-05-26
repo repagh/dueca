@@ -21,7 +21,7 @@
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
 
-STARTHDF5LOG;
+namespace dueca { namespace hdf5log {
 
 EntryWatcher::EntryWatcher(const std::string& channelname,
                            const std::string& path,
@@ -220,4 +220,4 @@ void EntryWatcher::EntryData::createFunctor(std::weak_ptr<H5::H5File> nfile,
 }
 
 
-ENDHDF5LOG;
+} } // namespace dueca namespace hdf5log

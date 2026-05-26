@@ -18,7 +18,7 @@
 #include <debug.h>
 #include <algorithm>
 
-STARTHDF5LOG;
+namespace dueca { namespace hdf5log {
 
 HDF5DCOWriteFunctor::
 HDF5DCOWriteFunctor(std::weak_ptr<H5::H5File>& file,
@@ -346,4 +346,4 @@ writeNew(const void* data, hsize_t chunkidx,
     }
 #endif
 
-ENDHDF5LOG;
+} } // namespace dueca namespace hdf5log

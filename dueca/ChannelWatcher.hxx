@@ -23,7 +23,7 @@
 #include <iostream>
 #include <ChannelEntryInfo.hxx>
 
-DUECA_NS_START;
+namespace dueca {
 class UnifiedChannel;
 class UChannelEntry;
 struct ChannelWatcherPrivate;
@@ -118,6 +118,6 @@ protected:
 
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

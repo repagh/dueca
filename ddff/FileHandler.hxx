@@ -26,7 +26,7 @@
 #include <list>
 #include <vector>
 
-DDFF_NS_START
+namespace dueca { namespace ddff {
 
 class FileStreamWrite;
 class FileStreamRead;
@@ -384,6 +384,6 @@ private:
    data) at the previous fill level, so reading can continue there.
 */
 
-DDFF_NS_END
+} } // namespace ddff namespace dueca
 
 #endif

@@ -19,13 +19,13 @@
 
 // include the dusime header
 #include <dueca.h>
-USING_DUECA_NS;
+
 
 // include headers for functions/classes you need in the module
 #include "ChannelReplicator.hxx"
 #include <udpcom/NetCommunicatorMaster.hxx>
 
-STARTNSREPLICATOR;
+namespace dueca {
 
 /** A simple module for watching and replicating channel data.
 
@@ -260,6 +260,6 @@ private:
   }
 };
 
-ENDNSREPLICATOR;
+} // namespace dueca
 
 #endif

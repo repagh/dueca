@@ -22,7 +22,7 @@
 #include <MemberCall2Way.hxx>
 #include <dueca_ns.h>
 
-USING_DUECA_NS;
+
 
 /** \brief ScriptCreatable templated holder class
 

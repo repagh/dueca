@@ -29,7 +29,7 @@
 
 using namespace std;
 // #define COMPLETE_NOW
-DUECA_NS_START
+namespace dueca {
 
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
@@ -247,4 +247,4 @@ void ModuleCreator::injectAndCheckComplete()
   }
 }
 
-DUECA_NS_END
+} // namespace dueca

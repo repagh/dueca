@@ -82,7 +82,7 @@ using namespace std;
 #define PRIORITY_BASE 10
 #endif
 
-DUECA_NS_START
+namespace dueca {
 
 #ifdef USE_POSIX_THREADS
 /** A condition variable for the thread coordination. */
@@ -1301,4 +1301,4 @@ void Environment::setExitCode(int ecode)
   exitcode = ecode;
 }
 
-DUECA_NS_END
+} // namespace dueca

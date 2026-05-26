@@ -23,7 +23,7 @@
 #include <vector>
 #include <chrono>
 
-DUECA_NS_START;
+namespace dueca {
 
 class ReplayReport;
 
@@ -388,6 +388,6 @@ public:
 
 template<> const char* getclassname<ReplayMaster>();
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

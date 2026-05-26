@@ -20,7 +20,7 @@
 
 #include <dueca_ns.h>
 #include <iostream>
-DUECA_NS_START
+namespace dueca {
 
 
 /** Implementation of a scaling/converting device, using a polynomial
@@ -50,18 +50,18 @@ public:
   std::ostream& print (std::ostream& os) const;
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 template<int n>
 inline std::ostream& operator << (std::ostream& os,
-                                  const DUECA_NS::Polynomial<n>& o)
+                                  const dueca::Polynomial<n>& o)
 { return o.print(os); }
 
 #endif
 
 #if defined(Polynomial_cxx) || defined(DO_INSTANTIATE)
 
-DUECA_NS_START
+namespace dueca {
 
 template<int n>
 Polynomial<n>::Polynomial(const double ai[n+1])
@@ -95,6 +95,6 @@ std::ostream& Polynomial<n>::print(std::ostream& os) const
   return os << ")";
 }
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

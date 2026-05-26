@@ -19,7 +19,7 @@
 #include <map>
 #include <list>
 
-DUECA_NS_START
+namespace dueca {
 
 /** c-level call to initialize stuff with gui init. */
 typedef void (* initf) (const std::string &);
@@ -79,5 +79,5 @@ public:
   }
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

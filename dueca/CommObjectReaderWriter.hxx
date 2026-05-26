@@ -20,7 +20,7 @@
 #include <CommObjectExceptions.hxx>
 #include <CommObjectMemberArity.hxx>
 
-DUECA_NS_START;
+namespace dueca {
 
 /** Base class with common elements for both anonymous/introspective
     read and write access to channel data.
@@ -78,6 +78,6 @@ public:
   CommObjectReaderWriter& operator = (const CommObjectReaderWriter& o);
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

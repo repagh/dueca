@@ -38,7 +38,7 @@
 #include <dueca.h>
 using namespace std;
 
-STARTHDF5LOG;
+namespace dueca { namespace hdf5log {
 
 // class/module name
 const char *const HDF5Logger::classname = "hdf5-logger";
@@ -792,4 +792,4 @@ void HDF5Logger::sendStatus(const std::string &msg, bool error,
 // will check in with the script code, and enable the
 // creation of modules of this type
 // static TypeCreator<HDF5Logger> a(HDF5Logger::getMyParameterTable());
-ENDHDF5LOG;
+} } // namespace dueca namespace hdf5log

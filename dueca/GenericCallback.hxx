@@ -18,7 +18,7 @@
 #include<iostream>
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 class TimeSpec;
 /** Implements callback objects.
 
@@ -48,10 +48,10 @@ private:
   GenericCallback& operator = (const GenericCallback&);
 };
 
-DUECA_NS_END
+} // namespace dueca
 
-PRINT_NS_START;
+namespace std {
 extern ostream& operator << (ostream& os, const dueca::GenericCallback& callback);
-PRINT_NS_END;
+} // namespace std
 
 #endif

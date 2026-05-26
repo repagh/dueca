@@ -19,7 +19,7 @@
 #include <dueca.h>
 #include "ReplicatorNamespace.hxx"
 
-STARTNSREPLICATOR;
+namespace dueca {
 
 class EntryWatcher: public dueca::ChannelWatcher
 {
@@ -51,6 +51,6 @@ public:
   virtual ~EntryWatcher();
 };
 
-ENDNSREPLICATOR;
+} // namespace dueca
 
 #endif

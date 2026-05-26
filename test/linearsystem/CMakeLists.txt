@@ -11,4 +11,4 @@ include_directories(${CMAKE_SOURCE_DIR}/extra)
 add_executable(linearsystem.x linearsystem.cxx)
 set_target_properties(linearsystem.x PROPERTIES
   COMPILE_FLAGS ${EIGEN_CFLAGS})
-target_link_libraries(linearsystem.x dueca-extra${STATICSUFFIX})
+target_link_libraries(linearsystem.x dueca-extra${STATICSUFFIX} fmt::fmt)

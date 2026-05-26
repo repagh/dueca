@@ -20,7 +20,7 @@
 #include <iostream>
 #include <inttypes.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 /** @file ChannelDef.hxx
 
@@ -219,24 +219,24 @@ const char* getclassname<dueca::Channel::PackingMode>();
 template<>
 const char* getclassname<dueca::Channel::TransportClass>();
 
-DUECA_NS_END;
+} // namespace dueca
 
 
-PRINT_NS_START
+namespace std {
 /** Printing of the EntryTimeAspect. */
 std::ostream& operator << (std::ostream& os,
-                           const DUECA_NS::Channel::EntryTimeAspect& tc);
+                           const dueca::Channel::EntryTimeAspect& tc);
 /** Printing of the EntryArity. */
 std::ostream& operator << (std::ostream& os,
-                           const DUECA_NS::Channel::EntryArity& tc);
+                           const dueca::Channel::EntryArity& tc);
 /** Printing of the ReadingMode. */
 std::ostream& operator << (std::ostream& os,
-                           const DUECA_NS::Channel::ReadingMode& tc);
+                           const dueca::Channel::ReadingMode& tc);
 /** Printing of the PackingMode. */
 std::ostream& operator << (std::ostream& os,
-                           const DUECA_NS::Channel::PackingMode& tc);
+                           const dueca::Channel::PackingMode& tc);
 /** Printing of the TransportClass. */
 std::ostream& operator << (std::ostream& os,
-                           const DUECA_NS::Channel::TransportClass& tc);
-PRINT_NS_END;
+                           const dueca::Channel::TransportClass& tc);
+} // namespace std
 #endif

@@ -44,7 +44,7 @@ using WsClient = SimpleWeb::SocketClient<SimpleWeb::WS>;
 //using WssServer = SimpleWeb::SocketServer<SimpleWeb::WSS>;
 //using WssClient = SimpleWeb::SocketClient<SimpleWeb::WSS>;
 
-DUECA_NS_START;
+namespace dueca {
 
 class AmorphStore;
 
@@ -283,6 +283,6 @@ public:
   ssize_t checkup();
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

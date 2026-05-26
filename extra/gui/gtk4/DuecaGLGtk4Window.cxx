@@ -26,7 +26,7 @@
 #include <gdk/wayland/gdkwayland.h>
 #endif
 
-DUECA_NS_START;
+namespace dueca {
 
 DuecaGLGtk4Window::DuecaGLGtk4Window(const char *window_title,
                                      bool pass_passive, bool depth_buffer,
@@ -243,4 +243,4 @@ void DuecaGLGtk4Window::initGL()
   // default implementation; noop
 }
 
-DUECA_NS_END;
+} // namespace dueca

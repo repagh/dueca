@@ -25,7 +25,7 @@
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 const char *const NetUseOverviewGtk4::classname = "net-view";
 
@@ -86,7 +86,7 @@ bool NetUseOverviewGtk4::complete()
   g_object_set_data(G_OBJECT(timingcanvas), "node",
                     reinterpret_cast<gpointer>(-1));
   g_signal_connect(G_OBJECT(timingcanvas), "configure-event",
-                   G_CALLBACK(DUECA_NS::cbConfigure),
+                   G_CALLBACK(dueca::cbConfigure),
                    reinterpret_cast<gpointer>(this));
 
   gtk_drawing_area_set_draw_func(
@@ -118,7 +118,7 @@ bool NetUseOverviewGtk4::complete()
     g_object_set_data(G_OBJECT(canvas), "node", reinterpret_cast<gpointer>(ii));
     gtk_box_append(GTK_BOX(canvasbox), canvas);
     g_signal_connect(G_OBJECT(canvas), "configure-event",
-                     G_CALLBACK(DUECA_NS::cbConfigure),
+                     G_CALLBACK(dueca::cbConfigure),
                      reinterpret_cast<gpointer>(this));
     gtk_drawing_area_set_draw_func(
       GTK_DRAWING_AREA(canvas),
@@ -273,4 +273,4 @@ gboolean NetUseOverviewGtk4::deleteView(GtkWindow *win, gpointer gp)
   return TRUE;
 }
 
-DUECA_NS_END;
+} // namespace dueca

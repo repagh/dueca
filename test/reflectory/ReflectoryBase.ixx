@@ -16,7 +16,7 @@
 #define ReflectoryBase_ixx
 #include "ReflectoryBase.hxx"
 
-DUECA_NS_START;
+namespace dueca {
 
 template<typename TICK>
 ReflectoryBase<TICK>::ReflectoryBase() :
@@ -135,6 +135,6 @@ void ReflectoryBase<TICK>::passConfigChange(ReflectoryData& d) const
 }
 
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

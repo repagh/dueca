@@ -21,7 +21,7 @@
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
 
-DUECA_NS_START
+namespace dueca {
 
 ChannelDataMonitorGtk3::ChannelDataMonitorGtk3(ChannelOverviewGtk3  *master,
                                                const std::string& channelname,
@@ -355,4 +355,4 @@ void ChannelDataMonitorGtk3::close()
 void ChannelDataMonitorGtk3::open()
 { window.show(); }
 
-DUECA_NS_END
+} // namespace dueca

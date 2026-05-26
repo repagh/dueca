@@ -27,7 +27,7 @@ using namespace std;
 #define KEEP_COUNT
 
 
-DUECA_NS_START
+namespace dueca {
 
 Arena::Arena(int object_size, int default_alloc) :
 #ifdef USE_BOOST_LOCKFREE
@@ -162,15 +162,15 @@ std::ostream& Arena::print(std::ostream& os)
             << ")";
 }
 
-DUECA_NS_END
+} // namespace dueca
 
-void* operator new(size_t sz, DUECA_NS ::Arena *a)
+void* operator new(size_t sz, dueca ::Arena *a)
 {
   assert(sz <= a->getMaxObjectSize());
   return a->alloc(sz);
 }
 
-std::ostream& operator << (std::ostream& os, DUECA_NS ::Arena& a)
+std::ostream& operator << (std::ostream& os, dueca ::Arena& a)
 {
   return a.print(os);
 }

@@ -19,7 +19,7 @@
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
 
-DUECA_NS_START
+namespace dueca {
 
 UnifiedChannelMaster::EntryData::EntryData(const std::string& name,
                                            const std::string& label,
@@ -530,4 +530,4 @@ void UnifiedChannelMaster::sweep(AsyncQueueMT<UChannelCommRequest>& com)
   }
 }
 
-DUECA_NS_END
+} // namespace dueca

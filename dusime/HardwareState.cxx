@@ -14,7 +14,7 @@
 
 #define HardwareState_cxx
 #include "HardwareState.hxx"
-DUECA_NS_START
+namespace dueca {
 
 static const char* HardwareState_names[] = {
   "Down",
@@ -22,11 +22,11 @@ static const char* HardwareState_names[] = {
   "Testing",
   "Active"
 }
-DUECA_NS_END
+} // namespace dueca
 
-PRINT_NS_START
-ostream& operator << (ostream& os, const DUECA_NS::HardwareState& o)
+namespace std {
+ostream& operator << (ostream& os, const dueca::HardwareState& o)
 {
   return os << HardwareState_names[int(o)];
 }
-PRINT_NS_END
+} // namespace std

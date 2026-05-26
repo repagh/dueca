@@ -28,7 +28,7 @@
 #include <boost/intrusive_ptr.hpp>
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 struct ObjectInfo;
 class ChannelReadToken;
 class ChannelWriteToken;
@@ -185,5 +185,5 @@ private:
   bool setNoNodes(const int& l);
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

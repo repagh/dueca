@@ -133,7 +133,7 @@ static GListModel *add_data_element(gpointer _item, gpointer user_data)
 
 } // anonymous namespace
 
-DUECA_NS_START
+namespace dueca {
 
 ChannelDataMonitorGtk4::ChannelDataMonitorGtk4(ChannelOverviewGtk4 *master,
                                                unsigned channelno,
@@ -486,4 +486,4 @@ void ChannelDataMonitorGtk4::cbBindValue(GtkSignalListItemFactory *fact,
   }
 }
 
-DUECA_NS_END
+} // namespace dueca

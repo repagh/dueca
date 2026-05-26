@@ -18,7 +18,7 @@
 #include <stringoptions.h>
 #include <dueca_ns.h>
 
-DUECA_NS_START
+namespace dueca {
 
 /** Helper base class for windowing code. Currently this is
     implementing the windowing code for the "GLSweeper" module, but
@@ -59,6 +59,6 @@ public:
   SCM_FEATURES_DEF;
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

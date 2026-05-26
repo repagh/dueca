@@ -22,7 +22,7 @@
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
 
-DUECA_NS_START
+namespace dueca {
 
 //SCM_FEATURES_IMP(Entity,"entity");
 
@@ -199,7 +199,7 @@ void scheme_init<Entity>()
                      1, 0, 1, (scm_func) make_object);
 }
 
-DUECA_NS_END
+} // namespace dueca
 
 #include <undebprint.h>
 

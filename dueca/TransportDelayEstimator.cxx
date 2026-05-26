@@ -20,7 +20,7 @@
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
 
-DUECA_NS_START
+namespace dueca {
 
 const ParameterTable* TransportDelayEstimator::getParameterTable()
 {
@@ -207,4 +207,4 @@ const int TransportDelayEstimator::operator () (int bytes)
 }
 
 
-DUECA_NS_END
+} // namespace dueca

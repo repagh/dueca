@@ -23,7 +23,7 @@
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
 
-DUECA_NS_START
+namespace dueca {
 
 class DataSetConverter;
 class UChannelEntryData;
@@ -329,7 +329,7 @@ public:
 };
 
 
-DUECA_NS_END
+} // namespace dueca
 #include <undebprint.h>
 
 #endif

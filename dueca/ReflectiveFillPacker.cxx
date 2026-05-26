@@ -42,7 +42,7 @@
 #include <debprint.h>
 using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 const int ReflectiveFillPacker::no_of_stores = 2;
 
@@ -288,4 +288,4 @@ ostream& operator << (ostream& os, const ReflectiveFillPacker& o)
   return os << "ReflectiveFillPacker(" << o.getId() << ')';
 }
 
-DUECA_NS_END
+} // namespace dueca

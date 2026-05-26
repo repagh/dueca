@@ -16,7 +16,7 @@
 
 #include "debug.h"
 
-DUECA_NS_START;
+namespace dueca {
 
 DuecaGLGtk3Window::DuecaGLGtk3Window(const char *window_title,
                                      bool pass_passive, bool depth_buffer,
@@ -227,4 +227,4 @@ void DuecaGLGtk3Window::initGL()
   // default implementation; noop
 }
 
-DUECA_NS_END;
+} // namespace dueca

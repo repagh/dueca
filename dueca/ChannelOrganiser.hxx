@@ -26,7 +26,7 @@
 
 #include <dueca_ns.h>
 
-DUECA_NS_START
+namespace dueca {
 // class names
 class UnifiedChannel;
 class Environment;
@@ -155,16 +155,16 @@ public:
   std::ostream& print (std::ostream& o) const;
 };
 
-DUECA_NS_END
+} // namespace dueca
 
-PRINT_NS_START
+namespace std {
 /// Print one of these to an output stream
-inline std::ostream& operator << (std::ostream& o, const DUECA_NS::ChannelOrganiser::
+inline std::ostream& operator << (std::ostream& o, const dueca::ChannelOrganiser::
                              ChannelEndSpec &ce)
 { return ce.print(o); }
 
 /** Print a ChannelOrganiser to a stream, for debugging mainly. */
-inline std::ostream& operator << (std::ostream& o, const DUECA_NS::ChannelOrganiser& cl)
+inline std::ostream& operator << (std::ostream& o, const dueca::ChannelOrganiser& cl)
 { return cl.print(o); }
-PRINT_NS_END
+} // namespace std
 #endif

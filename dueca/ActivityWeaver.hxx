@@ -20,7 +20,7 @@
 #include "ActivityLister.hxx"
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 class ActivityBit;
 class ActivityWeaver;
@@ -107,5 +107,5 @@ public:
   bool checkValidity(uint32_t key) const;
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

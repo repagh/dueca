@@ -23,7 +23,7 @@
 #include "dusime/Snapshot.hxx"
 #include <toml.hpp>
 
-DUECA_NS_START;
+namespace dueca {
 
 /** Supporting class for maintaining an inventory of snapshots in
     DUECA/DUSIME.
@@ -312,6 +312,6 @@ private:
 
 template <> const char *getclassname<SnapshotInventory>();
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

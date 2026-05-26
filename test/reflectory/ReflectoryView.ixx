@@ -16,7 +16,7 @@
 #define ReflectoryView_ixx
 #include "ReflectoryView.hxx"
 
-DUECA_NS_START;
+namespace dueca {
 
 
 template <class DATA, typename TICK>
@@ -36,5 +36,5 @@ ReflectoryView<DATA,TICK>::~ReflectoryView()
   //
 }
 
-DUECA_NS_END;
+} // namespace dueca
 #endif

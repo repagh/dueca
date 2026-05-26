@@ -14,7 +14,7 @@
 #include "StringUtils.hxx"
 using namespace std;
 
-DUECA_NS_START;
+namespace dueca {
 
 string replaceAll(string s, const string & search, const string & repl)
 {
@@ -51,4 +51,4 @@ std::string trim(const std::string & s, const std::string & pattern) {
   return string(s, b, e - b + 1);
 }
 
-DUECA_NS_END;
+} // namespace dueca

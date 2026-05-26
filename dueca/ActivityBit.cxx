@@ -25,7 +25,7 @@
 #include "ArenaPool.hxx"
 using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 const unsigned int ActivityBit::frac_max = 0xff00;
 
 ActivityBit::ActivityBit(const uint16_t& p_tick_plus,
@@ -150,4 +150,4 @@ const vstring ActivityBit::reportVerbal(int manager_number,
   return st.str();
 }
 
-DUECA_NS_END
+} // namespace dueca

@@ -29,7 +29,7 @@
 #include <StateChange.hxx>
 #include <AsyncList.hxx>
 #include <WrapSendEvent.hxx>
-DUECA_NS_START;
+namespace dueca {
 
 HardwareModule::HardwareModule(Entity *e, const char *m_class, const char *part,
                                const IncoTable *inco_table, int state_size) :
@@ -247,4 +247,4 @@ void HardwareModule::processEntityCommands(const TimeSpec &ts)
     }
   }
 }
-DUECA_NS_END;
+} // namespace dueca

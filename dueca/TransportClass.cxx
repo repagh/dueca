@@ -17,7 +17,7 @@
 #include <iostream>
 using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 const char* names[] = {
   "Bulk",
@@ -28,4 +28,4 @@ ostream& operator << (ostream& os, const TransportClass& tc)
 {
   return os << names[int(tc)];
 }
-DUECA_NS_END
+} // namespace dueca

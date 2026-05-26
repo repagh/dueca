@@ -22,7 +22,7 @@
 #include <MultiStreamReadToken.hxx>
 #include <DataReader.hxx>
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 #ifndef NoExtrapolation_defined
 #define NoExtrapolation_defined
@@ -101,6 +101,6 @@ private:
 /* \example MultiStreamReaderExample.cxx
     Here is an example of how to use stream readers. */
 
-DUECA_NS_END
+} // namespace dueca
 #endif
 

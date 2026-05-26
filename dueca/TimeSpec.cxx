@@ -31,7 +31,7 @@
 #endif
 using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 // -------------- normal TimeSpec ---------------------------
 
@@ -468,4 +468,4 @@ TimeSpec operator + (const PeriodicTimeSpec& t,
   validity_end += period;
   return *this;
 } */
-DUECA_NS_END
+} // namespace dueca

@@ -20,7 +20,7 @@
 #include <DataTimeSpec.hxx>
 #include <SimTime.hxx>
 
-DUECA_NS_START;
+namespace dueca {
 
 class ElementWriter;
 class ChannelWriteToken;
@@ -165,5 +165,5 @@ private:
   static void *operator new(size_t s);
 };
 
-DUECA_NS_END;
+} // namespace dueca
 #endif

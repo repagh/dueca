@@ -35,7 +35,7 @@
 
 #include <debprint.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 DusimeModule::DusimeModule(Entity* e,
                            const char* m_class, const char* part,
@@ -347,4 +347,4 @@ void DusimeModule::trimCalculation(const TimeSpec& t, const TrimMode& mode)
      do trim calculations. */
   W_MOD("Module " << getId() << " trimCalculation not implemented!");
 }
-DUECA_NS_END
+} // namespace dueca

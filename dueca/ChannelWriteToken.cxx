@@ -24,7 +24,7 @@
 #include <DCOFunctor.hxx>
 #include <debug.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 
 ChannelWriteToken::ChannelWriteToken(const GlobalId& owner,
@@ -150,4 +150,4 @@ bool ChannelWriteToken::isEventType() const
   return handle->entry->isEventType();
 }
 
-DUECA_NS_END;
+} // namespace dueca

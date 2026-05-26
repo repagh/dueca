@@ -20,7 +20,7 @@
 #include <dueca_ns.h>
 #include <CommObjectTraits.hxx>
 
-DUECA_NS_START
+namespace dueca {
 
 class AmorphStore;
 class AmorphReStore;
@@ -48,19 +48,19 @@ const char* const getString(const IncoRole &o);
 template<>
 const char* getclassname<IncoRole>();
 
-DUECA_NS_END
+} // namespace dueca
 
 /// print the IncoRole to a stream
-PRINT_NS_START
+namespace std {
 /** print a string representation for inco role */
-ostream& operator << (ostream& s, const DUECA_NS::IncoRole& o);
+ostream& operator << (ostream& s, const dueca::IncoRole& o);
 /** read a string representation for inco role */
-istream& operator >> (istream& is, DUECA_NS::IncoRole& o);
-PRINT_NS_END
+istream& operator >> (istream& is, dueca::IncoRole& o);
+} // namespace std
 
 /** Support store packing */
-void packData(DUECA_NS::AmorphStore& s, const DUECA_NS::IncoRole &o);
+void packData(dueca::AmorphStore& s, const dueca::IncoRole &o);
 /** Support store unpacking */
-void unPackData(DUECA_NS::AmorphReStore& s, DUECA_NS::IncoRole &o);
+void unPackData(dueca::AmorphReStore& s, dueca::IncoRole &o);
 
 #endif

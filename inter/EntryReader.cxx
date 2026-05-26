@@ -26,7 +26,7 @@
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
 
-STARTNSREPLICATOR;
+namespace dueca {
 
 EntryReader::EntryReader(const dueca::GlobalId &master_id,
                          const dueca::ChannelEntryInfo &i,
@@ -134,4 +134,4 @@ void EntryReader::flushEntry()
   }
 }
 
-ENDNSREPLICATOR;
+} // namespace dueca

@@ -31,11 +31,11 @@
 #include <exception>
 #include <map>
 
-DUECA_NS_START
+namespace dueca {
 class ReplayFiler;
-DUECA_NS_END;
+} // namespace dueca
 
-DDFF_NS_START
+namespace dueca { namespace ddff {
 // class DDFFDataRecorder;
 // typedef std::list<DDFFDataRecorder *> recorderlist_t;
 typedef std::list<SegmentedRecorderBase*> recorderlist_t;
@@ -324,13 +324,13 @@ struct data_recorder_index_not_correct : public std::exception
   const char *what() const throw() { return "DataRecorder index incorrect"; }
 };
 
-DDFF_NS_END
-PRINT_NS_START
+} } // namespace ddff namespace dueca
+namespace std {
 inline ostream &operator<<(ostream &os,
                            const dueca::ddff::FileWithSegments::Tag &o)
 {
   return os << "Tag(" << o.cycle << " " << o.index0 << "-" << o.index1 << " "
             << o.label << ")";
 }
-PRINT_NS_END
+} // namespace std
 #endif

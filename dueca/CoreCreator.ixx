@@ -42,7 +42,7 @@
 #define CDEBUG(A) std::cerr << A << std::endl
 #include "dueca-guile.h"
 #include "dueca_assert.h"
-DUECA_NS_START
+namespace dueca {
 
 class script_read_error: public std::exception
 {
@@ -154,7 +154,7 @@ int CoreCreator<T, B, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10>::
   T* obj = dynamic_cast<T*>(sobj->getObject());
   scm_puts(const_cast<char*>("#<"), port);
   scm_puts( SchemeClassData<T>::single()->getName(), port);
-  ostringstream p; p <<  obj << "> " << std::ends;
+  std::ostringstream p; p <<  obj << "> " << std::ends;
   scm_puts(const_cast<char*>(p.str().c_str()), port);
   return 1;
 }
@@ -498,7 +498,7 @@ template<> STATIC bool is_not_noop<NOOP>()
 
 #endif
 
-DUECA_NS_END
+} // namespace dueca
 
 #include <undebprint.h>
 

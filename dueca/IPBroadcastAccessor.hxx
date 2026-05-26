@@ -20,7 +20,7 @@
 #define MAXHOSTNAME 256
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 /** Broadcast-based communication over IP.
 
@@ -68,5 +68,5 @@ private:
   IPBroadcastAccessor(const IPBroadcastAccessor&);
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

@@ -22,7 +22,7 @@
 #include <iostream>
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 struct ParameterTable;
 
 /** Priority specification. DUECA usually runs with several
@@ -100,5 +100,5 @@ public:
   friend std::ostream& operator << (std::ostream& os, const PrioritySpec&);
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

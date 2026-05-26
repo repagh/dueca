@@ -26,7 +26,7 @@
 #include <dassert.h>
 #include <debug.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 ChannelReadToken::ChannelReadToken(
   const GlobalId &owner, const NameSet &channelname,
@@ -406,4 +406,4 @@ ChannelEntryInfo ChannelReadToken::getChannelEntryInfo() const
   }
 }
 
-DUECA_NS_END;
+} // namespace dueca

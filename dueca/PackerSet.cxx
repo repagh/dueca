@@ -22,7 +22,7 @@
 #define DO_INSTANTIATE
 #include "MemberCall2Way.hxx"
 
-DUECA_NS_START
+namespace dueca {
 
 const ParameterTable *PackerSet::getParameterTable()
 {
@@ -145,5 +145,5 @@ GenericPacker* PackerSet::getPacker(TransportClass tclass) const
   return high_prio.get();
 }
 
-DUECA_NS_END
+} // namespace dueca
 

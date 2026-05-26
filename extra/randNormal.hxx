@@ -20,7 +20,7 @@
 
 #ifndef RANDNORMALTEST
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 #endif
 
 /** \file randNormal.hxx
@@ -30,6 +30,6 @@ DUECA_NS_START
 double randNormal();
 
 #ifndef RANDNORMALTEST
-DUECA_NS_END
+} // namespace dueca
 #endif
 #endif

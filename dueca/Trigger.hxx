@@ -30,7 +30,7 @@
 
 // Forward declarations
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 class UCallbackOrActivity;
 class TriggerTarget;
 class TriggerPuller;
@@ -539,7 +539,7 @@ private:
   friend class IncoCalculator;
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 
 #endif

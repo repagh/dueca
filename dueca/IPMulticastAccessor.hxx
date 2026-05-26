@@ -20,7 +20,7 @@
 #define MAXHOSTNAME 256
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 /** Multicast-based communication over IP.
 
@@ -72,5 +72,5 @@ private:
   IPMulticastAccessor(const IPMulticastAccessor&);
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

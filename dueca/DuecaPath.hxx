@@ -17,7 +17,7 @@
 #include <stringoptions.h>
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 /** class that makes it possible to find the dueca data files. */
 class DuecaPath
 {
@@ -46,5 +46,5 @@ public:
   static vstring prepend(const vstring& tail);
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

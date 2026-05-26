@@ -17,7 +17,7 @@
 #include <gtk/gtk.h>
 
 #include <dueca_ns.h>
-DUECA_NS_START;
+namespace dueca {
 
 /** This class provides feedback from keypresses and mouse movements
     on a Gtk3 widget. It is normally used in combination with GL
@@ -76,5 +76,5 @@ public:
   virtual void mouse(int button, int state, int x, int y);
 };
 
-DUECA_NS_END;
+} // namespace dueca
 #endif

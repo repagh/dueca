@@ -35,7 +35,7 @@ http://blog.lse.epita.fr/articles/42-implementing-generic-double-word-compare-an
 #define USE_SPARES
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 template <class T, class Alloc> class AsyncQueueWriter;
 template <class T, class Alloc> class AsyncQueueReader;
@@ -395,5 +395,5 @@ inline void return_list_elt(AsyncQueueMT<T,Alloc>& list,
 
 
 
-DUECA_NS_END
+} // namespace dueca
 #endif

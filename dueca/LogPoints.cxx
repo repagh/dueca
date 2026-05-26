@@ -26,7 +26,7 @@
 using namespace std;
 
 
-DUECA_NS_START
+namespace dueca {
 
 LogPoints::LogPoints() :
   id(NULL),
@@ -90,4 +90,4 @@ const GlobalId& LogPoints::getId() const
   return no_id;
 }
 
-DUECA_NS_END
+} // namespace dueca

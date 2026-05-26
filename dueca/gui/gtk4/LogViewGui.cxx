@@ -26,7 +26,7 @@
 #include <debug.h>
 using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 // type for logging
 struct _DLogEntry
@@ -439,4 +439,4 @@ void LogViewGui::cbBindCatLevel(GtkSignalListItemFactory *fact,
   gtk_drop_down_set_selected(drop, cat->level[node]);
 }
 
-DUECA_NS_END
+} // namespace dueca

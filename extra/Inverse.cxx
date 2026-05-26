@@ -15,7 +15,7 @@
 
 #include "Inverse.hxx"
 
-DUECA_NS_START
+namespace dueca {
 
 Inverse::Inverse(double K, double x0, double epsx) :
   K(K),
@@ -48,5 +48,5 @@ std::ostream& Inverse::print(std::ostream& os) const
 }
 
 
-DUECA_NS_END
+} // namespace dueca
 

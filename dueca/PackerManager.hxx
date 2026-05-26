@@ -22,7 +22,7 @@
 #include <dueca_ns.h>
 #include "ScriptCreatable.hxx"
 
-DUECA_NS_START
+namespace dueca {
 struct ParameterTable;
 
 /** This class keeps a mapping with pointers to packers, three for
@@ -89,5 +89,5 @@ public:
   void stopPackers(TimeTickType tick);
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

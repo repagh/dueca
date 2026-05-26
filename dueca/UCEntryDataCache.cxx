@@ -17,7 +17,7 @@
 #include "AmorphStore.hxx"
 #include <cstring>
 
-DUECA_NS_START;
+namespace dueca {
 
 UCRawDataCache::UCRawDataCache(const char* indata, size_t offset,
                                  size_t isize) :
@@ -71,5 +71,5 @@ AmorphReStore UCEntryDataCache::getStore()
 }
 
 
-DUECA_NS_END
+} // namespace dueca
 

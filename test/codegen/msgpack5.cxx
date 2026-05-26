@@ -34,7 +34,7 @@ using namespace std;
 #define TEST_ARRAYS 1
 #define TEST_MAPS 1
 
-USING_DUECA_NS;
+using namespace dueca;
 
 int main()
 {

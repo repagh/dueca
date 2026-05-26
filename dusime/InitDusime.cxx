@@ -29,12 +29,12 @@
 #include "DataRecorder.hxx"
 #include "ReplayFiler.hxx"
 
-USING_DUECA_NS
+using namespace dueca;
 
 #if defined(SCRIPT_SCHEME)
-DUECA_NS_START
+namespace dueca {
 SCHEME_CLASS_SINGLE(ReplayFiler, ScriptCreatable, "replay-filer");
-DUECA_NS_END
+} // namespace dueca
 #endif
 
 extern "C" LNK_PUBLICC

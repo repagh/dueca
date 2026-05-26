@@ -54,7 +54,7 @@ extern RT_TASK* rtai_guile_task;
 #endif
 
 // include the applicable OS-specific synchronisation stuff
-DUECA_NS_START
+namespace dueca {
 
 /** The class StateGuardData keeps the data for the StateGuard in an
     implementation-dependent fashion. */
@@ -219,4 +219,4 @@ bool StateGuard::tryState(const char* txt) const
 }
 
 #endif // DEBUG_MUTEX
-DUECA_NS_END
+} // namespace dueca

@@ -21,7 +21,7 @@
 #include <limits>
 #include <iostream>
 
-DUECA_NS_START
+namespace dueca {
 
 
 /** Implementation of a scaling/converting device, using a polynomial
@@ -65,11 +65,11 @@ public:
   std::ostream& print (std::ostream& os) const;
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 /** Print operator for Inverse */
 inline std::ostream& operator << (std::ostream& os,
-                                  const DUECA_NS::Inverse& o)
+                                  const dueca::Inverse& o)
 { return o.print(os); }
 
 #endif

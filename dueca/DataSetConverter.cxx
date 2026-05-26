@@ -13,7 +13,7 @@
 */
 
 #include "DataSetConverter.hxx"
-DUECA_NS_START
+namespace dueca {
 
 DataSetConverter::DataSetConverter()
 {
@@ -24,4 +24,4 @@ DataSetConverter::~DataSetConverter()
 {
   // nothing
 }
-DUECA_NS_END
+} // namespace dueca

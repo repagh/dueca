@@ -17,7 +17,7 @@
 #include <iostream>
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 /** An integer value with a maximum limit, that, when increased to or
     beyond this limit, wraps back. */
@@ -84,11 +84,11 @@ public:
   inline int getLimit() const {return limit;}
 };
 
-DUECA_NS_END
+} // namespace dueca
 
-PRINT_NS_START
-inline ostream& operator << (ostream& o, const DUECA_NS::CyclicInt& cl)
+namespace std {
+inline ostream& operator << (ostream& o, const dueca::CyclicInt& cl)
 { return cl.print(o); }
-PRINT_NS_END
+} // namespace std
 
 #endif

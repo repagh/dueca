@@ -21,7 +21,7 @@
 #include <StreamAccessToken.hxx>
 #include <DataWriter.hxx>
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 /** This is a light weight (on the stack) object to facilitate for
     writing stream data. By creating a "StreamWriter", the access
@@ -93,5 +93,5 @@ private:
   static void* operator new(size_t s);
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

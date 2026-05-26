@@ -26,7 +26,7 @@
 #include <dueca/ChannelWriteToken.hxx>
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 class Entity;
 class DuecaView;
 
@@ -185,6 +185,6 @@ public:
   void startStatusCheck();
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

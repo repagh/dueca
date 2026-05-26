@@ -18,7 +18,7 @@
 #include "GenericVarIO.hxx"
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 /** Template specialisation of the GenericVarIO.
 
     The MemberCall2Way takes a pointer to a member function of simple
@@ -136,7 +136,7 @@ public:
   bool peek(void *obj, T &v) const;
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif
 
 //--------------------------------------------------------------------
@@ -148,7 +148,7 @@ DUECA_NS_END
 #define MemberCall2Way_ii
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 template <class C, class T>
 MemberCall2Way<C, T>::MemberCall2Way(bool (C ::*c)(T &, bool)) :
@@ -170,6 +170,6 @@ bool MemberCall2Way<C, T>::peek(void *obj, T &v) const
   return ((*(C *)obj).*call)(v, false);
 }
 
-DUECA_NS_END
+} // namespace dueca
 #endif
 #endif

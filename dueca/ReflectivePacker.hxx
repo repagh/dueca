@@ -25,7 +25,7 @@
 #include <Activity.hxx>
 #include <EasyId.hxx>
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 class ReflectiveAccessor;
 struct ParameterTable;
 
@@ -167,5 +167,5 @@ private:
   bool setPrioritySpec(const PrioritySpec& ps);
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

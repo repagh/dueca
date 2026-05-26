@@ -19,7 +19,7 @@
 #include "GenericCallback.hxx"
 #include <dueca_ns.h>
 
-DUECA_NS_START
+namespace dueca {
 /** Template class for callback to a member function.
 
     With a member function of a specific type (with only a TimeSpec as
@@ -51,7 +51,7 @@ public:
   ~Callback();
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif
 

@@ -25,7 +25,7 @@
 #include "GtkGladeWindow.hxx"
 #include <gtk/gtk.h>
 
-DUECA_NS_START
+namespace dueca {
 
 // GObject derived struct to pass data between interface and application
 struct _DChannelInfo;
@@ -209,6 +209,6 @@ public:
   void monitorToggle(GtkCheckButton *btn, _DChannelInfo *path_str);
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

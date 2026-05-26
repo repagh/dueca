@@ -15,7 +15,7 @@
 #include "EntryWatcher.hxx"
 #include "ChannelReplicator.hxx"
 
-STARTNSREPLICATOR;
+namespace dueca {
 
 
 EntryWatcher::EntryWatcher(const std::string& channelname,
@@ -43,4 +43,4 @@ void EntryWatcher::entryRemoved(const dueca::ChannelEntryInfo& i)
   master->entryRemoved(i, channelname);
 }
 
-ENDNSREPLICATOR;
+} // namespace dueca

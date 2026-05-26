@@ -24,7 +24,7 @@
 
 #define DEB(A) std::cerr << A << std::endl;
 
-DUECA_NS_START;
+namespace dueca {
 
 template<typename TICK>
 ReflectoryRemote<TICK>::ReflectoryRemote() :
@@ -158,6 +158,6 @@ void ReflectoryRemote<TICK>::extendJoinRequest(unsigned nid)
   this->passConfigChange(d);
 }
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

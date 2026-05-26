@@ -19,7 +19,7 @@
 #include <string>
 #include <dueca_ns.h>
 
-DUECA_NS_START
+namespace dueca {
 
 /** Implements the interface to Scheme */
 struct SchemeScripting: public ScriptHelper
@@ -46,5 +46,5 @@ struct SchemeScripting: public ScriptHelper
   bool writeline(const std::string& line);
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

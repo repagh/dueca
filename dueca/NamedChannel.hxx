@@ -23,7 +23,7 @@
 
 #include <dueca_ns.h>
 #include <NameSet.hxx>
-DUECA_NS_START
+namespace dueca {
 
 
 struct NameSet;
@@ -104,5 +104,5 @@ public:
   virtual ObjectType getObjectType() const = 0;
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

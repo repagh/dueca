@@ -32,7 +32,7 @@
 #error "No glui.h headers"
 #endif
 
-DUECA_NS_START
+namespace dueca {
 
 const ParameterTable* GluiProtocol::getParameterTable()
 {
@@ -90,4 +90,4 @@ void GluiProtocol::sweep()
   }
 }
 
-DUECA_NS_END
+} // namespace dueca

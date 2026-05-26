@@ -17,7 +17,7 @@
 
 #include "GenericVarIO.hxx"
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 /** If defined, a hack is implemented that avoids some problems with
     templates.
@@ -139,7 +139,7 @@ public:
   bool peek(void* obj, Te& v) const;
 
 };
-DUECA_NS_END
+} // namespace dueca
 
 #ifdef COMILER_HAS_PROBLEMS_WITH_TEMPLATE_ON_TEMPLATE
 /** Macro to handle the compiler template problems. */
@@ -159,7 +159,7 @@ DUECA_NS_END
 #define VarProbe_ii
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 #ifdef COMILER_HAS_PROBLEMS_WITH_TEMPLATE_ON_TEMPLATE
 
 template <class C, class T>
@@ -234,7 +234,7 @@ bool VarProbeElt<C,Ta,Te>::peek(void* obj, Te& v) const
   return true;
 }
 
-DUECA_NS_END
+} // namespace dueca
 #endif
 #endif
 

@@ -18,10 +18,10 @@
 #include <cstdint>
 #include <dueca_ns.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 uint16_t crc16_ccitt(const char* pbyte, size_t len);
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

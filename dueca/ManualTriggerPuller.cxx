@@ -11,7 +11,7 @@
 
 #include "ManualTriggerPuller.hxx"
 
-DUECA_NS_START;
+namespace dueca {
 
 ManualTriggerPuller::ManualTriggerPuller(const std::string& name) :
   TriggerPuller(name)
@@ -25,4 +25,4 @@ ManualTriggerPuller::~ManualTriggerPuller()
   //
 }
 
-DUECA_NS_END;
+} // namespace dueca

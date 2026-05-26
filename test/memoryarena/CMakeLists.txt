@@ -16,4 +16,4 @@ find_package(Threads REQUIRED)
 #  OUTPUT_STRIP_TRAILING_WHITESPACE)
 
 add_executable(memoryarena.x memoryarena.cxx)
-target_link_libraries(memoryarena.x dueca${STATICSUFFIX} ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(memoryarena.x dueca${STATICSUFFIX} ${CMAKE_THREAD_LIBS_INIT} fmt::fmt)

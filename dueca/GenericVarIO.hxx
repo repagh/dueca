@@ -29,7 +29,7 @@ typedef scm_unused_struct* SCM;
 #endif
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 /** The different kinds of variables that can be transmitted */
 enum ProbeType {
   Probe_double,
@@ -156,5 +156,5 @@ public:
   DECLARE_IN_GENERICVAR_IO(string128);
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

@@ -19,7 +19,7 @@
 #include <dueca_ns.h>
 #include <dueca/visibility.h>
 
-DUECA_NS_START
+namespace dueca {
 
 template<class LI, class S, class V> class Summary;
 template<class LI, class S, class V>
@@ -146,5 +146,5 @@ public:
   const char* what() const throw() {return msg;}
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

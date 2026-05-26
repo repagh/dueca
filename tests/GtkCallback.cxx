@@ -227,7 +227,7 @@ on_custom1_destroy                     (GtkObject       *object
 
 };
 
-USING_DUECA_NS;
+using namespace dueca;
 
 void testv()
 {

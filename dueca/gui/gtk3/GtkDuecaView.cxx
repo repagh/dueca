@@ -70,7 +70,7 @@ static void hide_or_show_view(GtkWidget *widget, gpointer data)
   }
 }
 
-DUECA_NS_START
+namespace dueca {
 
 const char *const GtkDuecaView::classname = "dueca-view";
 
@@ -593,7 +593,7 @@ void GtkDuecaView::cbCloseAbout(GtkDialog *menuitem, gpointer user_data)
 
 void GtkDuecaView::cbExtraModDialog(GtkMenuItem *menuitem, gpointer user_data)
 {
-  if (DUECA_NS::EntityManager::single()->stopIsOK()) {
+  if (dueca::EntityManager::single()->stopIsOK()) {
     gtk_widget_show(gw_common["select_md2"]);
   }
   else {
@@ -963,4 +963,4 @@ void GtkDuecaView::requestToKeepRunning(bool keep_running)
   }
 }
 
-DUECA_NS_END;
+} // namespace dueca

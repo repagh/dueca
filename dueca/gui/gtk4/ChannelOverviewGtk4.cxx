@@ -48,7 +48,7 @@
 #include <dueca/dueca.h>
 using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 // class/module name
 const char *const ChannelOverviewGtk4::classname = "channel-view";
@@ -1152,4 +1152,4 @@ void ChannelOverviewGtk4::cbBindView(GtkSignalListItemFactory *fact,
   }
 }
 
-DUECA_NS_END
+} // namespace dueca

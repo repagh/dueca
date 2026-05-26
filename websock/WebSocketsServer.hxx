@@ -42,8 +42,8 @@ typedef io_service io_context;
 
 #include "CommonChannelServer.hxx"
 
-DUECA_NS_START;
-WEBSOCK_NS_START;
+namespace dueca {
+namespace websock {
 
 using HttpServer = SimpleWeb::Server<SimpleWeb::HTTP>;
 using HttpsServer = SimpleWeb::Server<SimpleWeb::HTTPS>;
@@ -548,7 +548,7 @@ public: // construction and further specification
   ~WebSocketsServer();
 };
 
-WEBSOCK_NS_END;
-DUECA_NS_END;
+} // namespace websock
+} // namespace dueca
 
 #endif

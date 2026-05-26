@@ -20,7 +20,7 @@
 #include <debug.h>
 using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 GenericTypeCreator::GenericTypeCreator(const std::string& type_name, const char* vhash) :
   type_name(type_name)
 {
@@ -62,4 +62,4 @@ createModuleCreator(const std::string& part,
   return new ModuleCreator(part, this, ps);
 }
 
-DUECA_NS_END
+} // namespace dueca

@@ -15,7 +15,7 @@
 #include "CommObjectTraits.hxx"
 #include "smartstring.hxx"
 
-DUECA_NS_START;
+namespace dueca {
 
 template <>
 const char* getclassname<double>() { return "double"; }
@@ -65,4 +65,4 @@ const char* PrintToChars::getNewCString() const
   return result;
 }
 
-DUECA_NS_END;
+} // namespace dueca

@@ -17,7 +17,7 @@
 
 #include <dueca/Activity.hxx>
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 class Module;
 
@@ -197,5 +197,5 @@ private:
   friend class ActivityItem;
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

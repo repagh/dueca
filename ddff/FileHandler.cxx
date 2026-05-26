@@ -23,7 +23,7 @@
 #include <debprint.h>
 using namespace std;
 
-DDFF_NS_START
+namespace dueca { namespace ddff {
 
 FileHandler::FileHandler(const std::string &fname, Mode mode,
                          unsigned blocksize) :
@@ -517,4 +517,4 @@ void FileHandler::StreamSetInfo::blockWritten(pos_type offset)
   }
 }
 
-DDFF_NS_END
+} } // namespace ddff namespace dueca

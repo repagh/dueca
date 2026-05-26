@@ -25,7 +25,7 @@
 #include <debprint.h>
 using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 Accessor::Accessor(const NameSet& name,
                    size_t input_packet_size, size_t input_offset) :
@@ -186,4 +186,4 @@ template<> const char* core_creator_name<Accessor>(const char* given)
   return "Accessor";
 }
 
-DUECA_NS_END
+} // namespace dueca

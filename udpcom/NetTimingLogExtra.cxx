@@ -11,13 +11,13 @@
         license         : EUPL-1.2
 */
 
-DUECA_NS_END;
+} // namespace dueca
 
 #include <iomanip>
 #include <algorithm>
 #include <debug.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 void NetTimingLog::histoLog(unsigned cycletime, unsigned span)
 {

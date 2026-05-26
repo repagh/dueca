@@ -13,5 +13,4 @@ include_directories(
 
 add_executable(overflow.x overflow.cxx)
 
-target_link_libraries(overflow.x dueca-inter${STATICSUFFIX})
-
+target_link_libraries(overflow.x dueca-inter${STATICSUFFIX} fmt::fmt)

@@ -22,7 +22,7 @@
 
     Conversion routines for XML to DCO. */
 
-DUECA_NS_START;
+namespace dueca {
 
 /** Exception type thrown when XML data cannot be fitted in a given
     DCO object. */
@@ -52,5 +52,5 @@ class CommObjectWriter;
 void XMLtoDCO(const pugi::xml_node& reader,
               CommObjectWriter& writer);
 
-DUECA_NS_END;
+} // namespace dueca
 #endif

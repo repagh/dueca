@@ -43,7 +43,7 @@ namespace msgpack {
 }}}
 
 
-MSGPACKUS_NS_START;
+namespace msgunpack {
 
 template<typename S>
   inline void msg_unpack(S& i0, const S& iend,
@@ -56,9 +56,9 @@ template<typename S>
   msg_unpack(i0, iend, e.label);
 }
 
-MSGPACKUS_NS_END;
+} // namespace msgunpack
 
-DDFF_NS_START
+namespace dueca { namespace ddff {
 
 FileWithInventory::FileWithInventory(const std::string& fname, Mode mode,
                                      unsigned blocksize) :
@@ -207,4 +207,4 @@ void FileWithInventory::syncToFile(bool intermediate)
   processWrites();
 }
 
-DDFF_NS_END
+} } // namespace ddff namespace dueca

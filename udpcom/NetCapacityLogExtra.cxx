@@ -11,12 +11,12 @@
         license         : EUPL-1.2
 */
 
-DUECA_NS_END;
+} // namespace dueca
 #include <iomanip>
 #include <algorithm>
 #include <sstream>
 #include <dueca/debug.h>
-DUECA_NS_START;
+namespace dueca {
 
 NetCapacityLog::NetCapacityLog(const uint16_t& node_id) :
     node_id(node_id),

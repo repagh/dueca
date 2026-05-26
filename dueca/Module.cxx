@@ -29,7 +29,7 @@ using namespace std;
 #endif
 
 
-DUECA_NS_START
+namespace dueca {
 
 
 Module::Module(const Entity *e, const char* m_class, const char* part) :
@@ -168,4 +168,4 @@ void Module::setState(const ModuleState& nstate, const TimeSpec &ts)
 }
 
 
-DUECA_NS_END
+} // namespace dueca

@@ -24,7 +24,7 @@
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 const char* const NetUseOverviewGtk2::classname = "net-view";
 
@@ -85,10 +85,10 @@ bool NetUseOverviewGtk2::complete()
   g_object_set_data(G_OBJECT(timingcanvas), "node",
                     reinterpret_cast<gpointer>(-1));
   g_signal_connect(G_OBJECT(timingcanvas), "configure_event",
-                     G_CALLBACK(DUECA_NS::cbConfigure),
+                     G_CALLBACK(dueca::cbConfigure),
                      reinterpret_cast<gpointer>(this));
   g_signal_connect(G_OBJECT(timingcanvas), "expose-event",
-                   G_CALLBACK(DUECA_NS::cbDraw),
+                   G_CALLBACK(dueca::cbDraw),
                    reinterpret_cast<gpointer>(this));
   gtk_widget_show(timingcanvas);
   GtkWidget *canvasbox = window["graph_box"];
@@ -111,10 +111,10 @@ bool NetUseOverviewGtk2::complete()
     gtk_box_pack_start(GTK_BOX(canvasbox), canvas,
                        TRUE, FALSE, 2);
     g_signal_connect(G_OBJECT(canvas), "configure-event",
-                     G_CALLBACK(DUECA_NS::cbConfigure),
+                     G_CALLBACK(dueca::cbConfigure),
                      reinterpret_cast<gpointer>(this));
     g_signal_connect(G_OBJECT(canvas), "expose-event",
-                     G_CALLBACK(DUECA_NS::cbDraw),
+                     G_CALLBACK(dueca::cbDraw),
                      reinterpret_cast<gpointer>(this));
     gtk_widget_set_tooltip_markup(canvas, tttext.str().c_str());
     gtk_widget_show(canvas);
@@ -259,4 +259,4 @@ void NetUseOverviewGtk2::cbClose(GtkButton* button, gpointer gp)
   g_signal_emit_by_name(G_OBJECT(menuitem), "activate", NULL);
 }
 
-DUECA_NS_END;
+} // namespace dueca

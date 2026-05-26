@@ -17,10 +17,10 @@
 
 #include <ddff/DDFFDataRecorder.hxx>
 
-DUECA_NS_START
+namespace dueca {
 
 //typedef ddff::DDFFDataRecorder DataRecorder;
 using DataRecorder =  ddff::DDFFDataRecorder;
 
-DUECA_NS_END
+} // namespace dueca
 #endif

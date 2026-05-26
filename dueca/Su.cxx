@@ -20,7 +20,7 @@
 #include <unistd.h>
 #include <iostream>
 using namespace std;
-DUECA_NS_START
+namespace dueca {
 
 Su* Su::singleton = NULL;
 
@@ -124,4 +124,4 @@ bool Su::revert()
 #endif
   return true;
 }
-DUECA_NS_END
+} // namespace dueca

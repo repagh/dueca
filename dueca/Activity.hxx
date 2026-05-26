@@ -38,7 +38,7 @@
 #include "dueca_ns.h"
 #include <dueca/stringoptions.h>
 
-DUECA_NS_START
+namespace dueca {
 
 // forward declarations
 class Transporter;
@@ -360,5 +360,5 @@ private:
   friend class ActivityItem;
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

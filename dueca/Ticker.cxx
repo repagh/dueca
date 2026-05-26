@@ -77,7 +77,7 @@
 #include "debprint.h"
 
 using namespace std;
-DUECA_NS_START
+namespace dueca {
 
 #define DDEB(A) cerr << A << endl;
 
@@ -835,4 +835,4 @@ void Ticker::checkTick()
   }
 }
 
-DUECA_NS_END
+} // namespace dueca

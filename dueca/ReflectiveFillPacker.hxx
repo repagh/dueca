@@ -26,7 +26,7 @@
 #include <iostream>
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 class ReflectiveStoreInformation;
 class AmorphStore;
 struct ParameterTable;
@@ -119,5 +119,5 @@ private:
   void packWork();
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

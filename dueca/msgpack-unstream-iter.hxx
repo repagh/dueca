@@ -35,7 +35,7 @@
   }                                                                            \
   }
 
-MSGPACKUS_NS_START;
+namespace msgunpack {
 
 /** Specific exception to indicate unpacking failure */
 struct msgpack_unpack_mismatch : public std::exception
@@ -749,7 +749,7 @@ template <typename S>
 inline void unpack_member_id_inarray(S &i0, const S &iend, const char *mid)
 {}
 
-MSGPACKUS_NS_END;
+} // namespace msgunpack
 
 #if 0
 #ifdef MSGPACK_USE_DEFINE_MAP

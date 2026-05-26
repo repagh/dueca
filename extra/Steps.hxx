@@ -18,7 +18,7 @@
 #include <iostream>
 #include <exception>
 
-DUECA_NS_START
+namespace dueca {
 
 /** An auxiliary function for Steps. */
 void Steps_sort_and_copy(const double *ui, const double *yi, double *tp, double *y, int n);
@@ -77,10 +77,10 @@ public:
   std::ostream &print(std::ostream &os) const { return Steps_print(os, tp, y, n); }
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 template <int n>
-inline std::ostream &operator<<(std::ostream &os, const DUECA_NS::Steps<n> &o)
+inline std::ostream &operator<<(std::ostream &os, const dueca::Steps<n> &o)
 {
   return o.print(os);
 }

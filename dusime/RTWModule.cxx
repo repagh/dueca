@@ -25,7 +25,7 @@
 
 #include <debprint.h>
 
-DUECA_NS_START
+namespace dueca {
 
 RTWModule::RTWModule(Entity* e, const char* m_class, const char* part,
                      const IncoTable* inco_table, int state_size) :
@@ -170,4 +170,4 @@ void RTWModule::loadXmlSnapshot(const TimeSpec &ts, const XmlSnapshot &snap)
      ignored. */
   W_MOD("module " << getId() << " did not restore from xml snapshot data");
 }
-DUECA_NS_END
+} // namespace dueca

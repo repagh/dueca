@@ -14,7 +14,7 @@
 #define DDFFDCOMetaFunctor_cxx
 #include "DDFFDCOMetaFunctor.hxx"
 
-DDFF_NS_START
+namespace dueca { namespace ddff {
 
 DDFFDCOMetaFunctor::DDFFDCOMetaFunctor()
 {
@@ -27,4 +27,4 @@ DDFFDCOMetaFunctor::~DDFFDCOMetaFunctor()
 
 }
 
-DDFF_NS_END
+} } // namespace ddff namespace dueca

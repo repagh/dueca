@@ -18,7 +18,7 @@
 #include "IncoTable.hxx"
 using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 TrimView* TrimView::singleton = NULL;
 
@@ -93,4 +93,4 @@ void* TrimView::insertEntityNode(const char* name, void* parent,
   return NULL;
 }
 
-DUECA_NS_END
+} // namespace dueca

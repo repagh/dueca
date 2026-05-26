@@ -24,7 +24,7 @@
 // The exception class from the standard C++ library. */
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 /** An Exception class for DUECA.
 
     This class adds (if known), the GlobalId of the server who threw
@@ -111,12 +111,12 @@ public: \
 #endif
 #include "all_exceptions.h"
 
-DUECA_NS_END
+} // namespace dueca
 
-PRINT_NS_START
+namespace std {
 /** Directly print an old DUECA exception */
-inline ostream& operator<< (ostream& o, const DUECA_NS::Exception& e)
+inline ostream& operator<< (ostream& o, const dueca::Exception& e)
 { return e.print(o); }
-PRINT_NS_END
+} // namespace std
 
 #endif

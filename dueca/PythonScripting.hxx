@@ -32,7 +32,7 @@ namespace bpy = boost::python;
 #include <string>
 #include <dueca_ns.h>
 
-DUECA_NS_START
+namespace dueca {
 
 /** Implements the interface to Python */
 struct PythonScripting: public ScriptHelper
@@ -71,5 +71,5 @@ struct PythonScripting: public ScriptHelper
   void runCode(const char* code);
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

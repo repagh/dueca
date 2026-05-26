@@ -24,7 +24,7 @@
 #include <debprint.h>
 
 using namespace std;
-DUECA_NS_START
+namespace dueca {
 #if 0
 ActivityLister::ActivityLister(const ActivityWeaver* weaver,
                                int sources, int focus, int match_key) :
@@ -360,4 +360,4 @@ bool ActivityWeaver::checkValidity(uint32_t key) const
 {
   return key == current_key;
 }
-DUECA_NS_END
+} // namespace dueca

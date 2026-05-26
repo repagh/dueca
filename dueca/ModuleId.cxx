@@ -25,7 +25,7 @@
 #include <debprint.h>
 using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 map<vstring, ModuleId::Index> ModuleId::name_map;
 vector<vstring> ModuleId::names;
@@ -238,4 +238,4 @@ std::ostream& ModuleId::print(std::ostream& os) const
   }
   return os;
 }
-DUECA_NS_END
+} // namespace dueca

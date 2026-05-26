@@ -16,7 +16,7 @@
 #include "IncoRole.hxx"
 #include "AmorphStore.hxx"
 #include <iostream>
-DUECA_NS_START
+namespace dueca {
 
 const char* const getString(const IncoRole &o)
 {
@@ -31,33 +31,33 @@ const char* const getString(const IncoRole &o)
 template<>
 const char* getclassname<IncoRole>() {return "IncoRole";}
 
-DUECA_NS_END
+} // namespace dueca
 
-PRINT_NS_START
-ostream& operator << (ostream& s, const DUECA_NS ::IncoRole& o)
+namespace std {
+ostream& operator << (ostream& s, const dueca ::IncoRole& o)
 {
-  return s << DUECA_NS::getString(o);
+  return s << dueca::getString(o);
 }
 
-istream& operator >> (istream& is, DUECA_NS::IncoRole& o)
+istream& operator >> (istream& is, dueca::IncoRole& o)
 {
   std::string tmp; is >> tmp;
-  for (o = DUECA_NS::Control; true; o = DUECA_NS::IncoRole(int(o)+1)) {
-    if (o == DUECA_NS::NoIncoRoles || tmp == string(getString(o)) ) {
+  for (o = dueca::Control; true; o = dueca::IncoRole(int(o)+1)) {
+    if (o == dueca::NoIncoRoles || tmp == string(getString(o)) ) {
       return is;
     }
   }
 }
 
-PRINT_NS_END
+} // namespace std
 
-void packData(DUECA_NS::AmorphStore& s, const DUECA_NS::IncoRole& o)
+void packData(dueca::AmorphStore& s, const dueca::IncoRole& o)
 {
   packData(s, uint8_t(o));
 }
 
-void unPackData(DUECA_NS::AmorphReStore& s, DUECA_NS::IncoRole &o)
+void unPackData(dueca::AmorphReStore& s, dueca::IncoRole &o)
 {
   uint8_t tmp(s);
-  o = DUECA_NS::IncoRole(tmp);
+  o = dueca::IncoRole(tmp);
 }

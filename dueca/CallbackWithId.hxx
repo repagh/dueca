@@ -19,7 +19,7 @@
 #include "GenericCallback.hxx"
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 /** Template class for callback to a member function.
 
@@ -62,7 +62,7 @@ public:
   /// Destructor.
   ~CallbackWithId();
 };
-DUECA_NS_END
+} // namespace dueca
 #endif
 
 
@@ -74,7 +74,7 @@ DUECA_NS_END
 #ifndef CallbackWithId_ii
 #define CallbackWithId_ii
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 template <class T, class I> void CallbackWithId<T,I>::
 operator() (const TimeSpec &t)
@@ -101,6 +101,6 @@ template <class T, class I> CallbackWithId<T,I>::
   // no more
 }
 
-DUECA_NS_END
+} // namespace dueca
 #endif
 #endif

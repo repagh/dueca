@@ -27,7 +27,7 @@
 #include <iomanip>
 #include <debprint.h>
 
-PRINT_NS_START
+namespace std {
 
 ostream& operator << (ostream& os, const Matrix& x)
 {
@@ -39,9 +39,9 @@ ostream& operator << (ostream& os, const Matrix& x)
   }
   return os;
 }
-PRINT_NS_END
+} // namespace std
 
-DUECA_NS_START
+namespace dueca {
 
 IntervalCalculation::IntervalCalculation() :
   sspeed(0.6),
@@ -143,6 +143,6 @@ void IntervalCalculation::getResult(Vector& y)
 {
   intervals[0].getResult(y);
 }
-DUECA_NS_END
+} // namespace dueca
 
 #endif

@@ -17,7 +17,7 @@
 
 #include <dueca_ns.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 class GLWindowHelper;
 
@@ -142,7 +142,7 @@ public:
   inline GLWindowHelper* getOpenGLHelper() { return helper; }
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif
 

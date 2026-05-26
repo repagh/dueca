@@ -21,7 +21,7 @@
 #include <boost/intrusive_ptr.hpp>
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 class Module;
 class ModuleCreator;
 struct ModuleState;
@@ -88,12 +88,12 @@ public:
   std::ostream &print(std::ostream &os) const;
 };
 
-DUECA_NS_END
+} // namespace dueca
 
-PRINT_NS_START
-inline ostream &operator<<(ostream &os, const DUECA_NS::Entity &e)
+namespace std {
+inline ostream &operator<<(ostream &os, const dueca::Entity &e)
 {
   return e.print(os);
 }
-PRINT_NS_END
+} // namespace std
 #endif

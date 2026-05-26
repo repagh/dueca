@@ -25,7 +25,7 @@
 #include <oddoptions.h>
 #include <SimTime.hxx>
 
-DUECA_NS_START
+namespace dueca {
 
 class Packer;
 class Unpacker;
@@ -138,5 +138,5 @@ public:
 /** Return the (python) script name for this object */
 template<> const char* core_creator_name<Accessor>(const char*);
 
-DUECA_NS_END
+} // namespace dueca
 #endif

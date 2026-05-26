@@ -463,6 +463,9 @@ case $OPTION in
             PKGS="$PKGS $EXTRAGUI"
         fi
 
+        # now using fmt for string formatting
+        PGKS="PKGS fmt"
+
         # merge in the scriptsuffix
         PKGS=`eval echo "${PKGS}"`
         DUECASTART=`eval echo "${DUECASTART}"`
@@ -558,4 +561,3 @@ case $OPTION in
 
 esac
 exit 0
-

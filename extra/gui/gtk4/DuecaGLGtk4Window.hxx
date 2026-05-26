@@ -21,7 +21,7 @@
 
 #include "DuecaGtkInteraction.hxx"
 
-DUECA_NS_START;
+namespace dueca {
 
 /** Provides a DUECA shell around a window with a Gtk4 GtkGlarea.
 
@@ -159,4 +159,4 @@ public:
   virtual void initGL();
 };
 
-DUECA_NS_END;
+} // namespace dueca

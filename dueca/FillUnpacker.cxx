@@ -39,7 +39,7 @@
 #include <debprint.h>
 using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 int FillUnpacker::unpacker_no = 0;
 
@@ -389,4 +389,4 @@ ostream& operator << (ostream& os, const FillUnpacker& p)
     reinterpret_cast<void*>(const_cast<FillUnpacker*>(&p)) << ')';
 }
 
-DUECA_NS_END
+} // namespace dueca

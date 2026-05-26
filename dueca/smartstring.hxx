@@ -23,7 +23,7 @@
 #include <exception>
 #include "dueca_ns.h"
 
-DUECA_NS_START;
+namespace dueca {
 
 void DCOtoJSONstrict(rapidjson::Writer<rapidjson::StringBuffer> &writer,
                      const CommObjectReader &reader);
@@ -225,11 +225,11 @@ public:
   }
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #define smartstring_hxx
 
-MSGPACKUS_NS_START;
+namespace msgunpack {
 template <typename S>
 inline void msg_unpack(S &i0, const S &iend, dueca::smartstring &i);
-MSGPACKUS_NS_END;
+} // namespace msgunpack

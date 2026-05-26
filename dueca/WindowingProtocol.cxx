@@ -15,7 +15,7 @@
 #define WindowingProtocol_cxx
 #include "WindowingProtocol.hxx"
 
-DUECA_NS_START
+namespace dueca {
 
 WindowingProtocol::WindowingProtocol(const char* name) :
   name(name)
@@ -33,4 +33,4 @@ const char* WindowingProtocol::getTypeName()
   return "WindowingProtocol";
 }
 
-DUECA_NS_END
+} // namespace dueca

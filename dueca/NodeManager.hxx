@@ -26,7 +26,7 @@
 #include <dueca/ChannelWriteToken.hxx>
 #include <vector>
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 extern unsigned int static_node_id;
 
@@ -171,5 +171,5 @@ public:
   //@}
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

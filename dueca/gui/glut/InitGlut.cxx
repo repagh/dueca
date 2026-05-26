@@ -24,7 +24,7 @@
 #include "TypeCreator.hxx"
 #include "CoreCreator.hxx"
 
-DUECA_NS_START
+namespace dueca {
 
 SCHEME_CLASS_DEC(WindowingProtocol);
 SCHEME_CLASS_SINGLE(GlutProtocol,WindowingProtocol,"glut-protocol");
@@ -43,4 +43,4 @@ LNK_PUBLICC void InitGlut()
 }
 
 
-DUECA_NS_END
+} // namespace dueca

@@ -16,7 +16,7 @@
 #include "ParameterTable.hxx"
 #include "GenericVarIO.hxx"
 
-DUECA_NS_START
+namespace dueca {
 
 const char* set_timing_description =
 "Supply a time specification to define the update rate of the main activity";
@@ -30,4 +30,4 @@ ParameterTable::~ParameterTable()
   delete probe;
 }
 
-DUECA_NS_END
+} // namespace dueca

@@ -13,7 +13,7 @@
 
 #include "GladeException.hxx"
 
-DUECA_NS_START;
+namespace dueca {
 
 GladeException::GladeException(const GladeException &e) :
     reason(e.reason)
@@ -37,4 +37,4 @@ std::ostream& GladeException::print(std::ostream& os) const
   return os;
 }
 
-DUECA_NS_END;
+} // namespace dueca

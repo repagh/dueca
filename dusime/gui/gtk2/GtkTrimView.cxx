@@ -36,7 +36,7 @@
 #endif
 #include <dassert.h>
 #include <debprint.h>
-DUECA_NS_START
+namespace dueca {
 
 GtkTrimView* GtkTrimView::singleton = NULL;
 
@@ -380,4 +380,4 @@ void* GtkTrimView::insertEntityNode(const char* name, void* vparent,
   return reinterpret_cast<void*>(newnode);
 }
 
-DUECA_NS_END
+} // namespace dueca

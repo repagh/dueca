@@ -23,7 +23,7 @@
 #include "GtkGladeWindow.hxx"
 #include <ActivityViewBase.hxx>
 
-DUECA_NS_START
+namespace dueca {
 
 struct ParameterTable;
 struct ActivityViewGui;
@@ -86,5 +86,5 @@ public:
   int cbDrawAreaButtonRelease(GtkWidget *w, GdkEventButton *ev);
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

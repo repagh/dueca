@@ -19,7 +19,7 @@
 #define DO_INSTANTIATE
 #include "AsyncList.hxx"
 
-DUECA_NS_START
+namespace dueca {
 
 AperiodicAlarm::AperiodicAlarm(const std::string& name) :
   TargetAndPuller(name),
@@ -62,4 +62,4 @@ void AperiodicAlarm::trigger(const DataTimeSpec& t, unsigned idx)
   }
 }
 
-DUECA_NS_END
+} // namespace dueca

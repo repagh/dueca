@@ -19,7 +19,7 @@
 #include <inttypes.h>
 #include <cstddef>
 
-DUECA_NS_START
+namespace dueca {
 
 class AmorphStore;
 class AmorphReStore;
@@ -82,6 +82,6 @@ public:
   virtual const char* getClassname() const = 0;
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif
 

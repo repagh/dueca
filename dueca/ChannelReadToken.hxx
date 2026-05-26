@@ -27,7 +27,7 @@
 #include <dueca_ns.h>
 #include <string>
 
-DUECA_NS_START;
+namespace dueca {
 
 class GenericCallback;
 class Activity;
@@ -780,6 +780,6 @@ private:
   ChannelReadToken &operator=(const ChannelReadToken &);
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

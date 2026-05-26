@@ -15,17 +15,17 @@
 #include "LogString.hxx"
 #include "Dstring.ixx"
 
-DUECA_NS_START
+namespace dueca {
 template class Dstring<LSSIZE>;
-DUECA_NS_END
+} // namespace dueca
 
-PRINT_NS_START
+namespace std {
 template std::ostream& operator << (std::ostream& os,
-                                    const DUECA_NS ::Dstring<LSSIZE>& o);
-PRINT_NS_END
+                                    const dueca ::Dstring<LSSIZE>& o);
+} // namespace std
 
-template void packData(DUECA_NS ::AmorphStore& s,
-                       const DUECA_NS ::Dstring<LSSIZE>& o);
-template void unPackData(DUECA_NS ::AmorphReStore& s,
-                         DUECA_NS ::Dstring<LSSIZE>& o);
+template void packData(dueca ::AmorphStore& s,
+                       const dueca ::Dstring<LSSIZE>& o);
+template void unPackData(dueca ::AmorphReStore& s,
+                         dueca ::Dstring<LSSIZE>& o);
 

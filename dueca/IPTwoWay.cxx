@@ -40,7 +40,7 @@
 #include "MemberCall.hxx"
 using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 const ParameterTable* IPTwoWay::getParameterTable()
 {
@@ -224,4 +224,4 @@ bool IPTwoWay::selectOneWay(const bool& oneway)
   return true;
 }
 
-DUECA_NS_END
+} // namespace dueca

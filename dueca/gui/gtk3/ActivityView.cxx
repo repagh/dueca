@@ -50,7 +50,7 @@
 #include <debprint.h>
 using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 struct ActivityViewGui
 {
@@ -144,10 +144,10 @@ bool ActivityView::complete()
 
   // add canvases for the different nodes
   gui.canvas = new GtkWidget*
-    [DUECA_NS::NodeManager::single()->getNoOfNodes()];
+    [dueca::NodeManager::single()->getNoOfNodes()];
 
   for (int ii = 0; ii <
-         DUECA_NS ::NodeManager::single()->getNoOfNodes(); ii++) {
+         dueca ::NodeManager::single()->getNoOfNodes(); ii++) {
 
     // create the canvas
     gui.canvas[ii] = gtk_drawing_area_new();
@@ -165,16 +165,16 @@ bool ActivityView::complete()
 
     // add a callback for expose and one for realize
     g_signal_connect(G_OBJECT(gui.canvas[ii]), "configure_event",
-                     G_CALLBACK(DUECA_NS::cbConfigure),
+                     G_CALLBACK(dueca::cbConfigure),
                      reinterpret_cast<gpointer>(this));
     g_signal_connect(G_OBJECT(gui.canvas[ii]), "draw",
-                     G_CALLBACK(DUECA_NS::cbDraw),
+                     G_CALLBACK(dueca::cbDraw),
                      reinterpret_cast<gpointer>(this));
     g_signal_connect(G_OBJECT(gui.canvas[ii]), "button-press-event",
-                     G_CALLBACK(DUECA_NS::cbDrawAreaButtonPress),
+                     G_CALLBACK(dueca::cbDrawAreaButtonPress),
                      reinterpret_cast<gpointer>(this));
     g_signal_connect(G_OBJECT(gui.canvas[ii]), "button-release-event",
-                     G_CALLBACK(DUECA_NS::cbDrawAreaButtonRelease),
+                     G_CALLBACK(dueca::cbDrawAreaButtonRelease),
                      reinterpret_cast<gpointer>(this));
     gtk_widget_show(gui.canvas[ii]);
   }
@@ -195,7 +195,7 @@ bool ActivityView::complete()
 ActivityView::~ActivityView()
 {
   for (int ii = 0; ii <
-         DUECA_NS ::NodeManager::single()->getNoOfNodes(); ii++) {
+         dueca ::NodeManager::single()->getNoOfNodes(); ii++) {
     g_object_unref(gui.canvas[ii]);
   }
   delete [] gui.canvas;
@@ -605,4 +605,4 @@ void ActivityView::updateLines(unsigned node_id)
   }
 }
 
-DUECA_NS_END
+} // namespace dueca

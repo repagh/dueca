@@ -28,7 +28,7 @@
 #include <dueca_ns.h>
 #include <gtk/gtk.h>
 
-DUECA_NS_START
+namespace dueca {
 struct ParameterTable;
 
 /** Handles -- at least part of -- the communication with the
@@ -248,5 +248,5 @@ public:
   void requestToKeepRunning(bool keep_running) override;
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

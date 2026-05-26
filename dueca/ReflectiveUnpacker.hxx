@@ -26,7 +26,7 @@
 #include <dueca/Callback.hxx>
 
 
-DUECA_NS_START
+namespace dueca {
 class AmorphReStore;
 class TimeSpec;
 class PrioritySpec;
@@ -228,5 +228,5 @@ private:
   friend std::ostream& operator << (std::ostream& os, const ReflectiveUnpacker& p);
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

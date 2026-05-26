@@ -2,7 +2,7 @@
 #include <dueca_ns.h>
 #include <gtk/gtk.h>
 
-DUECA_NS_START
+namespace dueca {
 
 const LogCategory& cat_one()
 {
@@ -37,7 +37,7 @@ public:
   }
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 int main(int argc, char* argv[])
 {

@@ -19,7 +19,7 @@
 #include <inttypes.h>
 #include <dueca_ns.h>
 
-DUECA_NS_START
+namespace dueca {
 
 /** A time class that counts the time from -- approximately -- the
     start of the program. Mainly used in time-tagging debug messages. */
@@ -44,11 +44,11 @@ public:
   std::ostream& print(std::ostream& os) const;
 };
 
-DUECA_NS_END
+} // namespace dueca
 
-PRINT_NS_START
+namespace std {
 inline ostream& operator<< (ostream& os,
-                            const DUECA_NS ::DuecaClockTime& c)
+                            const dueca ::DuecaClockTime& c)
 { return c.print(os); }
-PRINT_NS_END
+} // namespace std
 #endif

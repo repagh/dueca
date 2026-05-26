@@ -37,7 +37,7 @@
 #include <fstream>
 #include <memory>
 
-DUECA_NS_START
+namespace dueca {
 
 class ChannelDataMonitor;
 
@@ -365,6 +365,6 @@ protected:
                   ChannelDataMonitor *monitor = NULL);
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

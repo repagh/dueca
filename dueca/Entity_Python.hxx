@@ -18,7 +18,7 @@
 #include <CreationCenter.hxx>
 #include <boost/python.hpp>
 
-DUECA_NS_START
+namespace dueca {
 
 static boost::intrusive_ptr<Entity> entity_constructor
 (const std::string& ename, const bpy::list& f)
@@ -47,6 +47,6 @@ static void python_entity_init()
     .def("addModule", addModulePy);
 }
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

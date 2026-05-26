@@ -61,7 +61,7 @@ MSGPACK_API_VERSION_NAMESPACE(v1)
 }
 } // namespace msgpack
 
-MSGPACKUS_NS_START;
+namespace msgunpack {
 template <typename S>
 inline void msg_unpack(S &i0, const S &iend,
                        dueca::ddff::FileWithSegments::Tag &e)
@@ -80,9 +80,9 @@ inline void msg_unpack(S &i0, const S &iend,
   msg_unpack(i0, iend, e.inco_name);
 }
 
-MSGPACKUS_NS_END;
+} // namespace msgunpack
 
-DDFF_NS_START
+namespace dueca { namespace ddff {
 
 FileWithSegments::Tag::Tag() :
   offset(),
@@ -536,4 +536,4 @@ recorderlist_t &FileWithSegments::myRecorders()
   return my_recorders;
 }
 
-DDFF_NS_END
+} } // namespace ddff namespace dueca

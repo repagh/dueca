@@ -30,7 +30,7 @@
 #include <AperiodicAlarm.hxx>
 #include <dueca.h>
 
-DUECA_NS_START
+namespace dueca {
 
 /** This is the base class for singleton object that controls the
     Dusime modules (HardwareModule, SimulationModule) in a
@@ -207,5 +207,5 @@ protected:
   virtual void refreshButtonState(const SimulationState &btn_state);
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

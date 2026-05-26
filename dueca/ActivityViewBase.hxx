@@ -28,7 +28,7 @@
 #include <fstream>
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 struct ParameterTable;
 
@@ -216,5 +216,5 @@ public:
   virtual void updateLines(unsigned node) = 0;
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

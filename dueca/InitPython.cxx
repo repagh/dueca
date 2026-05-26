@@ -50,7 +50,7 @@
 #define DEBRPINTLEVEL 0
 #include <debprint.h>
 
-DUECA_NS_START
+namespace dueca {
 
 void init_dueca_accessor(void)
 {
@@ -152,4 +152,4 @@ template <> ProbeType getProbeType(const typeflag<dueca::GenericPacker &> &a)
   return Probe_GenericPacker;
 }
 
-DUECA_NS_END
+} // namespace dueca

@@ -17,7 +17,7 @@
 
 #define __CUSTOM_GETSTRING_Type
 // alternative names
-const char* const getString(const DUECA_NS::SimulationState::Type &o)
+const char* const getString(const dueca::SimulationState::Type &o)
 {
   static const char* Type_names[] = {
     "HoldCurrent",
@@ -43,7 +43,7 @@ SimulationState::SimulationState(const std::string& s) :
 
 const char* const SimulationState::getString() const
 {
-  return DUECA_NS::getString(t);
+  return dueca::getString(t);
 }
 
 SimulationState::Type SimulationState::transitionFinal() const

@@ -35,7 +35,7 @@
 #include <cmath>
 #include <limits>
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 /** Conversion to net representation, used for the StoreMark calls */
 template <class T>
@@ -341,51 +341,51 @@ public:
   std::ostream& print(std::ostream& o) const;
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 // the packData non-member functions are in global namespace, to keep
 // them compatible with functions that an application developer might define
-inline void packData(DUECA_NS ::AmorphStore &s, const float& i)
+inline void packData(dueca ::AmorphStore &s, const float& i)
 { s.packData(i); }
-inline void packData(DUECA_NS ::AmorphStore &s, const double& i)
+inline void packData(dueca ::AmorphStore &s, const double& i)
 { s.packData(i); }
-inline void packData(DUECA_NS ::AmorphStore &s, const char& i)
+inline void packData(dueca ::AmorphStore &s, const char& i)
 { s.packData(i); }
-inline void packData(DUECA_NS ::AmorphStore &s, const int8_t& i)
+inline void packData(dueca ::AmorphStore &s, const int8_t& i)
 { s.packData(i); }
-inline void packData(DUECA_NS ::AmorphStore &s, const int16_t& i)
+inline void packData(dueca ::AmorphStore &s, const int16_t& i)
 { s.packData(i); }
-inline void packData(DUECA_NS ::AmorphStore &s, const int32_t& i)
+inline void packData(dueca ::AmorphStore &s, const int32_t& i)
 { s.packData(i); }
-inline void packData(DUECA_NS ::AmorphStore &s, const int64_t& i)
+inline void packData(dueca ::AmorphStore &s, const int64_t& i)
 { s.packData(i); }
-inline void packData(DUECA_NS ::AmorphStore &s, const uint8_t& i)
+inline void packData(dueca ::AmorphStore &s, const uint8_t& i)
 { s.packData(i); }
-inline void packData(DUECA_NS ::AmorphStore &s, const uint16_t& i)
+inline void packData(dueca ::AmorphStore &s, const uint16_t& i)
 { s.packData(i); }
-inline void packData(DUECA_NS ::AmorphStore &s, const uint32_t& i)
+inline void packData(dueca ::AmorphStore &s, const uint32_t& i)
 { s.packData(i); }
-inline void packData(DUECA_NS ::AmorphStore &s, const uint64_t& i)
+inline void packData(dueca ::AmorphStore &s, const uint64_t& i)
 { s.packData(i); }
-inline void packData(DUECA_NS ::AmorphStore &s, const bool& i)
+inline void packData(dueca ::AmorphStore &s, const bool& i)
 { s.packData(i); }
-inline void packData(DUECA_NS ::AmorphStore &s, const vstring& i)
+inline void packData(dueca ::AmorphStore &s, const vstring& i)
 { s.packData(i); }
-inline void packData(DUECA_NS ::AmorphStore &s, const char* i,
+inline void packData(dueca ::AmorphStore &s, const char* i,
                      const unsigned length)
 { s.packData(i, length); }
-inline void packData(DUECA_NS ::AmorphStore &s, const char* c)
+inline void packData(dueca ::AmorphStore &s, const char* c)
 { s.packData(c); }
-void packData(DUECA_NS ::AmorphStore& s, const timeval& tv);
+void packData(dueca ::AmorphStore& s, const timeval& tv);
 
 // generic pack diff
 template<class D>
-void packDataDiff(DUECA_NS:: AmorphStore, const D& d, const D& r);
+void packDataDiff(dueca:: AmorphStore, const D& d, const D& r);
 
-inline std::ostream& operator << (std::ostream& o, const DUECA_NS ::AmorphStore &s)
+inline std::ostream& operator << (std::ostream& o, const dueca ::AmorphStore &s)
 { return s.print(o); }
 
-DUECA_NS_START
+namespace dueca {
 
 /** Class to unpack objects packed by an AmorphStore.
 
@@ -577,51 +577,51 @@ public:
 };
 
 
-DUECA_NS_END
+} // namespace dueca
 
-inline void unPackData(DUECA_NS ::AmorphReStore &s, float &i)
+inline void unPackData(dueca ::AmorphReStore &s, float &i)
 { s.unPackData(i); }
-inline void unPackData(DUECA_NS ::AmorphReStore &s, double &i)
+inline void unPackData(dueca ::AmorphReStore &s, double &i)
 { s.unPackData(i); }
-inline void unPackData(DUECA_NS ::AmorphReStore &s, int8_t &i)
+inline void unPackData(dueca ::AmorphReStore &s, int8_t &i)
 { s.unPackData(i); }
-inline void unPackData(DUECA_NS ::AmorphReStore &s, char &i)
+inline void unPackData(dueca ::AmorphReStore &s, char &i)
 { s.unPackData(i); }
-inline void unPackData(DUECA_NS ::AmorphReStore &s, int16_t &i)
+inline void unPackData(dueca ::AmorphReStore &s, int16_t &i)
 { s.unPackData(i); }
-inline void unPackData(DUECA_NS ::AmorphReStore &s, int32_t &i)
+inline void unPackData(dueca ::AmorphReStore &s, int32_t &i)
 { s.unPackData(i); }
-inline void unPackData(DUECA_NS ::AmorphReStore &s, int64_t &i)
+inline void unPackData(dueca ::AmorphReStore &s, int64_t &i)
 { s.unPackData(i); }
-inline void unPackData(DUECA_NS ::AmorphReStore &s, uint8_t &i)
+inline void unPackData(dueca ::AmorphReStore &s, uint8_t &i)
 { s.unPackData(i); }
-inline void unPackData(DUECA_NS ::AmorphReStore &s, uint16_t &i)
+inline void unPackData(dueca ::AmorphReStore &s, uint16_t &i)
 { s.unPackData(i); }
-inline void unPackData(DUECA_NS ::AmorphReStore &s, uint32_t &i)
+inline void unPackData(dueca ::AmorphReStore &s, uint32_t &i)
 { s.unPackData(i); }
-inline void unPackData(DUECA_NS ::AmorphReStore &s, uint64_t &i)
+inline void unPackData(dueca ::AmorphReStore &s, uint64_t &i)
 { s.unPackData(i); }
-inline void unPackData(DUECA_NS ::AmorphReStore &s, bool &i)
+inline void unPackData(dueca ::AmorphReStore &s, bool &i)
 { s.unPackData(i); }
-inline void unPackData(DUECA_NS ::AmorphReStore &s, vstring &i)
+inline void unPackData(dueca ::AmorphReStore &s, vstring &i)
 { s.unPackData(i); }
-inline void unPackData(DUECA_NS ::AmorphReStore &s, char *i,
+inline void unPackData(dueca ::AmorphReStore &s, char *i,
                        const unsigned length)
 { s.unPackData(i, length); }
-inline void unPackData(DUECA_NS ::AmorphReStore &s, char * &i)
+inline void unPackData(dueca ::AmorphReStore &s, char * &i)
 { s.unPackData(i); }
-void unPackData(DUECA_NS ::AmorphReStore& s, timeval& tv);
+void unPackData(dueca ::AmorphReStore& s, timeval& tv);
 
 /** Generic, templated prototype for unpacking only a difference
     transmission. */
 template<class D>
-void unPackDataDiff(DUECA_NS:: AmorphReStore, D& d);
+void unPackDataDiff(dueca:: AmorphReStore, D& d);
 
 /** Print a timeval to stream. */
 std::ostream& operator << (std::ostream& o, const timeval& tv);
 
 /** Print a restore to stream */
-inline std::ostream& operator << (std::ostream& o, const DUECA_NS ::AmorphReStore &s)
+inline std::ostream& operator << (std::ostream& o, const dueca ::AmorphReStore &s)
 { return s.print(o); }
 
 #endif

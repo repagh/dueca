@@ -30,40 +30,8 @@
     <li>CCMSGPACKUS_NS. Absolute unpack namespace, "::msgunpack"
     </ul>
 */
+#pragma once
 
-#ifndef dueca_ns_h
-#define dueca_ns_h
+namespace dueca {}
 
-/** If defined, the dueca classes are encapsulated in the dueca
-    namespace. */
-#define DUECA_NS_ON 1
-
-/** This is a shortcut for start of the namespace. It should only be
-    used within dueca/dusime code, not in application code. */
-#define DUECA_NS_START namespace dueca {
-  /** This is a shortcut for the end  of the namespace. It should only be
-      used within dueca/dusime code, not in application code. */
-#define DUECA_NS_END } /* namespace dueca */
-/** This defines the name of the dueca namespace. */
-#define DUECA_NS dueca
-/** This defines the "absolute" dueca namespace, starting with a
-    double colon. */
-#define CCDUECA_NS ::dueca
-/** Use this define in your code, if you want to use the dueca
-    namespace. */
 #define USING_DUECA_NS using namespace dueca;
-
-/** This is used internally in DUECA, for printing (operator<<) functions */
-#define PRINT_NS_START namespace std {
-/** End printing function. */
-#define PRINT_NS_END }
-
-/** A specific set of message-pack compatible routines for quick
-    matching unpack. */
-#define MSGPACKUS_NS_START namespace msgunpack {
-/** End of the message-pack compatible routines namespace. */
-#define MSGPACKUS_NS_END }
-/** Absolute reference to message-pack compatible unpack routines */
-#define CCMSGPACKUS_NS ::msgunpack
-
-#endif

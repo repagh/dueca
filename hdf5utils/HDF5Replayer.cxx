@@ -38,7 +38,7 @@
 #include <HDF5Exceptions.hxx>
 using namespace std;
 
-STARTHDF5LOG;
+namespace dueca { namespace hdf5log {
 
 // class/module name
 const char* const HDF5Replayer::classname = "hdf5-replayer";
@@ -722,4 +722,4 @@ void HDF5Replayer::ReplaySet::switchFile(std::weak_ptr<H5::H5File> hfile,
 // creation of modules of this type
 //static TypeCreator<HDF5Replayer> a(HDF5Replayer::getMyParameterTable());
 
-ENDHDF5LOG;
+} } // namespace dueca namespace hdf5log

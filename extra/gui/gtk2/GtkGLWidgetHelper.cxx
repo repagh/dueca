@@ -19,7 +19,7 @@
 #include <dassert.h>
 #include <GuiHandler.hxx>
 
-DUECA_NS_START;
+namespace dueca {
 
 GdkGLContext* GtkGLWidgetHelper::share_context = NULL;
 
@@ -246,4 +246,4 @@ GLWindowHelper* GtkOpenGLHelper::newWindow()
   return new GtkGLWindowHelper();
 }
 
-DUECA_NS_END;
+} // namespace dueca

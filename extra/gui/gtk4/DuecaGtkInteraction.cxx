@@ -27,7 +27,7 @@
 #include <glut.h>
 #endif
 
-DUECA_NS_START;
+namespace dueca {
 
 /** A struct for translation of Gtk keycodes to the Glut key codes
     adopted in DUECA. */
@@ -243,4 +243,4 @@ void DuecaGtkInteraction::motion(int x, int y) {}
 void DuecaGtkInteraction::passive(int x, int y) {}
 void DuecaGtkInteraction::mouse(int button, int state, int x, int y) {}
 
-DUECA_NS_END;
+} // namespace dueca

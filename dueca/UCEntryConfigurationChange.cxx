@@ -11,7 +11,7 @@
 
 #include "UCEntryConfigurationChange.hxx"
 
-DUECA_NS_START;
+namespace dueca {
 
 EntryConfigurationChange::EntryConfigurationChange() :
   changetype(Sentinel),
@@ -40,4 +40,4 @@ void EntryConfigurationChange::insert(EntryConfigurationChangePtr toinsert)
   next = toinsert;
 }
 
-DUECA_NS_END;
+} // namespace dueca

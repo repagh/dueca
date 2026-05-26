@@ -40,8 +40,8 @@
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
 
-DUECA_NS_START
-//USING_DUECA_NS
+namespace dueca {
+//using namespace dueca;
 //using namespace std;
 
 InformationStash<ActivityDescription>& Activity_stash()
@@ -228,4 +228,4 @@ ActivityCallback::~ActivityCallback()
 }
 
 
-DUECA_NS_END
+} // namespace dueca

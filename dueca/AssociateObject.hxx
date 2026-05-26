@@ -16,7 +16,7 @@
 
 #include <dueca/dueca_ns.h>
 
-DUECA_NS_START
+namespace dueca {
 
 /** Proxy identity for helper classes associated with an object
     derived from dueca::NamedObject.
@@ -89,6 +89,6 @@ public:
   ObjectType getObjectType() const final { return host_type; }
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

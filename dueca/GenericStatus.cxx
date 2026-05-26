@@ -14,7 +14,7 @@
 
 #define GenericStatus_cxx
 #include "GenericStatus.hxx"
-DUECA_NS_START
+namespace dueca {
 
 GenericStatus::GenericStatus()
 {
@@ -34,4 +34,4 @@ GenericStatus& GenericStatus::operator &= (GenericStatus& o)
   return *this;
 }
 
-DUECA_NS_END
+} // namespace dueca

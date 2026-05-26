@@ -14,7 +14,7 @@
 #define ArgElement_cxx
 #include "ArgElement.hxx"
 
-DUECA_NS_START
+namespace dueca {
 
 ArgElement::ArgElement(unsigned idx, boost::any value) :
   idx(idx), value(value) { }
@@ -31,4 +31,4 @@ ArgElement::operator= (const ArgElement& o)
   return *this;
 }
 
-DUECA_NS_END
+} // namespace dueca

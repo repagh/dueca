@@ -21,7 +21,7 @@
 #include <boost/smart_ptr/intrusive_ref_counter.hpp>
 #endif
 
-DDFF_NS_START
+namespace dueca { namespace ddff {
 
 /** Base class for segmented recording. Handles marking of recording stretches,
     and callback to the writing stream to inform on segment-data links */
@@ -91,6 +91,6 @@ public:
   virtual void startReplay(TimeTickType tick);
 };
 
-DDFF_NS_END
+} } // namespace ddff namespace dueca
 
 #include <undebprint.h>

@@ -17,7 +17,7 @@
 #include "CircularWithPoly.hxx"
 #include <cmath>
 
-DUECA_NS_START
+namespace dueca {
 
 CircularWithPoly::CircularWithPoly(double K, double xzero, double norm_start,
                                    size_t n, const double ai[]) :
@@ -82,7 +82,7 @@ std::ostream& CircularWithPoly::print(std::ostream& os) const
   return os << ")";
 }
 
-DUECA_NS_END
+} // namespace dueca
 
 #ifdef UNITTEST
 using namespace std;

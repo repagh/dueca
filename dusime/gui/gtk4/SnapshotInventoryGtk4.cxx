@@ -108,7 +108,7 @@ static GListModel *add_data_element(gpointer _item, gpointer user_data)
 
 } // end anonymous namespace
 
-DUECA_NS_START;
+namespace dueca {
 
 // class/module name
 const char *const SnapshotInventoryGtk4::classname = "initials-inventory";
@@ -724,4 +724,4 @@ void SnapshotInventoryGtk4::cbEditClose(GtkWidget *button, gpointer gp)
   gtk_widget_set_visible(editwin, FALSE);
 }
 
-DUECA_NS_END;
+} // namespace dueca

@@ -11,12 +11,12 @@
         license         : EUPL-1.2
 */
 
-DUECA_NS_END;
+} // namespace dueca
 
 #include <iomanip>
 using namespace std;
 
-DUECA_NS_START;
+namespace dueca {
 
 // code originally written for this codegen version
 #define __CUSTOM_COMPATLEVEL_110

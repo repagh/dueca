@@ -55,7 +55,7 @@ if ((c) & 01) (c) = ((c) >>1) + 0x80000000; else (c) >>= 1;
 #define AMALGI(d, I) \
 { ROTATE_RIGHT(I); I = (I ^ d); }
 
-DUECA_NS_START
+namespace dueca {
 
 const ParameterTable* ReflectivePacker::getParameterTable()
 {
@@ -400,4 +400,4 @@ int ReflectivePacker::changeCurrentStore(int& store_no)
   return 0;
 }
 
-DUECA_NS_END
+} // namespace dueca

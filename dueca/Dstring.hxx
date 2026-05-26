@@ -34,7 +34,7 @@
 #include <string>
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 /** Forward declarations. */
 class AmorphReStore;
@@ -192,30 +192,30 @@ template<unsigned mxsize>
 bool operator == (const std::string& o, const Dstring<mxsize>& s)
 { return o == s.c_str(); }
 
-DUECA_NS_END
+} // namespace dueca
 
 /** Packs a Dstring into an amorpous storage object. */
 template<unsigned mxsize>
-void packData(DUECA_NS ::AmorphStore& s,
-              const DUECA_NS ::Dstring<mxsize>& o);
+void packData(dueca ::AmorphStore& s,
+              const dueca ::Dstring<mxsize>& o);
 
 /** Unpacks a Dstring from an amorpous storage object. */
 template<unsigned mxsize>
-void unPackData(DUECA_NS ::AmorphReStore& s, DUECA_NS ::Dstring<mxsize>& o);
+void unPackData(dueca ::AmorphReStore& s, dueca ::Dstring<mxsize>& o);
 
-PRINT_NS_START
+namespace std {
 /** Print a Dstring to stream. */
 template<unsigned mxsize>
 ostream& operator << (ostream& os,
-                      const DUECA_NS ::Dstring<mxsize>& o);
+                      const dueca ::Dstring<mxsize>& o);
 
 /** Read a Dstring from a stream. */
 template<unsigned mxsize>
 istream& operator >> (istream& is,
-                      DUECA_NS ::Dstring<mxsize>& o);
-PRINT_NS_END
+                      dueca ::Dstring<mxsize>& o);
+} // namespace std
 
-MSGPACKUS_NS_START;
+namespace msgunpack {
 
 /** Unpack a DUECA dstring from a msgpack visitor
 
@@ -225,4 +225,4 @@ MSGPACKUS_NS_START;
 */
 template <typename S, unsigned mxsize>
 inline void msg_unpack(S& i0, const S& iend, dueca::Dstring<mxsize>& s);
-MSGPACKUS_NS_END;
+} // namespace msgunpack

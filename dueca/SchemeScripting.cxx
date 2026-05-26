@@ -20,7 +20,7 @@
 #include <debprint.h>
 using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 SchemeScripting::SchemeScripting() :
   ScriptHelper("(pass-control 2) ; *Added by ScriptInterpret*",
@@ -141,4 +141,4 @@ bool SchemeScripting::writeline(const std::string& line)
 }
 
 
-DUECA_NS_END
+} // namespace dueca

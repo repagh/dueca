@@ -19,7 +19,7 @@
 #include <iostream>
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 class NamedObject;
 // class names
 
@@ -81,7 +81,7 @@ public:
   friend std::ostream& operator << (std::ostream& os, const ModuleIdList& il);
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif
 
 

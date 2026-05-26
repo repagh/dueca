@@ -64,7 +64,7 @@ static const ::dueca::CommObjectDataTable entriestable[] = {
 
 #include <cstring>
 
-DUECA_NS_START
+namespace dueca {
 
 // magic number, hashed from class name and member names / classes
 const uint32_t LogCategory::magic_check_number=0x26c8c043;
@@ -144,4 +144,4 @@ const vstring& LogCategory::getExplain() const
   return unknown;
 }
 
-DUECA_NS_END
+} // namespace dueca

@@ -22,7 +22,7 @@
 //#define I_XTR
 #include <debug.h>
 
-DDFF_NS_START;
+namespace dueca { namespace ddff {
 
 EntryWatcher::EntryWatcher(const std::string& channelname,
                            const std::string& path,
@@ -213,4 +213,4 @@ void EntryWatcher::EntryData::createFunctor(std::weak_ptr<FileWithSegments> nfil
 }
 
 
-DDFF_NS_END;
+} } // namespace ddff namespace dueca

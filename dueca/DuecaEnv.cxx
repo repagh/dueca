@@ -23,7 +23,7 @@
 #define DO_INSTANTIATE
 #include "AsyncList.hxx"
 
-DUECA_NS_START
+namespace dueca {
 
 DuecaEnv* DuecaEnv::singleton = NULL;
 
@@ -92,4 +92,4 @@ void DuecaEnv::callComplete()
 }
 
 
-DUECA_NS_END
+} // namespace dueca

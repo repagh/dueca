@@ -17,7 +17,7 @@
 #include <dueca/NamedObject.hxx>
 #include <dueca/Accessor.hxx>
 
-DUECA_NS_START;
+namespace dueca {
 
 struct NetTimingLog;
 struct NetCapacityLog;
@@ -197,6 +197,6 @@ private:
   void prepareToStop(TimeTickType tick) final;
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

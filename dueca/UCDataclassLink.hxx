@@ -18,7 +18,7 @@
 #include "UCClientHandle.hxx"
 #include <map>
 
-DUECA_NS_START
+namespace dueca {
 
 /** Entry map, linking reading clients and available entries for a
     specific Dataclass name. */
@@ -37,6 +37,6 @@ struct UCDataclassLink
 typedef std::map<std::string,UCDataclassLink> dataclassmap_type;
 typedef UCDataclassLink* UCDataclassLinkPtr;
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

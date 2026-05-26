@@ -17,7 +17,7 @@
 
 #include <dueca_ns.h>
 
-DUECA_NS_START
+namespace dueca {
 
 /** Common base class for DataUpdater instantiations. */
 class DataUpdaterBase
@@ -170,6 +170,6 @@ private:
   static void* operator new(size_t s);
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

@@ -22,7 +22,7 @@
 using namespace std;
 
 
-DUECA_NS_START
+namespace dueca {
 
 StatusT1::StatusT1() :
   mstate(ModuleState::Neutral),
@@ -91,4 +91,4 @@ bool StatusT1::equiv(const StatusT1 & o) const
   return mstate == o.mstate && sstate == o.sstate;
 }
 
-DUECA_NS_END
+} // namespace dueca

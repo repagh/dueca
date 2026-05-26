@@ -25,7 +25,7 @@
 #include <dueca/ChannelReadToken.hxx>
 #include <dueca/ChannelWriteToken.hxx>
 
-DUECA_NS_START
+namespace dueca {
 class IncoCollaborator;
 class IntervalCalculation;
 typedef IntervalCalculation TrimCalculator;
@@ -161,5 +161,5 @@ public:
   /** Initiate a new calculation cycle. */
   void initiate(IncoMode mode);
 };
-DUECA_NS_END
+} // namespace dueca
 #endif

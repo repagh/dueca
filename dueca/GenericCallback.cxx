@@ -15,7 +15,7 @@
 #include "GenericCallback.hxx"
 using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 GenericCallback::GenericCallback()
 {
@@ -33,5 +33,5 @@ ostream& operator << (ostream& os, const GenericCallback& callback)
   return os;
 }
 
-DUECA_NS_END
+} // namespace dueca
 

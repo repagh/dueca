@@ -18,7 +18,7 @@
 #include <ModuleState.hxx>
 #include <dusime/SimulationState.hxx>
 #include <dassert.h>
-DUECA_NS_START
+namespace dueca {
 
 template <class S>
 Status<S>::Status()
@@ -83,4 +83,4 @@ template Status<ModuleState>;
 #ifdef BUILD_DMODULES
 template Status<SimulationState>;
 #endif
-DUECA_NS_END
+} // namespace dueca

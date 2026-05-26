@@ -40,12 +40,12 @@ XmlSnapshot::XmlSnapshot(const string& xmldata, const NameSet& originator) :
   std::copy(xmldata.begin(), xmldata.end(), data.begin());
 }
 
-DUECA_NS_END;
-void packData(DUECA_NS::AmorphStore&s,
-              const DUECA_NS::XmlSnapshot::XmlSnapshotCommand& cmd)
+} // namespace dueca
+void packData(dueca::AmorphStore&s,
+              const dueca::XmlSnapshot::XmlSnapshotCommand& cmd)
 { packData(s, uint8_t(cmd)); }
 
-void unPackData(DUECA_NS::AmorphReStore&s,
-                DUECA_NS::XmlSnapshot::XmlSnapshotCommand& cmd)
-{ uint8_t tmp(s); cmd = DUECA_NS::XmlSnapshot::XmlSnapshotCommand(tmp); }
-DUECA_NS_START;
+void unPackData(dueca::AmorphReStore&s,
+                dueca::XmlSnapshot::XmlSnapshotCommand& cmd)
+{ uint8_t tmp(s); cmd = dueca::XmlSnapshot::XmlSnapshotCommand(tmp); }
+namespace dueca {

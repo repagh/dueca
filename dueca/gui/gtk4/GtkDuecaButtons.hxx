@@ -20,7 +20,7 @@
 #include <dueca_ns.h>
 #include <gtk/gtk.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 /** Set a specific image on the given button 
 
@@ -39,6 +39,6 @@ void gtk_dueca_emergency_load_image(GtkWidget *btn, unsigned imno);
 
 void load_dueca_buttons();
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

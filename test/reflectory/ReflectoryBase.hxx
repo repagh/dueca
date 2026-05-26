@@ -25,7 +25,7 @@
 #include "ReflectoryData.hxx"
 #include "ReflectoryExceptions.hxx"
 
-DUECA_NS_START;
+namespace dueca {
 
 
 /** Advance definition */
@@ -296,6 +296,6 @@ public:
   virtual TICK update(const TICK& tick, unsigned nodeid) = 0;
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

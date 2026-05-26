@@ -46,9 +46,9 @@
 #include "dueca_ns.h"
 #include "dueca-version.h"
 
-DUECA_NS_START
+namespace dueca {
 struct ParameterTable;
-DUECA_NS_END
+}
 
 // templated headers
 #include "Callback.hxx"
@@ -146,8 +146,4 @@ DUECA_NS_END
     res = false; \
   }
 
-#endif
-
-#ifndef NO_DUECA_NAMESPACE
-USING_DUECA_NS;
 #endif

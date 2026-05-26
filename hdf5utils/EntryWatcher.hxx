@@ -22,7 +22,7 @@
 #include <memory>
 #include <boost/scoped_ptr.hpp>
 
-STARTHDF5LOG;
+namespace dueca { namespace hdf5log {
 
 class EntryWatcher: public dueca::ChannelWatcher
 {
@@ -127,6 +127,6 @@ public:
                       const std::string &prefix);
 };
 
-ENDHDF5LOG;
+} } // namespace dueca namespace hdf5log
 
 #endif

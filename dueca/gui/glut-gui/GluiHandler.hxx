@@ -18,7 +18,7 @@
 
 #include <dueca_ns.h>
 
-DUECA_NS_START
+namespace dueca {
 /** This encapsulates the top-level handling of cooperation with the
     Glut + Gui interface library. */
 class GluiHandler: public GuiHandler
@@ -45,5 +45,5 @@ public:
 };
 
 
-DUECA_NS_END
+} // namespace dueca
 #endif

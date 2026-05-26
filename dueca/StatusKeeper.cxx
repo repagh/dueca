@@ -21,7 +21,7 @@
 #include <DuecaView.hxx>
 using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 //template<class S, class V>
 //StatusKeeper<S,V>* StatusKeeper<S,V>::singleton = NULL;
@@ -79,4 +79,4 @@ bool StatusKeeper<S,V>::existsSummary(const ModuleId& i) const
 // explicit instantiation for DUECA/DUSIME status check and view
 template class StatusKeeper<StatusT1, DuecaView>;
 
-DUECA_NS_END
+} // namespace dueca

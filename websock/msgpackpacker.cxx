@@ -17,8 +17,8 @@
 #include <dueca/debug.h>
 // need a version >= 3 for the websock-msgpack code
 
-DUECA_NS_START;
-WEBSOCK_NS_START;
+namespace dueca {
+namespace websock {
 
 msgpackpacker::msgpackpacker(std::ostream &buffer) :
   writer(buffer)
@@ -311,8 +311,8 @@ boost::any decode_value(const msgpack::object &doc, typeindex_t tix)
   return val;
 }
 
-WEBSOCK_NS_END;
-DUECA_NS_END;
+} // namespace websock
+} // namespace dueca
 
 namespace msgpack {
 namespace adaptor {
@@ -354,8 +354,8 @@ template <> struct as<dueca::websock::mainmap_t>
 } // namespace adaptor
 } // namespace msgpack
 
-DUECA_NS_START;
-WEBSOCK_NS_START;
+namespace dueca {
+namespace websock {
 
 void decode_dco(const mainmap_t &obj, CommObjectWriter &dco)
 {
@@ -424,7 +424,7 @@ void decode_dco(const mainmap_t &obj, CommObjectWriter &dco)
   }
 }
 
-WEBSOCK_NS_END;
-DUECA_NS_END;
+} // namespace websock
+} // namespace dueca
 
 #endif

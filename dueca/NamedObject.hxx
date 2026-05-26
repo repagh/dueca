@@ -20,7 +20,7 @@
 //#include <list>
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 struct NameSet;
 class Destination;
 class GenericChannel;
@@ -109,5 +109,5 @@ public:
   virtual ObjectType getObjectType() const = 0;
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

@@ -37,7 +37,7 @@
 #include <debprint.h>
 using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 int Unpacker::unpacker_no = 0;
 
@@ -191,4 +191,4 @@ void Unpacker::despatch(const TimeSpec& t)
   work.pop();
 }
 
-DUECA_NS_END
+} // namespace dueca

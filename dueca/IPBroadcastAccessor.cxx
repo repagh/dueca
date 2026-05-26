@@ -52,7 +52,7 @@
 #include "MemberCall.hxx"
 using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 const ParameterTable* IPBroadcastAccessor::getParameterTable()
 {
@@ -247,4 +247,4 @@ IPBroadcastAccessor::~IPBroadcastAccessor()
   //
 }
 
-DUECA_NS_END
+} // namespace dueca

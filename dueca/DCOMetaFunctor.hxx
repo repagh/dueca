@@ -21,7 +21,7 @@
 #include <memory>
 #include <dueca_ns.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 /**
     Base class for key-based access to helper classes for DCO
@@ -139,5 +139,5 @@ struct LoadMetaFunctor {
 };
 
 
-DUECA_NS_END
+} // namespace dueca
 #endif

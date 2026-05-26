@@ -19,7 +19,7 @@
 #include "ChannelDef.hxx"
 #include "UChannelEntry.hxx"
 
-DUECA_NS_START;
+namespace dueca {
 
 ChannelEntryInfo::ChannelEntryInfo(const UChannelEntry* e, bool created) :
   entry_id(e->getId()),
@@ -123,9 +123,9 @@ void ChannelEntryInfo::JSONprint(std::ostream& p)
 }
 
 
-DUECA_NS_END;
+} // namespace dueca
 
-PRINT_NS_START;
+namespace std {
 std::ostream& operator << (std::ostream& os, const dueca::ChannelEntryInfo& i)
 {
   os << "ChannelEntryInfo(entry_id=" << i.entry_id
@@ -141,4 +141,4 @@ std::ostream& operator << (std::ostream& os, const dueca::ChannelEntryInfo& i)
      << ", created=" << i.created << ")";
   return os;
 }
-PRINT_NS_END;
+} // namespace std

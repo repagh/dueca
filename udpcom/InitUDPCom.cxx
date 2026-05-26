@@ -38,15 +38,15 @@
 #include "TypeCreator.hxx"
 #endif
 
-DUECA_NS_START;
+namespace dueca {
 
 #if defined(SCRIPT_SCHEME)
 SCHEME_CLASS_SINGLE(DuecaNetMaster,ScriptCreatable,"dueca-net-master");
 SCHEME_CLASS_SINGLE(DuecaNetPeer,ScriptCreatable,"dueca-net-peer");
 #endif
 
-DUECA_NS_END;
-USING_DUECA_NS;
+} // namespace dueca
+using namespace dueca;
 
 extern "C"
 LNK_PUBLICC void InitUDPCom()

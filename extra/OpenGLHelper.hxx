@@ -19,7 +19,7 @@
 #include <map>
 #include <dueca_ns.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 class DuecaGLWindow;
 
@@ -93,6 +93,6 @@ public:
   virtual ~OpenGLHelper();
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

@@ -21,7 +21,7 @@
 #include "Trigger.hxx"
 using namespace std;
 
-DUECA_NS_START;
+namespace dueca {
 
 UCClientHandle::UCClientHandle(ChannelReadToken* token,
                                const std::string& dataclassname,
@@ -125,4 +125,4 @@ bool UCEntryClientLink::entryMatch() const
 }
 
 
-DUECA_NS_END;
+} // namespace dueca

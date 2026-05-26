@@ -20,7 +20,7 @@
 #include <debug.h>
 #include <cstdlib>
 
-DUECA_NS_START;
+namespace dueca {
 
 static GdkPaintable *emergency_icons[2] = { NULL, NULL };
 static GdkPaintable *button_icons[5] = { NULL, NULL, NULL };
@@ -108,4 +108,4 @@ struct UnLoad
 static UnLoad unloader;
 } // namespace
 
-DUECA_NS_END;
+} // namespace dueca

@@ -17,7 +17,7 @@
 #include <boost/python.hpp>
 
 namespace bpy = boost::python;
-DUECA_NS_START
+namespace dueca {
 
 struct ReferenceHolderPython : ReferenceHolder
 {
@@ -30,6 +30,6 @@ struct ReferenceHolderPython : ReferenceHolder
   ~ReferenceHolderPython() override;
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

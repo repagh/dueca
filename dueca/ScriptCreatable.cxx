@@ -18,7 +18,7 @@
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
 
-DUECA_NS_START
+namespace dueca {
 
 CODE_REFCOUNT(ScriptCreatable)
 
@@ -84,4 +84,4 @@ bool ScriptCreatable::checkComplete()
 template<> const char* core_creator_name<ScriptCreatable>(const char*)
 { return "ScriptCreatable"; }
 
-DUECA_NS_END
+} // namespace dueca

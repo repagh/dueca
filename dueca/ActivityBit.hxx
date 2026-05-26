@@ -19,15 +19,15 @@
 #include "TimeSpec.hxx"
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 class ActivityWeaver;
 class ActivityBit;
 typedef ActivityBit* ActivityBitPtr;
 class AmorphReStore;
 class AmorphStore;
-DUECA_NS_END
+} // namespace dueca
 
-DUECA_NS_START
+namespace dueca {
 
 /** An object to contain the log data of one action of an
     ActivityManager. */
@@ -167,32 +167,32 @@ public:
 /** returns a string description of an ActivityBitType */
 const char* const getString(const ActivityBit::ActivityBitType &o);
 
-DUECA_NS_END
+} // namespace dueca
 
-inline void packData(DUECA_NS ::AmorphStore& s,
-                     const DUECA_NS ::ActivityBit& o)
+inline void packData(dueca ::AmorphStore& s,
+                     const dueca ::ActivityBit& o)
 { o.packData(s); }
 
-PRINT_NS_START
+namespace std {
 /** print an ActivityBit to a stream. */
-inline ostream& operator << (ostream& s, const DUECA_NS ::ActivityBit& o)
+inline ostream& operator << (ostream& s, const dueca ::ActivityBit& o)
 { return o.print(s); }
 
 /** print the ActivityBitType to a stream */
 inline ostream& operator << (ostream& s,
-                             const DUECA_NS :: ActivityBit::ActivityBitType& o)
+                             const dueca :: ActivityBit::ActivityBitType& o)
 { return s << getString(o); }
-PRINT_NS_END
+} // namespace std
 
 /// unpacks an ActivityBitType from amorphous storage
-inline void unPackData(DUECA_NS :: AmorphReStore& s,
-                       DUECA_NS :: ActivityBit::ActivityBitType& o)
+inline void unPackData(dueca :: AmorphReStore& s,
+                       dueca :: ActivityBit::ActivityBitType& o)
 {uint8_t tmp; ::unPackData(s, tmp);
- o = DUECA_NS :: ActivityBit::ActivityBitType(tmp);}
+ o = dueca :: ActivityBit::ActivityBitType(tmp);}
 
 /// packs an ActivityBitType into amorphous storage
-inline void packData(DUECA_NS :: AmorphStore& s,
-                     const DUECA_NS :: ActivityBit::ActivityBitType& o)
+inline void packData(dueca :: AmorphStore& s,
+                     const dueca :: ActivityBit::ActivityBitType& o)
 {::packData(s, uint8_t(o));}
 
 #endif

@@ -42,7 +42,7 @@
 #include <dueca.h>
 using namespace std;
 
-DDFF_NS_START;
+namespace dueca { namespace ddff {
 
 // class/module name
 const char *const DDFFLogger::classname = "ddff-logger";
@@ -820,4 +820,4 @@ void DDFFLogger::sendStatus(const std::string &msg, bool error,
 // will check in with the script code, and enable the
 // creation of modules of this type
 // static TypeCreator<DDFFLogger> a(DDFFLogger::getMyParameterTable());
-DDFF_NS_END;
+} } // namespace ddff namespace dueca

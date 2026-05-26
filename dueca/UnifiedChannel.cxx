@@ -71,7 +71,7 @@ public:
 
  */
 
-DUECA_NS_START
+namespace dueca {
 
 /* Simple singleton with an InformationStash object. This initially stores
    and later sends all changes regarding read access to channel entries */
@@ -1793,7 +1793,7 @@ void UnifiedChannel::releaseMonitor(entryid_type entry)
   entries[entry]->monitorReleaseData();
 }
 
-DUECA_NS_END
+} // namespace dueca
 
 // added here, to remove conflicts with DEB definition
 #include <undebprint.h>

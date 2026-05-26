@@ -14,10 +14,10 @@
 #define DCOMetaFunctor_cxx
 #include "DCOMetaFunctor.hxx"
 
-DUECA_NS_START;
+namespace dueca {
 
 DCOMetaFunctor::DCOMetaFunctor() { }
 
 DCOMetaFunctor::~DCOMetaFunctor() { }
 
-DUECA_NS_END;
+} // namespace dueca

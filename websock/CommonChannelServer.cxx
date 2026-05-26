@@ -30,8 +30,8 @@
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
 
-DUECA_NS_START;
-WEBSOCK_NS_START;
+namespace dueca {
+namespace websock {
 
 const char *presetmismatch::what() const throw()
 {
@@ -755,12 +755,12 @@ unsigned WriteReadSetup::getNextId()
 CODE_REFCOUNT(WriteReadEntry);
 
 WriteReadEntry::WriteReadEntry(std::shared_ptr<WriteReadSetup> setup,
-                               WebSocketsServerBase *master,
-                               const PrioritySpec &ps, bool extended) :
+                               WebSocketsServerBase *imaster,
+                               const PrioritySpec &ps, bool iextended) :
   ChannelWatcher(setup->r_channelname),
   INIT_REFCOUNT_COMMA autostart_cb(this, &WriteReadEntry::tokenValid),
   do_valid(master->getId(), "channel valid", &autostart_cb, ps),
-  marker(master->getMarker()),
+  marker(imaster->getMarker()),
   state(UnConnected),
   w_token(),
   r_token(),
@@ -770,11 +770,11 @@ WriteReadEntry::WriteReadEntry(std::shared_ptr<WriteReadSetup> setup,
   w_dataclass(),
   r_dataclass(),
   label(boost::lexical_cast<std::string>(setup->getNextId())),
-  master(master),
+  master(imaster),
   active(true),
   bulk(setup->bulk),
   diffpack(setup->diffpack),
-  extended(extended),
+  extended(iextended),
   cb(this, &WriteReadEntry::passData),
   do_calc(master->getId(), ("serve " + r_channelname).c_str(), &cb, ps)
 {
@@ -947,5 +947,5 @@ void WriteReadEntry::entryRemoved(const ChannelEntryInfo &i)
   }
 }
 
-DUECA_NS_END;
-WEBSOCK_NS_END;
+} // namespace dueca
+} // namespace websock

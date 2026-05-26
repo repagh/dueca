@@ -20,7 +20,7 @@
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
 
-DUECA_NS_START
+namespace dueca {
 
 SchemeObject::SchemeObject(ScriptCreatable* r) :
   self(),
@@ -108,4 +108,4 @@ void SchemeObject::markReferred()
     }*/
 }
 
-DUECA_NS_END
+} // namespace dueca

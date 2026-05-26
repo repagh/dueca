@@ -20,7 +20,7 @@
 #include <iostream>
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 class ActivityBit;
 class ActivityWeaver;
@@ -188,5 +188,5 @@ private:
   friend class ActivityWeaver;
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

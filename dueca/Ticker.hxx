@@ -34,7 +34,7 @@
 
 #define SYNC_DATA_SIZE 8+4+4
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 class ActivityManager;
 class TimeKeeper;
 struct SyncReport;
@@ -341,5 +341,5 @@ public:
   ObjectType getObjectType() const {return O_Dueca;};
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

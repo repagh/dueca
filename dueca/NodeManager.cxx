@@ -30,19 +30,14 @@
 
 #define I_SYS
 #include <debug.h>
-
-#ifdef HAVE_SSTREAM
-#include <sstream>
-#else
-#include <strstream>
-#endif
+#include <fmt/format.h>
 
 #define DO_INSTANTIATE
 #include "Callback.hxx"
 #include <CriticalActivity.hxx>
 using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 NodeManager *NodeManager::singleton = NULL;
 unsigned int static_node_id = 0xffffffff;
@@ -320,16 +315,7 @@ NodeControlMessage::NodeState NodeManager::getNodeState(int i)
 
 const vstring NodeManager::getNodeName(query_iterator i) const
 {
-#ifdef HAVE_SSTREAM
-  std::ostringstream st;
-  st << "node " << i << std::ends;
-  return vstring(st.str());
-#else
-  char cbuf[10];
-  std::ostrstream st(cbuf, 10);
-  st << "node " << i << '\000';
-  return vstring(cbuf);
-#endif
+  return fmt::format("node {:2d}", i);
 }
 
 const char *const NodeManager::getNodeStatus(query_iterator i) const
@@ -337,4 +323,4 @@ const char *const NodeManager::getNodeStatus(query_iterator i) const
   return getString(node_state[i]);
 }
 
-DUECA_NS_END
+} // namespace dueca

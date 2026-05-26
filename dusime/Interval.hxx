@@ -32,7 +32,7 @@ typedef Eigen::Map<Eigen::VectorXd> VectorE;
 
 #include <dueca_ns.h>
 
-DUECA_NS_START
+namespace dueca {
 
 /** My home-brewn versions of parallel secant solution
     Assumes some unkown but continuous function y[] of a variable x. */
@@ -79,6 +79,6 @@ private:
   /** Calculate a new range. */
   void newRange(double range);
 };
-DUECA_NS_END
+} // namespace dueca
 
 #endif

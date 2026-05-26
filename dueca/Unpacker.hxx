@@ -27,7 +27,7 @@
 #include <dueca/Callback.hxx>
 #include <dueca/AperiodicAlarm.hxx>
 
-DUECA_NS_START
+namespace dueca {
 
 class AmorphReStore;
 class TimeSpec;
@@ -139,5 +139,5 @@ public:
   inline void setAccessor(Accessor* ac) {accessor = ac;}
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

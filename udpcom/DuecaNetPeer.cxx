@@ -37,7 +37,7 @@
 #include <debprint.h>
 using namespace std;
 
-DUECA_NS_START;
+namespace dueca {
 
 int DuecaNetPeer::sequence = 0;
 
@@ -343,4 +343,4 @@ clientUnpackPayload(MessageBuffer::ptr_type buffer, unsigned id,
   data_comm->returnBuffer(buffer);
 }
 
-DUECA_NS_END;
+} // namespace dueca

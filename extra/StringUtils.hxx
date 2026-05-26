@@ -26,7 +26,7 @@
 #include <sstream>
 #include <vector>
 
-DUECA_NS_START;
+namespace dueca {
 
 /**
  * \defgroup StringUtils String manipulation functions
@@ -124,5 +124,5 @@ unsigned int split(const std::string & input, std::vector<std::string> & output,
 std::string trim(const std::string& s, const std::string & pattern=", \t\n\015");
 /*@}*/
 
-DUECA_NS_END;
+} // namespace dueca
 #endif

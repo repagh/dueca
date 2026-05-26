@@ -16,7 +16,7 @@
 #include "ChannelDef.hxx"
 #include "AmorphStore.hxx"
 
-DUECA_NS_START;
+namespace dueca {
 
 static const char* getString(Channel::EntryTimeAspect e)
 {
@@ -66,28 +66,28 @@ template<>
 const char* getclassname<dueca::Channel::TransportClass>()
 { return "TransportClass"; }
 
-DUECA_NS_END;
+} // namespace dueca
 
 
-PRINT_NS_START;
+namespace std {
 std::ostream& operator << (std::ostream& os,
-                           const DUECA_NS::Channel::EntryTimeAspect& tc)
+                           const dueca::Channel::EntryTimeAspect& tc)
 { return os << getString(tc); }
 
 std::ostream& operator << (std::ostream& os,
-                           const DUECA_NS::Channel::EntryArity& tc)
+                           const dueca::Channel::EntryArity& tc)
 { return os << getString(tc); }
 
 std::ostream& operator << (std::ostream& os,
-                           const DUECA_NS::Channel::ReadingMode& tc)
+                           const dueca::Channel::ReadingMode& tc)
 { return os << getString(tc); }
 
 std::ostream& operator << (std::ostream& os,
-                           const DUECA_NS::Channel::PackingMode& tc)
+                           const dueca::Channel::PackingMode& tc)
 { return os << getString(tc); }
 
 std::ostream& operator << (std::ostream& os,
-                           const DUECA_NS::Channel::TransportClass& tc)
+                           const dueca::Channel::TransportClass& tc)
 { return os << getString(tc); }
 
-PRINT_NS_END;
+} // namespace std

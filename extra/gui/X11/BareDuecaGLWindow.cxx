@@ -35,7 +35,7 @@
 #include <X11/extensions/XInput2.h>
 using namespace std;
 
-DUECA_NS_START;
+namespace dueca {
 
 static ::Display *static_dpy = NULL;
 static GLXContext shared_context = NULL;
@@ -591,4 +591,4 @@ void BareDuecaGLWindow::motion(int x, int y) {}
 void BareDuecaGLWindow::passive(int x, int y) {}
 void BareDuecaGLWindow::touch(unsigned finger, bool s, float x, float y) {}
 
-DUECA_NS_END;
+} // namespace dueca

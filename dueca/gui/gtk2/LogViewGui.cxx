@@ -23,7 +23,7 @@
 
 #include <debug.h>
 
-DUECA_NS_START
+namespace dueca {
 
 
 struct LogViewGui::GuiInfo
@@ -323,4 +323,4 @@ void LogViewGui::editedLevel(GtkCellRendererText* renderer,
   master->setLevel(cat, conv.column, new_text);
 }
 
-DUECA_NS_END
+} // namespace dueca

@@ -19,6 +19,6 @@
 #include <unistd.h>
 #include "debug.h"
 #include "dueca-guile.h"
-DUECA_NS_START
+namespace dueca {
 
-DUECA_NS_END
+} // namespace dueca

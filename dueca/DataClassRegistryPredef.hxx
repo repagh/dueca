@@ -24,7 +24,7 @@
 #include <boost/scoped_ptr.hpp>
 #include <dueca/visibility.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 #ifndef _NOEXCEPT
 #define _NOEXCEPT throw()
@@ -114,6 +114,6 @@ public:
   UndefinedFunctor(const std::string& msg);
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

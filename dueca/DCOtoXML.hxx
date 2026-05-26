@@ -22,7 +22,7 @@
 
     Conversion routines for writing DCO objects to XML. */
 
-DUECA_NS_START;
+namespace dueca {
 
 class CommObjectReader;
 
@@ -54,6 +54,6 @@ void DCOtoXML(pugi::xml_node &writer,
               const char* dcoclass, const void* object,
               bool meta=false);
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

@@ -34,7 +34,7 @@
 #include <debprint.h>
 using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 ChannelWriteToken* ChannelOrganiser::channel_updates;
 
@@ -256,4 +256,4 @@ ostream& ChannelOrganiser::ChannelEndSpec::print(ostream& o) const
 {
   return o << "ChannelEndSpec(end_id=" << end_id << ")";
 }
-DUECA_NS_END
+} // namespace dueca
