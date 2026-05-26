@@ -1,7 +1,7 @@
 /* ------------------------------------------------------------------   */
 /*      item            : @Module@.hxx
         made by         : @author@
-        from template   : DusimeModuleTemplate.hxx (2026.04)
+        from template   : DusimeModuleTemplate.hxx (2026.05)
         date            : @date@
         category        : header file
         description     :

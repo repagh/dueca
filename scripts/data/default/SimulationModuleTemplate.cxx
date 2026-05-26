@@ -1,6 +1,7 @@
 /* ------------------------------------------------------------------   */
-/*      item            : @Module@Mod.cxx
+/*      item            : @Module@.hxx
         made by         : @author@
+        from template   : SimulationoduleTemplate.cxx (2026.05)
         date            : @date@
         category        : body file
         description     :
@@ -8,6 +9,7 @@
         language        : C++
         copyright       : (c)
 */
+
 
 
 #define @Module@Mod_cxx
@@ -337,4 +339,3 @@ void @Module@Mod::trimCalculation(const TimeSpec& ts, const TrimMode& mode)
 // will check in with the scheme-interpreting code, and enable the
 // creation of modules of this type
 static TypeCreator<@Module@Mod> a(@Module@Mod::getMyParameterTable());
-

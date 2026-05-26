@@ -1,10 +1,11 @@
 /* ------------------------------------------------------------------   */
-/*      item            : SimulationModelTemplate.hxx
-        made by         : Rene van Paassen
-        date            : 030107
+/*      item            : @Module@.hxx
+        made by         : @author@
+        from template   : SimulationodelTemplate.hxx (2026.05)
+        date            : @date@
         category        : header file
         description     :
-        changes         : 030107 first version
+        changes         : @date@ first version
         language        : C++
         copyright       : (c)
 */

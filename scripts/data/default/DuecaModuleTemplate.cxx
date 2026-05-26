@@ -1,7 +1,7 @@
 /* ------------------------------------------------------------------   */
 /*      item            : @Module@.cxx
         made by         : @author@
-        from template   : DuecaModuleTemplate.cxx (2026.04)
+        from template   : DuecaModuleTemplate.cxx (2026.05)
         date            : @date@
         category        : body file
         description     :

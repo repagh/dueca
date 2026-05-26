@@ -1,7 +1,7 @@
 /* ------------------------------------------------------------------   */
 /*      item            : @Module@.hxx
         made by         : @author@
-        from template   : DuecaModuleTemplate.hxx (2026.04)
+        from template   : DuecaModuleTemplate.hxx (2026.05)
         date            : @date@
         category        : header file
         description     :
@@ -39,13 +39,13 @@ private: // simulation data
 private: // channel access
   // declare access tokens for all the channels you read and write
   // examples:
-  // ChannelReadToken    r_mytoken;
-  // ChannelWriteToken   w_mytoken;
+  // dueca::ChannelReadToken    r_mytoken;
+  // dueca::ChannelWriteToken   w_mytoken;
 
 private: // activity allocation
   /** You might also need a clock. Don't mis-use this, because it is
       generally better to trigger on the incoming channels */
-  //PeriodicAlarm        myclock;
+  // dueca::PeriodicAlarm        myclock;
 
   /** Callback object for simulation calculation. */
   dueca::Callback<@Module@>  cb1;

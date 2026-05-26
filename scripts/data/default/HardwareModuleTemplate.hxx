@@ -1,7 +1,7 @@
 /* ------------------------------------------------------------------   */
 /*      item            : @Module@.hxx
         made by         : @author@
-        from template   : HardwareModuleTemplate.hxx (2026.04)
+        from template   : HardwareModuleTemplate.hxx (2026.05)
         date            : @date@
         category        : header file
         description     :
@@ -50,8 +50,8 @@ private: // snapshot data
 private: // channel access
   // declare access tokens for all the channels you read and write
   // examples:
-  // ChannelReadToken    r_mytoken;
-  // ChannelWriteToken   w_mytoken;
+  // dueca::ChannelReadToken    r_mytoken;
+  // dueca::ChannelWriteToken   w_mytoken;
 
 private: // activity allocation
   /** Callback object for simulation calculation. */

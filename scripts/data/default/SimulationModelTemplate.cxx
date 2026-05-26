@@ -1,14 +1,13 @@
 /* ------------------------------------------------------------------   */
-/*      item            : SimulationModelTemplate.cxx
-        made by         : Rene' van Paassen
-        date            : 030107
+/*      item            : @Module@.hxx
+        made by         : @author@
+        from template   : SimulationodelTemplate.cxx (2026.05)
+        date            : @date@
         category        : body file
         description     :
-        changes         : 030107 first version
+        changes         : @date@ first version
         language        : C++
-        copyright       : (c) 2016 TUDelft-AE-C&S
-        copyright       : (c) 2022 René van Paassen
-        license         : EUPL-1.2
+        copyright       : (c)
 */
 
 
