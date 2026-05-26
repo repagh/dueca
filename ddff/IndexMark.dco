@@ -9,10 +9,9 @@
         license         : EUPL-1.2")
 
 (Type IndexPointList "
-#include <ddff_ns.h>
 #include <IndexPoint.hxx>
 #include <varvector.hxx>
-typedef dueca::varvector<DDFF_NS::IndexPoint> IndexPointList;")
+typedef dueca::varvector<dueca::ddff::IndexPoint> IndexPointList;")
 (Type TimeTickType  "#include <SimTime.hxx>")
 
 ;; Indicate where in the file buffers, a specific recording starts

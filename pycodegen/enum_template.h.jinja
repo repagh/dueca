@@ -59,7 +59,7 @@ void unPackData(::dueca::AmorphReStore& s,
                 {{ objprefix }}{{ name }} &o);
 #endif
 
-PRINT_NS_START;
+namespace std {
 /** Print an object of type {{ name }} */
 inline std::ostream&
 operator << (std::ostream& s, const {{ objprefix }}{{ name }}& o)
@@ -68,7 +68,7 @@ operator << (std::ostream& s, const {{ objprefix }}{{ name }}& o)
 inline std::istream&
 operator >> (std::istream& s, {{ objprefix }}{{ name }}& o)
 { std::string tmp; s >> tmp; dueca::readFromString(o, tmp); return s; }
-PRINT_NS_END;
+} // namespace std
 
 /** This function retrieves the classname of {{ name }} */
 template <>

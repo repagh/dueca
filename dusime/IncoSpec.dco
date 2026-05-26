@@ -23,13 +23,12 @@
  IncoSpec
  (IncludeFile IncoSpecExtra)
  (AddToHeader
-"DUECA_NS_START;
+"namespace dueca {
 struct IncoTable;
-DUECA_NS_END;")
+} // namespace dueca")
 
  ;; The module cooperating in the inco service
  (NameSet module)
  ;; A table of initial condition variables
  (std::vector<IncoVariable> table (DefaultSize 0))
  )
-

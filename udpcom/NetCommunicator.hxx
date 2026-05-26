@@ -406,6 +406,6 @@ protected:
 
 /** Print the sendstate as a readable string */
 std::ostream& operator << (std::ostream& os,
-                           const NetCommunicator::SendState& x);
+                           const dueca::NetCommunicator::SendState& x);
 
 #endif

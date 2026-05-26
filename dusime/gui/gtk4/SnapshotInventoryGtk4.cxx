@@ -77,7 +77,7 @@ static DSnapShotSet *d_snap_shot_set_new(
   return res;
 }
 
-static DSnapShot *d_snap_shot_new(const std::list<Snapshot>::const_iterator &ii)
+static DSnapShot *d_snap_shot_new(const std::list<dueca::Snapshot>::const_iterator &ii)
 {
   auto res = D_SNAP_SHOT(g_object_new(d_snap_shot_get_type(), NULL));
   res->data = ii;

@@ -58,6 +58,9 @@
 // template implementation
 #define DO_INSTANTIATE
 
+// included in cxx
+using namespace dueca;
+
 #endif
 
 #define CHECK_RECORDER(A) \

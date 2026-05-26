@@ -91,7 +91,7 @@
     \endcode
  */
 template<class T>
-class ScriptCreatableDataHolder: public ScriptCreatable
+class ScriptCreatableDataHolder: public dueca::ScriptCreatable
 {
 private: // simulation data
   /** encapsulate the object */

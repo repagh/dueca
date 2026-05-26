@@ -1001,7 +1001,7 @@ void unPackData(::dueca::AmorphReStore& s,
                 %(objprefix)s%(masterprefix)s%(name)s &o);
 #endif
 
-PRINT_NS_START;
+namespace std {
 /** Print an object of type %(masterprefix)s%(name)s */
 inline std::ostream&
 operator << (std::ostream& s, const %(objprefix)s%(masterprefix)s%(name)s& o)
@@ -1011,7 +1011,7 @@ inline std::istream&
 /** Read an enum of type %(masterprefix)s%(name)s */
 operator >> (std::istream& s, %(objprefix)s%(masterprefix)s%(name)s& o)
 { std::string tmp; s >> tmp; dueca::readFromString(o, tmp); return s; }
-PRINT_NS_END;
+} // namespace std
 """ % joindict(self.__dict__, { 'mastername' : master.name,
                                 'masterprefix' :
                                 (master.name and f'{master.name}::') or '',
@@ -1099,7 +1099,7 @@ bool getNext({objprefixnotd}{masterprefix}{name} &o)
   return false;
 }}
 #endif
-}}; // end namespace dueca
+}} // namespace dueca
 
 #if !defined(__CUSTOM_PACKDATA_{name}) && !defined(__DCO_NOPACK)
 void packData(::dueca::AmorphStore& s,
@@ -1418,13 +1418,13 @@ class MemberBase(object):
         if self.klassref.getType() == 'Enum':
             return '''
     { TABNAME("set-%(schemename)s"),
-      new MemberCall<%(mastername)s,std::string>
+      new dueca::MemberCall<%(mastername)s,std::string>
         (&%(mastername)s::doFromParameterTableSet_%(name)s),
       "%(scomments)s" }''' % self.__dict__
 
         return '''
     { TABNAME("set-%(schemename)s"),
-      new VarProbe<%(mastername)s,%(klass)s >(&%(mastername)s::%(name)s),
+      new dueca::VarProbe<%(mastername)s,%(klass)s >(&%(mastername)s::%(name)s),
       "%(scomments)s" }''' % self.__dict__
 
     def setFunctionDec(self):
@@ -1443,7 +1443,7 @@ class MemberBase(object):
 bool %(mastername)s::doFromParameterTableSet_%(name)s(const std::string& n)
 {
   try {
-    readFromString(%(name)s, n);
+    dueca::readFromString(%(name)s, n);
   }
   catch(const dueca::ConversionNotDefined& e) {
     std::cerr << "Cannot interpret " << n << std::endl;
@@ -2133,7 +2133,7 @@ class Channel(BuildObject):
 // specialisation of the script class data singleton
 #ifdef SCRIPT_SCHEME
 #include <dueca/SchemeClassData.hxx>
-DUECA_NS_START
+namespace dueca {
 template<>
 SchemeClassData<ScriptCreatableDataHolder<%(name)s> >*
 SchemeClassData<ScriptCreatableDataHolder<%(name)s> >::single()
@@ -2142,23 +2142,23 @@ SchemeClassData<ScriptCreatableDataHolder<%(name)s> >::single()
     ("%(name)s", SchemeClassData<ScriptCreatable>::single());
   return &singleton;
 }
-DUECA_NS_END
+} // namespace dueca
 #endif
 
 #ifdef SCRIPT_PYTHON
-DUECA_NS_START
+namespace dueca {
 #include <dueca/PythonCorrectedName.hxx>
 template<>
 const char* core_creator_name<ScriptCreatableDataHolder<%(name)s> >(const char*)
 { return "%(name)s"; }
-DUECA_NS_END
+} // namespace dueca
 #endif
 
 // Make a CoreCreator object for this module, the CoreCreator
 // will check in with the scheme-interpreting code, and enable the
 // creation of objects of this type
-static CoreCreator<ScriptCreatableDataHolder<%(objprefix)s%(name)s>,
-                   ScriptCreatable>
+static dueca::CoreCreator<ScriptCreatableDataHolder<%(objprefix)s%(name)s>,
+                          dueca::ScriptCreatable>
 a(%(objprefix)s%(name)s::getParameterTable(), "%(name)s");
 #endif
 ''' % self.__dict__
