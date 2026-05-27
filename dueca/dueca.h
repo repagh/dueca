@@ -118,7 +118,7 @@ struct ParameterTable;
     \param   A    Channel token to be checked. */
 #define CHECK_TOKEN(A) \
   if (! (A) .isValid() ) {                              \
-    W_MOD(getId() << '/' << getclassname(*this)         \
+    W_MOD(getId() << '/' << dueca::getclassname(*this)         \
           << " channel token " #A " for channel "       \
           << (A) .getName() << " not (yet) valid");     \
     res = false; \
@@ -130,7 +130,7 @@ struct ParameterTable;
     \param   A    Condition to be checked. */
 #define CHECK_CONDITION(A) \
   if (! ( A ) ) { \
-    W_MOD(getId() << '/' << getclassname(*this)         \
+    W_MOD(getId() << '/' << dueca::getclassname(*this)         \
           << " condition " #A " not valid");            \
     res = false; \
   }
@@ -142,7 +142,7 @@ struct ParameterTable;
     \param   B    Message that will be printed */
 #define CHECK_CONDITION2(A,B) \
   if (! ( A ) ) {                                         \
-    W_MOD(getId() << '/' << getclassname(*this) << ' ' << B); \
+    W_MOD(getId() << '/' << dueca::getclassname(*this) << ' ' << B); \
     res = false; \
   }
 

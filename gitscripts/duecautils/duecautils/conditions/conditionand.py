@@ -40,6 +40,7 @@ def _combine_elts(inputvars, selection, ekey, inputs):
     try:
         # combine from multiple?
         eitlist = list(map(str.strip, selection.split(',')))
+        dprint(f"searching {eitlist[0]} in {inputvars}")
         idx = inputvars.index(eitlist[0])
         res = copy.copy(inputs[idx].__dict__[ekey])
         cfun = _funmapping[inputs[idx].__dict__[ekey].__class__]

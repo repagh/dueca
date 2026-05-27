@@ -23,7 +23,7 @@ class Param:
         self.name = par.get('name').replace('-', '_')
         _regex = par.get('regex', False)
         self.format = par.get('format', False)
-        pstrip = par.get('strip', (_regex and 'both') or default_strip)
+        pstrip = par.get('strip', (_regex and 'both') or par.get('trim', default_strip))
 
         if pstrip.lower() == 'left':
             pval = par.text.lstrip()
