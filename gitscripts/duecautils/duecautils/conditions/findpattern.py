@@ -6,13 +6,13 @@ Created on Wed Jun 30 20:56:53 2021
 @author: repa
 """
 
-from .policycondition import PolicyCondition, checkAndSet
-from ..matchreference import MatchReferenceFile, MatchSpan
-from ..verboseprint import dprint
 import glob
 import re
-import os
 from collections import defaultdict
+from .policycondition import PolicyCondition, checkAndSet
+from ..matchreference import MatchReferenceFile
+from ..xmlutil import XML_interpret_bool
+from ..verboseprint import dprint
 
 def _empty_list():
     return list()
@@ -39,7 +39,7 @@ class FindPattern(PolicyCondition):
 
     # Determine how param arguments need to be stripped
     default_strip = dict(fileglob='both', pattern='both', resultvar='both',
-                         limit='both')
+                         limit='both', trim='both')
 
     def __init__(self, fileglob: str, pattern: str,
                  resultvar=None, limit=0, **kwargs):
@@ -76,20 +76,21 @@ class FindPattern(PolicyCondition):
             raise ValueError(
                 f"{self.__class__.__name__}, cannot interpret 'limit' "
                 f" from '{limit}'")
+        self.trim = XML_interpret_bool(str(kwargs.get('trim', "false")))
 
     def holds(self, p_path, **kwargs):
 
         # run and test
         result = []
         newvars = defaultdict(_empty_list)
-        
+
         # testp = re.compile(self.pattern)
         matching = glob.glob(self.fileglob, recursive=False)
 
         dprint(f"Testing {matching}")
         for fn in matching:
             res = MatchReferenceFile(MatchFunctionPattern(self.pattern), fn, self.limit)
-            if res.value:
+            if not self.trim or res.value:
                 result.append(res)
 
 

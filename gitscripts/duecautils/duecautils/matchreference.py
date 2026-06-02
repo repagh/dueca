@@ -50,6 +50,9 @@ class MatchSpan:
     def explain(self, label='default'):
         return f"Match in category {label}, l: {self.line}, {self.span[0]}-{self.span[1]} on {self.matchre}"
 
+    def __str__(self):
+        return f"Match(l={self.line} {self.span[0]}-{self.span[1]})"
+
 
 class MatchReference:
 
@@ -95,6 +98,9 @@ class MatchReferenceDco(MatchReference):
     def filename(self):
         return self.commobjects.fname
 
+    def __str__(self):
+        return f"MatchReferenceDco={self.value} {[c.dco for c in self.commobjects if self.matchFunction(c.base_project, c.dco)]} :{self.filename}"
+
 
 class MatchReferenceModule(MatchReference):
 
@@ -124,8 +130,10 @@ class MatchReferenceModule(MatchReference):
 
     @property
     def filename(self):
-        return modules.fname
+        return self.modules.fname
 
+    def __str__(self):
+        return f"MatchReferenceModule={self.value} {[f"{m['project']}/{m['module']}" for m in self.modules if self.matchFunction(m['project'], m['module'])]} :{self.filename}"
 
 class MatchReferenceFile(MatchReference):
     """Match on a file (typically given by a pattern)
@@ -166,6 +174,8 @@ class MatchReferenceFile(MatchReference):
             res.append(m.explain())
         return '\n'.join(res)
 
+    def __str__(self):
+        return f"MatchReferenceFile={self.value} {[(str(m)) for m in self.matches]} :{self.filename}"
 
 def trimList(l: list):
     return [ e for e in l if e.value ]

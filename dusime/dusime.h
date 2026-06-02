@@ -65,7 +65,7 @@ using namespace dueca;
 
 #define CHECK_RECORDER(A) \
   if (! (A) .isValid() ) {                               \
-    W_MOD(getId() << '/' << getclassname(*this)          \
+    W_MOD(getId() << '/' << dueca::getclassname(*this)   \
           << " recorder " #A << " not (yet) valid");     \
     res = false; \
   }

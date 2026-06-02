@@ -40,7 +40,7 @@ def _combine_elts(inputvars, selection, ekey, inputs):
     try:
         # combine from multiple?
         eitlist = list(map(str.strip, selection.split(',')))
-        dprint(f"searching {eitlist[0]} in {inputvars}")
+        #dprint(f"searching {eitlist[0]} in {inputvars}")
         idx = inputvars.index(eitlist[0])
         res = copy.copy(inputs[idx].__dict__[ekey])
         cfun = _funmapping[inputs[idx].__dict__[ekey].__class__]
@@ -89,7 +89,7 @@ def _combine_and(kwargs, inputvars, matchelts, resultelts, trim):
 
     """
     res = []
-    dprint(f"And combining {inputvars}")
+    dprint(f"And combining {inputvars}, on {matchelts}")
 
     # this tests the combinations of all inputvars values
     for inputs in itertools.product(*map(kwargs.get, inputvars)):
@@ -102,19 +102,20 @@ def _combine_and(kwargs, inputvars, matchelts, resultelts, trim):
         for elt in matchelts:
             i0 = inputs[0]
             eltval = i0.__dict__.get(elt, None)
-            for i in inputs[1:]:
+            for i,iv in enumerate(inputs[1:]):
 
                 if eltval is None:
-                    eltval = i.__dict__.get(elt, None)
+                    eltval = iv.__dict__.get(elt, None)
 
-                if (i.__dict__.get(elt, None) is not None) and \
-                    eltval != i.__dict__[elt]:
+                elif (iv.__dict__.get(elt, None) is not None) and \
+                    eltval != iv.__dict__[elt]:
                     matching = False
-                    dprint(f"No match between {i0} and {i} on {elt}"
-                           f" {eltval} != {i.__dict__[elt]}")
+                    dprint(f"No match between {i0} and {iv} on {elt}"
+                           f" {eltval} != {iv.__dict__[elt]}")
                 else:
-                    value = value and i.value
-            matchresult[elt] = eltval
+                    value = value and iv.value
+            if eltval is None:
+                matching = False
 
         if matching and (value or (not trim)):
             mr = MatchReference(value=value)
@@ -128,33 +129,19 @@ def _combine_and(kwargs, inputvars, matchelts, resultelts, trim):
             for ekey, eit in resultelts.items():
                 mr.__dict__[ekey] = _combine_elts(
                     inputvars, eit, ekey, inputs)
-                dprint(f"Setting {ekey} on new match from {eit}")
+                dprint(f"Setting {ekey} on new match to {mr.__dict__[ekey]}")
 
-            '''
-            try:
-                for ekey, eit in resultelts.items():
-                    idx = inputvars.index(eit)
-                    mr.__dict__[ekey] = inputs[idx].__dict__[ekey]
-                    dprint(f"Setting {ekey} on new match from {eit}")
-            except IndexError as e:
-                print(f"index {idx}, on {inputs}")
-                raise e
-            except Exception as e:
-                print(f"trying to set values, member {ekey}, from var {eit} with vars {kwargs}: {e}")
-                raise e
-            '''
             res.append(mr)
 
-    dprint(f"result and combination {res}")
     return res
 
 class ConditionAnd(ComplexCondition):
 
     # Determine how param arguments need to be stripped
-    default_strip = dict(trim='both', match='both',
+    default_strip = dict(trim='both', matchelts='both',
                          resultvar='both', inputvar='both')
 
-    def __init__(self, _match='', **kwargs):
+    def __init__(self, **kwargs):
         """
         Create an 'and' combination of conditions
 
@@ -187,8 +174,10 @@ class ConditionAnd(ComplexCondition):
         None.
 
         """
-        _match = str(_match)
-        self.matchelts = (_match and list(map(str.strip, _match.split(',')))) or []
+        # _match = str(_match)
+        # self.matchelts = (_match and list(map(str.strip, _match.split(',')))) or []
+        self.matchelts = 'matchelts' in kwargs and \
+            list(map(str.strip, str(kwargs["matchelts"]).split(','))) or []
         self.resultelts = {}
         if 'resultvar' in kwargs:
             self.resultvar = str(kwargs['resultvar'])
@@ -226,9 +215,11 @@ class ConditionAnd(ComplexCondition):
                             if nv.value])
             else:
                 newvars[self.resultvar] = []
+            dprint(f"Result: {self.resultvar}")
+            for r in newvars[self.resultvar]:
+                dprint(f"  {r}")
 
         motivation.append(')')
-        dprint('and', _res, newvars)
         return (_res, motivation, newvars)
 
 PolicyCondition.register("and", ConditionAnd)

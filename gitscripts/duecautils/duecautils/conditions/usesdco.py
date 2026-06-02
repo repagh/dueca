@@ -10,6 +10,7 @@ from .policycondition import PolicyCondition, checkAndSet
 from ..matchreference import MatchReferenceDco
 from ..param import Param
 from .homedco import MatchFunctionDCO
+from ..verboseprint import dprint
 
 class UsesDco(PolicyCondition):
     """ Check whether a certain project/dco combination is being used.
@@ -70,6 +71,9 @@ class UsesDco(PolicyCondition):
 
         checkAndSet(self.resultvar, newvars, res)
         result = [r for r in res if r.value ]
+        dprint(f"Result: {self.resultvar}")
+        for r in result:
+            dprint(f"  {r}")
 
         return (result, map(self.__class__.matchresult.explain, result), newvars)
 

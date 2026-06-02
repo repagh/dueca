@@ -142,9 +142,10 @@ class ConditionOr(ComplexCondition):
     default_strip = dict(matchelts='both', trim='both',
                          resultvar='both', inputvar='both')
 
-    def __init__(self, _match='', **kwargs):
-        _match = str(_match)
-        self.matchelts = list(map(str.strip, _match.split(',')))
+    def __init__(self, **kwargs):
+        self.matchelts = 'matchelts' in kwargs and \
+            list(map(str.strip, str(kwargs["matchelts"]).split(','))) or []
+        # self.matchelts = list(map(str.strip, _match.split(',')))
         self.resultelts = {}
         for key, arg in kwargs.items():
             if key.startswith('result_'):

@@ -12,8 +12,8 @@ import copy
 
 def _combine_not(kwargs, inputvar, trim=False):
     """
-    And-combination of condition test results. It currently always trims to
-    the true values.
+    Not-calculation of condition test results. If trim=True, only returns
+    true values,
 
     Parameters
     ----------
@@ -39,9 +39,9 @@ def _combine_not(kwargs, inputvar, trim=False):
     for inputs in kwargs.get(inputvar):
 
         mr = copy.copy(inputs)
-        mr.value = not inputs.value
 
         if (not trim) or mr.value:
+            dprint("not result add ", mr)
             res.append(mr)
     dprint(f"result negation {res}")
     return res
@@ -60,6 +60,7 @@ class ConditionNot(ComplexCondition):
             self.resultvar = str(kwargs['resultvar'])
         else:
             self.resultvar = None
+            print("not not result var")
 
         if (self.resultvar is not None) and \
             (len(self.inputvars) != 1):
@@ -70,6 +71,10 @@ class ConditionNot(ComplexCondition):
     def holds(self, **kwargs):
         motivation = ['NOT(']
         res, mot, newvars = self.subconditions[0].holds(**kwargs)
+        # reverse the true/false test
+        print(res)
+        for r in res:
+            r.value = not r.value
         motivation.extend(mot)
         motivation.append(')')
 
@@ -77,7 +82,6 @@ class ConditionNot(ComplexCondition):
             newvars[self.resultvar] = _combine_not(
                     newvars, self.inputvars[0], self.trim)
 
-        # print('not', newvars)
-        return (not res, motivation, newvars)
+        return (res, motivation, newvars)
 
 PolicyCondition.register("not", ConditionNot)

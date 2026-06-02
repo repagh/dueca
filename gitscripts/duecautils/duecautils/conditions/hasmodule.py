@@ -9,8 +9,6 @@ Created on Sun May  2 20:02:33 2021
 from .policycondition import PolicyCondition, checkAndSet
 from ..xmlutil import XML_interpret_bool
 from ..matchreference import MatchReferenceModule
-from ..modules import Modules
-import itertools as it
 
 class MatchFunctionModule:
     """ Function object class indicating a project/module match
