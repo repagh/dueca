@@ -6,9 +6,11 @@ Created on Sun May  2 20:02:33 2021
 @author: repa
 """
 
-from .policycondition import PolicyCondition, checkAndSet
+from fractions import Fraction
+from .policycondition import PolicyCondition, check_and_set
 from ..xmlutil import XML_interpret_bool
 from ..matchreference import MatchReferenceModule
+from ..verboseprint import dprint
 
 class MatchFunctionModule:
     """ Function object class indicating a project/module match
@@ -102,10 +104,11 @@ class HasModule(PolicyCondition):
 
         """
         # project and module may be Param objects
-        self.project, self.module = project, module
+        self.project = project
+        self.module = module
         self.resultvar = str(resultvar)
         self.all_machines = XML_interpret_bool(str(all_machines))
-
+        super().__init__(**kwargs)
 
     def holds(self, p_modules: dict, p_project: str,
               p_machine: str, **kwargs):
@@ -144,9 +147,10 @@ class HasModule(PolicyCondition):
                 matchFunction=MatchFunctionModule(self.project, self.module),
                 modules=p_modules[m]))
 
-        checkAndSet(self.resultvar, newvars, res)
-        result = [r for r in res if r.value ]
-        return (result, map(self.__class__.matchresult.explain, result), newvars)
+        check_and_set(self.resultvar, newvars, res)
+        result = Fraction(len([r for r in res if r.value ]), max(1, len(machines)))
+        dprint("HasModule", result)
+        return (result, map(self.__class__.matchresult.explain, res), newvars)
 
 
 PolicyCondition.register("has-module", HasModule)

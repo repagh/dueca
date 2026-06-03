@@ -1865,7 +1865,7 @@ class RunPolicies(OnExistingProject):
         else:
             report = policies.inventory()
             if report:
-                print("Applicable policies:\n ", "\n".join(report))
+                print("Applicable policies:\n ", "\n  ".join(report))
             else:
                 print("No applicable policies.")
 

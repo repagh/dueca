@@ -48,7 +48,7 @@ class MatchSpan:
         self.matchre = matchre
 
     def explain(self, label='default'):
-        return f"Match in category {label}, l: {self.line}, {self.span[0]}-{self.span[1]} on {self.matchre}"
+        return f"Match in category {label}, l: {self.line}, {self.span[0]}-{self.span[1]} on '{self.matchre.group(0)}'"
 
     def __str__(self):
         return f"Match(l={self.line} {self.span[0]}-{self.span[1]})"

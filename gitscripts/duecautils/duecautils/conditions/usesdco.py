@@ -5,8 +5,8 @@ Created on Sun May  2 20:02:33 2021
 
 @author: repa
 """
-
-from .policycondition import PolicyCondition, checkAndSet
+from fractions import Fraction
+from .policycondition import PolicyCondition, check_and_set
 from ..matchreference import MatchReferenceDco
 from ..param import Param
 from .homedco import MatchFunctionDCO
@@ -21,7 +21,7 @@ class UsesDco(PolicyCondition):
     # Determine how param arguments need to be stripped
     default_strip = dict(project='both', dco='both', resultvar='both')
 
-    def __init__(self, project: Param, dco: Param, resultvar=None, **kwargs):
+    def __init__(self, project: Param, dco: Param, resultvar='', **kwargs):
         """
         Test whether a dco object is used in any of the project's own
         modules.
@@ -44,7 +44,8 @@ class UsesDco(PolicyCondition):
 
         """
         self.pproject, self.dco = project, dco
-        self.resultvar = resultvar
+        self.resultvar = str(resultvar).strip()
+        super().__init__(**kwargs)
 
     def holds(self, p_commobjects, p_project, **kwargs):
         """Check whether a specific module uses a DCO file
@@ -66,16 +67,13 @@ class UsesDco(PolicyCondition):
 
         for m, commobj in p_commobjects.items():
             res.append(MatchReferenceDco(
-                MatchFunctionDCO(self.pproject, self.dco),
+                MatchFunctionDCO(self.pproject or p_project, self.dco),
                 commobjects = commobj))
 
-        checkAndSet(self.resultvar, newvars, res)
-        result = [r for r in res if r.value ]
-        dprint(f"Result: {self.resultvar}")
-        for r in result:
-            dprint(f"  {r}")
+        check_and_set(self.resultvar, newvars, res)
+        result = Fraction(len([r for r in res if r.value ]), len(p_commobjects))
 
-        return (result, map(self.__class__.matchresult.explain, result), newvars)
+        return (result, map(self.__class__.matchresult.explain, res), newvars)
 
 
 PolicyCondition.register("uses-dco", UsesDco)

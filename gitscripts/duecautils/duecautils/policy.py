@@ -89,15 +89,16 @@ class Policy:
             files.extend(f2)
         return '\n'.join(res), files
 
-def _readPolicyFile(fname, openedFiles=None):
+def _readPolicyFile(fname, openedFiles=None, ppath=''):
+
     policies = []
     if openedFiles is None:
-        openedFiles = set(['fname'])
-
+        openedFiles = set([fname])
 
     try:
         if os.path.isfile(fname):
             f = open(fname, 'rb')
+            ppath = ppath or os.path.dirname(fname)
         else:
             f = request.urlopen(fname)
 
@@ -133,13 +134,15 @@ def _readPolicyFile(fname, openedFiles=None):
                         f" ignoring {fname2}")
 
                 # try this first as full filename, and then as a relative
-                # file
-                try:
+                # file wrt the current path
+                if os.path.isfile(fname2):
+                    policies.extend(_readPolicyFile(fname2, openedFiles))
+                elif ppath and os.sep.join((ppath, fname2)):
+                    fname2 = os.sep.join((ppath, fname2))
+                    policies.extend(_readPolicyFile(fname2, openedFiles))
+                else:
+                    # must be a full url
                     policies.extend(_readPolicyFile(fname2))
-                except FileNotFoundError:
-                    # try with a relative url, based on the current filename
-                    pdir = os.sep.join(fname.split(os.sep)[:-1])
-                    policies.extend(_readPolicyFile(pdir + '/' + fname2))
 
             else:
                 print(f"Unknown tag in policy file {fname}: {node}")
@@ -167,15 +170,16 @@ class Policies:
         if not urls or defaultpol:
             homedir = os.environ.get('HOME', '/dev/null')
 
-            # user-defined policy file
+            # user's default policy file
             if os.path.isfile(f'{homedir}/.config/dueca/policies.xml'):
                 self.policies.extend(_readPolicyFile(
                     f'{homedir}/.config/dueca/policies.xml'))
             try:
 
-                # policy files from environment
+                # policy files or urls from environment
                 for pfile in os.environ['DUECA_POLICIES'].split(';'):
-                    self.policies.extend(_readPolicyFile(pfile))
+                    ppath = os.path.isfile(pfile) and os.sep.join(os.path.split(pfile)[:-1]) or ''
+                    self.policies.extend(_readPolicyFile(pfile, ppath=ppath))
 
             except KeyError:
 
@@ -259,9 +263,9 @@ class Policies:
         result = []
         for p in self.policies:
             args = self._prepareArgs(p.name, p.polid)
-            res, mot, newvars = p.holds(**args)
-            if res and not self.explain:
-                result.append(f"Policy {p.polid}: {p.name}: Applicable")
+            res, mot, _ = p.holds(**args)
+            if res and not self.explain and p.polid not in self.plist.policies:
+                result.append(f"Policy {p.polid}: {p.name}: Applicable ({res})")
             if self.explain:
                 l = [f"Policy {p.polid}: {p.name}: {((not res) and 'Not a') or 'A'}pplicable"]
                 l.extend(mot)

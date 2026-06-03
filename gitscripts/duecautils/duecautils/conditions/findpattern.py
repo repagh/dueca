@@ -9,7 +9,8 @@ Created on Wed Jun 30 20:56:53 2021
 import glob
 import re
 from collections import defaultdict
-from .policycondition import PolicyCondition, checkAndSet
+from fractions import Fraction
+from .policycondition import PolicyCondition, check_and_set
 from ..matchreference import MatchReferenceFile
 from ..xmlutil import XML_interpret_bool
 from ..verboseprint import dprint
@@ -34,6 +35,8 @@ class MatchFunctionPattern:
 
 
 class FindPattern(PolicyCondition):
+    """Find a regex pattern in files
+    """
 
     matchresult = MatchReferenceFile
 
@@ -42,7 +45,7 @@ class FindPattern(PolicyCondition):
                          limit='both', trim='both')
 
     def __init__(self, fileglob: str, pattern: str,
-                 resultvar=None, limit=0, **kwargs):
+                 resultvar='', limit=0, trim='false', **kwargs):
         """
         Check for a pattern in the indicated files.
 
@@ -70,33 +73,32 @@ class FindPattern(PolicyCondition):
             self.pattern = pattern.val
 
         self.resultvar = str(resultvar)
-        try:
-            self.limit = int(str(limit))
-        except ValueError:
-            raise ValueError(
-                f"{self.__class__.__name__}, cannot interpret 'limit' "
-                f" from '{limit}'")
-        self.trim = XML_interpret_bool(str(kwargs.get('trim', "false")))
+        self.limit = int(str(limit))
+        self.trim = XML_interpret_bool(str(trim))
+        super().__init__(**kwargs)
 
     def holds(self, p_path, **kwargs):
 
         # run and test
-        result = []
+        result = Fraction(0)
+        reslist = []
         newvars = defaultdict(_empty_list)
 
         # testp = re.compile(self.pattern)
         matching = glob.glob(self.fileglob, recursive=False)
 
-        dprint(f"Testing {matching}")
-        for fn in matching:
-            res = MatchReferenceFile(MatchFunctionPattern(self.pattern), fn, self.limit)
-            if not self.trim or res.value:
-                result.append(res)
+        if matching:
+            for fn in matching:
+                res = MatchReferenceFile(MatchFunctionPattern(self.pattern), fn, self.limit)
+                if not self.trim or res.value:
+                    reslist.append(res)
 
+            # update result
+            result = Fraction(len([r for r in reslist if r.value]), len(matching))
 
-        checkAndSet(self.resultvar, newvars, result)
-        dprint(f"pattern setting {self.resultvar}, files: {len(result)}")
-        return (result, map(self.__class__.matchresult.explain, result), newvars)
+        check_and_set(self.resultvar, newvars, reslist)
+        dprint("FindPattern", result)
+        return (result, map(self.__class__.matchresult.explain, reslist), newvars)
 
 PolicyCondition.register('find-pattern', FindPattern)
 
