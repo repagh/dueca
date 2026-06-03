@@ -4,6 +4,35 @@ from ..matchreference import MatchReferenceDco
 from ..param import Param
 from ..verboseprint import dprint
 
+class MatchFunctionHomeDCO:
+
+    # match union
+    matchon = set(('project', 'homedco'))
+    forall = set(('module',))
+
+    def __init__(self, project):
+        """Create a match check
+
+        Parameters
+        ----------
+        project : Param
+            name/regex of the project to match/filter
+        dco : Param
+            name/regex of the the dco
+        """
+        self.projectref = project
+        #self.dcoref = dco
+
+    def __call__(self, project, dco, homedco, **kwargs):
+
+        # dprint(f"homedco match {project} {homedco}")
+        return self.projectref.match(project) and not homedco
+
+    def explain(self, project=None, dco=None, homedco=None, **kwargs):
+        if project is None and dco is None:
+            return f'FALSE, no match on {self.projectref.val} / '
+        return f"Match: project '{project}' ~ '{self.projectref.val}' and {not homedco}"
+
 class MatchFunctionDCO:
     """ Function object indicating a match
 
@@ -29,7 +58,9 @@ class MatchFunctionDCO:
         self.projectref = project
         self.dcoref = dco
 
-    def __call__(self, project, dco, **kwargs):
+    def __call__(self, project, dco, homedco, **kwargs):
+
+        # dprint(f"testing {project}/{dco} ref {self.projectref.val}/{self.dcoref.val}")
         if self.projectref is None or self.dcoref is None:
             return False
 
@@ -111,8 +142,8 @@ class HomeDco(PolicyCondition):
         # project/dco or comment lines in that dco files
         for m, commobj in p_commobjects.items():
             res.append(MatchReferenceDco(
-                MatchFunctionDCO(Param(p_project), self.dco),
-                                       commobjects=commobj))
+                MatchFunctionHomeDCO(Param(p_project)),
+                commobjects=commobj))
 
         # the MatchReferenceDco objects have a truthy value, if any of the
         # dco match the isMatch function

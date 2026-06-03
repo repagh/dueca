@@ -99,7 +99,7 @@ def _combine_or(kwargs, inputvars, matchelts, resultelts, trim):
 
     """
     res = []
-    dprint(f"Or combining {inputvars}")
+    dprint(f"Or combining {inputvars}, on {matchelts}")
 
     # this tests the combinations of all inputvars values
     for inputs in itertools.product(*map(kwargs.get, inputvars)):
@@ -109,44 +109,54 @@ def _combine_or(kwargs, inputvars, matchelts, resultelts, trim):
         matching = True
         value = len(inputs) or inputs[0].value
         matchresult = {}
+        i0 = inputs[0]
+        eltval = None
+
         for elt in matchelts:
-            i0 = inputs[0]
-            eltval = i0.__dict__.get(elt, None)
+
+            # what is the value on i0?
+            eltval = eval(f"i0.{elt}") #__dict__.get(elt, None)
+
             for i in inputs[1:]:
 
+                nval = eval(f"i.{elt}")
                 if eltval is None:
-                    eltval = i.__dict__.get(elt, None)
+                    eltval = nval
 
-                if (i.__dict__.get(elt, None) is not None) and eltval != i.__dict__[
-                    elt
-                ]:
+                elif eltval != nval:
+                    # element match value differs
                     matching = False
-                    dprint(
-                        f"No match between {i0} and {i} on {elt}"
-                        f" {eltval} != {i.__dict__[elt]}"
-                    )
-                else:
-                    value = value or i.value
-            matchresult[elt] = eltval
+                    break
 
-        if matching and (value or (not trim)):
-            mr = MatchReference(value=value)
+            if eltval is None:
+                print(f"No value for member {elt}", i0.__dict__, i0.__class__)
+            else:
+                matchresult[elt] = eltval
 
-            # the matching keys are inserted by default
-            for k, v in matchresult.items():
-                mr.__dict__[k] = v
-                dprint(f"matched all {k} to {v}")
+        if matching:
+            value = i0.value
+            for iv in inputs[1:]:
+                value = max(value, iv.value)
 
-            # add other results as defined in result-.... values
-            for ekey, eit in resultelts.items():
+            if value or (not trim):
+                mr = MatchReference(value=value)
 
-                # idx = inputvars.index(eit)
-                # mr.__dict__[ekey] = inputs[idx].__dict__[ekey]
-                mr.__dict__[ekey] = _combine_elts(inputvars, eit, ekey, inputs)
-                dprint(f"Setting {ekey} on new match from {eit}")
-            res.append(mr)
+                # the matching keys are inserted by default
+                for k, v in matchresult.items():
+                    mr.__dict__[k] = v
 
-    dprint(f"result and combination {res}")
+                # add other results as defined in result-.... values
+                for ekey, eit in resultelts.items():
+
+                    # idx = inputvars.index(eit)
+                    # mr.__dict__[ekey] = inputs[idx].__dict__[ekey]
+                    mr.__dict__[ekey] = _combine_elts(inputvars, eit, ekey, inputs)
+                    dprint(f"Setting {ekey} on new match from {eit}")
+
+                # save the new combined value
+                res.append(mr)
+
+    # dprint(f"result or combination {res}")
     return res
 
 

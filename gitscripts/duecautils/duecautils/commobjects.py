@@ -62,8 +62,12 @@ class CommObjectDef:
                     line = f'{project}/{module}/{dco}.dco{comment and "  # " + comment}\n'
             else:
                 line = f'{comment and "# " + comment}\n'
-        self._line = line
+        if line[-1] != '\n':
+            self._line = line + '\n'
+        else:
+            self._line = line
         self.base_project = None
+        self.homedco = None
         self.module = 'comm-objects'
         self.dco = None
         if line.strip() == '':
@@ -74,6 +78,7 @@ class CommObjectDef:
         try:
             res = _dcoline.match(line)
             self.base_project = res.group(2) or ownproject
+            self.homedco = not res.group(2)
             self.module = res.group(3)
             self.dco = res.group(4)
             # dprint(f"DCO line {line} decoded as {self}")

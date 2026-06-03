@@ -1832,6 +1832,10 @@ class RunPolicies(OnExistingProject):
             help="Force application, even is the policy is considered "
             "to have already been applied",
         )
+        parser.add_argument(
+            "--dry-run",
+            type=str, nargs="+", help="Labels for all the policies to try"
+        )
         parser.set_defaults(handler=RunPolicies)
 
     def __call__(self, ns):
@@ -1848,6 +1852,13 @@ class RunPolicies(OnExistingProject):
             # print(report)
             if report:
                 print("Applied given policies:\n", "\n".join(report))
+            else:
+                print("The given policy cannot be applied")
+        elif ns.dry_run:
+            report = policies.apply(policylist=ns.dry_run, force=ns.force, dryrun=True)
+            # print(report)
+            if report:
+                print("Dryrun given policies:\n", "\n".join(report))
             else:
                 print("The given policy cannot be applied")
         elif ns.apply_all:

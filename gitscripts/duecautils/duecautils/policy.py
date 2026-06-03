@@ -79,12 +79,12 @@ class Policy:
                 f" Policy {self.polid} was tested for application")
         return res, motivation, newvars
 
-    def enact(self, kwargs):
+    def enact(self, kwargs, dryrun=False):
 
         res = []
         files = []
         for act in self.actions:
-            description, f2 = act.enact(**kwargs)
+            description, f2 = act.enact(dryrun, **kwargs)
             res.append(description)
             files.extend(f2)
         return '\n'.join(res), files
@@ -98,9 +98,11 @@ def _readPolicyFile(fname, openedFiles=None, ppath=''):
     try:
         if os.path.isfile(fname):
             f = open(fname, 'rb')
-            ppath = ppath or os.path.dirname(fname)
         else:
             f = request.urlopen(fname)
+
+        # get the path for relative inputs later
+        ppath = ppath or os.path.dirname(fname)
 
         dprint(f"Reading policies from {fname}")
         parser = etree.XMLParser(remove_blank_text=True)
@@ -272,7 +274,7 @@ class Policies:
                 result.append('\n'.join(l))
         return result
 
-    def apply(self, policylist=None, force=False):
+    def apply(self, policylist=None, force=False, dryrun=False):
 
         result = []
         for p in self.policies:
@@ -292,12 +294,13 @@ class Policies:
             # when applicable, apply the policy
             if res:
                 args.update(newvars)
-                description, files = p.enact(args)
+                description, files = p.enact(args, dryrun=dryrun)
                 result.append(description)
 
                 # mark policy as implemented
                 dprint(f"Policy {p.polid} applied to {files}")
-                self.plist.implemented(p.polid, files)
+                if not dryrun:
+                    self.plist.implemented(p.polid, files)
 
         self.plist._sync()
         return result

@@ -26,7 +26,7 @@ def _combine_dict(d1, d2):
 
 
 def _combine_first():
-    def _combine_first(r1, r2):
+    def _combine_first(r1, _r2):
         return r1
 
     return _combine_first
@@ -117,25 +117,29 @@ def _combine_and(kwargs, inputvars, matchelts, resultelts, trim):
         for elt in matchelts:
 
             # what is the value on i0?
-            eltval = i0.__dict__.get(elt, None)
+            eltval = eval(f"i0.{elt}")
 
             # check further inputs
             for i, iv in enumerate(inputs[1:]):
 
+                nval = eval(f"iv.{elt}")
                 if eltval is None:
-                    eltval = iv.__dict__.get(elt, None)
+                    eltval = nval
 
-                elif (iv.__dict__.get(elt, None) is not None) and eltval != iv.__dict__[
-                    elt
-                ]:
-                    # this element value differs
+                elif eltval != nval:
+                    # element match value differs
                     matching = False
                     break
+
+            if eltval is None:
+                print(f"No value for member {elt}")
+            else:
+                matchresult[elt] = eltval
 
         if matching:
             value = i0.value
             for iv in inputs[1:]:
-                value = value and iv.value
+                value = value * iv.value
 
             if value or (not trim):
                 mr = MatchReference(value=value)
@@ -143,15 +147,16 @@ def _combine_and(kwargs, inputvars, matchelts, resultelts, trim):
                 # the matching keys are inserted by default
                 for k, v in matchresult.items():
                     mr.__dict__[k] = v
-                    # dprint(f"matched all {k} to {v}")
+                    dprint(f"setting {k} to {v}")
 
                 # add other results as defined in result-.... values
                 for ekey, eit in resultelts.items():
                     mr.__dict__[ekey] = _combine_elts(inputvars, eit, ekey, inputs)
-                    # dprint(f"Setting {ekey} on new match to {mr.__dict__[ekey]}")
+                    dprint(f"Setting {ekey} on new match to {mr.__dict__[ekey]}")
 
                 res.append(mr)
 
+    # dprint(f"result and combination {res}")
     return res
 
 

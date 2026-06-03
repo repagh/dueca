@@ -62,7 +62,7 @@ class ActionInsertText(PolicyAction):
         self.mode = str(mode)
 
 
-    def enact(self, p_path, **kwargs):
+    def enact(self, dryrun, p_path, **kwargs):
 
         todo = [ td for td in kwargs[str(self.matchvar)] if td.value ]
         doubleFile(todo, self.matchvar)
@@ -74,11 +74,18 @@ class ActionInsertText(PolicyAction):
             if not it.value:
                 continue
             try:
-                dprint(f"Renaming {it.filename}")
-                os.rename(it.filename, it.filename+'~')
+                if dryrun:
+                    rfile = it.filename
+                    wfile = it.filename + '.dryrun'
+                else:
+                    rfile = it.filename + '~'
+                    wfile = it.filename
+                    os.rename(it.filename, rfile)
+                    dprint(f"Renaming {it.filename}")
+
                 idxw = 0
-                f0 = open(it.filename+'~', 'r')
-                with open(it.filename, 'w') as f1:
+                f0 = open(rfile, 'r', encoding='utf-8')
+                with open(wfile, 'w', encoding='utf-8') as f1:
                     txt0 = f0.read()
                     for rep in it.matches:
                         if self.mode =='replace':
@@ -98,11 +105,11 @@ class ActionInsertText(PolicyAction):
                     # write the remaining
                     f1.write(txt0[idxw:])
                 f0.close()
-                files.append(it.filename)
-                res.append(f'Modified {it.filename}')
+                files.append(wfile)
+                res.append(f'Modified {wfile}')
             except Exception as e:
-                raise e
                 res.append(f'Failed modification of {it.filename}, error {e}')
+                raise e
 
         return '\n'.join(res), files
 

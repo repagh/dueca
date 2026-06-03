@@ -67,7 +67,7 @@ class UsesDco(PolicyCondition):
 
         for m, commobj in p_commobjects.items():
             res.append(MatchReferenceDco(
-                MatchFunctionDCO(self.pproject or p_project, self.dco),
+                MatchFunctionDCO(self.pproject, self.dco),
                 commobjects = commobj))
 
         check_and_set(self.resultvar, newvars, res)

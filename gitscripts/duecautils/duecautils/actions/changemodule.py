@@ -56,16 +56,16 @@ class ActionChangeModule(PolicyAction):
 
         super().__init__(**kwargs)
 
-        self.modulelists = inputvar
+        self.modulelists = str(inputvar).strip()
         self.new_module = new_module
         self.new_project = new_project
         if url is None and new_project:
                 url = f'dgr:///{new_project}.git'
         self.url = ((url is not None) and url) or url
         self.version = version
-        self.mode = mode
+        self.mode = str(mode)
 
-    def enact(self, p_policy: str, p_polid, **kwargs):
+    def enact(self, dryrun: bool, p_policy: str, p_polid, **kwargs):
         """
         Run the module swap, deletion or addition.
 
@@ -117,7 +117,7 @@ class ActionChangeModule(PolicyAction):
                     if ml.matchFunction(m['project'], m['module']):
                         ml.modules.deleteModule(m['project'], m['module'])
                 res.append(f'Deleted {m["project"]}/{m["module"]}')
-            if self.mode != 'noop':
+            if self.mode != 'noop' and not dryrun:
                 ml.modules._sync()
                 modified.append(ml.filename)
             else:

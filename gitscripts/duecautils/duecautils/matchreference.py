@@ -79,27 +79,28 @@ class MatchReferenceDco(MatchReference):
                  commobjects: CommObjectsList):
         self.matchFunction = matchFunction
         self.commobjects = commobjects
-        value = bool([c for c in commobjects if matchFunction(c.base_project, c.dco)])
+        self.filename = commobjects.fname
+        #print(self.commobjects)
+        #for c in self.commobjects:
+        #    print(c.base_project, c.dco, c.homedco)
+        value = bool([c for c in commobjects if matchFunction(c.base_project, c.dco, c.homedco)])
 
         super(MatchReferenceDco, self).__init__(value)
 
     def explain(self):
+
         res = [ f'For {self.commobjects.fname}:' ]
         if self.value:
             res.extend([ self.matchFunction.explain(c.base_project, c.dco)
                          for c in self.commobjects
-                         if self.matchFunction(c.base_project, c.dco) ])
+                         if self.matchFunction(c.base_project, c.dco, c.homedco) ])
         else:
             res.append(self.matchFunction.explain())
 
         return '\n'.join(res)
 
-    @property
-    def filename(self):
-        return self.commobjects.fname
-
     def __str__(self):
-        return f"MatchReferenceDco={self.value} {[c.dco for c in self.commobjects if self.matchFunction(c.base_project, c.dco)]} :{self.filename}"
+        return f"MatchReferenceDco={self.value} {[c.dco for c in self.commobjects if self.matchFunction(c.base_project, c.dco, c.homedco)]} :{self.filename}"
 
 
 class MatchReferenceModule(MatchReference):
