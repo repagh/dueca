@@ -57,11 +57,11 @@ class ActionChangeModule(PolicyAction):
         super().__init__(**kwargs)
 
         self.modulelists = str(inputvar).strip()
-        self.new_module = new_module
-        self.new_project = new_project
+        self.new_module = str(new_module)
+        self.new_project = str(new_project)
         if url is None and new_project:
-                url = f'dgr:///{new_project}.git'
-        self.url = ((url is not None) and url) or url
+            url = f'dgr:///{new_project}.git'
+        self.url = str(url)
         self.version = version
         self.mode = str(mode)
 

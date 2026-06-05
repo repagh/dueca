@@ -27,7 +27,7 @@ def _combine_dict(d1, d2):
 
 def _combine_first():
     def _combine_first(r1, _r2):
-        return r1
+        return copy.copy(r1)
 
     return _combine_first
 
@@ -59,7 +59,7 @@ def _combine_elts(inputvars, selection, ekey, inputs):
             # res.update(inputs[idx].__dict__[ekey])
         return res
     except Exception as e:
-        raise ValueError(f"Cannot transfer/combine property {ekey}, error {e}")
+        raise ValueError(f"Cannot transfer/combine property {ekey}, error {e}, available properties {inputs[idx].__dict__.keys()}")
 
 
 def _combine_and(kwargs, inputvars, matchelts, resultelts, trim):
@@ -209,7 +209,12 @@ class ConditionAnd(ComplexCondition):
             if key.startswith("result_"):
                 # dprint(f"result element {key}, value {val}")
                 self.resultelts[key[len("result_") :]] = str(val).strip()
+        for k in self.resultelts.keys():
+            del kwargs[f"result_{k}"]
+
         self.trim = XML_interpret_bool(str(trim))
+        if 'trim' in kwargs:
+            del kwargs['trim']
         super(ConditionAnd, self).__init__(**kwargs)
 
     def holds(self, **kwargs):

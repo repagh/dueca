@@ -30,13 +30,24 @@ import git
 import argcomplete
 from lxml import etree
 
-import duecautils
-from duecautils.modules import Modules, projectSplit, checkGitUrl, RootMap, MainOrMaster
-from duecautils.machinemapping import NodeMachineMapping
-from duecautils.githandler import GitHandler
-from duecautils.verboseprint import dprint
-from duecautils.policy import Policies
-from duecautils.xmlutil import XML_interpret_bool, XML_tag, XML_comment
+try:
+    # production mode
+    from duecautils import verboseprint
+    from duecautils.modules import Modules, projectSplit, checkGitUrl, RootMap, MainOrMaster
+    from duecautils.machinemapping import NodeMachineMapping
+    from duecautils.githandler import GitHandler
+    from duecautils.verboseprint import dprint
+    from duecautils.policy import Policies
+    from duecautils.xmlutil import XML_interpret_bool, XML_tag, XML_comment
+
+except (ImportError, ModuleNotFoundError):
+    from duecautils.duecautils import verboseprint
+    from duecautils.duecautils.modules import Modules, projectSplit, checkGitUrl, RootMap, MainOrMaster
+    from duecautils.duecautils.machinemapping import NodeMachineMapping
+    from duecautils.duecautils.githandler import GitHandler
+    from duecautils.duecautils.verboseprint import dprint
+    from duecautils.duecautils.policy import Policies
+    from duecautils.duecautils.xmlutil import XML_interpret_bool, XML_tag, XML_comment
 
 # suppress argparse warnings for now, remove this once Ubuntu 18.04 and 20.04 are no longer
 # supported, and argparse calls can be fixed
@@ -2073,7 +2084,7 @@ if __name__ == "__main__":
     pres = mainparser.parse_args(sys.argv[1:])
 
     if pres.verbose:
-        duecautils.verboseprint._verbose_print = True
+        verboseprint._verbose_print = True
 
     # if successful, a handler has been provided
     try:

@@ -9,11 +9,11 @@ Created on Fri Feb 26 19:19:28 2021
 import tempfile
 import subprocess
 import os
-import git
 import re
 import sys
 import shutil
 import argparse
+import git
 
 try:
     # try the rich formatter with pip install rich-argparse
@@ -184,7 +184,7 @@ Useful environment variables:
 |-----------|-------|
 | DAPPS_CVSROOT      | Location of the CVS projects |
 | DUECA_CVSTOGITPATCHES | Place to keep patch results |
-| DAPPS_GITROOT         | Base folder/path for git repositories |                      
+| DAPPS_GITROOT         | Base folder/path for git repositories |
 | DAPPS_CONVERTBASE     | Optional folder for conversion work |
 
 Typical working mode:
@@ -209,7 +209,7 @@ Typical working mode:
 
 The patch folder can keep temporary results; when converting a project from
 cvs, the patches there are used to update the converted project. The "total"
-patch is preferred, otherwise the partial patches will be used.""", ), 
+patch is preferred, otherwise the partial patches will be used.""", ),
             formatter_class=formatter)
 parser.add_argument(
     '--verbose', action='store_true',
@@ -540,6 +540,18 @@ for project in projects:
     # now add a tag
     repo.create_tag('from_cvs', message='As converted from ')
     repo.remote().push('from_cvs')
+
+    # apply policies if available
+    opts = ['dueca-gproject', 'policies', '--apply-all']
+    res = subprocess.run(opts)
+
+    if res.returncode == 0:
+        changed_files = [ item.a_path for item in repo.index.diff(None) ]
+        repo.index.add(changed_files)
+        repo.index.commit('Applied currently defined policies')
+    else:
+        repo.git.stash("push", message="Failed to apply policies")
+        print("Could not apply the policies, stashed changes")
 
     #%% patch file available?
     allok = True

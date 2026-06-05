@@ -53,6 +53,8 @@ class MatchSpan:
     def __str__(self):
         return f"Match(l={self.line} {self.span[0]}-{self.span[1]})"
 
+    def __repr__(self):
+        return str(self)
 
 class MatchReference:
 

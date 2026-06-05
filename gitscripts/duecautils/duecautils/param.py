@@ -1,4 +1,5 @@
 import re
+from .verboseprint import dprint
 
 class Param:
 
@@ -35,8 +36,10 @@ class Param:
             pval = par.text
 
         if _regex:
+            dprint(f"Regex on {pval}")
             self.val = re.compile(pval)
         else:
+            dprint(f"Direct match on {pval}")
             self.val = pval
 
     def match(self, val: str):

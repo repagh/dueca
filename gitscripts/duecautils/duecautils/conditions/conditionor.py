@@ -178,7 +178,12 @@ class ConditionOr(ComplexCondition):
         for key, arg in kwargs.items():
             if key.startswith("result_"):
                 self.resultelts[key[len("result_") :]] = arg.value().strip()
+        for k in self.resultelts.keys():
+            del kwargs[f"result_{k}"]
+
         self.trim = XML_interpret_bool(str(kwargs.get("trim", "false")))
+        if 'trim' in kwargs:
+            del kwargs['trim']
         super(ConditionOr, self).__init__(**kwargs)
 
     def holds(self, **kwargs):

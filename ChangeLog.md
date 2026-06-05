@@ -2,6 +2,19 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
+## [4.3.0] - 2026-06-10
+
+### Changed
+
+- Improved dueca-gproject policies, better tests and condition calculation
+- Removed "using namespace dueca;" "using namespace std;" from all headers
+  except `dusime.h` when included from cxx file. This requires fixes on older
+  projects, policy updates support mostly automatic fixing.
+- Adapted template files accordingly
+- Removed the `DUECA_NS` namespace macros
+- Suppress warnings for pyparsing and argparse on newer platforms
+  TODO: when old platforms removed, use snake-cased functions
+
 ## [4.2.9] - 2026-05-??
 
 ### Changed
