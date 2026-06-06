@@ -45,7 +45,10 @@ default, policies can be installed in several locations:
     For users at Control and Simulation, the common policies are available
     through setting:
 
-        DUECA_POLICIES=https://gitlab.tudelft.nl/dueca-ae-cs-policies/common/-/raw/main/index.xml
+        DUECA_POLICIES=https://gitlab.tudelft.nl/ae-cs-dueca-policies/common/-/raw/main/index.xml
+
+    This project is publicly readable, so it may also serve the interest
+    of others.
 
 
 ## Background
@@ -129,6 +132,7 @@ match two lists of information on dco files.
 These policies are described in xml files. The main structure of the
 file is given as:
 
+~~~~{.xml}
     <policies xmlns="https://dueca.tudelft.nl"
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="https://dueca.tudelft.nl https://dueca.tudelft.nl/schemas/policies.xsd">
@@ -136,6 +140,7 @@ file is given as:
         ...
       </policy>
     </policies>
+~~~~
 
 A policy file may contain multiple policies. It also may contain
 include statements to import policies from other files, using the
@@ -143,6 +148,7 @@ include statements to import policies from other files, using the
 
 Here is an example of a condition:
 
+~~~~{.xml}
     <condition type="and">
       <param name="inputvar">
 	    <!-- These are two variables that contain the result of embedded
@@ -220,6 +226,7 @@ Here is an example of a condition:
         </param>
       </condition>
     </condition>
+~~~~
 
 As you can see, it is a compound "and" condition. Parameters control
 the behaviour of the conditions. To communicate between conditions and
@@ -411,4 +418,18 @@ Insert text at given positions in a file
 - mode, 'before', 'after', or 'replace'
 
 You can give this text the option to use matched groups from the
-inputvar's regular expression (if you used that).
+inputvar's regular expression (if you used that). The following snippet
+uses groups in the regular expression match from a condition test to
+re-write some code, `g1` and `g2` are from the regex groups:
+
+~~~~{.xml}
+   <action type="insert-text">
+      <param name="inputvar">
+        stdspots
+      </param>
+      <param name="mode">replace</param>
+      <param name="text" format="true" trim="true">
+        {g1}std::{g2}
+      </param>
+    </action>
+~~~~~
