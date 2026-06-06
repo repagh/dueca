@@ -5,7 +5,7 @@
 -->
 <policies xmlns="https://dueca.tudelft.nl/policies"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="https://dueca.tudelft.nl/policies https://dueca.tudelft.nl/schemas/policies.xsd">
+  xsi:schemaLocation="https://dueca.tudelft.nl/policies https://raw.githubusercontent.com/dueca/dueca/master/gitscripts/default/policies.xsd">
 
   <policy name="replace-worldview-dco-motion" id="21-001">
     <description>
@@ -25,6 +25,9 @@
       </param>
     </condition>
     <action type="change-dco">
+      <param name="mode">
+        replace
+      </param>
       <param name="new_dco">
         BaseObjectMotion
       </param>
@@ -34,7 +37,6 @@
       <param name="inputvar">
         dcolist
       </param>
-      <param name="mode">replace</param>
     </action>
   </policy>
 
@@ -88,18 +90,22 @@
 
       <!-- match on filename (dco file), and pass the dcolist parameter
 	   from the first list -->
-      <param name="match">
+      <param name="matchelts">
         filename
       </param>
       <param name="inputvar">
-	dcolist_uses, dcolist_notcorrected
+	      dcolist_uses, dcolist_notcorrected
       </param>
       <param name="resultvar">
-	dcolist
+	      dcolist
       </param>
-      <param name="result-dcolist">
-	dcolist_uses
+      <param name="result-commobjects">
+	      dcolist_uses
       </param>
+      <param name="result-matchFunction">
+        dcolist_uses
+      </param>
+      <param name="trim">true</param>
 
       <condition type="uses-dco">
         <param name="dco">
@@ -115,20 +121,20 @@
 
       <!-- detect where the objects have not yet been added -->
       <condition type="not">
-	<param name="inputvar">
-	  dcolist_complete
-	</param>
+        <param name="inputvar">
+	        dcolist_complete
+	      </param>
         <param name="resultvar">
           dcolist_notcorrected
         </param>
 
         <condition type="and">
-	  <param name="inputvar">
-	    have_bop, have_bom
-	  </param>
-	  <param name="match">
-	    filename
-	  </param>
+          <param name="inputvar">
+	          have_bop, have_bom
+	        </param>
+          <param name="matchelts">
+	         filename
+	        </param>
           <param name="resultvar">
             dcolist_complete
           </param>
@@ -139,9 +145,9 @@
             <param name="project">
               WorldView
             </param>
-	    <param name="resultvar">
-	      have_bom
-	    </param>
+            <param name="resultvar">
+	            have_bom
+	          </param>
           </condition>
           <condition type="uses-dco">
             <param name="dco">
@@ -150,9 +156,9 @@
             <param name="project">
               WorldView
             </param>
-	    <param name="resultvar">
-	      have_bop
-	    </param>
+            <param name="resultvar">
+	            have_bop
+	        </param>
           </condition>
         </condition>
       </condition>
@@ -167,7 +173,6 @@
       <param name="inputvar">
         dcolist
       </param>
-      <param name="mode">add</param>
     </action>
     <action type="change-dco">
       <param name="new_dco">
@@ -179,7 +184,6 @@
       <param name="inputvar">
         dcolist
       </param>
-      <param name="mode">add</param>
     </action>
   </policy>
 
@@ -195,7 +199,7 @@
     <condition type="and">
 
       <!-- Combine on filename, look per machine class -->
-      <param name="match">
+      <param name="matchelts">
         filename
       </param>
       <!-- Result variable is a list with filenames pointing to the
@@ -216,7 +220,7 @@
       <condition type="or">
 
         <!-- Combine on filename, has the effect of looking per machine class -->
-        <param name="match">
+        <param name="matchelts">
           filename
         </param>
         <param name="resultvar">
@@ -224,9 +228,6 @@
         </param>
         <param name="inputvar">
           modlist1,modlist2
-        </param>
-        <param name="match">
-          filename
         </param>
         <param name="result-modules">
           modlist1
@@ -253,7 +254,7 @@
           <param name="all_machines">
             true
           </param>
-           <param name="project">
+          <param name="project">
             WorldListener
           </param>
           <param name="module">
@@ -272,7 +273,7 @@
           <param name="all_machines">
             true
           </param>
-           <param name="project">
+          <param name="project">
             WorldView
           </param>
           <param name="module">
