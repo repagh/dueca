@@ -199,10 +199,10 @@ Here is an example of a condition:
         <param name="fileglob">
           */*.?xx
         </param>
-        <param name="pattern">
-          #include "GenericMotionFilter\.hxx"
+        <param name="pattern" regex="true">
+          #include ["&lt;]GenericMotionFilter\.hxx["&gt;]
         </param>
-		<!-- result in "files_that_include" -->
+    		<!-- result in "files_that_include" -->
         <param name="resultvar">
           files_that_include
         </param>
@@ -225,7 +225,7 @@ As you can see, it is a compound "and" condition. Parameters control
 the behaviour of the conditions. To communicate between conditions and
 between conditions and actions, result variables are used. Each result
 variable describes the result of a specific test, typically in the
-form of the file name of the file that matches the test, locations
+form of a list of files name of the files that matches the test, with locations
 where in the file the match is found, etc.
 
 In the example above, regular expression patterns are searched in
@@ -409,3 +409,6 @@ Insert text at given positions in a file
 - text, text to insert
 - inputvar, from the match, by findpattern
 - mode, 'before', 'after', or 'replace'
+
+You can give this text the option to use matched groups from the
+inputvar's regular expression (if you used that).

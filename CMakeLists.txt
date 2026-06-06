@@ -376,6 +376,7 @@ using namespace std; int main() { ios::openmode t;}" NAMESPACE_IOS)
 pkg_check_modules(EIGEN REQUIRED eigen3)
 
 # gtk variants, these are re-checked with required in specific files
+pkg_check_modules(GTK2 gtk+-2.0)
 pkg_check_modules(GTKMM24 gtkmm-2.4)
 pkg_check_modules(GTKGLEXT gtkglext-1.0)
 pkg_check_modules(GTK3 gtk+-3.0)

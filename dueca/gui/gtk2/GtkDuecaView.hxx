@@ -140,7 +140,7 @@ public:
   ~GtkDuecaView();
 
   /** Specification of window size. */
-  bool PositionAndSize(const vector<int>& p);
+  bool PositionAndSize(const std::vector<int>& p);
 
   /** Start the GtkDuecaView module. Is not really used, GtkDuecaView is
       intrinsically started. */

@@ -43,7 +43,7 @@ GtkTrimView* GtkTrimView::singleton = NULL;
 static vstring getMyString(double d)
 {
 #ifdef HAVE_SSTREAM
-  stringstream s;
+  std::stringstream s;
   s << d << std::ends;
   return s.str();
 #else
@@ -75,7 +75,7 @@ GtkTrimView::GtkTrimView() :
   entry_widget(NULL),
   window_open(false),
   root(new Summary<TrimId, TrimLink, TrimView>
-       (&TrimId::create(vector<vstring>(), -1, -1),
+       (&TrimId::create(std::vector<vstring>(), -1, -1),
         new TrimLink(0.0, 0.0, 0.0))),
   mode(FlightPath)
 {
@@ -159,7 +159,7 @@ void GtkTrimView::setMode(GtkButton *button, gpointer user_data)
 
 void GtkTrimView::calculate(GtkButton *button, gpointer user_data)
 {
-  for (vector<IncoCalculator*>::iterator ii = calculators.begin();
+  for (std::vector<IncoCalculator*>::iterator ii = calculators.begin();
        ii != calculators.end(); ii++) {
     (*ii)->initiate(mode);
   }
@@ -318,7 +318,7 @@ void GtkTrimView::unSelectRow(GtkCTree *ctree, GList *node,
 int GtkTrimView::addEntity(const std::string& ename,
                            IncoCalculator *calculator)
 {
-  vector<vstring> names;
+  std::vector<vstring> names;
   names.push_back(ename);
   if (root->insertLinkAndStatus
       (TrimId::create(names, calculators.size(), -1),
@@ -336,7 +336,7 @@ void GtkTrimView::removeEntity(const std::string& name)
   */
 }
 
-bool GtkTrimView::addVariable(const vector<vstring>& names,
+bool GtkTrimView::addVariable(const std::vector<vstring>& names,
                               int cal, int tvar,
                               const IncoVariableWork& ivar)
 {

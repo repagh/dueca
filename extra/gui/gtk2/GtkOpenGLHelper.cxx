@@ -136,7 +136,7 @@ static gboolean on_gtk_gl_key_press_event(GtkWidget *w,
   }
 
   // cannot find anything here
-  cerr << "No key for GTK keycode " << event->keyval << std::endl;
+  std::cerr << "No key for GTK keycode " << event->keyval << std::endl;
   return TRUE;
 }
 

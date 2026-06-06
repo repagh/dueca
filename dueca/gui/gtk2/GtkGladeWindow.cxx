@@ -75,7 +75,7 @@ bool GtkGladeWindow::readGladeFile(const char* file,
   std::string line;
   while (!testfile.eof()) {
     std::getline(testfile, line);
-    if (line.find("<glade-interface>") != string::npos) {
+    if (line.find("<glade-interface>") != std::string::npos) {
       chooseglade = true;
       break;
     }
@@ -282,4 +282,3 @@ void GtkGladeWindow::hide()
 }
 
 } // namespace dueca
-

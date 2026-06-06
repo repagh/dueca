@@ -255,7 +255,7 @@ bool LogViewGui::open(unsigned int nrows)
 void LogViewGui::appendItem(const LogMessage& msg)
 {
   // first re-format some stuff to strings
-  ostringstream time, category, logpoint, objectid, activity;
+  std::ostringstream time, category, logpoint, objectid, activity;
 
   msg.time.show(time);     // time
   union { uint32_t i; char name[5]; } catconv; catconv.name[4] = '\000';

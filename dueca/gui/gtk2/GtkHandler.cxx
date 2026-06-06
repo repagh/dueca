@@ -85,7 +85,7 @@ void GtkHandler::init(bool xlib_lock)
 #ifdef HAVE_X11_XLIB_H
   if (xlib_lock) {
     if (!XInitThreads()) {
-      cerr << "Xlib thread initiation failed" << endl;
+      std::cerr << "Xlib thread initiation failed" << std::endl;
     }
   }
 #else
@@ -124,4 +124,3 @@ void GtkHandler::returnControl()
   gtk_main_quit();
 }
 } // namespace dueca
-

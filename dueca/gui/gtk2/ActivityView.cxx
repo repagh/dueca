@@ -303,10 +303,10 @@ void ActivityView::cbUpdate(GtkButton* button, gpointer gp)
   }
 
   TimeTickType request_start =
-    (max(prev_request_end, SimTime::now() + lookahead) /
+    (std::max(prev_request_end, SimTime::now() + lookahead) /
      Ticker::single()->getCompatibleIncrement()) *
     Ticker::single()->getCompatibleIncrement();
-  TimeTickType ispan = max(2, int(dspan * ticks_per_sec + 0.5));
+  TimeTickType ispan = std::max(2, int(dspan * ticks_per_sec + 0.5));
   {
     DataWriter<ActivityLogRequest> r(send_request, SimTime::getTimeTick());
     r.data().span = ispan;

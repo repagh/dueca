@@ -327,9 +327,9 @@ bool GtkDuecaView::complete()
 
     // additional windows that might be opened
 #if GTK_MAJOR_VERSION > 1
-    string commonglade = DuecaPath::prepend("common_if.glade2");
+    std::string commonglade = DuecaPath::prepend("common_if.glade2");
 #else
-    string commonglade = DuecaPath::prepend("common_if.glade");
+    std::string commonglade = DuecaPath::prepend("common_if.glade");
 #endif
     {
       static GladeCallbackTable cb_links[] = {
@@ -455,7 +455,7 @@ GtkDuecaView::~GtkDuecaView()
   g_object_unref(G_OBJECT(nodes_store));
 }
 
-bool GtkDuecaView::PositionAndSize(const vector<int>& p)
+bool GtkDuecaView::PositionAndSize(const std::vector<int>& p)
 {
   if (p.size() == 2 || p.size() == 4) {
     window.setWindow(p);
@@ -491,7 +491,7 @@ const ParameterTable* GtkDuecaView::getParameterTable()
     { "shutdown-script", new VarProbe<GtkDuecaView, vstring>
       (REF_MEMBER(&GtkDuecaView::shutdownscript)),
       "Script called to shut down the DUECA nodes" },
-    { "position-size", new MemberCall<GtkDuecaView, vector<int> >
+    { "position-size", new MemberCall<GtkDuecaView, std::vector<int> >
       (&GtkDuecaView::PositionAndSize),
       "Specify the position, and optionally also the size of the interface\n"
       "window." },
@@ -1033,5 +1033,3 @@ void GtkDuecaView::requestToKeepRunning(bool keep_running)
 }
 
 } // namespace dueca
-
-
