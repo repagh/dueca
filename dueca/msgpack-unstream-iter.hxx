@@ -462,6 +462,14 @@ template <typename S> struct unstream
     }
   }
 
+  static void unpack_bin(S& i0, const S& iend, char* tgt, size_t sz)
+  {
+    for (; sz--; ) {
+      check_iterator_notend(i0, iend);
+      *tgt++ = *i0++;
+    }
+  }
+
   /** Extract an array size
 
       @param i0    iterator

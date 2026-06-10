@@ -11,8 +11,7 @@
         copyright       : (c)
 */
 
-#ifndef @Module@_hxx
-#define @Module@_hxx
+#pragma once
 
 // include the dusime header
 #include <dusime.h>
@@ -180,5 +179,3 @@ private:
   /** Destroy it again. */
   void destroyModel(modelSet *S);
 };
-
-#endif

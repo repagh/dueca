@@ -10,8 +10,7 @@
         copyright       : (c)
 */
 
-#ifndef @Module@Mod_hxx
-#define @Module@Mod_hxx
+#pragma once
 
 // include the dusime header
 #include <dusime.h>
@@ -133,5 +132,3 @@ public: // member functions for cooperation with DUSIME
       output. */
   void trimCalculation(const dueca::TimeSpec& ts, const dueca::TrimMode& mode);
 };
-
-#endif

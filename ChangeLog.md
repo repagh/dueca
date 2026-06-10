@@ -8,8 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 - Improved dueca-gproject policies, better tests and condition calculation
 - Removed "using namespace dueca;" "using namespace std;" from all headers
-  except `dusime.h` when included from cxx file. This requires fixes on older
-  projects, policy updates support mostly automatic fixing.
+  except. This requires fixes on older projects, these policy updates support
+  mostly automatic fixing.
 - Adapted template files accordingly
 - Removed the `DUECA_NS` namespace macros
 - Suppress warnings for pyparsing and argparse on newer platforms

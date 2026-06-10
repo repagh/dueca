@@ -11,5 +11,4 @@
 */
 
 
-#define SimulationModelTemplate_cxx
 #include "SimulationModelTemplate.hxx"

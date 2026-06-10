@@ -10,8 +10,6 @@
         copyright       : (c)
 */
 
-
-#define @Module@_cxx
 // include the definition of the helper class
 #include "@Module@.hxx"
 

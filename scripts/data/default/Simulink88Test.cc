@@ -54,6 +54,7 @@ const unsigned NCSTATES = sizeof(X_@rtwmodel@_T)/sizeof(real_T);
 #include <strstream>
 
 using namespace std;
+using namespace dueca;
 
 void Usage(int argc, char* argv[])
 {
@@ -241,4 +242,3 @@ int main(int argc, char* argv[])
     }
   }
 }
-

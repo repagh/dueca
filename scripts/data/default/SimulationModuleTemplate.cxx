@@ -10,9 +10,6 @@
         copyright       : (c)
 */
 
-
-
-#define @Module@Mod_cxx
 // include the definition of the module class
 #include "@Module@Mod.hxx"
 
@@ -21,6 +18,7 @@
 // the standard package for DUSIME, including template source
 #define DO_INSTANTIATE
 #include <dusime.h>
+using namespace dueca;
 
 // include the debug writing header. Warning and error messages
 // are on by default, debug and info can be selected by

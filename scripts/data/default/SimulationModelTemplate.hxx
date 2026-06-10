@@ -10,8 +10,7 @@
         copyright       : (c)
 */
 
-#ifndef SimulationModelTemplate_hxx
-#define SimulationModelTemplate_hxx
+#pragma once
 
 template<class T> Integrator;
 
@@ -47,4 +46,3 @@ public:
   // calculate the derivative of the state vector.
   void calculateDerivatives();
 };
-#endif

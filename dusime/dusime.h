@@ -59,7 +59,7 @@
 #define DO_INSTANTIATE
 
 // included in cxx
-using namespace dueca;
+// using namespace dueca;
 
 #endif
 
