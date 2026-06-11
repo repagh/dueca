@@ -278,13 +278,13 @@ get_object_ptr(const boost::intrusive_ptr<ScriptCreatableDataHolder<T>> &ptr)
 
 template <class T> void *get_object_ptr(const boost::intrusive_ptr<T> &ptr)
 {
-  DEB("get_object_ptr, direct " << getclassname<T>());
+  DEB("get_object_ptr, direct");
   return reinterpret_cast<void *>(ptr.get());
 }
 
 template <class T> void *direct_object_ptr(const boost::intrusive_ptr<T> &ptr)
 {
-  DEB("direct_object_ptr ");
+  DEB("direct_object_ptr");
   return reinterpret_cast<void *>(ptr.get());
 }
 
