@@ -1245,5 +1245,6 @@ bool IPAccessor::adjustPriority(const PrioritySpec &p)
   return true;
 }
 
+template <> const char *getclassname<IPAccessor>() { return "IPAccessor"; }
 
 } // namespace dueca

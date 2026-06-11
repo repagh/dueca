@@ -287,5 +287,6 @@ ostream& operator << (ostream& os, const ReflectiveFillPacker& o)
 {
   return os << "ReflectiveFillPacker(" << o.getId() << ')';
 }
+template <> const char *getclassname<ReflectiveFillPacker>() { return "ReflectiveFillPacker"; }
 
 } // namespace dueca

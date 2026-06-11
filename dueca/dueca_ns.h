@@ -32,6 +32,11 @@
 */
 #pragma once
 
-namespace dueca {}
+namespace dueca {
+
+template<typename T>
+const char* getclassname();
+
+}
 
 #define USING_DUECA_NS using namespace dueca;

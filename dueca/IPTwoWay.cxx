@@ -223,5 +223,6 @@ bool IPTwoWay::selectOneWay(const bool& oneway)
   no_of_senders = oneway ? 1 : 2;
   return true;
 }
+template <> const char *getclassname<IPTwoWay>() { return "IPTwoWay"; }
 
 } // namespace dueca

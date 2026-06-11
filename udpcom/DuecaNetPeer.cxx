@@ -343,4 +343,7 @@ clientUnpackPayload(MessageBuffer::ptr_type buffer, unsigned id,
   data_comm->returnBuffer(buffer);
 }
 
+template <> const char *getclassname<DuecaNetPeer>() { return "DuecaNetPeer"; }
+
+
 } // namespace dueca

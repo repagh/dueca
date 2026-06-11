@@ -400,4 +400,7 @@ int ReflectivePacker::changeCurrentStore(int& store_no)
   return 0;
 }
 
+template <> const char *getclassname<ReflectivePacker>() { return "ReflectivePacker"; }
+
+
 } // namespace dueca

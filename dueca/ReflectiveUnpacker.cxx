@@ -416,5 +416,6 @@ ostream& HeadInfo::print(ostream& os) const
      << " sender=" << sender << ")";
   return os;
 }
+template <> const char *getclassname<ReflectiveUnpacker>() { return "ReflectiveUnpacker"; }
 
 } // namespace dueca

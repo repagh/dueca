@@ -1301,4 +1301,7 @@ void Environment::setExitCode(int ecode)
   exitcode = ecode;
 }
 
+template <> const char *getclassname<Environment>() { return "Environment"; }
+
+
 } // namespace dueca

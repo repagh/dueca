@@ -421,4 +421,6 @@ void ShmAccessor::prepareToStop(TimeTickType tick)
   stopwork.switchOn(TimeSpec(0,0));
 }
 
+template <> const char *getclassname<ShmAccessor>() { return "ShmAccessor"; }
+
 } // namespace dueca

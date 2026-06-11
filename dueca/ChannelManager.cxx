@@ -670,4 +670,7 @@ const ParameterTable *ChannelManager::getParameterTable()
   return table;
 }
 
+template <> const char *getclassname<ChannelManager>() { return "ChannelManager"; }
+
+
 } // namespace dueca

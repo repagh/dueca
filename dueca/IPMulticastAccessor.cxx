@@ -332,5 +332,7 @@ IPMulticastAccessor::~IPMulticastAccessor()
   //
 }
 
+template <> const char *getclassname<IPMulticastAccessor>() { return "IPMulticastAccessor"; }
+
 
 } // namespace dueca

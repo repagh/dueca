@@ -180,4 +180,7 @@ findMatchingTransport(int destination, Channel::TransportClass tclass)
   return (singleton->packer_set[destination])->getPacker(tclass);
 }
 
+template <> const char *getclassname<PackerManager>() { return "PackerManager"; }
+
+
 } // namespace dueca

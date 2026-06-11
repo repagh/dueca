@@ -430,4 +430,7 @@ ostream& operator << (ostream& os, const
 {
   return os << "(ObjectManager(" << (int) a.location << "))";
 }
+
+template <> const char *getclassname<ObjectManager>() { return "ObjectManager"; }
+
 } // namespace dueca

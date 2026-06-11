@@ -383,10 +383,12 @@ void FillUnpacker::despatch(const TimeSpec& t)
   }
 }
 
-ostream& operator << (ostream& os, const FillUnpacker& p)
+std::ostream& operator << (std::ostream& os, const FillUnpacker& p)
 {
   return os << "FillUnpacker(" <<
     reinterpret_cast<void*>(const_cast<FillUnpacker*>(&p)) << ')';
 }
+
+template <> const char *getclassname<FillUnpacker>() { return "FillUnpacker"; }
 
 } // namespace dueca

@@ -271,16 +271,23 @@ template <class T>
 void *
 get_object_ptr(const boost::intrusive_ptr<ScriptCreatableDataHolder<T>> &ptr)
 {
-  DEB("get_object_ptr, ScriptCreatableDataHolder "
+  DEB("get_object_ptr, ScriptCreatableDataHolder " << getclassname<T>() << " "
       << reinterpret_cast<void *>(&(ptr->data())));
   return reinterpret_cast<void *>(&(ptr->data()));
 }
 
 template <class T> void *get_object_ptr(const boost::intrusive_ptr<T> &ptr)
 {
-  DEB("get_object_ptr, direct");
+  DEB("get_object_ptr, direct " << getclassname<T>());
   return reinterpret_cast<void *>(ptr.get());
 }
+
+template <class T> void *direct_object_ptr(const boost::intrusive_ptr<T> &ptr)
+{
+  DEB("direct_object_ptr ");
+  return reinterpret_cast<void *>(ptr.get());
+}
+
 
 static ReferenceHolderPython *getOrCreatePythonHolder(void *_obj)
 {
@@ -302,7 +309,7 @@ bpy::object CoreCreator<T, B, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10>::c_param(
   bpy::extract<boost::intrusive_ptr<T>> objectptr(args[0]);
 
   if (objectptr.check()) {
-    auto holder = getOrCreatePythonHolder(get_object_ptr(objectptr()));
+    auto holder = getOrCreatePythonHolder(direct_object_ptr(objectptr()));
     ArgElement::arglist_t paramlist;
     if (!single()->processList(kwargs, args, paramlist, holder) ||
         !single()->injectValues(paramlist, get_object_ptr(objectptr()))) {

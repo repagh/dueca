@@ -67,6 +67,6 @@ void GlutProtocol::sweep()
     glutMainLoopEvent();
   }
 }
+template <> const char *getclassname<GlutProtocol>() { return "GlutProtocol"; }
 
 } // namespace dueca
-

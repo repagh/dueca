@@ -462,6 +462,10 @@ TimeSpec operator + (const PeriodicTimeSpec& t,
                   t.getValidityEnd() + dt*t.getPeriod());
 }
 
+template <> const char *getclassname<TimeSpec>() { return "TimeSpec"; }
+
+template <> const char *getclassname<PeriodicTimeSpec>() { return "PeriodicTimeSpec"; }
+
 /* const PeriodicTimeSpec& operator++()
 {
   validity_start += period;

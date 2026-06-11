@@ -89,4 +89,6 @@ PrioritySpec::~PrioritySpec()
   //
 }
 
+template <> const char *getclassname<PrioritySpec>() { return "PrioritySpec"; }
+
 } // namespace dueca

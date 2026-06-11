@@ -145,5 +145,7 @@ GenericPacker* PackerSet::getPacker(TransportClass tclass) const
   return high_prio.get();
 }
 
-} // namespace dueca
+template <> const char *getclassname<PackerSet>() { return "PackerSet"; }
 
+
+} // namespace dueca

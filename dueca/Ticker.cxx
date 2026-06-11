@@ -835,4 +835,7 @@ void Ticker::checkTick()
   }
 }
 
+template <> const char *getclassname<Ticker>() { return "Ticker"; }
+
+
 } // namespace dueca

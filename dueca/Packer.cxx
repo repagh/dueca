@@ -172,5 +172,6 @@ int Packer::changeCurrentStore(int& store_no)
   return fill_level;
 }
 
+template <> const char *getclassname<Packer>() { return "Packer"; }
 
 } // namespace dueca

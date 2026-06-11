@@ -206,5 +206,6 @@ const int TransportDelayEstimator::operator () (int bytes)
   return estimate;
 }
 
+template <> const char *getclassname<TransportDelayEstimator>() { return "TransportDelayEstimator"; }
 
 } // namespace dueca

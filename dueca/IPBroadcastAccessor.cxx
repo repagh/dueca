@@ -246,5 +246,6 @@ IPBroadcastAccessor::~IPBroadcastAccessor()
 {
   //
 }
+template <> const char *getclassname<IPBroadcastAccessor>() { return "IPBroadcastAccessor"; }
 
 } // namespace dueca

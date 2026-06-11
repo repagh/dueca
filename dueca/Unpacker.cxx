@@ -191,4 +191,6 @@ void Unpacker::despatch(const TimeSpec& t)
   work.pop();
 }
 
+template <> const char *getclassname<Unpacker>() { return "Unpacker"; }
+
 } // namespace dueca

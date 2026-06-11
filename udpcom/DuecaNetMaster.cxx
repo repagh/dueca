@@ -563,4 +563,6 @@ void DuecaNetMaster::clientWelcomeConfig(AmorphStore &s, unsigned peer_id)
   s.packData(group_magic);
 }
 
+template <> const char *getclassname<DuecaNetMaster>() { return "DuecaNetMaster"; }
+
 } // namespace dueca
