@@ -34,8 +34,8 @@
 
 namespace dueca {
 
-template<typename T>
-const char* getclassname();
+/** Templated, to-be-specialized function, for printing type names. */
+template<typename T> const char* getclassname();
 
 }
 

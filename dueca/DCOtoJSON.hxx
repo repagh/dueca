@@ -111,9 +111,6 @@ void DCOtoJSONstrict(rapidjson::Writer<rapidjson::OStreamWrapper> &writer,
 void DCOtoJSONstrict(rapidjson::StringBuffer &doc,
                      const char* dcoclass, const void* object);
 
-/** classname function, should exist for DCO objects */
-template <typename T> const char* getclassname();
-
 /** Convert the data from a DCO object into a JSON writer
     Templated version, directly access the (known) object.
 

@@ -199,10 +199,6 @@ const entryid_type entry_any = 0xffff;
 /** Constant indicating that entry should be selected by label */
 const entryid_type entry_bylabel = 0xfffe;
 
-/** classname function, default for DCO objects */
-template <typename T>
-const char* getclassname();
-
 /** classname function, needed in case the enum must be sent over */
 template<>
 const char* getclassname<dueca::Channel::EntryTimeAspect>();

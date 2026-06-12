@@ -40,9 +40,6 @@ typedef rapidjson::GenericValue<rapidjson::UTF8<> > JValue;
 void JSONtoDCO(const JValue &reader,
                CommObjectWriter& writer);
 
-/** classname function, should exist for DCO objects */
-template <typename T> const char* getclassname();
-
 /** Convert the data from a JSON representation into
     a DCO object.
     Templated version, directly access the (known) object.

@@ -60,10 +60,6 @@ namespace dueca {
 /* pre-define */
 class smartstring;
 
-/** Standard templated function */
-template <typename T>
-const char* getclassname();
-
 /** @name Class name return for common types
     @retval String with classname
 */
