@@ -136,7 +136,11 @@ class MatchReferenceModule(MatchReference):
         return self.modules.fname
 
     def __str__(self):
-        return f"MatchReferenceModule={self.value} {[f"{m['project']}/{m['module']}" for m in self.modules if self.matchFunction(m['project'], m['module'])]} :{self.filename}"
+        return f"MatchReferenceModule={self.value}[" + \
+                ', '.join([f"{m['project']}/{m['module']}"
+                        for m in self.modules
+                        if self.matchFunction(m['project'], m['module'])]) + \
+                f"] :{self.filename}"
 
 class MatchReferenceFile(MatchReference):
     """Match on a file (typically given by a pattern)

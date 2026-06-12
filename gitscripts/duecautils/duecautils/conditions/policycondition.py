@@ -141,7 +141,7 @@ class ConditionConstant(PolicyCondition):
 PolicyCondition.register("constant", ConditionConstant)
 
 
-def check_and_set(pname:str|None, params:dict, value:list):
+def check_and_set(pname:str, params:dict, value:list):
     """Helper, to update a parameter workspace with new result values
 
     Parameters
