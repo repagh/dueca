@@ -267,6 +267,11 @@ CoreCreator<T, B, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10>::~CoreCreator()
   //
 }
 
+/* This variant of the get_object_ptr function picks out the ScriptCreatable
+   DCO objects. When used as DCO object, these are "clean", but when created
+   from the script, they are wrapped in a ScriptCreatableDataHolder.
+
+   This call returns the pointer to the data proper. */
 template <class T>
 void *
 get_object_ptr(const boost::intrusive_ptr<ScriptCreatableDataHolder<T>> &ptr)
@@ -276,9 +281,23 @@ get_object_ptr(const boost::intrusive_ptr<ScriptCreatableDataHolder<T>> &ptr)
   return reinterpret_cast<void *>(&(ptr->data()));
 }
 
+/* This variant of the get_object_ptr function works for anything else
+   ScriptCreatable. These objects have a slot to keep a reference to their
+   Python arguments, and the object pointer is simply the pointer to the
+   object. */
+
 template <class T> void *get_object_ptr(const boost::intrusive_ptr<T> &ptr)
 {
   DEB("get_object_ptr, direct");
+  return reinterpret_cast<void *>(ptr.get());
+}
+
+/* For storing Python arguments with the object, to prevent cleanup before
+   they can be used, this pointer is direct, giving either a directly
+   Python-capable object, or the wrapper of a DCO object. */
+template <class T> void *direct_object_ptr(const boost::intrusive_ptr<T> &ptr)
+{
+  DEB("direct_object_ptr");
   return reinterpret_cast<void *>(ptr.get());
 }
 
@@ -302,7 +321,7 @@ bpy::object CoreCreator<T, B, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10>::c_param(
   bpy::extract<boost::intrusive_ptr<T>> objectptr(args[0]);
 
   if (objectptr.check()) {
-    auto holder = getOrCreatePythonHolder(get_object_ptr(objectptr()));
+    auto holder = getOrCreatePythonHolder(direct_object_ptr(objectptr()));
     ArgElement::arglist_t paramlist;
     if (!single()->processList(kwargs, args, paramlist, holder) ||
         !single()->injectValues(paramlist, get_object_ptr(objectptr()))) {
