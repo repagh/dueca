@@ -217,6 +217,7 @@ function create_debfiles()
     # variants in guile use, 2.0 for 22.04, 20.04, 1.8 for 18.04
     # also this control will later be modified for different build versions
     mv debian-versioned/control debian-versioned/control.bak
+    mv debian-versioned/rules debian-versioned/rules.bak
     popd
 
     # and for xUbuntu 20.04
