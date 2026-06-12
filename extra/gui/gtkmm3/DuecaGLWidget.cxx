@@ -15,7 +15,7 @@
 #define E_CNF
 #define W_CNF
 #include "debug.h"
-#include "GtkGLWidgetHelper.hxx"
+//#include "GtkGLWidgetHelper.hxx"
 #include <gtkmm/container.h>
 
 namespace dueca {
@@ -25,8 +25,7 @@ DuecaGLWidget::DuecaGLWidget(GtkWidget* ctype) :
   Gtk::DrawingArea(GTK_DRAWING_AREA(ctype)),
   DuecaGLCanvas()
 {
-  gtkgl_helper = new GtkGLWidgetHelper;
-  helper = gtkgl_helper;
+  //
 }
 
 
@@ -38,7 +37,7 @@ DuecaGLWidget::~DuecaGLWidget()
 void DuecaGLWidget::InitArea()
 {
   // DrawingArea needs to be unrealized to enable GL
-  if (is_realized()) unrealize();
+  if (this->get_realized()) unrealize();
 
   Gtk::Container* parent = get_parent();
   if (parent) parent->set_reallocate_redraws(true);
@@ -46,10 +45,7 @@ void DuecaGLWidget::InitArea()
   parent->hide();
   gtk_widget_unrealize(GTK_WIDGET(parent->gobj()));// Protected in Gtk::Widget
 
-  //GtkGLWidgetHelper* h = dynamic_cast<GtkGLWidgetHelper*>(helper);
-  gtkgl_helper->gtk_glwidget_id = GTK_WIDGET(gobj());
-
-  gtkgl_helper->init_gl_area(this);
+  this->();
 
   parent->show();
 }

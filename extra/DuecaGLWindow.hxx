@@ -17,9 +17,13 @@
 
 #include <dueca_ns.h>
 
-
 #if defined(DUECA_CONFIG_GTK4)
 
+#include "gui/gtk4/DuecaGLGtk4Window.hxx"
+
+namespace dueca {
+typedef DuecaGLGtk4Window DuecaGLWindow;
+}
 
 #elif DUECA_CONFIG_GTK3
 
@@ -27,7 +31,7 @@
 
 /** @TODO: for now, the bare GL window is used. The Gtk3 GL code is not
     compatible with a lot of our old API gl drawing */
-#if GTK_CHECK_VERSION(3, 16, 0)  && 0
+#if GTK_CHECK_VERSION(3, 16, 0) && 0
 
 #include <extra/gui/gtk3/DuecaGLGtk3Window.hxx>
 //namespace dueca {
@@ -70,15 +74,15 @@ class DuecaGLWindow : public DuecaGLCanvas
   bool mouse_passive;
 
   /// If true, full screen draw
-  bool                                       fullscreen;
+  bool fullscreen;
   /// X-offset of the screen
-  int                                        offset_x;
+  int offset_x;
   /// Y-offset of the screen
-  int                                        offset_y;
+  int offset_y;
   /// X-size of the screen
-  int                                        size_x;
+  int size_x;
   /// Y-size of the screen
-  int                                        size_y;
+  int size_y;
 
   /** Also the Fl window needs special access. */
   friend class FlBasedGLWindow;
@@ -95,19 +99,15 @@ public:
       \param pass_passive If true, also passes passive (unclicked)
       mouse motions.
   */
-  DuecaGLWindow(const char* window_title,
-                bool pass_passive = false);
+  DuecaGLWindow(const char *window_title, bool pass_passive = false);
 
   /// @cond DO_NOT_DOCUMENT
   DUECA_DEPRECATED("please used the new constructor signature")
   /// @endcond DO_NOT_DOCUMENT
   /** Backwards compatible constructor. Arguments, except
       mouse_passive, are ignored. */
-  DuecaGLWindow(const char* window_title,
-                bool dummy1,
-                bool dummy2,
-                bool dummy3 = true,
-                bool dummy4 = true,
+  DuecaGLWindow(const char *window_title, bool dummy1, bool dummy2,
+                bool dummy3 = true, bool dummy4 = true,
                 bool mouse_passive = true);
 
   /** destructor. */
@@ -116,12 +116,12 @@ public:
   /** Request full screen drawing -- or not. Can be linked to Scheme
       in a parameter table. Use this call before opening the window
       with openWindow. */
-  bool setFullScreen(const bool& fs = true);
+  bool setFullScreen(const bool &fs = true);
 
   /** Set the window position, at least if the window manager will
       honour this. Can be linked to Scheme in a parameter table. Use
       this call before opening the window with openWindow. */
-  bool setWindow(const std::vector<int>& wpos);
+  bool setWindow(const std::vector<int> &wpos);
 
   /** Set up the window initial position and size. Honouring of
       initial position depends on the window manager. Use this call
@@ -144,9 +144,10 @@ public:
   void show();
 
   /** Get x offset */
-  int getXOffset() const {return offset_x;}
+  int getXOffset() const { return offset_x; }
   /** Get y offset */
-  int getYOffset() const {return offset_y;}
+  int getYOffset() const { return offset_y; }
+
 public:
   /** \{ Prototypes for interation handling.
   This class adheres to -- as much as is practical -- the calling
