@@ -373,25 +373,12 @@ Documentation for users of the DUSIME and DUECA API
        -DBUILD_X11GL=ON \
        -DBUILD_DDFF=ON
 
-if [ -d "%{?__cmake_builddir}" ]; then
-    %cmake_build
-    cd %{__cmake_builddir}
-elif [ -d build ]; then
-    cd build
-    make
-else
-    make
-fi
-make doc
+%cmake_build
+%cmake_build -t doc
 
 %install
 
-if [ -d "%{?__cmake_builddir}" ]; then
-    cd %{__cmake_builddir}
-elif [ -d build ]; then
-    cd build
-fi
-%make_install
+%cmake_install
 
 # remove these autogen files
 rm -rf %{buildroot}%{python3_sitelib}/bin
