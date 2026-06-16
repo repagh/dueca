@@ -298,7 +298,7 @@ void CriticalActivity::criticalError()
 bool CriticalActivity::criticalErrorNodeWide()
 {
   if (node_safe) {
-    // put all critical activities into safe more
+    // put all critical activities into safe mode
     node_safe = false;
 
     // stop the packers, stop sending data to other nodes

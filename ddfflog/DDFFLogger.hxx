@@ -39,6 +39,7 @@
 #include "DDFFDCOMetaFunctor.hxx"
 #include <ddff/SegmentedRecorderBase.hxx>
 #include "ddff_ns.h"
+#include <dueca/CriticalActivity.hxx>
 #include <list>
 #include <string>
 #include <memory>
@@ -199,8 +200,11 @@ private: // activity allocation
   /** Callback object for simulation calculation. */
   Callback<DDFFLogger> cb1;
 
+  /** Callback object in safe mode */
+  Callback<DDFFLogger> cbsafe;
+
   /** Activity for simulation calculation. */
-  ActivityCallback do_calc;
+  CriticalActivity do_calc;
 
 public: // class name and trim/parameter tables
   /** Name of the module. */
@@ -267,6 +271,9 @@ private: // member functions for cooperation with DUECA
 private: // the member functions that are called for activities
   /** the method that implements the main calculation. */
   void doCalculation(const TimeSpec &ts);
+
+  /** method called in safe mode */
+  void doSafe(const TimeSpec& ts);
 
   friend class EntryWatcher;
 

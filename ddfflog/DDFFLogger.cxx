@@ -159,8 +159,9 @@ DDFFLogger::DDFFLogger(Entity *e, const char *part, const PrioritySpec &ps) :
   myclock(),
   // a callback object, pointing to the main calculation function
   cb1(this, &_ThisModule_::doCalculation),
+  cbsafe(this, &_ThisModule_::doSafe),
   // the module's main activity
-  do_calc(getId(), "log", &cb1, ps)
+  do_calc(this, "log", &cb1, &cbsafe, ps)
 {
   // connect the triggers for simulation
   do_calc.setTrigger(myclock);
@@ -590,6 +591,8 @@ void DDFFLogger::startModule(const TimeSpec &time)
 {
   if (!immediate_start) {
     do_calc.switchOn(time);
+    do_calc.readyForWork();
+    do_calc.switchWork(time);
     if (reporting) {
       reporting->forceAdvance(time);
     }
@@ -784,6 +787,20 @@ void DDFFLogger::doCalculation(const TimeSpec &ts)
     sendStatus(std::string("DDFF File IO failure, ") + e.what(), true,
                ts.getValidityStart());
     setLoggingActive(false);
+  }
+}
+
+void DDFFLogger::doSafe(const TimeSpec& ts)
+{
+  if (do_calc.stoppedByError() && hfile) {
+    /* DUECA ddff.
+
+       Entering safe state with error, trying to log and close datafile. */
+    W_XTR("Closing off DDFF file after error");
+
+    hfile->syncInventory();
+    hfile->syncToFile(false);
+    hfile.reset();
   }
 }
 
