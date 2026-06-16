@@ -97,6 +97,9 @@ private: // simulation data
   /// logging stopped if no file, or error occurred
   bool loggingactive;
 
+  /// remember starting up or shutting down
+  bool starting;
+
   /** set of data for a targeted (read one entry) channel read&save */
   struct TargetedLog : SegmentedRecorderBase
   {
@@ -224,7 +227,7 @@ public: // construction and further specification
       reading the 4 GB of wind tables) should be done here.
       Return false if something in the parameters is wrong (by
       the way, it would help if you printed what!) May be deleted. */
-  bool complete();
+  bool complete() final;
 
   /** Destructor. */
   ~DDFFLogger();
@@ -257,16 +260,16 @@ private:
 
 private: // member functions for cooperation with DUECA
   /** indicate that everything is ready. */
-  bool isPrepared();
+  bool isPrepared() final;
 
   /** indicate everything is ready */
   bool internalIsPrepared(bool notify);
 
   /** start responsiveness to input data. */
-  void startModule(const TimeSpec &time);
+  void startModule(const TimeSpec &time) final;
 
   /** stop responsiveness to input data. */
-  void stopModule(const TimeSpec &time);
+  void stopModule(const TimeSpec &time) final;
 
 private: // the member functions that are called for activities
   /** the method that implements the main calculation. */

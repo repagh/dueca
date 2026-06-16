@@ -42,7 +42,8 @@
 #include <dueca.h>
 using namespace std;
 
-namespace dueca { namespace ddff {
+namespace dueca {
+namespace ddff {
 
 // class/module name
 const char *const DDFFLogger::classname = "ddff-logger";
@@ -211,6 +212,7 @@ bool DDFFLogger::complete()
   }
 
   if (immediate_start) {
+    starting = true;
     do_calc.switchOn(0);
   }
 
@@ -233,6 +235,7 @@ void DDFFLogger::setLoggingActive(bool act)
 DDFFLogger::~DDFFLogger()
 {
   if (immediate_start) {
+    do_calc.switchSafe(0);
     do_calc.switchOff(0);
   }
 }
@@ -590,9 +593,8 @@ bool DDFFLogger::internalIsPrepared(bool notify)
 void DDFFLogger::startModule(const TimeSpec &time)
 {
   if (!immediate_start) {
+    starting = true;
     do_calc.switchOn(time);
-    do_calc.readyForWork();
-    do_calc.switchWork(time);
     if (reporting) {
       reporting->forceAdvance(time);
     }
@@ -603,6 +605,7 @@ void DDFFLogger::startModule(const TimeSpec &time)
 void DDFFLogger::stopModule(const TimeSpec &time)
 {
   if (!immediate_start) {
+    do_calc.switchSafe(time);
     do_calc.switchOff(time);
   }
 }
@@ -790,17 +793,25 @@ void DDFFLogger::doCalculation(const TimeSpec &ts)
   }
 }
 
-void DDFFLogger::doSafe(const TimeSpec& ts)
+void DDFFLogger::doSafe(const TimeSpec &ts)
 {
-  if (do_calc.stoppedByError() && hfile) {
+  if (do_calc.stoppedByError()) {
+    if (hfile) {
     /* DUECA ddff.
 
        Entering safe state with error, trying to log and close datafile. */
-    W_XTR("Closing off DDFF file after error");
+      W_XTR("Closing off DDFF file after error");
 
-    hfile->syncInventory();
-    hfile->syncToFile(false);
-    hfile.reset();
+      hfile->syncInventory();
+      hfile.reset();
+    }
+  }
+  else {
+    if (starting) {
+      do_calc.readyForWork();
+      do_calc.switchWork(ts + ts.getValiditySpan());
+      starting = false;
+    }
   }
 }
 
@@ -837,4 +848,5 @@ void DDFFLogger::sendStatus(const std::string &msg, bool error,
 // will check in with the script code, and enable the
 // creation of modules of this type
 // static TypeCreator<DDFFLogger> a(DDFFLogger::getMyParameterTable());
-} } // namespace ddff namespace dueca
+} // namespace ddff
+} // namespace dueca

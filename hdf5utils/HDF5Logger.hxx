@@ -22,6 +22,7 @@
 
 // include the dusime header
 #include <dusime.h>
+#include <dueca/CriticalActivity.hxx>
 
 // This includes headers for the objects that are sent over the channels
 #include <DUECALogConfig.hxx>
@@ -111,6 +112,9 @@ private: // simulation data
 
   /// logging stopped if no file, or error occurred
   bool loggingactive;
+
+  /// remember starting up or shutting down
+  bool starting;
 
   /** set of data for a targeted (read one entry) channel read&save */
   struct TargetedLog
@@ -217,10 +221,13 @@ private: // activity allocation
   PeriodicAlarm myclock;
 
   /** Callback object for simulation calculation. */
-  Callback<HDF5Logger> cb1;
+  Callback<_ThisModule_> cb1;
+
+  /** Callback object in safe mode */
+  Callback<_ThisModule_> cbsafe;
 
   /** Activity for simulation calculation. */
-  ActivityCallback do_calc;
+  CriticalActivity do_calc;
 
 public: // class name and trim/parameter tables
   /** Name of the module. */
@@ -240,7 +247,7 @@ public: // construction and further specification
       reading the 4 GB of wind tables) should be done here.
       Return false if something in the parameters is wrong (by
       the way, it would help if you printed what!) May be deleted. */
-  bool complete();
+  bool complete() final;
 
   /** Destructor. */
   ~HDF5Logger();
@@ -273,20 +280,23 @@ private:
 
 private: // member functions for cooperation with DUECA
   /** indicate that everything is ready. */
-  bool isPrepared();
+  bool isPrepared() final;
 
   /** indicate everything is ready */
   bool internalIsPrepared();
 
   /** start responsiveness to input data. */
-  void startModule(const TimeSpec &time);
+  void startModule(const TimeSpec &time) final;
 
   /** stop responsiveness to input data. */
-  void stopModule(const TimeSpec &time);
+  void stopModule(const TimeSpec &time) final;
 
 private: // the member functions that are called for activities
   /** the method that implements the main calculation. */
   void doCalculation(const TimeSpec &ts);
+
+  /** method called in safe mode */
+  void doSafe(const TimeSpec& ts);
 
   friend class EntryWatcher;
 
