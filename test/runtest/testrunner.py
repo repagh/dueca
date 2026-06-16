@@ -1023,7 +1023,7 @@ class CheckWord:
             )
 
             # find the most centric word
-            word, wbounds = _find_word(under_cursor, self.criterion)
+            word, wbounds = _find_word(under_cursor, criterion)
 
             # if we don't meet the start criterion
             if not word:
@@ -1051,6 +1051,7 @@ class CheckWord:
             xmlnode.set("word", word)
             xmlnode.set("testsize", str(testsize))
             xmlnode.set("timeout", str(timeout))
+            xmlnode.set("criterion", str(criterion))
             xmlnode.set("wait", str(wait))
             (
                 self.x,
@@ -1374,7 +1375,7 @@ class Scenario:
 
     def pass_key(self, key):
         global test_relative
-        print(f"Key press {key}")
+        # print(f"Key press {key}")
         if key in (Key.f1,):
 
             # get color spot here
@@ -1388,6 +1389,7 @@ class Scenario:
 
         elif key in (Key.f2,):
 
+            # insert a snapshot
             self.actions.append(
                 Snap(
                     xmlroot=self.actionnode,
@@ -1398,6 +1400,8 @@ class Scenario:
             return True
 
         elif key in (Key.f3,):
+
+            # calibrate the upper-left offset
             window = findWindowUnder(
                 self.project.windows, self.x, self.y, True, margin=80
             )
@@ -1437,7 +1441,7 @@ class Scenario:
 
         elif key in wordkeys:
 
-            # locate image here
+            # locate word
             window = findWindowUnder(
                 self.project.windows, self.x, self.y, True, margin=10
             )
@@ -1457,14 +1461,17 @@ class Scenario:
             return True
 
         elif key in (Key.esc,):
+            # stop processing
             return False
 
         elif key in (Key.f11,):
+            # do relative location
             test_relative = True
             print("Clicks are relative to latest color/image test")
             return True
 
         elif key in (Key.f12,):
+            # do absolute location
             test_relative = False
             print("Clicks are absolute")
             return True

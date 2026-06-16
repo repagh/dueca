@@ -73,6 +73,7 @@ set(CONTROLFILES
   triggering               # DuecaTestCommunication, trigger variants
   dtcwebsock               # DuecaTestCommunication, websocket test
   replayscenario_gtk4      # Re-run this, but with gtk4
+  dutecomabort             # DuecaTestCommunication, abort button
 )
 
 # run these tests with enough python modules
