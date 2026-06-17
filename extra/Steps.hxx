@@ -24,6 +24,7 @@ namespace dueca {
 void Steps_sort_and_copy(const double *ui, const double *yi, double *tp, double *y, int n);
 std::ostream &Steps_print(std::ostream& os, double *tp, double *y, int n);
 
+/** Error in defining steps. */
 class steps_exception : public std::exception
 {
 public:

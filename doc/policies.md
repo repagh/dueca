@@ -255,6 +255,7 @@ the USEMODULES keyword. This produces per matching module an
 
 The action here is to add an include line to the `CMakeLists.txt` file:
 
+~~~~{.xml}
     <action type="insert-text">
       <param name="inputvar">
         include_spots
@@ -276,6 +277,7 @@ The action here is to add an include line to the `CMakeLists.txt` file:
         motion-common
       </param>
     </action>
+~~~~
 
 This uses the `include_spots` variable, that indicates all
 `CMakeLists.txt` files that need the include, together with the

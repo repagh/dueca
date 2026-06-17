@@ -16,10 +16,14 @@
 #define DataRecorder_hxx
 
 #include <ddff/DDFFDataRecorder.hxx>
+/** @file DataRecorder.hxx
+ *
+ *  This file defines the dueca::DataRecorder as a DDFFDataRecorder
+ */ 
 
 namespace dueca {
 
-//typedef ddff::DDFFDataRecorder DataRecorder;
+/// Re-define the ddff datarecorder to be usable from DUECA
 using DataRecorder =  ddff::DDFFDataRecorder;
 
 } // namespace dueca

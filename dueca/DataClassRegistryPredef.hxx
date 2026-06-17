@@ -30,6 +30,7 @@ namespace dueca {
 #define _NOEXCEPT throw()
 #endif
 
+/** Base class for olde exception with message parts */
 template<size_t n>
 class MsgException: public std::exception
 {
@@ -58,7 +59,6 @@ typedef std::map<const std::string,std::shared_ptr<DCRegistryEntry> >
   DataClassRegistry_map_type;
 
 /** Entry of the DataClassRegistry */
-//typedef DataClassRegistry_map_type::mapped_type DataClassRegistry_entry_type;
 typedef const DCRegistryEntry* DataClassRegistry_entry_type;
 
 /** Exception thrown when the class name searched has not been registered */

@@ -39,4 +39,5 @@ template<typename T> const char* getclassname();
 
 }
 
+/** Obsolete macro */
 #define USING_DUECA_NS using namespace dueca;

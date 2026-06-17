@@ -93,6 +93,8 @@ public:
 
       @param window_title Title for the window
       @param pass_passive For compatibility, passive movement always passed.
+      @param depth_buffer Allocate a depth buffer
+      @param stencil_buffer Allocate a stencil buffer
   */
   DuecaGLFWWindow(const char *window_title = "DUECA", bool pass_passive = false,
                   bool depth_buffer = true, bool stencil_buffer = false);
