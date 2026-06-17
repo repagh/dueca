@@ -379,6 +379,9 @@ void DuecaNetMaster::clientDecodeConfig(AmorphReStore &s, unsigned peer_id)
     DEB("metainfo, id=" << peer_id << " node=" << nodeid << " host=" << hostname
                         << " sendorder=" << sendorder);
 
+    /* DUECA network.
+
+       Information about a peer joining, and its order in the network. */
     I_NET("Accepting peer, id=" << peer_id << " node=" << nodeid << " name="
                                 << hostname << " sendorder=" << sendorder);
   }

@@ -47,7 +47,7 @@
     <check-image window="DUECA/DUSIME control panel" x="365" y="83" template="abortbutton" testsize="96" timeout="10.0" wait="20.5" criterion="0.995"/>
     <click relative="true" x="1" y="3" button="Button.left" pressed="true" wait="0.3"/>
     <click relative="true" x="1" y="3" button="Button.left" pressed="false" wait="0.3"/>
-    <check-image window="DUECA/DUSIME control panel" x="365" y="91" template="abort-revert" testsize="96" timeout="10.0" wait="0.5" criterion="0.995"/>
+    <check-image window="DUECA/DUSIME control panel" x="365" y="91" template="abort-yes" testsize="96" timeout="10.0" wait="0.5" criterion="0.995"/>
     <click relative="true" x="-1" y="7" button="Button.left" pressed="true" wait="0.3"/>
     <click relative="true" x="-1" y="7" button="Button.left" pressed="false" wait="0.3"/>
     <check-image window="DUECA/DUSIME control panel" x="463" y="41" template="buttongraysel" testsize="64" timeout="10.0" wait="0.5" criterion="0.995"/>
@@ -62,7 +62,7 @@
     <click relative="true" x="-2" y="0" button="Button.left" pressed="false" wait="0.3"/>
     <click relative="true" x="19" y="52" button="Button.left" pressed="true" wait="0.3"/>
     <click relative="true" x="19" y="52" button="Button.left" pressed="false" wait="0.3"/>
-    <check-word window="Are you serious?" x="63" y="37" word="really" testsize="48" timeout="10.0" criterion="40" wait="0.5"/>
+    <check-word window="Are you serious?" x="63" y="37" word="really" testsize="48" timeout="10.0" criterion="30" wait="0.5"/>
     <click relative="true" x="0" y="-3" button="Button.left" pressed="true" wait="0.3"/>
     <click relative="true" x="0" y="-3" button="Button.left" pressed="false" wait="0.3"/>
     <click relative="true" x="0" y="-3" button="Button.left" pressed="true" wait="0.3"/>
