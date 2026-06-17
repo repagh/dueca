@@ -128,7 +128,7 @@ FileWithSegments::FileWithSegments(const std::string &filename, Mode mode,
 
 FileWithSegments::~FileWithSegments()
 {
-  //
+  syncInventory();
 }
 
 bool FileWithSegments::openFile(const std::string &filename,

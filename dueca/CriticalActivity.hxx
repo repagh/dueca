@@ -105,6 +105,11 @@ public:
   /** Destructor. */
   ~CriticalActivity();
 
+  /** Immediately report ready, without first running in safe.
+
+      @warning Do not use this with sensitive hardware */
+  inline void readyForWork() { run_state = Running; }
+
   /** Specify the time from which the activity will be switched to
       working mode. */
   void switchWork(const TimeSpec& time);

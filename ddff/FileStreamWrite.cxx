@@ -92,6 +92,10 @@ FileStreamWrite::~FileStreamWrite()
 
 void FileStreamWrite::closeOff(bool intermediate)
 {
+  // handle repeated full close call
+  if (current_buffer == NULL)
+    return;
+
   if (intermediate) {
     // copy the back-end current buffer
     typename AQMTMessageBufferAlloc::element_ptr tmp_buffer{ get_list_spare(

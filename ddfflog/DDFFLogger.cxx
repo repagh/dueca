@@ -42,7 +42,8 @@
 #include <dueca.h>
 using namespace std;
 
-namespace dueca { namespace ddff {
+namespace dueca {
+namespace ddff {
 
 // class/module name
 const char *const DDFFLogger::classname = "ddff-logger";
@@ -159,8 +160,9 @@ DDFFLogger::DDFFLogger(Entity *e, const char *part, const PrioritySpec &ps) :
   myclock(),
   // a callback object, pointing to the main calculation function
   cb1(this, &_ThisModule_::doCalculation),
+  cbsafe(this, &_ThisModule_::doSafe),
   // the module's main activity
-  do_calc(getId(), "log", &cb1, ps)
+  do_calc(this, "log", &cb1, &cbsafe, ps)
 {
   // connect the triggers for simulation
   do_calc.setTrigger(myclock);
@@ -210,6 +212,7 @@ bool DDFFLogger::complete()
   }
 
   if (immediate_start) {
+    starting = true;
     do_calc.switchOn(0);
   }
 
@@ -232,6 +235,7 @@ void DDFFLogger::setLoggingActive(bool act)
 DDFFLogger::~DDFFLogger()
 {
   if (immediate_start) {
+    do_calc.switchSafe(0);
     do_calc.switchOff(0);
   }
 }
@@ -589,6 +593,7 @@ bool DDFFLogger::internalIsPrepared(bool notify)
 void DDFFLogger::startModule(const TimeSpec &time)
 {
   if (!immediate_start) {
+    starting = true;
     do_calc.switchOn(time);
     if (reporting) {
       reporting->forceAdvance(time);
@@ -600,6 +605,7 @@ void DDFFLogger::startModule(const TimeSpec &time)
 void DDFFLogger::stopModule(const TimeSpec &time)
 {
   if (!immediate_start) {
+    do_calc.switchSafe(time);
     do_calc.switchOff(time);
   }
 }
@@ -787,6 +793,28 @@ void DDFFLogger::doCalculation(const TimeSpec &ts)
   }
 }
 
+void DDFFLogger::doSafe(const TimeSpec &ts)
+{
+  if (do_calc.stoppedByError()) {
+    if (hfile) {
+    /* DUECA ddff.
+
+       Entering safe state with error, trying to log and close datafile. */
+      W_XTR("Closing off DDFF file after error");
+
+      hfile->syncInventory();
+      hfile.reset();
+    }
+  }
+  else {
+    if (starting) {
+      do_calc.readyForWork();
+      do_calc.switchWork(ts + ts.getValiditySpan());
+      starting = false;
+    }
+  }
+}
+
 void DDFFLogger::sendStatus(const std::string &msg, bool error,
                             TimeTickType moment)
 {
@@ -820,4 +848,5 @@ void DDFFLogger::sendStatus(const std::string &msg, bool error,
 // will check in with the script code, and enable the
 // creation of modules of this type
 // static TypeCreator<DDFFLogger> a(DDFFLogger::getMyParameterTable());
-} } // namespace ddff namespace dueca
+} // namespace ddff
+} // namespace dueca

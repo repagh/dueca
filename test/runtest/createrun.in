@@ -14,7 +14,10 @@ echo "Operate the DUECA process with mouse clicks and keypresses"
 echo "- F1 button to insert a color check at the cursor"
 echo "- F2 button to inserts a snapshot in the sequence"
 echo "- F3 button calibrates the "0,0" in the display windows"
-echo "- F4 button to insert an image check near the cursor"
+echo "- F4-F7 button to insert an image check near the cursor"
+echo "- F8-F10 button to insert word check near the cursor"
+echo "- F11 set clicks relative to last check center"
+echo "- F12 set clicks relative to window"
 echo "- Esc to end the recording"
 sleep 1
 

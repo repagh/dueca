@@ -117,7 +117,7 @@ void FileWithInventory::loadInventory()
 
 FileWithInventory::~FileWithInventory()
 {
-  //
+  syncInventory();
 }
 
 bool FileWithInventory::isComplete() const
