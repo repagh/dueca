@@ -207,7 +207,7 @@ protected:
   void addDataClass(ReplicatorConfig& cf, std::string cname);
 
   /** Check dataclass with magic and inheritance */
-  void verifyDataClass(const ReplicatorConfig& cf, unsigned node);
+  bool verifyDataClass(const ReplicatorConfig& cf, unsigned node);
 
   /** Return buffer, implemented/accessed by Master/Peer */
   virtual void returnBuffer(MessageBuffer::ptr_type) = 0;

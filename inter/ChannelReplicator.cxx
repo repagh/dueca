@@ -26,8 +26,7 @@
 // include the debug writing header, by default, write warning and
 // error messages
 //#define D_INT
-#define I_INT
-#define W_INT
+//#define I_INT
 #include <debug.h>
 #include <AmorphStore.hxx>
 
@@ -274,7 +273,7 @@ void ChannelReplicator::addDataClass(ReplicatorConfig& cf, std::string cname)
   }
 }
 
-void ChannelReplicator::verifyDataClass(const ReplicatorConfig& cf, unsigned node)
+bool ChannelReplicator::verifyDataClass(const ReplicatorConfig& cf, unsigned node)
 {
   magiclist_t::const_iterator mi = cf.data_magic.begin();
   classlist_t::const_iterator ci = cf.dataclass.begin();
@@ -282,8 +281,20 @@ void ChannelReplicator::verifyDataClass(const ReplicatorConfig& cf, unsigned nod
   std::string cname;
   while (mi != cf.data_magic.end()) {
     cname = *ci;
-    DataClassRegistry_entry_type ce =
-      DataClassRegistry::single().getEntry(cname);
+    DataClassRegistry_entry_type ce;
+    try {
+      ce = DataClassRegistry::single().getEntry(cname);
+    }
+    catch (const DataObjectClassNotFound& e) {
+      /* DUECA interconnect.
+
+         This dataclass is not known in this node. The data for this interconnect
+         link will be ignored. Add the dataclass to your node if needed.
+      */
+      W_INT("Dataclass " << cname << " is not known in this node.");
+      return false;
+    }
+
     if (DataClassRegistry::single().getMagic(ce) != *mi) {
       /* DUECA interconnect.
 
@@ -292,7 +303,7 @@ void ChannelReplicator::verifyDataClass(const ReplicatorConfig& cf, unsigned nod
          probably by running an update and recompile, and ensure the DCO
          definitions are identical. */
       E_INT("data class magic for " << *ci << " differs with node " << node);
-      throw(dataclassdiffers());
+      return false;
     }
     mi++; ci++;
     if (mi != cf.data_magic.end()) {
@@ -306,7 +317,7 @@ void ChannelReplicator::verifyDataClass(const ReplicatorConfig& cf, unsigned nod
         E_INT("data class inheritance wrong " << cname << " parent here: " <<
               DataClassRegistry::single().getParent(cname) <<
               " parent node " << node << ": " << *ci);
-        throw(dataclassdiffers());
+        return false;
       }
     }
     else if (DataClassRegistry::single().getParent(cname).size()) {
@@ -320,9 +331,12 @@ void ChannelReplicator::verifyDataClass(const ReplicatorConfig& cf, unsigned nod
       E_INT("data class inheritance wrong " << cname << " parent here: " <<
             DataClassRegistry::single().getParent(cname) <<
             " no parent in node " << node);
-      throw(dataclassdiffers());
+      return false;
     }
   }
+
+  // all checked at this point
+  return true;
 }
 
 } // namespace dueca

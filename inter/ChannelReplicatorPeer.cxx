@@ -348,23 +348,35 @@ void ChannelReplicatorPeer::clientDecodeConfig(AmorphReStore &s)
                watched[cmd.channel_id]->writers.end());
 
         // check all data class stuff matches
-        verifyDataClass(cmd, cmd.slave_id);
+        if (verifyDataClass(cmd, cmd.slave_id)) {
 
-        /* DUECA interconnect.
+          /* DUECA interconnect.
 
            Information on creating a new replicating writer in a
            channel. */
-        I_INT("new writer in channel " << watched[cmd.channel_id]->channelname
-                                       << " rid " << cmd.entry_id << " origin "
-                                       << cmd.slave_id);
-        watched[cmd.channel_id]->writers[cmd.entry_id] =
-          std::shared_ptr<EntryWriter>(new EntryWriter(
-            getId(), cmd.slave_id, cmd.entry_id,
-            watched[cmd.channel_id]->channelname, cmd.dataclass.front(),
-            cmd.data_magic.front(), cmd.name, cmd.time_aspect, cmd.arity,
-            cmd.packmode, cmd.tclass, getId()));
-        watched[cmd.channel_id]->writers[cmd.entry_id]->setReplicatorEntryId(
-          cmd.entry_id);
+          I_INT("new writer in channel " << watched[cmd.channel_id]->channelname
+                                         << " rid " << cmd.entry_id
+                                         << " origin " << cmd.slave_id);
+          watched[cmd.channel_id]->writers[cmd.entry_id] =
+            std::shared_ptr<EntryWriter>(new EntryWriter(
+              getId(), cmd.slave_id, cmd.entry_id,
+              watched[cmd.channel_id]->channelname, cmd.dataclass.front(),
+              cmd.data_magic.front(), cmd.name, cmd.time_aspect, cmd.arity,
+              cmd.packmode, cmd.tclass, getId()));
+          watched[cmd.channel_id]->writers[cmd.entry_id]->setReplicatorEntryId(
+            cmd.entry_id);
+        }
+
+        else {
+
+          /* DUECA interconnect.
+
+           Dataclass not correct, will ignore the following entry.
+           */
+          W_INT("Ignoring entry for channel "
+                << watched[cmd.channel_id]->channelname << " rid "
+                << cmd.entry_id << " origin " << cmd.slave_id);
+        }
       }
     } break;
 

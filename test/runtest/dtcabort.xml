@@ -51,7 +51,7 @@
     <click relative="true" x="-1" y="7" button="Button.left" pressed="true" wait="0.3"/>
     <click relative="true" x="-1" y="7" button="Button.left" pressed="false" wait="0.3"/>
     <check-image window="DUECA/DUSIME control panel" x="463" y="41" template="buttongraysel" testsize="64" timeout="10.0" wait="0.5" criterion="0.995"/>
-    <snap name="dutecomabort000.png" />
+    <snap name="dtcabort000.png" />
     <click relative="true" x="-1" y="0" button="Button.left" pressed="true" wait="0.3"/>
     <click relative="true" x="-1" y="0" button="Button.left" pressed="false" wait="0.3"/>
     <click relative="true" x="-1" y="0" button="Button.left" pressed="true" wait="0.3"/>
