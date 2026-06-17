@@ -26,7 +26,7 @@ OSCDIRV="${HOME}/rpmbuild/tu/home:repabuild/dueca-versioned"
 # ubuntu versions with trimmed files
 TRIMUBUNTU="18.04 20.04 22.04 26.04"
 # debian/raspbian versions with trim
-TRIMDEBIAN="11 12 13"
+TRIMDEBIAN="11 13"
 TRIMRASPBIAN="11 13"
 
 
