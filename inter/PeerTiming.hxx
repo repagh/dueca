@@ -56,7 +56,7 @@ class PeerTiming
 
 public:
   /** Constructor */
-  PeerTiming(TimeTickType jumpsize=1U, double time_gain=0.002);
+  PeerTiming(TimeTickType jumpsize=1U, double _time_gain=0.002);
 
   /** Destructor */
   ~PeerTiming();
