@@ -98,7 +98,7 @@ ChannelReplicator::ChannelReplicator(Entity *e, const char *classname2,
      You always pass the pointer to the entity, give the classname and the
      part arguments. */
   Module(e, classname2, part),
-
+  timing_gain(0.002),
   watched(),
   detected_entries(3, "ChannelReplicator detected entries"),
   deleted_entries(3, "ChannelReplicator deleted entries")
