@@ -792,38 +792,34 @@ void ChannelReplicatorMaster::clientDecodeConfig(AmorphReStore &s,
     case ReplicatorConfig::AddEntry: {
 
       // throws and stops all if the dataclass tree is wrong
-      if (verifyDataClass(cmd, peer_id)) {
+      if (!verifyDataClass(cmd, peer_id)) {
+        /* DUECA interconnect.
+
+           Peer's data class differs from the dataclass defined here,
+           ignoring.
+        */
+        I_INT("Ignoring entry from peer=" << peer_id
+                                          << " due to dataclass mismatch");
+        return;
+      }
 
       // add the entry to the candidate writers, this addition
       // will be processed in sendChannelConfigChanges
-        candidate_writers.push_back(make_pair(
-          cmd.channel_id,
-          std::shared_ptr<EntryWriter>(new EntryWriter(
-            getId(), peer_id, cmd.tmp_entry_id,
-            watched[cmd.channel_id]->channelname, cmd.dataclass.front(),
-            cmd.data_magic.front(), cmd.name, cmd.time_aspect, cmd.arity,
-            cmd.packmode, cmd.tclass, getId()))));
+      candidate_writers.push_back(
+        make_pair(cmd.channel_id,
+                  std::shared_ptr<EntryWriter>(new EntryWriter(
+                    getId(), peer_id, cmd.tmp_entry_id,
+                    watched[cmd.channel_id]->channelname, cmd.dataclass.front(),
+                    cmd.data_magic.front(), cmd.name, cmd.time_aspect,
+                    cmd.arity, cmd.packmode, cmd.tclass, getId()))));
 
       /* DUECA interconnect.
 
          Information on adding a local entered entry. */
-        I_INT("Adding writer entry to candidates, from "
-              << cmd.slave_id << " RidT " << cmd.tmp_entry_id);
-      }
-      else {
-        /* DUECA interconnect.
+      I_INT("Adding writer entry to candidates, from "
+            << cmd.slave_id << " RidT " << cmd.tmp_entry_id);
+    } break;
 
-           Dataclass not correct, will ignore the following entry. This will affect all
-           peers in this interconnect group, you might consider configuring the dataclass
-           for this master.
-        */
-        W_INT("Ignoring entry for channel "
-              << watched[cmd.channel_id]->channelname << " rid " << cmd.entry_id
-              << " origin " << cmd.slave_id);
-      }
-
-      break;
-    }
     case ReplicatorConfig::RemoveEntry: {
 
       // find the entry, and move it to the obsoletes, so it can be
@@ -851,8 +847,8 @@ void ChannelReplicatorMaster::clientDecodeConfig(AmorphReStore &s,
       obsolete_writers.push_back(make_pair(cmd.channel_id, ww->second));
       watched[cmd.channel_id]->writers.erase(ww);
 
-      break;
-    }
+    } break;
+
     default:
       /* DUECA interconnect.
 

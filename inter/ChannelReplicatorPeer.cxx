@@ -300,14 +300,18 @@ void ChannelReplicatorPeer::clientDecodeConfig(AmorphReStore &s)
 
     case ReplicatorConfig::AddChannel: {
 
-      // this should be absolutely true
-#ifdef assert
-      channelmap_type::const_iterator ii = watched.begin();
-      while (ii != watched.end() && ii->second->channelname != cmd.name &&
-             ii->first != cmd.channel_id)
-        ii++;
-      assert(ii == watched.end());
-#endif
+      // This channel should not exist here
+      auto chn = watched.find(cmd.channel_id);
+      if (chn != watched.end()) {
+        /* DUECA interconnect.
+
+           Logic error in interconnector. Channel id already configured at peer.
+        */
+        E_INT("Replicator channel id="
+              << cmd.channel_id << " already exists, name="
+              << chn->second->channelname << " vs new name=" << cmd.name);
+        return;
+      }
 
       // add the channel watcher
       watched[cmd.channel_id] = std::shared_ptr<WatchedChannel>(
@@ -315,6 +319,16 @@ void ChannelReplicatorPeer::clientDecodeConfig(AmorphReStore &s)
     } break;
 
     case ReplicatorConfig::AddEntry: {
+
+      auto chn = watched.find(cmd.channel_id);
+      if (chn == watched.end()) {
+        /* DUECA interconnect.
+
+           Logic error in interconnector. Channel id not yet configured at peer.
+        */
+        E_INT("Replicator channel id=" << cmd.channel_id << " not configured.");
+        return;
+      }
 
       if (cmd.slave_id == peer_id) {
 
@@ -325,9 +339,18 @@ void ChannelReplicatorPeer::clientDecodeConfig(AmorphReStore &s)
 
         // if the entry is from here, it is validated now. Considering that
         // order in the tcp link is preserved
-        assert(candidate_readers.front().second->getReplicatorEntryId() ==
-                 cmd.tmp_entry_id &&
-               candidate_readers.front().first == cmd.channel_id);
+        if (candidate_readers.front().second->getReplicatorEntryId() !=
+              cmd.tmp_entry_id ||
+            candidate_readers.front().first != cmd.channel_id) {
+          /* DUECA interconnect.
+
+             Logic error in interconnector. Channel id not yet configured at peer.
+          */
+          E_INT("Replicator channel id="
+                << cmd.channel_id
+                << " candidate reader list for own entry mismatch");
+          return;
+        }
 
         /* DUECA interconnect.
 
@@ -344,40 +367,46 @@ void ChannelReplicatorPeer::clientDecodeConfig(AmorphReStore &s)
       else {
 
         // entry creating somewhere else, start replicating it here
-        assert(watched[cmd.channel_id]->writers.find(cmd.entry_id) ==
-               watched[cmd.channel_id]->writers.end());
-
-        // check all data class stuff matches
-        if (verifyDataClass(cmd, cmd.slave_id)) {
-
+        if (watched[cmd.channel_id]->writers.find(cmd.entry_id) !=
+            watched[cmd.channel_id]->writers.end()) {
           /* DUECA interconnect.
+
+             Logic error in interconnector. entry already configured.
+          */
+          E_INT("Replicator channel id=" << cmd.channel_id
+                                         << " already configured entry="
+                                         << cmd.entry_id);
+          return;
+        }
+      }
+
+      // check all data class stuff matches
+      if (!verifyDataClass(cmd, cmd.slave_id)) {
+        /* DUECA interconnect.
+
+           Dataclass mismatch between nodes, this entry will be ignored.
+        */
+        E_INT("Replicator channel id=" << cmd.channel_id
+                                       << " entry=" << cmd.entry_id
+                                       << "mismatch, ignoring entry");
+        return;
+      }
+
+      /* DUECA interconnect.
 
            Information on creating a new replicating writer in a
            channel. */
-          I_INT("new writer in channel " << watched[cmd.channel_id]->channelname
-                                         << " rid " << cmd.entry_id
-                                         << " origin " << cmd.slave_id);
-          watched[cmd.channel_id]->writers[cmd.entry_id] =
-            std::shared_ptr<EntryWriter>(new EntryWriter(
-              getId(), cmd.slave_id, cmd.entry_id,
-              watched[cmd.channel_id]->channelname, cmd.dataclass.front(),
-              cmd.data_magic.front(), cmd.name, cmd.time_aspect, cmd.arity,
-              cmd.packmode, cmd.tclass, getId()));
-          watched[cmd.channel_id]->writers[cmd.entry_id]->setReplicatorEntryId(
-            cmd.entry_id);
-        }
-
-        else {
-
-          /* DUECA interconnect.
-
-           Dataclass not correct, will ignore the following entry.
-           */
-          W_INT("Ignoring entry for channel "
-                << watched[cmd.channel_id]->channelname << " rid "
-                << cmd.entry_id << " origin " << cmd.slave_id);
-        }
-      }
+      I_INT("new writer in channel " << watched[cmd.channel_id]->channelname
+                                     << " rid " << cmd.entry_id << " origin "
+                                     << cmd.slave_id);
+      watched[cmd.channel_id]->writers[cmd.entry_id] =
+        std::shared_ptr<EntryWriter>(new EntryWriter(
+          getId(), cmd.slave_id, cmd.entry_id,
+          watched[cmd.channel_id]->channelname, cmd.dataclass.front(),
+          cmd.data_magic.front(), cmd.name, cmd.time_aspect, cmd.arity,
+          cmd.packmode, cmd.tclass, getId()));
+      watched[cmd.channel_id]->writers[cmd.entry_id]->setReplicatorEntryId(
+        cmd.entry_id);
     } break;
 
     case ReplicatorConfig::RemoveEntry:
