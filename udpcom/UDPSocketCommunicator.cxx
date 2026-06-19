@@ -27,8 +27,9 @@
 
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
+using namespace std;
 
-DUECA_NS_START;
+namespace dueca {
 
 // helper to determine multicast
 static bool isMulticastAddress(in_addr_t s_addr)
@@ -771,4 +772,4 @@ UDPSocketCommunicatorPeer::~UDPSocketCommunicatorPeer()
   // all performed by parent
 }
 
-DUECA_NS_END;
+} // namespace dueca

@@ -11,7 +11,6 @@
         license         : EUPL-1.2
 */
 
-
 #define FillPacker_cc
 #include "FillPacker.hxx"
 #include <dueca-conf.h>
@@ -36,20 +35,21 @@
 #include <debprint.h>
 #define E_CNF
 #include "debug.h"
+using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 const int FillPacker::no_of_stores = 2;
 
-const ParameterTable* FillPacker::getParameterTable()
+const ParameterTable *FillPacker::getParameterTable()
 {
   static const ParameterTable table[] = {
-    { "buffer-size", new VarProbe<FillPacker,int>
-      (REF_MEMBER(&FillPacker::buffer_size)),
-      "size of buffer for packing objects into = max size of sent objects"  },
+    { "buffer-size",
+      new VarProbe<FillPacker, int>(REF_MEMBER(&FillPacker::buffer_size)),
+      "size of buffer for packing objects into = max size of sent objects" },
     { NULL, NULL,
       "A FillPacker packs the bulk channel data, and offers these to an\n"
-      "IP accessor for transmission whenever there is spare capacity."}
+      "IP accessor for transmission whenever there is spare capacity." }
   };
   return table;
 }
@@ -62,16 +62,14 @@ FillPacker::FillPacker() :
   bytes_to_send(0),
   buffer_size(512)
 #ifdef FILLPACKER_SEND_ID
-  ,pkg_count(0)
+  ,
+  pkg_count(0)
 #endif
 {
   store = new AmorphStore[2];
 }
 
-const char* FillPacker::getTypeName()
-{
-  return "FillPacker";
-}
+const char *FillPacker::getTypeName() { return "FillPacker"; }
 
 bool FillPacker::complete()
 {
@@ -86,20 +84,16 @@ bool FillPacker::complete()
   DEB("Initialising fill packer, 2 buffers of size " << buffer_size);
 
   // give the stores some data
-  for (int ii = 2; ii--; ) {
+  for (int ii = 2; ii--;) {
     store[ii].renewBuffer(buffer_size);
     store[ii].reUse();
   }
   return true;
 }
 
-FillPacker::~FillPacker()
-{
-  delete[] store;
-}
+FillPacker::~FillPacker() { delete[] store; }
 
-bool FillPacker::packOneSet(AmorphStore& store,
-                            const PackUnit& c)
+bool FillPacker::packOneSet(AmorphStore &store, const PackUnit &c)
 {
   // 3 bytes, the channel id and this send no
   packData(store, c.entry->getChannelId());
@@ -120,11 +114,10 @@ bool FillPacker::packOneSet(AmorphStore& store,
 
 #ifdef LOG_PACKING
   if (accessor->getLogPacking()) {
-    accessor->getPackLog() << "FP " << setw(9) << c.tick
-                           << "  i,"
-                           << setw(3) << c.entry->getChannelId().getObjectId()
-                                 << setw(6) << store.getSize() - before
-                           << " s" << setw(4) << c.idx << endl;
+    accessor->getPackLog() << "FP " << setw(9) << c.tick << "  i," << setw(3)
+                           << c.entry->getChannelId().getObjectId() << setw(6)
+                           << store.getSize() - before << " s" << setw(4)
+                           << c.idx << endl;
   }
 #endif
 
@@ -153,7 +146,7 @@ void FillPacker::packWork()
       work_queue.pop();
     }
   }
-  catch(AmorphStoreBoundary& e) {
+  catch (AmorphStoreBoundary &e) {
 
     // in case something did not fit
     if (old_level == 0) {
@@ -184,8 +177,7 @@ void FillPacker::packWork()
   }
 }
 
-
-int FillPacker::stuffMessage(char* buff, int size,
+int FillPacker::stuffMessage(char *buff, int size,
                              MessageBuffer::ptr_type buffer)
 {
   packWork();
@@ -200,7 +192,8 @@ int FillPacker::stuffMessage(char* buff, int size,
       bytes_to_send = store[store_to_fill].getSize();
       index_to_send = 0;
       store_to_send = store_to_fill;
-      if (++store_to_fill == no_of_stores) store_to_fill = 0;
+      if (++store_to_fill == no_of_stores)
+        store_to_fill = 0;
       store[store_to_fill].reUse();
     }
 
@@ -212,7 +205,6 @@ int FillPacker::stuffMessage(char* buff, int size,
   if (bytes_to_send == 0 || size < MIN_FILL) {
     return 0;
   }
-
 
 #ifdef FILLPACKER_SEND_ID
 
@@ -227,9 +219,9 @@ int FillPacker::stuffMessage(char* buff, int size,
   int send_size = min(size - 5, bytes_to_send);
   std::memcpy(&buff[5], &(store[store_to_send].getToData())[index_to_send],
               send_size);
-  DEB("Fill pack node " << int(getId().getLocationId()) <<
-      " count " << pkg_count << " to message no " <<
-      (buffer? (buffer->message_cycle >> 4): -1));
+  DEB("Fill pack node " << int(getId().getLocationId()) << " count "
+                        << pkg_count << " to message no "
+                        << (buffer ? (buffer->message_cycle >> 4) : -1));
   pkg_count++;
 
 #else
@@ -240,11 +232,11 @@ int FillPacker::stuffMessage(char* buff, int size,
               send_size);
 #endif
 
-  DEB1("Fill send, size=" << send_size << " from idx " << index_to_send <<
-       " first byte=" <<
-       int((store[store_to_send].getToData())[index_to_send]) <<
-       " last byte=" <<
-       int((store[store_to_send].getToData())[index_to_send+send_size-1]));
+  DEB1(
+    "Fill send, size="
+    << send_size << " from idx " << index_to_send << " first byte="
+    << int((store[store_to_send].getToData())[index_to_send]) << " last byte="
+    << int((store[store_to_send].getToData())[index_to_send + send_size - 1]));
 
   // remember status of buffer here
   index_to_send += send_size;
@@ -258,4 +250,6 @@ int FillPacker::stuffMessage(char* buff, int size,
 #endif
 }
 
-DUECA_NS_END
+template <> const char *getclassname<FillPacker>() { return "FillPacker"; }
+
+} // namespace dueca

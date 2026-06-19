@@ -23,7 +23,7 @@
 #include <dueca_ns.h>
 #include <boost/intrusive_ptr.hpp>
 
-DUECA_NS_START
+namespace dueca {
 
 /** Pre-define */
 class ScriptCreatable;
@@ -103,7 +103,7 @@ public:
   inline ModuleCreator* getModuleCreator() { return module.get(); }
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif
 
 

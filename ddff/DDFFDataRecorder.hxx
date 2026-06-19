@@ -38,7 +38,7 @@
 #include <debprint.h>
 #include <dueca/debug.h>
 
-DDFF_NS_START
+namespace dueca { namespace ddff {
 
 /** Recording/replay facility for storing data in simulation replay.
 
@@ -522,7 +522,7 @@ struct channel_access_not_available : public std::exception
   }
 };
 
-DDFF_NS_END
+} } // namespace ddff namespace dueca
 
 #include <undebprint.h>
 #include <dueca/undebug.h>

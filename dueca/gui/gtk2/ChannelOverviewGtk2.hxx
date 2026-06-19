@@ -25,7 +25,7 @@
 #include "GtkGladeWindow.hxx"
 
 
-DUECA_NS_START
+namespace dueca {
 
 /** A view on the DUECA channels
 
@@ -134,7 +134,7 @@ public: // construction and further specification
   bool setTimeSpec(const TimeSpec& ts);
 
   /** Request check on the timing. */
-  bool checkTiming(const vector<int>& i);
+  bool checkTiming(const std::vector<int>& i);
 
 protected:
   /** update view */
@@ -169,6 +169,6 @@ public:
   void monitorToggle(GtkCellRendererToggle *cell, gchar *path_str);
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

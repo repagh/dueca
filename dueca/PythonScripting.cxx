@@ -21,9 +21,9 @@
 #include <fstream>
 #include <dueca-conf.h>
 #include <boost/python/module.hpp>
+using namespace std;
 
-
-DUECA_NS_START
+namespace dueca {
 
 extern int* p_argc;
 extern char*** p_argv;
@@ -331,9 +331,9 @@ bool PythonScripting::writeline(const std::string& line)
     running = false;
     return false;
   }
-  scratchfile << line << endl;
+  scratchfile << line << std::endl;
   return false;
 }
 
 
-DUECA_NS_END
+} // namespace dueca

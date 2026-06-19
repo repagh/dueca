@@ -13,7 +13,7 @@
 #include <cmath>
 #include <cassert>
 
-DUECA_NS_START;
+namespace dueca {
 
 #define FINAL_ALTITUDE_CORRECTION
 
@@ -308,7 +308,7 @@ Carthesian LocalAxis::toLocal(const ECEF& ecef) const
   return result;
 }
 
-DUECA_NS_END;
+} // namespace dueca
 
 namespace std {
 

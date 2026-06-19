@@ -18,7 +18,7 @@
 #include <dueca_ns.h>
 #include <dueca/DataReaderBase.hxx>
 
-DUECA_NS_START;
+namespace dueca {
 
 /*  Advance declaration */
 class ChannelReadToken;
@@ -487,6 +487,6 @@ private:
 };
 
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

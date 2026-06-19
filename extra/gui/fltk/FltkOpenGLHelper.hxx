@@ -17,7 +17,7 @@
 
 #include <OpenGLHelper.hxx>
 
-DUECA_NS_START;
+namespace dueca {
 
 class FlBasedGLWindow;
 
@@ -75,6 +75,6 @@ public:
   ~FltkOpenGLHelper();
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

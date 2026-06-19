@@ -39,9 +39,11 @@
 
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
+using namespace std;
 
-DUECA_NS_START;
-WEBSOCK_NS_START;
+
+namespace dueca {
+namespace websock {
 
 // Parameters to be inserted
 const ParameterTable *WebSocketsServerBase::getMyParameterTable()
@@ -821,8 +823,8 @@ void WebSocketsServerBase::doTransfer(const TimeSpec &ts)
 #endif
 }
 
-WEBSOCK_NS_END;
-DUECA_NS_END;
+} // namespace websock
+} // namespace dueca
 #include <dueca/undebug.h>
 #include <undebprint.h>
 
@@ -830,8 +832,8 @@ DUECA_NS_END;
 #include "jsonpacker.hxx"
 #include "msgpackpacker.hxx"
 
-DUECA_NS_START;
-WEBSOCK_NS_START;
+namespace dueca {
+namespace websock {
 template <>
 const char *const WebSocketsServer<jsonpacker, jsonunpacker>::classname =
   "web-sockets-server";
@@ -842,5 +844,5 @@ const char *const WebSocketsServer<msgpackpacker, msgpackunpacker>::classname =
   "web-sockets-server-msgpack";
 template class WebSocketsServer<msgpackpacker, msgpackunpacker>;
 #endif
-WEBSOCK_NS_END;
-DUECA_NS_END;
+} // namespace websock
+} // namespace dueca

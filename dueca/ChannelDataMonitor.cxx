@@ -17,7 +17,7 @@
 
 #include <debprint.h>
 
-DUECA_NS_START
+namespace dueca {
 
 ChannelDataMonitor::ChannelDataMonitor(ChannelOverview *master,
                                        unsigned channelno, unsigned entryno) :
@@ -40,4 +40,4 @@ void ChannelDataMonitor::close() {}
 void ChannelDataMonitor::open() {}
 
 bool ChannelDataMonitor::isOpen() const { return false; }
-DUECA_NS_END
+} // namespace dueca

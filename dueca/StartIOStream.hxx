@@ -15,7 +15,7 @@
 #define StartIOStream_hxx
 
 #include <dueca_ns.h>
-DUECA_NS_START;
+namespace dueca {
 
 /** Initialize iostreams library.
 
@@ -25,5 +25,5 @@ DUECA_NS_START;
 */
 void startIOStream();
 
-DUECA_NS_END;
+} // namespace dueca
 #endif

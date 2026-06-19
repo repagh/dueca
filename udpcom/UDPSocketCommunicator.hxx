@@ -30,7 +30,7 @@
 
 #include "PacketCommunicator.hxx"
 
-DUECA_NS_START;
+namespace dueca {
 
 /** Common elements for master and slave UDP communication
 
@@ -186,13 +186,13 @@ public:
 };
 
 
-DUECA_NS_END;
+} // namespace dueca
 
-PRINT_NS_START;
+namespace std {
 inline ostream & operator <<
 (ostream&os,
  const dueca::UDPSocketCommunicator::SenderINET& si)
 { return si.print(os); }
-PRINT_NS_END;
+} // namespace std
 
 #endif

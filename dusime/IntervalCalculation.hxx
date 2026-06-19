@@ -19,9 +19,8 @@
 
 #include <vector>
 #include <Interval.hxx>
-using namespace std;
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 /** Class that implements a sort of pseudo interval technology,
     finding an optimum/zero for a function. */
@@ -45,7 +44,7 @@ class IntervalCalculation
   int n_out;
 
   /** The intervals themselves. */
-  vector<Interval> intervals;
+  std::vector<Interval> intervals;
 
 public:
   /** Constructor. */
@@ -77,5 +76,5 @@ public:
   /** Get the current results. */
   void getResult(Vector& y);
 };
-DUECA_NS_END
+} // namespace dueca
 #endif

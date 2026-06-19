@@ -72,7 +72,7 @@ extern "C" {
 #include <MemberCall.hxx>
 #include <MemberCall2Way.hxx>
 
-DUECA_NS_START
+namespace dueca {
 
 #define SCRAMSIG SIGUSR1
 
@@ -639,4 +639,4 @@ void ScramNetAccessor::write(volatile uint32_t* address, uint32_t value)
 }
 
 
-DUECA_NS_END
+} // namespace dueca

@@ -21,8 +21,9 @@
 #include <dueca/CommObjectWriter.hxx>
 #include <AmorphStore.hxx>
 #include <dueca/MessageBuffer.hxx>
+using namespace std;
 
-USING_DUECA_NS;
+using namespace dueca;
 
 int main()
 {
@@ -155,7 +156,7 @@ int main()
     buf.release();
   }
 #endif
-  
+
 #if 1
   {
     // now add some data not in the original object

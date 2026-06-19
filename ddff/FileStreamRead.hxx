@@ -24,7 +24,7 @@
 #include <limits>
 #include <iostream>
 
-DDFF_NS_START
+namespace dueca { namespace ddff {
 class FileHandler;
 
 /** FileStreamRead, a reader class for file data.
@@ -299,6 +299,6 @@ private:
 };
 
 
-DDFF_NS_END
+} } // namespace ddff namespace dueca
 
 #endif

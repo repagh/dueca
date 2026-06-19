@@ -24,7 +24,7 @@
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 xmldecodeexception::xmldecodeexception(const char *re) :
   reason(re)
@@ -439,4 +439,4 @@ void XMLtoDCO(const pugi::xml_node &object, CommObjectWriter &writer)
   }
 }
 
-DUECA_NS_END;
+} // namespace dueca

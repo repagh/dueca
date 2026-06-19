@@ -22,7 +22,7 @@
 #include "Activity.hxx"
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 class StoreInformation;
 class GenericChannel;
 class TransportNotification;
@@ -109,5 +109,5 @@ public:
   ObjectType getObjectType () const {return O_Dueca;}
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

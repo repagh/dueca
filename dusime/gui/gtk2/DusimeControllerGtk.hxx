@@ -18,7 +18,7 @@
 #include "GtkGladeWindow.hxx"
 #include <dueca_ns.h>
 
-DUECA_NS_START
+namespace dueca {
 
 struct ParameterTable;
 
@@ -92,5 +92,5 @@ private:
   /** update the view of all buttons */
   void refreshButtonState(const SimulationState& tstate);
 };
-DUECA_NS_END
+} // namespace dueca
 #endif

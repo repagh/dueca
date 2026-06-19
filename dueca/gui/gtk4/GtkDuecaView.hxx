@@ -29,7 +29,7 @@
 #include <dueca_ns.h>
 #include <gtk/gtk.h>
 
-DUECA_NS_START
+namespace dueca {
 struct ParameterTable;
 
 // entity status, DUECA side
@@ -157,7 +157,7 @@ public:
   ~GtkDuecaView();
 
   /** Specification of window size. */
-  bool PositionAndSize(const vector<int> &p);
+  bool PositionAndSize(const std::vector<int> &p);
 
   /** Start the GtkDuecaView module. Is not really used, GtkDuecaView is
       intrinsically started. */
@@ -313,5 +313,5 @@ public:
   void syncNode(void *nid) override;
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

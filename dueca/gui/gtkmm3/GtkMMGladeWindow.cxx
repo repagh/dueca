@@ -14,7 +14,7 @@
 #include "GtkGladeWindow.hxx"
 #include <gtkmm.h>
 
-DUECA_NS_START
+namespace dueca {
 
 Gtk::Widget* GtkGladeWindow::getWidget(const std::string& name)
 {
@@ -46,4 +46,4 @@ void GtkGladeWindow::initGtkMM()
   initialised_gtkmm = true;
 }
 
-DUECA_NS_END
+} // namespace dueca

@@ -40,8 +40,8 @@
 
 // need a version >= 3 for the websock-msgpack code
 
-DUECA_NS_START;
-WEBSOCK_NS_START;
+namespace dueca {
+namespace websock {
 
 /** Type definition for conversion of c++ data to a byte stream. */
 typedef msgpack::packer<std::ostream> mwriter_t;
@@ -207,8 +207,8 @@ struct msgpackunpacker
   }
 };
 
-WEBSOCK_NS_END;
-DUECA_NS_END;
+} // namespace websock
+} // namespace dueca
 #endif
 
 #include <dueca/undebug.h>

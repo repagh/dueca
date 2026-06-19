@@ -19,7 +19,7 @@
 #include "GenericCallback.hxx"
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 /** Template class for callback to a member function.
 
@@ -52,7 +52,7 @@ public:
   void operator() (const TimeSpec &t);
 
   /// Print to stream, for debugging.
-  void print(ostream& os) const;
+  std::ostream& print(std::ostream& os) const;
 
 public:
   /// Constructor.
@@ -62,7 +62,7 @@ public:
   /// Destructor.
   ~CallbackWithId();
 };
-DUECA_NS_END
+} // namespace dueca
 #endif
 
 
@@ -74,7 +74,7 @@ DUECA_NS_END
 #ifndef CallbackWithId_ii
 #define CallbackWithId_ii
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 template <class T, class I> void CallbackWithId<T,I>::
 operator() (const TimeSpec &t)
@@ -82,10 +82,10 @@ operator() (const TimeSpec &t)
   ((*obj) .* h) (t, id);
 }
 
-template <class T, class I> void CallbackWithId<T,I>::
-print(ostream& os) const
+template <class T, class I> std::ostream& CallbackWithId<T,I>::
+print(std::ostream& os) const
 {
-  os << "CallbackWithId(obj=" << obj->getId() << ')';
+  return os << "CallbackWithId(obj=" << obj->getId() << ')';
 }
 
 template <class T, class I> CallbackWithId<T,I>::
@@ -101,6 +101,6 @@ template <class T, class I> CallbackWithId<T,I>::
   // no more
 }
 
-DUECA_NS_END
+} // namespace dueca
 #endif
 #endif

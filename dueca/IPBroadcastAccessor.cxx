@@ -50,8 +50,9 @@
 #include "MemberCall2Way.hxx"
 #include "VarProbe.hxx"
 #include "MemberCall.hxx"
+using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 const ParameterTable* IPBroadcastAccessor::getParameterTable()
 {
@@ -245,5 +246,6 @@ IPBroadcastAccessor::~IPBroadcastAccessor()
 {
   //
 }
+template <> const char *getclassname<IPBroadcastAccessor>() { return "IPBroadcastAccessor"; }
 
-DUECA_NS_END
+} // namespace dueca

@@ -17,7 +17,7 @@
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 UCallbackOrActivity::UCallbackOrActivity(Activity *act) :
   TriggerPuller("channel validity"),
@@ -67,4 +67,4 @@ void UCallbackOrActivity::operator()(const TimeSpec &ts)
   }
 }
 
-DUECA_NS_END;
+} // namespace dueca

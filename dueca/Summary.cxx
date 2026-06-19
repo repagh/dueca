@@ -24,7 +24,9 @@
 #define E_STS
 #include <debug.h>
 #include <debprint.h>
-DUECA_NS_START
+using namespace std;
+
+namespace dueca {
 
 template<class LI, class S, class V>
 Summary<LI,S,V>::Summary(LI* id, S* status, Summary<LI,S,V>* parent) :
@@ -214,4 +216,4 @@ const Summary<LI,S,V>& Summary<LI,S,V>::getParent() const
 template class Summary<ModuleId,StatusT1,DuecaView>;
 template ostream& operator << <ModuleId,StatusT1,DuecaView>
       (ostream& os, const Summary<ModuleId,StatusT1,DuecaView> & o);
-DUECA_NS_END
+} // namespace dueca

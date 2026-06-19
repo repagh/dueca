@@ -14,7 +14,7 @@
 
 #include <dueca/CommObjectTraits.hxx>
 
-DUECA_NS_START;
+namespace dueca {
 
 /** @file dcoprint.hxx
     Print templates for printing dco member variables.
@@ -81,4 +81,4 @@ inline S &dcoprint(S& s, const T& obj, const dco_print_optional&)
   return s;
 }
 
-DUECA_NS_END;
+} // namespace dueca

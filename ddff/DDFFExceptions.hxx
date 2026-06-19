@@ -20,7 +20,7 @@
 #include <dueca/SimTime.hxx>
 #include <inttypes.h>
 
-DDFF_NS_START
+namespace dueca { namespace ddff {
 
 /** Exception information */
 class file_read_error: public std::exception
@@ -250,6 +250,6 @@ public:
 
 
 
-DDFF_NS_END
+} } // namespace ddff namespace dueca
 
 #endif

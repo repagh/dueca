@@ -77,7 +77,7 @@ static DSnapShotSet *d_snap_shot_set_new(
   return res;
 }
 
-static DSnapShot *d_snap_shot_new(const std::list<Snapshot>::const_iterator &ii)
+static DSnapShot *d_snap_shot_new(const std::list<dueca::Snapshot>::const_iterator &ii)
 {
   auto res = D_SNAP_SHOT(g_object_new(d_snap_shot_get_type(), NULL));
   res->data = ii;
@@ -108,7 +108,7 @@ static GListModel *add_data_element(gpointer _item, gpointer user_data)
 
 } // end anonymous namespace
 
-DUECA_NS_START;
+namespace dueca {
 
 // class/module name
 const char *const SnapshotInventoryGtk4::classname = "initials-inventory";
@@ -724,4 +724,4 @@ void SnapshotInventoryGtk4::cbEditClose(GtkWidget *button, gpointer gp)
   gtk_widget_set_visible(editwin, FALSE);
 }
 
-DUECA_NS_END;
+} // namespace dueca

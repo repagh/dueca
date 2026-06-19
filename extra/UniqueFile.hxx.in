@@ -37,8 +37,7 @@
 #define ios_base
 #endif
 
-
-DUECA_NS_START
+namespace dueca {
 
 /** Create a numbered, unique, empty, writeable file, according to a format.
 
@@ -112,6 +111,6 @@ public:
   const char* what() const throw() {return reason;}
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

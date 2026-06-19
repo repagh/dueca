@@ -13,7 +13,7 @@
 
 #define GenericVarIO_cc
 #include "GenericVarIO.hxx"
-DUECA_NS_START
+namespace dueca {
 
 using namespace std;
 
@@ -89,4 +89,4 @@ MAKE_IN_GENERICVAR_IO(string32);
 MAKE_IN_GENERICVAR_IO(string64);
 MAKE_IN_GENERICVAR_IO(string128);
 
-DUECA_NS_END
+} // namespace dueca

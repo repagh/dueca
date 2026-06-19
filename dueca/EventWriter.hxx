@@ -19,7 +19,7 @@
 #include <DataWriter.hxx>
 #include <SimTime.hxx>
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 /** This is a facilitator for writing event data. By creating a
     "EventWriter", an event data object is created.
@@ -316,5 +316,5 @@ EventWriter<T>::EventWriter(EventChannelWriteToken<T>& token,
   ts(ts)
 { }
 #endif
-DUECA_NS_END
+} // namespace dueca
 #endif

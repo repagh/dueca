@@ -31,7 +31,7 @@
 #include <exception>
 #include <map>
 
-DUECA_NS_START
+namespace dueca {
 
 // pre-define
 struct ReplayCommand;
@@ -145,6 +145,6 @@ struct data_recorder_index_not_correct: public std::exception
   { return "DataRecorder index incorrect"; }
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

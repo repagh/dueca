@@ -20,7 +20,7 @@
 
 #include "ChannelReadToken.hxx"
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 struct NameSet;
 struct GlobalId;
@@ -153,7 +153,7 @@ private:
   friend class MultiStreamReaderBase<T>;
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif
 
@@ -173,7 +173,7 @@ DUECA_NS_END
 // only files that also include the implementation
 #include "Ticker.hxx"
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 template<class T> MultiStreamReadToken<T>::
 MultiStreamReadToken(const GlobalId& holder,
@@ -213,7 +213,7 @@ releaseReadAccess(DataTimeSpec& t_actual)
   ChannelReadToken::releaseAccess(NULL);
 }
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif
 #endif

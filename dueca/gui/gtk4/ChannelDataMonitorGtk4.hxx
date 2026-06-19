@@ -24,7 +24,7 @@
 #include <rapidjson/reader.h>
 #include <dueca_ns.h>
 
-DUECA_NS_START
+namespace dueca {
 
 namespace json = rapidjson;
 typedef json::GenericDocument<json::UTF8<>> JDocument;
@@ -113,4 +113,4 @@ private:
   void removeIterChildren(dvplist_t& dl, dvplist_it it);
 };
 
-DUECA_NS_END
+} // namespace dueca

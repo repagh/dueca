@@ -24,7 +24,7 @@
 #define DO_INSTANTIATE
 #include "stringoptions.h"
 
-DUECA_NS_START
+namespace dueca {
 
 uint32_t ActivityDescription::magic_check_number = 500;
 
@@ -84,4 +84,4 @@ ostream & ActivityDescription::print (ostream& s) const
   return s;
 }
 
-DUECA_NS_END
+} // namespace dueca

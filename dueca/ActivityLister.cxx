@@ -22,9 +22,9 @@
 #include "debug.h"
 #include <cstdio>
 #include <debprint.h>
+using namespace std;
 
-DUECA_NS_START
-
+namespace dueca {
 
 ActivityLine::ActivityLine(Type t, int x0, int x1) :
   type(t),
@@ -317,4 +317,4 @@ vstring ActivityLister::reportVerbal()
   return vstring("");
 }
 
-DUECA_NS_END
+} // namespace dueca

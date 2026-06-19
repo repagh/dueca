@@ -16,7 +16,7 @@
 #define RTWModule_hxx
 
 #include <SimulationModule.hxx>
-DUECA_NS_START
+namespace dueca {
 
 //forward declarations
 struct XmlSnapshot;
@@ -115,5 +115,5 @@ class RTWModule : public SimulationModule
     function is included in the rtw model template. */
     virtual void loadXmlSnapshot(const TimeSpec &ts, const XmlSnapshot &snap);
 };
-DUECA_NS_END
+} // namespace dueca
 #endif

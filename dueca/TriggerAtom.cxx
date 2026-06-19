@@ -15,7 +15,7 @@
 #include "TriggerAtom.hxx"
 #include "Trigger.hxx"
 
-DUECA_NS_START;
+namespace dueca {
 
 TriggerAtom::TriggerAtom() :
   target(NULL),
@@ -36,4 +36,4 @@ void TriggerAtom::propagate() const
   target->trigger(ts, id);
 }
 
-DUECA_NS_END;
+} // namespace dueca

@@ -12,8 +12,9 @@
 */
 
 #include "StringUtils.hxx"
+using namespace std;
 
-DUECA_NS_START;
+namespace dueca {
 
 string replaceAll(string s, const string & search, const string & repl)
 {
@@ -42,7 +43,7 @@ unsigned int split(const string & input, vector<string> & output, const string &
   return (output.size()-init_size);
 }
 
-string trim(const string & s, const string & pattern) {
+std::string trim(const std::string & s, const std::string & pattern) {
   if(s.size() == 0) return s;
   unsigned int b = s.find_first_not_of(pattern);
   if(b > s.size())  return "";
@@ -50,4 +51,4 @@ string trim(const string & s, const string & pattern) {
   return string(s, b, e - b + 1);
 }
 
-DUECA_NS_END;
+} // namespace dueca

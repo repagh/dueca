@@ -59,7 +59,7 @@
 #define DO_INSTANTIATE
 #include <AsyncList.hxx>
 
-DUECA_NS_START
+namespace dueca {
 
 TimeKeeper* TimeKeeper::singleton = NULL;
 const int TimeKeeper::usecs_table_size = 32;
@@ -486,4 +486,4 @@ void TimeKeeper::resetLateEarly()
   earliest_wrt_ideal = 0x7fffffff;
 }
 
-DUECA_NS_END
+} // namespace dueca

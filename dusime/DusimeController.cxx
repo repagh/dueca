@@ -39,8 +39,9 @@
 
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
+using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 const char *const DusimeController::classname = "dusime-bare";
 DusimeController *DusimeController::singleton = NULL;
@@ -497,4 +498,4 @@ void DusimeController::refreshButtonState(const SimulationState &btn_state)
   cerr << "New button state " << btn_state << endl;
 }
 
-DUECA_NS_END;
+} // namespace dueca

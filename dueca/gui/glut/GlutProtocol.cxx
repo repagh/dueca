@@ -24,7 +24,7 @@
 #include <glut.h>
 #endif
 
-DUECA_NS_START
+namespace dueca {
 
 GlutProtocol::GlutProtocol() :
   WindowingProtocol("glut")
@@ -67,6 +67,6 @@ void GlutProtocol::sweep()
     glutMainLoopEvent();
   }
 }
+template <> const char *getclassname<GlutProtocol>() { return "GlutProtocol"; }
 
-DUECA_NS_END
-
+} // namespace dueca

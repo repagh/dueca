@@ -19,7 +19,7 @@
 #include "debug.h"
 #include <dassert.h>
 
-DUECA_NS_START
+namespace dueca {
 
 DuecaView* DuecaView::singleton = NULL;
 bool DuecaView::is_base = false;
@@ -88,6 +88,6 @@ void* DuecaView::insertEntityNode(const char* name, void* parent,
   return NULL;
 }
 
-DUECA_NS_END;
+} // namespace dueca
 
 

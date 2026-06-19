@@ -24,7 +24,7 @@
 #include <SyncReport.hxx>
 #include <fstream>
 
-DUECA_NS_START
+namespace dueca {
 
 /** This is a module that generates a summary of the timing results of
     any instrumented activities. This module may be created from the
@@ -144,5 +144,5 @@ private:
   void readSync(const TimeSpec& ts);
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

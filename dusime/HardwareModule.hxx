@@ -32,7 +32,7 @@
 #include "Activity.hxx"
 #include <AsyncList.hxx>
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 /** HardwareModule, a base class for modules that interact with hardware.
 
@@ -122,5 +122,5 @@ private:
       Re-implementation of Module::setSafetyStop() */
   void setSafetyStop();
 };
-DUECA_NS_END
+} // namespace dueca
 #endif

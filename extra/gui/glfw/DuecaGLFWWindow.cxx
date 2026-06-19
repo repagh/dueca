@@ -26,7 +26,7 @@
 #include <debprint.h>
 #include <dueca/debug.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 unsigned opened_windows = 0;
 
@@ -387,4 +387,4 @@ void DuecaGLFWWindow::passive(int x, int y) {}
 
 void DuecaGLFWWindow::mouse(int button, int state, int x, int y) {}
 
-DUECA_NS_END;
+} // namespace dueca

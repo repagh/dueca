@@ -17,8 +17,6 @@
 #include <list>
 #include <map>
 
-using namespace std;
-
 class BaseObject
 {
   public:
@@ -33,30 +31,30 @@ class BaseObject
     virtual ~BaseObject();
 
     /// Return the name of the object
-    const string& getName() const               {return name;}
+    const std::string& getName() const               {return name;}
     /// Return the unparsed comment string
-    const string& getComment() const            {return comment;}
+    const std::string& getComment() const            {return comment;}
     /// Return the variable's type
-    const string& getType() const               {return type;}
+    const std::string& getType() const               {return type;}
     /// Return the size: implemented in derived objects
     virtual int   getSize() const =0;
 
     /** Add a comment to this type */
-    void addComment(const string& c)            {comment =c;}
+    void addComment(const std::string& c)            {comment =c;}
 
     /** Set the name of the project model */
     static void setModelName(const char* name)  {modelname = name;}
 
     /// Return the name of the model we are parsing
-    static const string& getModelName()         {return modelname;}
+    static const std::string& getModelName()         {return modelname;}
 
   private:
     /// Stores for comments, variable type, and name
-    string          comment, type, name;
+    std::string          comment, type, name;
     /// Store for the name of the model we are parsing
-    static string   modelname;
+    static std::string   modelname;
 };
 
-typedef list<BaseObject*> ObjectList;
-typedef map<string, BaseObject*> ObjectMap;
+typedef std::list<BaseObject*> ObjectList;
+typedef std::map<std::string, BaseObject*> ObjectMap;
 #endif

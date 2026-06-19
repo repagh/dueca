@@ -18,7 +18,7 @@
 #include "dueca_ns.h"
 #include <list>
 
-DUECA_NS_START
+namespace dueca {
 
 /** Result for a parsed element */
 struct ArgElement {
@@ -36,5 +36,5 @@ struct ArgElement {
   typedef std::list<ArgElement> arglist_t;
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

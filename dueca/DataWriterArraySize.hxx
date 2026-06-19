@@ -15,7 +15,7 @@
 #define DataWriterArraySize_hxx
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 /** Distinguishing class for array size initialization */
 struct DataWriterArraySize {
@@ -23,6 +23,6 @@ struct DataWriterArraySize {
   DataWriterArraySize(size_t s) : size(s) {}
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

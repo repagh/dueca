@@ -17,9 +17,8 @@
 #include "GenericPacker.hxx"
 #include "UnifiedChannel.hxx"
 #include <list>
-using namespace std;
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 class TimeSpec;
 struct ParameterTable;
 class AmorphStore;
@@ -80,8 +79,8 @@ public:
   int changeCurrentStore(int& store_no);
 
   /** Print to stream, debugging. */
-  friend ostream& operator << (ostream& os, const Packer& p);
+  friend std::ostream& operator << (std::ostream& os, const Packer& p);
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

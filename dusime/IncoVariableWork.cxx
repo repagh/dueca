@@ -14,10 +14,12 @@
 #define IncoVariableWork_cxx
 #include "IncoVariableWork.hxx"
 #include <cmath>
+using namespace std;
+
 static const double EPS_INCO = 1e-5;
 
 
-DUECA_NS_START;
+namespace dueca {
 
 IncoVariableWork::IncoVariableWork() :
   IncoVariable("invalid", 0.0, 0.0),
@@ -78,4 +80,4 @@ void IncoVariableWork::setTarget(double newval)
   target = newval;
 }
 
-DUECA_NS_END;
+} // namespace dueca

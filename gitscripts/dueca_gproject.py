@@ -18,34 +18,49 @@ license         : EUPL-1.2
 
 import sys
 import os
-import git
-import re
+import warnings
+from datetime import date
 import subprocess
+import re
 import argparse
-import argcomplete
-import tempfile
 from argparse import Namespace
 from collections import ChainMap
-import socket
-from datetime import date
+import tempfile
+import git
+import argcomplete
 from lxml import etree
-import duecautils
-from duecautils.modules import Modules, projectSplit, checkGitUrl, RootMap, MainOrMaster
-from duecautils.machinemapping import NodeMachineMapping
-from duecautils.githandler import GitHandler
-from duecautils.verboseprint import dprint
-from duecautils.policy import Policies
-from duecautils.xmlutil import XML_interpret_bool, XML_tag, XML_comment
 
+try:
+    # production mode
+    from duecautils import verboseprint
+    from duecautils.modules import Modules, projectSplit, checkGitUrl, RootMap, MainOrMaster
+    from duecautils.machinemapping import NodeMachineMapping
+    from duecautils.githandler import GitHandler
+    from duecautils.verboseprint import dprint
+    from duecautils.policy import Policies
+    from duecautils.xmlutil import XML_interpret_bool, XML_tag, XML_comment
 
-"""
-Git interaction with dueca-project
+except (ImportError, ModuleNotFoundError):
+    from duecautils.duecautils import verboseprint
+    from duecautils.duecautils.modules import Modules, projectSplit, checkGitUrl, RootMap, MainOrMaster
+    from duecautils.duecautils.machinemapping import NodeMachineMapping
+    from duecautils.duecautils.githandler import GitHandler
+    from duecautils.duecautils.verboseprint import dprint
+    from duecautils.duecautils.policy import Policies
+    from duecautils.duecautils.xmlutil import XML_interpret_bool, XML_tag, XML_comment
 
-When using 'git' as back-end for dueca-project, each project is housed
-in its own git repository. The dueca-project interface handles one
-remote repository for the current project, and can accept different
-repositories for borrowed modules.
-"""
+# suppress argparse warnings for now, remove this once Ubuntu 18.04 and 20.04 are no longer
+# supported, and argparse calls can be fixed
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+
+# """
+# Git interaction with dueca-project
+
+# When using 'git' as back-end for dueca-project, each project is housed
+# in its own git repository. The dueca-project interface handles one
+# remote repository for the current project, and can accept different
+# repositories for borrowed modules.
+# """
 
 helptext = """
 Project script for adapting a DUECA project.
@@ -1828,6 +1843,10 @@ class RunPolicies(OnExistingProject):
             help="Force application, even is the policy is considered "
             "to have already been applied",
         )
+        parser.add_argument(
+            "--dry-run",
+            type=str, nargs="+", help="Labels for all the policies to try"
+        )
         parser.set_defaults(handler=RunPolicies)
 
     def __call__(self, ns):
@@ -1846,6 +1865,13 @@ class RunPolicies(OnExistingProject):
                 print("Applied given policies:\n", "\n".join(report))
             else:
                 print("The given policy cannot be applied")
+        elif ns.dry_run:
+            report = policies.apply(policylist=ns.dry_run, force=ns.force, dryrun=True)
+            # print(report)
+            if report:
+                print("Dryrun given policies:\n", "\n".join(report))
+            else:
+                print("The given policy cannot be applied")
         elif ns.apply_all:
             report = policies.apply(policylist=None)
             if report:
@@ -1861,7 +1887,7 @@ class RunPolicies(OnExistingProject):
         else:
             report = policies.inventory()
             if report:
-                print("Applicable policies:\n ", "\n".join(report))
+                print("Applicable policies:\n ", "\n  ".join(report))
             else:
                 print("No applicable policies.")
 
@@ -2058,7 +2084,7 @@ if __name__ == "__main__":
     pres = mainparser.parse_args(sys.argv[1:])
 
     if pres.verbose:
-        duecautils.verboseprint._verbose_print = True
+        verboseprint._verbose_print = True
 
     # if successful, a handler has been provided
     try:

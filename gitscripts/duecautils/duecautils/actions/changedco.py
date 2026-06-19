@@ -27,7 +27,7 @@ class ActionChangeDco(PolicyAction):
         self.new_prj = new_project
         self.mode = str(mode)
 
-    def enact(self, p_commobjects, p_policy, p_polid, p_modules, **kwargs):
+    def enact(self, dryrun, p_commobjects, p_policy, p_polid, p_modules, **kwargs):
 
         try:
             # figure out which dco files have been changed
@@ -45,7 +45,7 @@ class ActionChangeDco(PolicyAction):
             todelete = []
 
             for co in dcl.commobjects:
-                if dcl.matchFunction(co.base_project, co.dco):
+                if dcl.matchFunction(co.base_project, co.dco, co.homedco):
                     ndco, nprj = None, None
                     if self.new_dco is not None:
                         ndco = self.new_dco.getString(vars=dict(dco=co.dco))
@@ -72,7 +72,7 @@ class ActionChangeDco(PolicyAction):
                 res.append(
                             f'Added {nproj}/comm-objects/{ndco}.dco')
 
-            if self.mode != 'noop':
+            if self.mode != 'noop' and not dryrun:
                 dcl.commobjects._sync()
             else:
                 res.append('No changes applied.')

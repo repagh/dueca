@@ -24,7 +24,7 @@
 #include <CommObjectMemberArity.hxx>
 
 
-DUECA_NS_START;
+namespace dueca {
 
 /** Base class for introspection reading a single element from a DCO
     object.
@@ -296,6 +296,6 @@ private:
   { val = long(peek_object(typename dco_traits<T>::rtype())); }
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

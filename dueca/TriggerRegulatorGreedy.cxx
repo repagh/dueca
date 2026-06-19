@@ -14,7 +14,7 @@
 #define TriggerRegulatorGreedy_cxx
 #include <boost/lexical_cast.hpp>
 #include "TriggerRegulatorGreedy.hxx"
-DUECA_NS_START;
+namespace dueca {
 
 TriggerRegulatorGreedy::TriggerRegulatorGreedy(TriggerPuller& base,
                                                const TimeSpec& ts) :
@@ -145,4 +145,4 @@ const std::string& TriggerRegulatorGreedy::getTargetName() const
 }
 
 
-DUECA_NS_END;
+} // namespace dueca

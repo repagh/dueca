@@ -25,7 +25,7 @@
 #define I_CNF
 #include <debug.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 // constructor of the object
 DuecaGLCanvas::DuecaGLCanvas() :
@@ -91,4 +91,4 @@ int DuecaGLCanvas::getYOffset()
   return helper ? helper->yoffset() : 0;
 }
 
-DUECA_NS_END;
+} // namespace dueca

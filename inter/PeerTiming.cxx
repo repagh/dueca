@@ -21,7 +21,7 @@
 #include <debprint.h>
 #include <dueca/DataTimeSpec.hxx>
 
-STARTNSREPLICATOR;
+namespace dueca {
 
 typedef TimeTickType T;
 
@@ -32,9 +32,9 @@ PeerTiming::AdjustmentHistory::AdjustmentHistory(TimeTickType theirtime,
 { }
 
 
-PeerTiming::PeerTiming(TimeTickType jumpsize, double time_gain) :
+PeerTiming::PeerTiming(TimeTickType jumpsize, double _time_gain) :
   delta_time(std::nan("")),
-  time_gain(time_gain),
+  time_gain(_time_gain),
   jumpsize(jumpsize)
 { }
 
@@ -175,4 +175,4 @@ bool PeerTiming::translate(DataTimeSpec& theirtime) const
 }
 
 
-ENDNSREPLICATOR;
+} // namespace dueca

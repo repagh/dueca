@@ -18,7 +18,7 @@
 #include "GtkGLWidgetHelper.hxx"
 #include <gtkmm/container.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 
 DuecaGLWidget::DuecaGLWidget(GtkWidget* ctype) :
@@ -54,4 +54,4 @@ void DuecaGLWidget::InitArea()
   parent->show();
 }
 
-DUECA_NS_END;
+} // namespace dueca

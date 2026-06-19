@@ -19,7 +19,7 @@
 #include "DuecaEnv.hxx"
 #include <string>
 
-DUECA_NS_START
+namespace dueca {
 
 extern "C" LNK_PUBLICC void InitExtraFltk()
 {
@@ -31,4 +31,4 @@ extern "C" LNK_PUBLICC void InitExtraFltk()
   static FltkOpenGLHelper h3(std::string("gtk2+fltk-gl"));
 }
 
-DUECA_NS_END
+} // namespace dueca

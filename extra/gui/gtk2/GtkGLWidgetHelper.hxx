@@ -18,7 +18,7 @@
 #include <gtk/gtkgl.h>
 #include <dueca_ns.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 class DuecaGLCanvas;
 class DuecaGLWidget;
@@ -81,6 +81,6 @@ public:
   ~GtkOpenGLHelper();
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

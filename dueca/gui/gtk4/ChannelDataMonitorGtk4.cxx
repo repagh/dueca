@@ -36,7 +36,7 @@ struct _DDataEntry
   guint level;
 
   // link to the data model
-  const ChannelDataViewPair *data;
+  const dueca::ChannelDataViewPair *data;
 };
 
 // Properties of the entry class
@@ -105,7 +105,7 @@ static void d_data_entry_init(DDataEntry *self)
   //
 }
 
-static DDataEntry *d_data_entry_new(const ChannelDataViewPair *p,
+static DDataEntry *d_data_entry_new(const dueca::ChannelDataViewPair *p,
                                     guint level = 0)
 {
   auto res = D_DATA_ENTRY(g_object_new(d_data_entry_get_type(), NULL));
@@ -133,7 +133,7 @@ static GListModel *add_data_element(gpointer _item, gpointer user_data)
 
 } // anonymous namespace
 
-DUECA_NS_START
+namespace dueca {
 
 ChannelDataMonitorGtk4::ChannelDataMonitorGtk4(ChannelOverviewGtk4 *master,
                                                unsigned channelno,
@@ -486,4 +486,4 @@ void ChannelDataMonitorGtk4::cbBindValue(GtkSignalListItemFactory *fact,
   }
 }
 
-DUECA_NS_END
+} // namespace dueca

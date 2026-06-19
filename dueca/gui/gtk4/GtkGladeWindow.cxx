@@ -39,8 +39,9 @@
 
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
+using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 bool GtkGladeWindow::initialised_glade = false;
 bool GtkGladeWindow::initialised_gtkmm = false;
@@ -1298,4 +1299,4 @@ bool GtkGladeWindow::setValue<char *>(char *const &value, const char *name,
   return res;
 }
 
-DUECA_NS_END
+} // namespace dueca

@@ -1,6 +1,7 @@
 /* ------------------------------------------------------------------   */
-/*      item            : @Module@Mod.cxx
+/*      item            : @Module@.hxx
         made by         : @author@
+        from template   : SimulationoduleTemplate.cxx (2026.05)
         date            : @date@
         category        : body file
         description     :
@@ -9,8 +10,6 @@
         copyright       : (c)
 */
 
-
-#define @Module@Mod_cxx
 // include the definition of the module class
 #include "@Module@Mod.hxx"
 
@@ -19,6 +18,7 @@
 // the standard package for DUSIME, including template source
 #define DO_INSTANTIATE
 #include <dusime.h>
+using namespace dueca;
 
 // include the debug writing header. Warning and error messages
 // are on by default, debug and info can be selected by
@@ -337,4 +337,3 @@ void @Module@Mod::trimCalculation(const TimeSpec& ts, const TrimMode& mode)
 // will check in with the scheme-interpreting code, and enable the
 // creation of modules of this type
 static TypeCreator<@Module@Mod> a(@Module@Mod::getMyParameterTable());
-

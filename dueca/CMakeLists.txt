@@ -120,7 +120,8 @@ set(STARTSOURCESPYTHON
   PythonScripting.cxx PythonScripting.hxx)
 
 set(CONFSOURCES includeguile.h nodes.h debug.h
-  stringoptions.h dueca-version.h DAtomics.hxx DCOTypeIndex.hxx)
+  stringoptions.h dueca-version.h DAtomics.hxx DCOTypeIndex.hxx
+  ArenaOptions.hxx)
 
 set(INSTALLHEADERS
 
@@ -206,7 +207,7 @@ pkg_check_modules(PUGIXML REQUIRED pugixml)
 # common libraries
 dueca_add_library(dueca
   SOURCES ${DCO_OUTPUT_HEADERS} ${DCO_OUTPUT_SOURCE} ${DUECASOURCES}
-  LINKLIBS ${CMAKE_THREAD_LIBS_INIT} ${PUGIXML_LIBRARIES} ${ATOMIC_LIBRARY})
+  LINKLIBS ${CMAKE_THREAD_LIBS_INIT} ${PUGIXML_LIBRARIES} ${ATOMIC_LIBRARY} fmt::fmt)
 
 if (BUILD_SHM)
   dueca_add_library(dueca-shm

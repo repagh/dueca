@@ -24,10 +24,8 @@
 #include <exception>
 #include <dueca/visibility.h>
 
-using namespace std;
-
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 // advance definitions
 typedef uint32_t TimeTickType;
@@ -249,7 +247,7 @@ public:
   friend class PeriodicTimeSpec;
 
   /// Write to stream, mainly for debugging purposes
-  ostream& print (ostream& os) const;
+  std::ostream& print (std::ostream& os) const;
 };
 
 
@@ -341,7 +339,7 @@ public:
   inline void setPeriod(TimeTickType p) {period = p;}
 
   /// Write to stream, mainly for debugging purposes
-  ostream& print (ostream& os) const;
+  std::ostream& print (std::ostream& os) const;
 public:
   /** Call macro to give this class connection to the script
       language. */
@@ -355,17 +353,17 @@ private:
   bool setPeriod(const int &i);
 };
 
-DUECA_NS_END
+} // namespace dueca
 
-PRINT_NS_START
+namespace std {
 /** Print a time specification */
-inline ostream& operator << (ostream& os, const DUECA_NS ::TimeSpec& t)
+inline ostream& operator << (ostream& os, const dueca ::TimeSpec& t)
 { return t.print(os); }
 
 /** Print a periodic time specification */
-inline ostream& operator << (ostream& os, const DUECA_NS ::PeriodicTimeSpec& t)
+inline ostream& operator << (ostream& os, const dueca ::PeriodicTimeSpec& t)
 { return t.print(os); }
-PRINT_NS_END
+} // namespace std
 
 #include <DataTimeSpec.hxx>
 

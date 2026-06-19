@@ -17,7 +17,7 @@
 #define DEBPRINTLEVEL -2
 #include <debprint.h>
 
-PRINT_NS_START;
+namespace std {
 
 ostream &operator<<(ostream &os, const dueca::messagepack::VVMode mode)
 {
@@ -31,9 +31,9 @@ ostream &operator<<(ostream &os, const dueca::messagepack::MMode mode)
   return (os << names[unsigned(mode)]);
 }
 
-PRINT_NS_END;
+} // namespace std
 
-DUECA_NS_START;
+namespace dueca {
 namespace messagepack {
 
   msgpack_obj_mode_mismatch::msgpack_obj_mode_mismatch(const char *operation,
@@ -492,4 +492,4 @@ namespace messagepack {
   }
 
 } // namespace messagepack
-DUECA_NS_END;
+} // namespace dueca

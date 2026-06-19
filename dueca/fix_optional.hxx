@@ -18,7 +18,7 @@
 #include <dueca/CommObjectTraits.hxx>
 #include <dueca/CommObjectMemberArity.hxx>
 
-DUECA_NS_START;
+namespace dueca {
 
 /** Make fixed-size objects optional, using a boolean flag for
     "null/nil/None" values
@@ -140,9 +140,9 @@ struct dco_traits<fix_optional<T> > :
 
 template <size_t N, typename T> class fixvector;
 
-DUECA_NS_END;
+} // namespace dueca
 
-PRINT_NS_START;
+namespace std {
 
 /** Print a fixvector */
 template <typename T>
@@ -158,13 +158,13 @@ ostream &operator<< (ostream &os,
   return os;
 }
 
-PRINT_NS_END;
+} // namespace std
 
 #define fix_optional_hxx
 #include <msgpack.hxx>
 
-MSGPACKUS_NS_START;
+namespace msgunpack {
 /** function to "stream" unpack from msgpack */
 template <typename S, size_t N, typename T>
 inline void msg_unpack(S &i0, const S &iend, dueca::fixvector<N, T> &i);
-MSGPACKUS_NS_END;
+} // namespace msgunpack

@@ -15,7 +15,7 @@
 
 #include "Trigger.hxx"
 
-DUECA_NS_START;
+namespace dueca {
 /** Manual/Custom triggering.
 
     A ManualTriggerPuller can be used to provide custom triggering from your
@@ -39,4 +39,4 @@ public:
   using TriggerPuller::pull;
 };
 
-DUECA_NS_END;
+} // namespace dueca

@@ -25,7 +25,7 @@
 #include "PacketCommunicator.hxx"
 #include "CycleCounter.hxx"
 
-DUECA_NS_START;
+namespace dueca {
 
 /** Generic TCP/IP + packet (UDP or websocket) communication base class.
 
@@ -402,10 +402,10 @@ protected:
 
 
 
-DUECA_NS_END;
+} // namespace dueca
 
 /** Print the sendstate as a readable string */
 std::ostream& operator << (std::ostream& os,
-                           const NetCommunicator::SendState& x);
+                           const dueca::NetCommunicator::SendState& x);
 
 #endif

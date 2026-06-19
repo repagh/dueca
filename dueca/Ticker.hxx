@@ -34,7 +34,7 @@
 
 #define SYNC_DATA_SIZE 8+4+4
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 class ActivityManager;
 class TimeKeeper;
 struct SyncReport;
@@ -276,14 +276,14 @@ public:
   /** Return a pointer to the single ticker that works in this node. */
   static inline Ticker* single() {
     if (single_instance == NULL) {
-      cerr << "Ticker says: check your dueca.cnf" << endl;
+      std::cerr << "Ticker says: check your dueca.cnf" << std::endl;
       std::exit (1);    // configuration error
     }
     return single_instance;
   }
 
   /** Print to stream, for debugging. */
-  friend ostream&  operator << (ostream& os, const Ticker& t);
+  friend std::ostream&  operator << (std::ostream& os, const Ticker& t);
 
 private:
   /** Make one tick, with the "compatible" tick time interval. Used
@@ -341,5 +341,5 @@ public:
   ObjectType getObjectType() const {return O_Dueca;};
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

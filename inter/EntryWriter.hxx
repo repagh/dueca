@@ -16,7 +16,7 @@
 
 #include "EntryHandler.hxx"
 
-STARTNSREPLICATOR;
+namespace dueca {
 // advance declaration
 class PeerTiming;
 
@@ -66,6 +66,6 @@ public:
                     bool spanskip);
 };
 
-ENDNSREPLICATOR;
+} // namespace dueca
 
 #endif

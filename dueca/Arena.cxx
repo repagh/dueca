@@ -17,10 +17,9 @@
 #include "LockFreeLIFO.hxx"
 
 #include "dueca-conf.h"
-#ifdef TEST_OPTIONS
-#define I_MEM
-#endif
-#include "debug.h"
+#define DEBPRINTLEVEL -1
+#include <debprint.h>
+
 #include <dassert.h>
 #include <iostream>
 #include <cstdlib>
@@ -28,7 +27,7 @@ using namespace std;
 #define KEEP_COUNT
 
 
-DUECA_NS_START
+namespace dueca {
 
 Arena::Arena(int object_size, int default_alloc) :
 #ifdef USE_BOOST_LOCKFREE
@@ -78,7 +77,7 @@ void Arena::extendStorage()
 
      Information on additional memory needed for reclaimable objects
      of a specific size. */
-  I_MEM("Extended the \"" << size_mult*sizeof(PlaceHolder) <<
+  DEB("Extended the \"" << size_mult*sizeof(PlaceHolder) <<
           "\" arena to " << memtotal_alloc);
 #endif
 }
@@ -163,15 +162,15 @@ std::ostream& Arena::print(std::ostream& os)
             << ")";
 }
 
-DUECA_NS_END
+} // namespace dueca
 
-void* operator new(size_t sz, DUECA_NS ::Arena *a)
+void* operator new(size_t sz, dueca ::Arena *a)
 {
   assert(sz <= a->getMaxObjectSize());
   return a->alloc(sz);
 }
 
-std::ostream& operator << (std::ostream& os, DUECA_NS ::Arena& a)
+std::ostream& operator << (std::ostream& os, dueca ::Arena& a)
 {
   return a.print(os);
 }

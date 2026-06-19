@@ -30,6 +30,7 @@
 #include "GLSweeper.hxx"
 
 #include <Environment.hxx>
+using namespace std;
 
 #ifdef TEST_OPTIONS
 #define CHECKGL \
@@ -46,7 +47,7 @@
 #endif
 
 
-DUECA_NS_START;
+namespace dueca {
 
 
 inline void redraw_done(DuecaGLCanvas* gw)
@@ -279,5 +280,4 @@ GLWindowHelper* GlutOpenGLHelper::newWindow()
   return new GlutGLWindowHelper();
 }
 
-DUECA_NS_END;
-
+} // namespace dueca

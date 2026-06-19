@@ -14,7 +14,7 @@
 #define DDFFDCOWriteFunctor_cxx
 #include "DDFFDCOWriteFunctor.hxx"
 
-DDFF_NS_START
+namespace dueca { namespace ddff {
 
 DDFFDCOWriteFunctor::
 DDFFDCOWriteFunctor(bool rtick) :
@@ -36,4 +36,4 @@ void DDFFDCOWriteFunctor::setIterator(FileStreamRead::Iterator& it)
   this->it_ptr = &it;
 }
 
-DDFF_NS_END
+} } // namespace ddff namespace dueca

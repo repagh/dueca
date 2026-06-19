@@ -16,11 +16,10 @@
 #define Callback_hxx
 
 #include <iostream>
-using namespace std;
 #include "GenericCallback.hxx"
 #include <dueca_ns.h>
 
-DUECA_NS_START
+namespace dueca {
 /** Template class for callback to a member function.
 
     With a member function of a specific type (with only a TimeSpec as
@@ -42,7 +41,7 @@ public:
   void operator() (const TimeSpec &t);
 
   /// Print to stream, for debugging.
-  void print(ostream& os) const;
+  std::ostream& print(std::ostream& os) const override;
 
 public:
   /// Constructor.
@@ -52,7 +51,7 @@ public:
   ~Callback();
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif
 
@@ -64,5 +63,3 @@ DUECA_NS_END
 #if defined(DO_INSTANTIATE)
 #include <Callback.ixx>
 #endif
-
-

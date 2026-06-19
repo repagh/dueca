@@ -21,7 +21,7 @@
 #include <MultiStreamWriteToken.hxx>
 #include <DataWriter.hxx>
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 /** This is a facilitator for writing multi-stream data. By creating a
     "MultiStreamWriter", the access token is used to gain access to the
@@ -95,6 +95,6 @@ private:
   static void* operator new(size_t s);
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

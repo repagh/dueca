@@ -16,7 +16,7 @@
 #define ListElementAllocator_hxx
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 /** Default allocator list objects.
 
@@ -63,6 +63,6 @@ struct ListElementAllocator
   { return ::new (mem) Element<T>(next); }
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

@@ -16,7 +16,7 @@
 
 #include "AmorphStore.hxx"
 
-DUECA_NS_START;
+namespace dueca {
 smartstring::smartstring() { }
 
 smartstring::smartstring(const char* s) : std::string(s) { }
@@ -31,4 +31,4 @@ smartstring::smartstring(size_t n, char c) : std::string(n, c) { }
 
 smartstring::~smartstring() { }
 
-DUECA_NS_END;
+} // namespace dueca

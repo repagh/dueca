@@ -36,7 +36,7 @@
 #include "TypeCreator.hxx"
 #endif
 
-DUECA_NS_START
+namespace dueca {
 
 #if defined(SCRIPT_SCHEME)
 
@@ -82,4 +82,4 @@ LNK_PUBLICC void InitScram()
   init_dueca_shmdeps();
 }
 
-DUECA_NS_END
+} // namespace dueca

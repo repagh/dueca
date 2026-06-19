@@ -22,7 +22,7 @@
 
 struct ParameterTable;
 
-DUECA_NS_START
+namespace dueca {
 
 /**  Implements the Gtk3 interface for TimingView
 */
@@ -65,5 +65,5 @@ public:
                     const TimingResults& data);
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

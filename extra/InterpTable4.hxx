@@ -15,7 +15,7 @@
 #pragma once
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 /** Interpolation data holder, for 4d interpolation tables. Either
     reads data from file, or uses a static array initialisation. */
@@ -91,4 +91,4 @@ public:
                 i4];
   }
 };
-DUECA_NS_END
+} // namespace dueca

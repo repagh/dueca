@@ -16,7 +16,7 @@
 #define E_CHN
 #include <debug.h>
 
-DUECA_NS_START
+namespace dueca {
 
 GenericEvent::GenericEvent(const GlobalId& maker_id, const TimeTickType&
                            time_stamp) :
@@ -66,4 +66,4 @@ void GenericEvent::assumeDataOwnership(const GlobalId& new_owner) const
   }
   own_event_data = false;
 }
-DUECA_NS_END
+} // namespace dueca

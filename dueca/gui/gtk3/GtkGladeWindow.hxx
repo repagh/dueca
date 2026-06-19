@@ -35,7 +35,7 @@ class Widget;
 /** \file gtk3/GtkGladeWindow.hxx
     Gtk GUI facilities. */
 
-DUECA_NS_START
+namespace dueca {
 
 class CommObjectReader;
 class CommObjectWriter;
@@ -769,7 +769,7 @@ unsigned GtkGladeWindow::setValues(DCO &dco, const char *format,
   return GtkGladeWindow::setValues(cor, format, arrformat, warn);
 }
 
-DUECA_NS_END
+} // namespace dueca
 
 #include <dueca/undebug.h>
 

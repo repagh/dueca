@@ -16,7 +16,7 @@
 
 #include "ReflectoryBase.hxx"
 
-DUECA_NS_START;
+namespace dueca {
 
 class DataSetConverter;
 
@@ -79,6 +79,6 @@ public:
   ~ReflectoryRemote();
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

@@ -25,7 +25,7 @@
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
 
-DUECA_NS_START
+namespace dueca {
 
 static ReferenceHolderPython *getOrCreatePythonHolder(ModuleCreator *object)
 {
@@ -87,7 +87,7 @@ static void python_module_init()
     .def("param", bpy::raw_function(addParam));
 }
 
-DUECA_NS_END
+} // namespace dueca
 
 #include <undebprint.h>
 #include <dueca/undebug.h>

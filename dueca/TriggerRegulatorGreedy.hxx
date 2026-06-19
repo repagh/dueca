@@ -17,7 +17,7 @@
 
 #include "Trigger.hxx"
 
-DUECA_NS_START;
+namespace dueca {
 
 /** Make triggering (more) regular.
 
@@ -120,6 +120,6 @@ private:
   void setTriggerName();
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

@@ -37,8 +37,9 @@
 #define NO_TYPE_CREATION
 #include <dueca.h>
 #include <dueca/debug.h>
+using namespace std;
 
-DUECA_NS_START;
+namespace dueca {
 
 // class/module name
 template <> const char *getclassname<ReplayMaster>() { return "replay-master"; }
@@ -564,4 +565,4 @@ bool ReplayMaster::canAdvanceAfterReplay() const
   return DusimeController::single()->allowCommandAdvance();
 }
 
-DUECA_NS_END;
+} // namespace dueca

@@ -22,7 +22,7 @@
 #include "dueca_ns.h"
 #include "TimingResults.hxx"
 
-DUECA_NS_START
+namespace dueca {
 
 struct TimingResults;
 class Activity;
@@ -45,7 +45,7 @@ class TimeSpec;
 
     \code
       { "check-timing",
-         new MemberCall<SpacePlane,vector<int> >
+         new MemberCall<SpacePlane,std::vector<int> >
         (&SpacePlane::checkTiming)},
     \endcode
 
@@ -53,7 +53,7 @@ class TimeSpec;
     implementation:
 
     \code
-    bool SpacePlane::checkTiming(const vector<int>& i)
+    bool SpacePlane::checkTiming(const std::vector<int>& i)
     {
       if (i.size() == 3) {
         new TimingCheck(do_step, i[0], i[1], i[2]);
@@ -143,6 +143,6 @@ private:
   void after(const TimeSpec& ts);
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

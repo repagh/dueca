@@ -21,7 +21,7 @@
 #include <memory>
 #include <dueca_ns.h>
 
-DUECA_NS_START;
+namespace dueca {
 class DataSetConverter;
 struct CommObjectDataTable;
 class DCOMetaFunctor;
@@ -45,5 +45,5 @@ public:
                      const DataSetConverter* converter);
 };
 
-DUECA_NS_END;
+} // namespace dueca
 #endif

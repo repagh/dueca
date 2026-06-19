@@ -24,7 +24,7 @@
 
 // https://www.internalpointers.com/post/writing-custom-iterators-modern-cpp
 
-DDFF_NS_START
+namespace dueca { namespace ddff {
 
 class FileHandler;
 class ControlBlockRead;
@@ -299,6 +299,6 @@ public:
   inline bool linkedToFile() const { return linked_to_file; }
 };
 
-DDFF_NS_END
+} } // namespace ddff namespace dueca
 
 #endif

@@ -23,7 +23,7 @@
 #include "dueca_ns.h"
 #include <algorithm>
 
-DUECA_NS_START;
+namespace dueca {
 
 /** Service class for triggering cleanup jobs */
 class TimedServicer: public NamedObject
@@ -109,6 +109,6 @@ public:
   { single()._releaseService(svcid); }
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

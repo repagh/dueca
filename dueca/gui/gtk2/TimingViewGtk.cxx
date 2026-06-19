@@ -39,7 +39,7 @@
 
 // only useful if interfaces present
 
-DUECA_NS_START
+namespace dueca {
 
 /** Toolkit-dependent GUI information. */
 class TimingViewGtk::GuiInfo
@@ -314,7 +314,7 @@ void TimingViewGtk::requestSync(GtkButton *button, gpointer user_data)
                 SimTime::now());
 }
 
-DUECA_NS_END
+} // namespace dueca
 
 
 

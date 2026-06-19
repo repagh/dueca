@@ -40,9 +40,9 @@
 #define NO_TYPE_CREATION
 #include <dueca.h>
 #include <MemberCall2Way.hxx>
+using namespace std;
 
-
-DUECA_NS_START;
+namespace dueca {
 
 // pointer to the only sweeper that may exist. If NULL, DuecaGLWindow
 // will not function
@@ -267,4 +267,4 @@ void GLSweeper::doCalculation(const TimeSpec& ts)
 }
 
 
-DUECA_NS_END;
+} // namespace dueca

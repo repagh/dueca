@@ -49,7 +49,8 @@
 #endif
 
 #define NUM_LOCAL_CHANNELS 2
-DUECA_NS_START
+using namespace std;
+namespace dueca {
 
 ChannelManager *ChannelManager::singleton = NULL;
 ChannelManager *const ChannelManager::single()
@@ -669,4 +670,7 @@ const ParameterTable *ChannelManager::getParameterTable()
   return table;
 }
 
-DUECA_NS_END
+template <> const char *getclassname<ChannelManager>() { return "ChannelManager"; }
+
+
+} // namespace dueca

@@ -15,7 +15,7 @@
 #pragma once
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 template <class T> class InterpIndex;
 
@@ -136,4 +136,4 @@ public:
                                                    idx4 + 1))));
   }
 };
-DUECA_NS_END
+} // namespace dueca

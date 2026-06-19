@@ -22,15 +22,15 @@
 #ifdef USE_STD_TYPEINDEX
 #include <typeindex>
 #include <typeinfo>
-DUECA_NS_START;
+namespace dueca {
 typedef std::type_index typeindex_t;
-DUECA_NS_END;
+}
 #define TYPEID(A) typeid(A)
 #else
 #include <boost/type_index.hpp>
-DUECA_NS_START;
+namespace dueca {
 typedef boost::typeindex::type_index typeindex_t;
-DUECA_NS_END;
+}
 #define TYPEID(A) boost::typeindex::type_id< A >()
 #endif
 

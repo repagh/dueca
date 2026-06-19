@@ -22,8 +22,9 @@
 
 #define DO_INSTANTIATE
 #include <Callback.hxx>
+using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 ActivityDescriptions::ActivityDescriptions() :
   id(NULL),
@@ -114,4 +115,4 @@ const GlobalId& ActivityDescriptions::getId() const
   return no_id;
 }
 
-DUECA_NS_END
+} // namespace dueca

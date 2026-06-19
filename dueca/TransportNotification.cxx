@@ -17,7 +17,9 @@
 #include <GenericPacker.hxx>
 #include <UnifiedChannel.hxx>
 #include <dassert.h>
-DUECA_NS_START
+using namespace std;
+
+namespace dueca {
 
 TransportNotification::
 TransportNotification(GenericPacker* t, UnifiedChannel *c,
@@ -47,4 +49,4 @@ ostream& operator << (ostream& os, const TransportNotification& o)
   return os << "TransportNotification(ch=" << o.channel->getId()
             << ",idx=" << o.idx << ')';
 }
-DUECA_NS_END
+} // namespace dueca

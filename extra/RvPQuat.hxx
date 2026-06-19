@@ -14,9 +14,9 @@
 #include <cmath>
 
 #ifdef DEBUG_AXIS
-#ifndef DUECA_NS_START
-#define DUECA_NS_START  namespace dueca {
-#define DUECA_NS_END    }
+#ifndef dueca_START
+#define dueca_START  namespace dueca {
+#define dueca_END    }
 #endif
 #else
 #include <dueca_ns.h>
@@ -27,7 +27,7 @@
     A random collection of quaternion code */
 
 
-DUECA_NS_START;
+namespace dueca {
 
 /// Index of x component / i variable
 static const int qX = 1;
@@ -211,6 +211,6 @@ inline void cross_prod_matrix(Mat& m, const Vec& v)
   m(2,0) = -v[1]; m(2,1) =  v[0]; m(2,2) =   0.0;
 }
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

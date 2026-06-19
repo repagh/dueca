@@ -25,7 +25,7 @@
 #include "debug-direct.h"
 #include <cstring>
 
-DUECA_NS_START;
+namespace dueca {
 //--------------------------------------------------------------------
 // IMPLEMENTATION
 //--------------------------------------------------------------------
@@ -147,8 +147,8 @@ size_t Dstring<mxsize>::size() const
 template<unsigned mxsize>
 void Dstring<mxsize>::assign(const char*d, size_t size)
 {
-  strncpy(_data, d, min(unsigned(size), mxsize-1U));
-  _data[min(unsigned(size), mxsize-1U)] = '\0';
+  strncpy(_data, d, std::min(unsigned(size), mxsize-1U));
+  _data[std::min(unsigned(size), mxsize-1U)] = '\0';
 }
 
 struct stringsize_exceeded: public std::exception
@@ -175,7 +175,7 @@ void Dstring<mxsize>::packData(AmorphStore& s) const
 template<unsigned mxsize>
 void Dstring<mxsize>::unPackData(AmorphReStore& s)
 {
-  
+
   // read the first character
   int8_t c; unsigned data_size;
   ::unPackData(s, c);
@@ -208,27 +208,27 @@ std::ostream& Dstring<mxsize>::print (std::ostream& os) const
   return os;
 }
 
-DUECA_NS_END;
+} // namespace dueca
 
-PRINT_NS_START;
+namespace std {
 template<unsigned mxsize>
 std::ostream& operator << (std::ostream& os,
-                           const DUECA_NS ::Dstring<mxsize>& o)
+                           const dueca ::Dstring<mxsize>& o)
 {
   return o.print(os);
 }
-PRINT_NS_END;
+} // namespace std
 
 template<unsigned mxsize>
-void packData(DUECA_NS ::AmorphStore& s,
-              const DUECA_NS ::Dstring<mxsize>& o)
+void packData(dueca ::AmorphStore& s,
+              const dueca ::Dstring<mxsize>& o)
 {
   o.packData(s);
 }
 
 template<unsigned mxsize>
-void unPackData(DUECA_NS ::AmorphReStore& s,
-                DUECA_NS ::Dstring<mxsize>& o)
+void unPackData(dueca ::AmorphReStore& s,
+                dueca ::Dstring<mxsize>& o)
 {
   o.unPackData(s);
 }

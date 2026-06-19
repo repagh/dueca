@@ -15,7 +15,7 @@
 #define DUECA_CONFIG_MSGPACK
 #include <udpcom/CycleCounter.hxx>
 
-USING_DUECA_NS;
+using namespace dueca;
 
 int main()
 {

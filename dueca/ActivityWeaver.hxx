@@ -20,7 +20,7 @@
 #include "ActivityLister.hxx"
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 class ActivityBit;
 class ActivityWeaver;
@@ -43,7 +43,7 @@ struct ActivityDescription;
 class ActivityWeaver
 {
   /** contains the logs from the ActivityManagers. */
-  vector<const ActivityLog*> current_logs;
+  std::vector<const ActivityLog*> current_logs;
 
   /** The number of logs/ActivityManagers. */
   int no_of_logs;
@@ -107,5 +107,5 @@ public:
   bool checkValidity(uint32_t key) const;
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

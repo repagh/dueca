@@ -39,14 +39,15 @@
 #include "DDFFDCOMetaFunctor.hxx"
 #include <ddff/SegmentedRecorderBase.hxx>
 #include "ddff_ns.h"
+#include <dueca/CriticalActivity.hxx>
 #include <list>
 #include <string>
 #include <memory>
 #include <boost/scoped_ptr.hpp>
 
-DDFF_NS_START;
+namespace dueca { namespace ddff {
 
-USING_DUECA_NS;
+
 
 /** Generic DDFF file format logging.
 
@@ -95,6 +96,9 @@ private: // simulation data
 
   /// logging stopped if no file, or error occurred
   bool loggingactive;
+
+  /// remember starting up or shutting down
+  bool starting;
 
   /** set of data for a targeted (read one entry) channel read&save */
   struct TargetedLog : SegmentedRecorderBase
@@ -199,8 +203,11 @@ private: // activity allocation
   /** Callback object for simulation calculation. */
   Callback<DDFFLogger> cb1;
 
+  /** Callback object in safe mode */
+  Callback<DDFFLogger> cbsafe;
+
   /** Activity for simulation calculation. */
-  ActivityCallback do_calc;
+  CriticalActivity do_calc;
 
 public: // class name and trim/parameter tables
   /** Name of the module. */
@@ -220,7 +227,7 @@ public: // construction and further specification
       reading the 4 GB of wind tables) should be done here.
       Return false if something in the parameters is wrong (by
       the way, it would help if you printed what!) May be deleted. */
-  bool complete();
+  bool complete() final;
 
   /** Destructor. */
   ~DDFFLogger();
@@ -234,13 +241,13 @@ private:
   bool setTimeSpec(const TimeSpec &ts);
 
   /** Request check on the timing. */
-  bool checkTiming(const vector<int> &i);
+  bool checkTiming(const std::vector<int> &i);
 
   /** Log a specific targeted entry in a channel */
-  bool logChannel(const vector<string> &i);
+  bool logChannel(const std::vector<std::string> &i);
 
   /** Watch all entries in a channel */
-  bool watchChannel(const vector<string> &i);
+  bool watchChannel(const std::vector<std::string> &i);
 
   /** Set reduction on the log rate */
   bool setReduction(const TimeSpec &red);
@@ -253,20 +260,23 @@ private:
 
 private: // member functions for cooperation with DUECA
   /** indicate that everything is ready. */
-  bool isPrepared();
+  bool isPrepared() final;
 
   /** indicate everything is ready */
   bool internalIsPrepared(bool notify);
 
   /** start responsiveness to input data. */
-  void startModule(const TimeSpec &time);
+  void startModule(const TimeSpec &time) final;
 
   /** stop responsiveness to input data. */
-  void stopModule(const TimeSpec &time);
+  void stopModule(const TimeSpec &time) final;
 
 private: // the member functions that are called for activities
   /** the method that implements the main calculation. */
   void doCalculation(const TimeSpec &ts);
+
+  /** method called in safe mode */
+  void doSafe(const TimeSpec& ts);
 
   friend class EntryWatcher;
 
@@ -292,5 +302,5 @@ private: // the member functions that are called for activities
   void setLoggingActive(bool act);
 };
 
-DDFF_NS_END;
+} } // namespace ddff namespace dueca
 #endif

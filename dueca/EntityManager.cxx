@@ -40,12 +40,13 @@
 
 #define DO_INSTANTIATE
 #include "Callback.hxx"
+using namespace std;
 
 #define CHECK_TOKEN(A) \
   if (! ( A ) .isValid() ) return;
 
 
-DUECA_NS_START
+namespace dueca {
 
 EntityManager* EntityManager::singleton = NULL;
 
@@ -481,4 +482,4 @@ bool EntityManager::controlEntities(int p)
   return true;
 }
 
-DUECA_NS_END
+} // namespace dueca

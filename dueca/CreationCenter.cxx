@@ -23,7 +23,7 @@
 #define DEBPRINTLEVEL -1
 #include "debprint.h"
 
-DUECA_NS_START
+namespace dueca {
 
 CreationCenter* CreationCenter::singleton = NULL;
 
@@ -78,4 +78,4 @@ bool CreationCenter::hasType(const std::string& c)
   return (type_map.find(c) != type_map.end());
 }
 
-DUECA_NS_END
+} // namespace dueca

@@ -17,7 +17,7 @@
 
 #include "AsyncQueueMT.hxx"
 
-DUECA_NS_START
+namespace dueca {
 
 /** @file AsyncList.hxx
 
@@ -31,6 +31,6 @@ using AsyncList = AsyncQueueMT<T,Alloc>;
 template <class T, class Alloc=ListElementAllocator<T> >
 using AsyncListWriter = AsyncQueueWriter<T,Alloc>;
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

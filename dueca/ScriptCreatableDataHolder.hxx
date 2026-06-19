@@ -22,7 +22,7 @@
 #include <MemberCall2Way.hxx>
 #include <dueca_ns.h>
 
-USING_DUECA_NS;
+
 
 /** \brief ScriptCreatable templated holder class
 
@@ -91,7 +91,7 @@ USING_DUECA_NS;
     \endcode
  */
 template<class T>
-class ScriptCreatableDataHolder: public ScriptCreatable
+class ScriptCreatableDataHolder: public dueca::ScriptCreatable
 {
 private: // simulation data
   /** encapsulate the object */

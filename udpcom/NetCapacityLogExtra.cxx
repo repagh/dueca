@@ -11,12 +11,12 @@
         license         : EUPL-1.2
 */
 
-DUECA_NS_END;
+} // namespace dueca
 #include <iomanip>
 #include <algorithm>
 #include <sstream>
 #include <dueca/debug.h>
-DUECA_NS_START;
+namespace dueca {
 
 NetCapacityLog::NetCapacityLog(const uint16_t& node_id) :
     node_id(node_id),
@@ -72,8 +72,8 @@ void NetCapacityLog::printhead(std::ostream& s, const std::string& label)
   s << "Net cycle bandwidth use; cycle period " << dt
     << " number of samples " << nstep << " packet size " << packsize
     << std::endl
-    << setw(10*6+18) << "regular message size"
-    << setw(10*6+2) << "total message size" << std::endl;
+    << std::setw(10*6+18) << "regular message size"
+    << std::setw(10*6+2) << "total message size" << std::endl;
   s << "        tick  node";
   for (int ii = 0; ii < 10; ii++) {
     s << std::setw(5) << (ii+1)*10 << "%";

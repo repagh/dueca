@@ -19,7 +19,7 @@
 
 #include <debug.h>
 
-STARTHDF5LOG;
+namespace dueca { namespace hdf5log {
 
 
 HDF5DCOReadFunctor::HDF5DCOReadFunctor(std::weak_ptr<H5::H5File>& file,
@@ -196,4 +196,4 @@ void HDF5DCOReadFunctor::LogDataSet::readObjectPart(void* data)
   }
 }
 
-ENDHDF5LOG;
+} } // namespace dueca namespace hdf5log

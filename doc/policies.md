@@ -45,7 +45,10 @@ default, policies can be installed in several locations:
     For users at Control and Simulation, the common policies are available
     through setting:
 
-        DUECA_POLICIES=https://gitlab.tudelft.nl/dueca-ae-cs-policies/common/-/raw/main/index.xml
+        DUECA_POLICIES=https://gitlab.tudelft.nl/ae-cs-dueca-policies/common/-/raw/main/index.xml
+
+    This project is publicly readable, so it may also serve the interest
+    of others.
 
 
 ## Background
@@ -129,6 +132,7 @@ match two lists of information on dco files.
 These policies are described in xml files. The main structure of the
 file is given as:
 
+~~~~{.xml}
     <policies xmlns="https://dueca.tudelft.nl"
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="https://dueca.tudelft.nl https://dueca.tudelft.nl/schemas/policies.xsd">
@@ -136,6 +140,7 @@ file is given as:
         ...
       </policy>
     </policies>
+~~~~
 
 A policy file may contain multiple policies. It also may contain
 include statements to import policies from other files, using the
@@ -143,6 +148,7 @@ include statements to import policies from other files, using the
 
 Here is an example of a condition:
 
+~~~~{.xml}
     <condition type="and">
       <param name="inputvar">
 	    <!-- These are two variables that contain the result of embedded
@@ -199,10 +205,10 @@ Here is an example of a condition:
         <param name="fileglob">
           */*.?xx
         </param>
-        <param name="pattern">
-          #include "GenericMotionFilter\.hxx"
+        <param name="pattern" regex="true">
+          #include ["&lt;]GenericMotionFilter\.hxx["&gt;]
         </param>
-		<!-- result in "files_that_include" -->
+    		<!-- result in "files_that_include" -->
         <param name="resultvar">
           files_that_include
         </param>
@@ -220,12 +226,13 @@ Here is an example of a condition:
         </param>
       </condition>
     </condition>
+~~~~
 
 As you can see, it is a compound "and" condition. Parameters control
 the behaviour of the conditions. To communicate between conditions and
 between conditions and actions, result variables are used. Each result
 variable describes the result of a specific test, typically in the
-form of the file name of the file that matches the test, locations
+form of a list of files name of the files that matches the test, with locations
 where in the file the match is found, etc.
 
 In the example above, regular expression patterns are searched in
@@ -248,6 +255,7 @@ the USEMODULES keyword. This produces per matching module an
 
 The action here is to add an include line to the `CMakeLists.txt` file:
 
+~~~~{.xml}
     <action type="insert-text">
       <param name="inputvar">
         include_spots
@@ -269,6 +277,7 @@ The action here is to add an include line to the `CMakeLists.txt` file:
         motion-common
       </param>
     </action>
+~~~~
 
 This uses the `include_spots` variable, that indicates all
 `CMakeLists.txt` files that need the include, together with the
@@ -409,3 +418,20 @@ Insert text at given positions in a file
 - text, text to insert
 - inputvar, from the match, by findpattern
 - mode, 'before', 'after', or 'replace'
+
+You can give this text the option to use matched groups from the
+inputvar's regular expression (if you used that). The following snippet
+uses groups in the regular expression match from a condition test to
+re-write some code, `g1` and `g2` are from the regex groups:
+
+~~~~{.xml}
+   <action type="insert-text">
+      <param name="inputvar">
+        stdspots
+      </param>
+      <param name="mode">replace</param>
+      <param name="text" format="true" trim="true">
+        {g1}std::{g2}
+      </param>
+    </action>
+~~~~~

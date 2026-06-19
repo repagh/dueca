@@ -18,7 +18,7 @@
 #include <exception>
 #include <dueca_ns.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 /** Exception information */
 class fileread_mismatch: public std::exception
@@ -45,6 +45,6 @@ public:
   fileread_exhausted();
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

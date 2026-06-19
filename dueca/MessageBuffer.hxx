@@ -20,7 +20,7 @@
 #include "DAtomics.hxx"
 #include <iterator>
 
-DUECA_NS_START;
+namespace dueca {
 
 
 /** Buffer struct */
@@ -172,6 +172,6 @@ private:
   MessageBuffer(const MessageBuffer& o);
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

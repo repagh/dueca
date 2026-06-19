@@ -205,9 +205,9 @@ public:
 
 // getting a string from a dueca string type
 // template<int N>
-// struct elementconverter<std::string, DUECA_NS ::Dstring<N> >
+// struct elementconverter<std::string, dueca ::Dstring<N> >
 // {
-//   inline string to(const DUECA_NS ::Dstring<N>& f)
+//   inline string to(const dueca ::Dstring<N>& f)
 //   {return string(f);}
 //   inline dueca::Dstring<N> from(const std::string& t)
 //   {return dueca::Dstring<N>(t);}

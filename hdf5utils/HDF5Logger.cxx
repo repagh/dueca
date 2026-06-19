@@ -36,8 +36,10 @@
 #define DO_INSTANTIATE
 #define NO_TYPE_CREATION
 #include <dueca.h>
+using namespace std;
 
-STARTHDF5LOG;
+namespace dueca {
+namespace hdf5log {
 
 // class/module name
 const char *const HDF5Logger::classname = "hdf5-logger";
@@ -166,8 +168,9 @@ HDF5Logger::HDF5Logger(Entity *e, const char *part, const PrioritySpec &ps) :
   myclock(),
   // a callback object, pointing to the main calculation function
   cb1(this, &_ThisModule_::doCalculation),
+  cbsafe(this, &_ThisModule_::doSafe),
   // the module's main activity
-  do_calc(getId(), "log", &cb1, ps)
+  do_calc(this, "log", &cb1, &cbsafe, ps)
 {
   // connect the triggers for simulation
   do_calc.setTrigger(myclock);
@@ -236,6 +239,7 @@ bool HDF5Logger::complete()
   }
 
   if (immediate_start) {
+    starting = true;
     do_calc.switchOn(0);
   }
 
@@ -258,6 +262,7 @@ void HDF5Logger::setLoggingActive(bool act)
 HDF5Logger::~HDF5Logger()
 {
   if (immediate_start) {
+    do_calc.switchSafe(0);
     do_calc.switchOff(0);
   }
 }
@@ -494,7 +499,6 @@ bool HDF5Logger::setStatusInterval(const TimeSpec &inter)
   return true;
 }
 
-
 std::string HDF5Logger::FormatTime(const boost::posix_time::ptime &now,
                                    const std::string &lft)
 {
@@ -557,6 +561,7 @@ bool HDF5Logger::internalIsPrepared()
 void HDF5Logger::startModule(const TimeSpec &time)
 {
   if (!immediate_start) {
+    starting = true;
     do_calc.switchOn(time);
     if (reporting) {
       reporting->forceAdvance(time);
@@ -568,6 +573,7 @@ void HDF5Logger::startModule(const TimeSpec &time)
 void HDF5Logger::stopModule(const TimeSpec &time)
 {
   if (!immediate_start) {
+    do_calc.switchSafe(time);
     do_calc.switchOff(time);
   }
 }
@@ -765,6 +771,26 @@ void HDF5Logger::doCalculation(const TimeSpec &ts)
   }
 }
 
+void HDF5Logger::doSafe(const TimeSpec &ts)
+{
+  if (do_calc.stoppedByError()) {
+    if (hfile) {
+    /* DUECA hdf5.
+
+       Entering safe state with error, trying to log and close datafile. */
+      W_XTR("Closing off HDF5 file after error");
+      hfile.reset();
+    }
+  }
+  else {
+    if (starting) {
+      do_calc.readyForWork();
+      do_calc.switchWork(ts + ts.getValiditySpan());
+      starting = false;
+    }
+  }
+}
+
 void HDF5Logger::sendStatus(const std::string &msg, bool error,
                             TimeTickType moment)
 {
@@ -791,4 +817,5 @@ void HDF5Logger::sendStatus(const std::string &msg, bool error,
 // will check in with the script code, and enable the
 // creation of modules of this type
 // static TypeCreator<HDF5Logger> a(HDF5Logger::getMyParameterTable());
-ENDHDF5LOG;
+} // namespace hdf5log
+} // namespace dueca

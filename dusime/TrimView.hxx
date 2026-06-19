@@ -21,7 +21,7 @@
 #include <TrimLink.hxx>
 #include "IncoVariableWork.hxx"
 
-DUECA_NS_START
+namespace dueca {
 
 class IncoCalculator;
 struct IncoVariable;
@@ -67,7 +67,7 @@ public:
   virtual void removeEntity(const std::string& s);
 
   /** Add a single variable to this view. */
-  virtual bool addVariable(const vector<vstring>& names,
+  virtual bool addVariable(const std::vector<vstring>& names,
                            int cal, int tvar,
                            const IncoVariableWork& ivar);
 
@@ -90,6 +90,6 @@ public:
                                             unsigned int variable);
 
 };
-DUECA_NS_END
+} // namespace dueca
 
 #endif

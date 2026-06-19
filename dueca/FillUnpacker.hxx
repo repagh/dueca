@@ -26,7 +26,7 @@
 #include "dueca_ns.h"
 #include "varvector.hxx"
 
-DUECA_NS_START
+namespace dueca {
 
 class ChannelManager;
 class PrioritySpec;
@@ -150,5 +150,5 @@ public:
 
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

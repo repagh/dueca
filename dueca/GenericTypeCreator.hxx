@@ -18,7 +18,7 @@
 #include <ArgElement.hxx>
 #include <string>
 
-DUECA_NS_START
+namespace dueca {
 
 struct ParameterTable;
 class PrioritySpec;
@@ -77,6 +77,6 @@ public:
   virtual bool injectValues(ArgElement::arglist_t& vals, void* object) = 0;
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

@@ -17,7 +17,7 @@
 #include <inttypes.h>
 #include "dueca_ns.h"
 
-DUECA_NS_START;
+namespace dueca {
 
 /** Set cpu to low-latency mode
 
@@ -35,5 +35,5 @@ public:
   ~CPULowLatency();
 };
 
-DUECA_NS_END;
+} // namespace dueca
 #endif

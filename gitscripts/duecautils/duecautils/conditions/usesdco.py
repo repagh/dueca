@@ -5,11 +5,12 @@ Created on Sun May  2 20:02:33 2021
 
 @author: repa
 """
-
-from .policycondition import PolicyCondition, checkAndSet
+from fractions import Fraction
+from .policycondition import PolicyCondition, check_and_set
 from ..matchreference import MatchReferenceDco
 from ..param import Param
 from .homedco import MatchFunctionDCO
+from ..verboseprint import dprint
 
 class UsesDco(PolicyCondition):
     """ Check whether a certain project/dco combination is being used.
@@ -20,7 +21,7 @@ class UsesDco(PolicyCondition):
     # Determine how param arguments need to be stripped
     default_strip = dict(project='both', dco='both', resultvar='both')
 
-    def __init__(self, project: Param, dco: Param, resultvar=None, **kwargs):
+    def __init__(self, project: Param, dco: Param, resultvar='', **kwargs):
         """
         Test whether a dco object is used in any of the project's own
         modules.
@@ -43,7 +44,8 @@ class UsesDco(PolicyCondition):
 
         """
         self.pproject, self.dco = project, dco
-        self.resultvar = resultvar
+        self.resultvar = str(resultvar).strip()
+        super().__init__(**kwargs)
 
     def holds(self, p_commobjects, p_project, **kwargs):
         """Check whether a specific module uses a DCO file
@@ -68,10 +70,10 @@ class UsesDco(PolicyCondition):
                 MatchFunctionDCO(self.pproject, self.dco),
                 commobjects = commobj))
 
-        checkAndSet(self.resultvar, newvars, res)
-        result = [r for r in res if r.value ]
+        check_and_set(self.resultvar, newvars, res)
+        result = Fraction(len([r for r in res if r.value ]), len(p_commobjects))
 
-        return (result, map(self.__class__.matchresult.explain, result), newvars)
+        return (result, map(self.__class__.matchresult.explain, res), newvars)
 
 
 PolicyCondition.register("uses-dco", UsesDco)

@@ -22,7 +22,7 @@
 
 struct ParameterTable;
 
-DUECA_NS_START
+namespace dueca {
 
 /** Implements the Gtk2 interface for TimingView
 
@@ -67,5 +67,5 @@ public:
 
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

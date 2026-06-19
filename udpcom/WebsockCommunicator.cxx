@@ -33,8 +33,9 @@ using namespace boost::placeholders;
 
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
+using namespace std;
 
-DUECA_NS_START;
+namespace dueca {
 
 // -----------------------------------------------------------------
 WSConnectionData &WSConnectionData::operator=(
@@ -1009,4 +1010,4 @@ bool WebsockCommunicatorPeer::isOperational()
   return is_operational;
 }
 
-DUECA_NS_END;
+} // namespace dueca

@@ -38,8 +38,9 @@
 #include "MemberCall2Way.hxx"
 #include "VarProbe.hxx"
 #include "MemberCall.hxx"
+using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 const ParameterTable* IPTwoWay::getParameterTable()
 {
@@ -222,5 +223,6 @@ bool IPTwoWay::selectOneWay(const bool& oneway)
   no_of_senders = oneway ? 1 : 2;
   return true;
 }
+template <> const char *getclassname<IPTwoWay>() { return "IPTwoWay"; }
 
-DUECA_NS_END
+} // namespace dueca

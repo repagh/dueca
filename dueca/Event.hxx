@@ -19,7 +19,7 @@
 
 // forward declarations
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 /** The normal event class. This is a parametrized class, an event may
     carry an arbitrary data type (but currently only one type) */
@@ -62,7 +62,7 @@ public:
 
   /** Overloaded operator for printing of the event to a stream. This
       is mainly used for debugging purposes. */
-  ostream & print (ostream& s) const;
+  std::ostream & print (std::ostream& s) const;
 
   /** Insert the corresponding data into the event object.
       @param data       DCO object pointer
@@ -81,21 +81,21 @@ private:
   const T *data;
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 /// packs the Event<T> into amorphous storage
 template<class T>
-inline void packData(DUECA_NS ::AmorphStore& s,
-                     const DUECA_NS ::Event<T>& o)
+inline void packData(dueca ::AmorphStore& s,
+                     const dueca ::Event<T>& o)
 { o.packData(s); }
 
-PRINT_NS_START
+namespace std {
 /// prints the Event<T> to a stream
 template<class T>
 inline ostream & operator << (ostream& s, const
-                       DUECA_NS ::Event<T>& o)
+                       dueca ::Event<T>& o)
 { return o.print(s); }
-PRINT_NS_END
+} // namespace std
 #endif
 
 //--------------------------------------------------------------------
@@ -107,7 +107,7 @@ PRINT_NS_END
 #define Event_ii
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 template <class T> Event<T>::
 Event(const T* data, const GlobalId& sender_id, const TimeTickType& target_time) :
   GenericEvent(sender_id, target_time),
@@ -155,7 +155,7 @@ template <class T> Event<T>::
 }
 
 template<class T>
-ostream&  Event<T>::print (ostream& s) const
+std::ostream&  Event<T>::print (std::ostream& s) const
 {
   return s << "Event<T>(" << *static_cast<const GenericEvent*>(this)
            << ",data=" << *(data) << ')';
@@ -170,11 +170,6 @@ void Event<T>::setData(const T* data, const GlobalId& sender_id, const TimeTickT
 }
 
 
-DUECA_NS_END
+} // namespace dueca
 #endif
 #endif
-
-
-
-
-

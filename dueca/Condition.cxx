@@ -55,7 +55,7 @@
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
 
-DUECA_NS_START
+namespace dueca {
 
 /** Implementation-dependend data for conditional waiting. */
 class ConditionData
@@ -174,4 +174,4 @@ void Condition::signal()
   my->signal();
   DEB("signalled condition " << name);
 }
-DUECA_NS_END
+} // namespace dueca

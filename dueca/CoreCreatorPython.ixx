@@ -39,7 +39,7 @@
 
 namespace bpy = boost::python;
 
-DUECA_NS_START
+namespace dueca {
 
 class ScriptDataError
 {
@@ -90,7 +90,7 @@ template <typename P> struct printarg
       first = false;
     }
     else {
-      res << "," << endl << "            ";
+      res << "," << std::endl << "            ";
     }
     if (opt) {
       res << "[<" << getProbeType(typeflag<P>()) << ">]";
@@ -158,13 +158,13 @@ CoreCreator<T, B, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10>::single(
     _single = singleton;
   }
   else if (singleton == NULL && _single == NULL) {
-    cerr << "Attempt to use CoreCreator singleton before initialization"
-         << endl;
+    std::cerr << "Attempt to use CoreCreator singleton before initialization"
+         << std::endl;
   }
   else if (singleton != NULL && _single != NULL) {
-    cerr << "Double initialization of CoreCreator singleton \""
+    std::cerr << "Double initialization of CoreCreator singleton \""
          << _single->getName() << "\" vs. \"" << singleton->getName() << "\""
-         << endl;
+         << std::endl;
   }
   return _single;
 }
@@ -187,15 +187,15 @@ CoreCreator<T, B, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10>::CoreCreator(
   single(this);
 
   if (DuecaEnv::scriptInstructions(this->name)) {
-    printCoreCreationCall(cout, this->name,
+    printCoreCreationCall(std::cout, this->name,
                           printargs<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10>());
   }
   else if (!DuecaEnv::scriptSpecific()) {
-    cout << "Adding object (" << this->name;
+    std::cout << "Adding object (" << this->name;
 #ifdef DUECA_GITHASH
-    cout << ", githash=" << _tc_xstr(DUECA_GITHASH);
+    std::cout << ", githash=" << _tc_xstr(DUECA_GITHASH);
 #endif
-    cout << ")" << endl;
+    std::cout << ")" << std::endl;
   }
   ScriptInterpret::addInitFunction(core_creator_name<T>(name),
                                    core_creator_name<B>(name), ifunct);
@@ -214,11 +214,11 @@ CoreCreator<T, B, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10>::CoreCreator(
   single(this);
 
   if (DuecaEnv::scriptInstructions(this->name)) {
-    printCoreCreationCall(cout, this->name,
+    printCoreCreationCall(std::cout, this->name,
                           printargs<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10>());
   }
   else if (!DuecaEnv::scriptSpecific()) {
-    cout << "Adding virt   (" << this->name << ")" << endl;
+    std::cout << "Adding virt   (" << this->name << ")" << std::endl;
   }
   ScriptInterpret::addInitFunction(core_creator_name<T>(name),
                                    core_creator_name<B>(name), ifunct0);
@@ -238,15 +238,15 @@ CoreCreator<T, B, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10>::CoreCreator(
   single(this);
 
   if (DuecaEnv::scriptInstructions(this->name)) {
-    printCoreCreationCall(cout, this->name,
+    printCoreCreationCall(std::cout, this->name,
                           printargs<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10>());
   }
   else if (!DuecaEnv::scriptSpecific()) {
-    cout << "Adding object (" << this->name;
+    std::cout << "Adding object (" << this->name;
 #ifdef DUECA_GITHASH
-    cout << ", githash=" << _tc_xstr(DUECA_GITHASH);
+    std::cout << ", githash=" << _tc_xstr(DUECA_GITHASH);
 #endif
-    cout << ")" << endl;
+    std::cout << ")" << std::endl;
   }
   ScriptInterpret::addInitFunction(core_creator_name<T>(name),
                                    core_creator_name<B>(name), ifunct);
@@ -271,7 +271,7 @@ template <class T>
 void *
 get_object_ptr(const boost::intrusive_ptr<ScriptCreatableDataHolder<T>> &ptr)
 {
-  DEB("get_object_ptr, ScriptCreatableDataHolder "
+  DEB("get_object_ptr, ScriptCreatableDataHolder " << getclassname<T>() << " "
       << reinterpret_cast<void *>(&(ptr->data())));
   return reinterpret_cast<void *>(&(ptr->data()));
 }
@@ -281,6 +281,13 @@ template <class T> void *get_object_ptr(const boost::intrusive_ptr<T> &ptr)
   DEB("get_object_ptr, direct");
   return reinterpret_cast<void *>(ptr.get());
 }
+
+template <class T> void *direct_object_ptr(const boost::intrusive_ptr<T> &ptr)
+{
+  DEB("direct_object_ptr");
+  return reinterpret_cast<void *>(ptr.get());
+}
+
 
 static ReferenceHolderPython *getOrCreatePythonHolder(void *_obj)
 {
@@ -302,7 +309,7 @@ bpy::object CoreCreator<T, B, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10>::c_param(
   bpy::extract<boost::intrusive_ptr<T>> objectptr(args[0]);
 
   if (objectptr.check()) {
-    auto holder = getOrCreatePythonHolder(get_object_ptr(objectptr()));
+    auto holder = getOrCreatePythonHolder(direct_object_ptr(objectptr()));
     ArgElement::arglist_t paramlist;
     if (!single()->processList(kwargs, args, paramlist, holder) ||
         !single()->injectValues(paramlist, get_object_ptr(objectptr()))) {
@@ -371,7 +378,7 @@ void CoreCreator<T, B, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10>::ifunct0()
   DEB("CoreCreator, virtual " << single()->name);
 }
 
-DUECA_NS_END
+} // namespace dueca
 
 #include <undebprint.h>
 #include <dueca/undebug.h>

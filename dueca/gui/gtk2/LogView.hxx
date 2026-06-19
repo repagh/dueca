@@ -29,7 +29,7 @@
 #include "LogViewGui.hxx"
 #include <fstream>
 
-DUECA_NS_START
+namespace dueca {
 
 /** This module assembles error/warning etc. log messages from all
     over the dueca process, and shows these in a window.
@@ -55,7 +55,7 @@ private: // simulation data
   int                                  n_lines;
 
   /** File for dumping message logs. */
-  ofstream                             message_log;
+  std::ofstream                             message_log;
 
 private: // channel access
   /** Callback on token completion */
@@ -130,5 +130,5 @@ public: // the member functions that are called for activities
   void setLevel(const LogCategory* cat, int node, const char* level_as_text);
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

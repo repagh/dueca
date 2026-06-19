@@ -27,7 +27,7 @@
 #include <dueca_ns.h>
 #include <dueca/visibility.h>
 
-DUECA_NS_START
+namespace dueca {
 
 struct NameSet;
 struct GlobalId;
@@ -209,7 +209,7 @@ public:
 
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif
 
 //--------------------------------------------------------------------
@@ -226,7 +226,7 @@ DUECA_NS_END
 #include "DataSetSubsidiary.hxx"
 #include <dueca_ns.h>
 
-DUECA_NS_START
+namespace dueca {
 
 template<class T> StreamChannelReadToken<T>::
 StreamChannelReadToken(const GlobalId& holder,
@@ -354,7 +354,7 @@ releaseAccess(T *& data)
   return;
 }
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif
 #endif

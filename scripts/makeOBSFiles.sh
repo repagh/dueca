@@ -26,7 +26,7 @@ OSCDIRV="${HOME}/rpmbuild/tu/home:repabuild/dueca-versioned"
 # ubuntu versions with trimmed files
 TRIMUBUNTU="18.04 20.04 22.04 26.04"
 # debian/raspbian versions with trim
-TRIMDEBIAN="11 12 13"
+TRIMDEBIAN="11 13"
 TRIMRASPBIAN="11 13"
 
 
@@ -85,9 +85,10 @@ function trimversion()
                 s/libmsgpack-cxx-dev,//
                 s/debian\.tar/debian-xUbuntu_22.04.tar/' $1 > $2
     elif [ "$3" = '26.04' ]; then
-        # remove gtk2
+        # remove gtk2, do not use boost
         sed -e 's/libglade2-dev,//
                 s/libgtkglext1-dev,//
+                s/\-DBUILD_DDFF=ON/\-DBUILD_DDFF=ON \-DUSE_BOOST_LOCKFREE=OFF/
                 s/debian\.tar/debian-xUbuntu_26.04.tar/' $1 > $2
     elif [ "$3" = '11' ]; then
         # remove gtk4
@@ -190,9 +191,9 @@ function create_debfiles()
         debian/changelog.in >debian/changelog
     tar cvf ../../debian.tar debian
 
-    # control will later be modified for different build versions
+    # control and rules may later be modified for different build versions
     mv debian/control debian/control.bak
-    cp debian/rules debian/rules.bak
+    mv debian/rules debian/rules.bak
     popd
 
     # to build/obs; dueca-versioned and dsc/spec files are here
@@ -216,6 +217,7 @@ function create_debfiles()
     # variants in guile use, 2.0 for 22.04, 20.04, 1.8 for 18.04
     # also this control will later be modified for different build versions
     mv debian-versioned/control debian-versioned/control.bak
+    mv debian-versioned/rules debian-versioned/rules.bak
     popd
 
     # and for xUbuntu 20.04
@@ -224,6 +226,7 @@ function create_debfiles()
         # base version debian folder
         pushd obs
         trimversion debian/control.bak debian/control ${VER}
+        trimversion debian/rules.bak debian/rules ${VER}
         tar cvf ../../debian-xUbuntu_${VER}.tar debian
         popd
 
@@ -231,6 +234,8 @@ function create_debfiles()
         pushd build/obs
         trimversion debian-versioned/control.bak \
             debian-versioned/control $VER
+        trimversion debian-versioned/rules.bak \
+            debian-versioned/rules $VER
         tar cvf ../../../debian-versioned-xUbuntu_${VER}.tar \
             --transform "s/debian-versioned/debian/" \
             debian-versioned
@@ -246,6 +251,7 @@ function create_debfiles()
         # base version debian folder
         pushd obs
         trimversion debian/control.bak debian/control ${VER}
+        trimversion debian/rules.bak debian/rules ${VER}
         tar cvf ../../debian-Debian_${VER}.tar debian
         popd
         pushd build/obs
@@ -260,6 +266,7 @@ function create_debfiles()
         # base version debian folder
         pushd obs
         trimversion debian/control.bak debian/control ${VER}
+        trimversion debian/rules.bak debian/rules ${VER}
         tar cvf ../../debian-Raspbian_${VER}.tar debian
         popd
         pushd build/obs

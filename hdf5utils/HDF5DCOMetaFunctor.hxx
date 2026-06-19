@@ -21,9 +21,9 @@
 #include <HDF5DCOWriteFunctor.hxx>
 #include <HDF5DCOReadFunctor.hxx>
 
-STARTHDF5LOG;
+namespace dueca { namespace hdf5log {
 
-USING_DUECA_NS;
+
 
 
 /** metafunctor to access DCO HDF5 facilities. Two modes of interaction
@@ -109,6 +109,6 @@ public:
                                              bool readticks=true) = 0;
 };
 
-ENDHDF5LOG;
+} } // namespace dueca namespace hdf5log
 
 #endif

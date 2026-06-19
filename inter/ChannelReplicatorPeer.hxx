@@ -19,14 +19,14 @@
 
 // include the dusime header
 #include <dueca.h>
-USING_DUECA_NS;
+
 
 // include headers for functions/classes you need in the module
 #include "ChannelReplicator.hxx"
 #include <udpcom/NetCommunicatorPeer.hxx>
 #include <boost/scoped_ptr.hpp>
 
-STARTNSREPLICATOR;
+namespace dueca {
 
 /** A simulation module.
 
@@ -179,6 +179,6 @@ private:
 
 };
 
-ENDNSREPLICATOR;
+} // namespace dueca
 
 #endif

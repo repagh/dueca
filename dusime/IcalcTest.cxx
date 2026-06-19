@@ -29,7 +29,7 @@ int main()
 #include <list>
 #include <cmath>
 #include <dueca_ns.h>
-USING_DUECA_NS
+using namespace dueca;
 
 #define EPS 1e-5
 
@@ -44,7 +44,7 @@ static void f(Vector& x, Vector& y)
 int main(int argc, char* argv[])
 {
   // make a solution
-  DUECA_NS ::IntervalCalculation icalc;
+  dueca ::IntervalCalculation icalc;
 
   //  double xmind[] = {0.0, 0.0, -5.0};
   //double xmaxd[] = {10.0, 10.0, 10.0};

@@ -41,7 +41,7 @@
 
 // only useful if interfaces present
 
-DUECA_NS_START
+namespace dueca {
 
 /** Toolkit-dependent GUI information. */
 class TimingViewGtk::GuiInfo
@@ -518,4 +518,4 @@ void TimingViewGtk::cbBindSummaryNUser(GtkSignalListItemFactory *fact,
     label, fmt::format("{:5d}", row->data.n_user).c_str());
 }
 
-DUECA_NS_END
+} // namespace dueca

@@ -19,7 +19,7 @@
 #include <stringoptions.h>
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 class ModuleCreator;
 
@@ -80,5 +80,5 @@ public:
   static void callComplete();
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

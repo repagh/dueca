@@ -17,7 +17,7 @@
 #include <boost/lexical_cast.hpp>
 #include "TimeWarp.hxx"
 
-DUECA_NS_START
+namespace dueca {
 
 TimeWarp::TimeWarp(TriggerPuller& base, int warp) :
   TargetAndPuller(),
@@ -58,4 +58,4 @@ void TimeWarp::setTriggerName()
 }
 
 
-DUECA_NS_END
+} // namespace dueca

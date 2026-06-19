@@ -36,7 +36,7 @@ class Widget;
 /** \file gtk4/GtkGladeWindow.hxx
     Gtk GUI facilities. */
 
-DUECA_NS_START
+namespace dueca {
 
 class CommObjectReader;
 class CommObjectWriter;
@@ -683,11 +683,11 @@ T *GtkGladeWindow::getWidgetDerived(const std::string &name, T *&w)
     }
   }
 }
-DUECA_NS_END;
+} // namespace dueca
 
 #include <dueca/debug.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 template <typename T>
 bool GtkGladeWindow::loadDropDownText(const char *name, const T &values)
@@ -743,11 +743,12 @@ bool GtkGladeWindow::getValue(T &value, const char *name, bool warn)
   return res;
 }
 
+/// Specialised version
 template <>
 bool GtkGladeWindow::setValue<char *>(char *const &value, const char *name,
                                       bool warn);
 
-//
+// Generic implementation
 template <typename T>
 bool GtkGladeWindow::setValue(const T &value, const char *name, bool warn)
 {
@@ -756,20 +757,20 @@ bool GtkGladeWindow::setValue(const T &value, const char *name, bool warn)
   return res;
 }
 
-// claim there is a specialized version
+/// Specialized version, implemented
 template <>
 unsigned GtkGladeWindow::getValues<CommObjectWriter>(CommObjectWriter &cow,
                                                      const char *format,
                                                      const char *arrformat,
                                                      bool warn);
 
-// claim there is a specialized version
+/// Specialized version, implemented
 template <>
 unsigned GtkGladeWindow::getValues<DCOWriter>(DCOWriter &cow,
                                               const char *format,
                                               const char *arrformat, bool warn);
 
-// the generic version
+// Generic implementation
 template <typename DCO>
 unsigned GtkGladeWindow::getValues(DCO &dco, const char *format,
                                    const char *arrformat, bool warn)
@@ -778,20 +779,20 @@ unsigned GtkGladeWindow::getValues(DCO &dco, const char *format,
   return GtkGladeWindow::getValues(cow, format, arrformat, warn);
 }
 
-// claim there is a specialized version
+/// claim there is a specialized version
 template <>
 unsigned GtkGladeWindow::setValues<CommObjectReader>(CommObjectReader &cow,
                                                      const char *format,
                                                      const char *arrformat,
                                                      bool warn);
 
-// claim there is a specialized version
+/// claim there is a specialized version
 template <>
 unsigned GtkGladeWindow::setValues<DCOReader>(DCOReader &cow,
                                               const char *format,
                                               const char *arrformat, bool warn);
 
-// the generic version
+// The generic implementation for DCO
 template <typename DCO>
 unsigned GtkGladeWindow::setValues(DCO &dco, const char *format,
                                    const char *arrformat, bool warn)
@@ -800,6 +801,6 @@ unsigned GtkGladeWindow::setValues(DCO &dco, const char *format,
   return GtkGladeWindow::setValues(cor, format, arrformat, warn);
 }
 
-DUECA_NS_END
+} // namespace dueca
 #include <dueca/undebug.h>
 #endif

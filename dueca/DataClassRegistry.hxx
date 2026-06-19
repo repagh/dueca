@@ -19,7 +19,7 @@
 #include "dueca_ns.h"
 #include "DataClassRegistryPredef.hxx"
 
-DUECA_NS_START;
+namespace dueca {
 
 /** Global registry for information about Dueca Communication Object
     (DCO) types.
@@ -187,6 +187,6 @@ public:
   getMetaFunctor(const std::string& classname, const std::string& fname) const;
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

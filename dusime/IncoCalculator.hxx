@@ -15,8 +15,6 @@
 #define IncoCalculator_hh
 
 #include <list>
-using namespace std;
-
 #include "Module.hxx"
 #include "IncoSpec.hxx"
 #include "IncoNotice.hxx"
@@ -27,7 +25,7 @@ using namespace std;
 #include <dueca/ChannelReadToken.hxx>
 #include <dueca/ChannelWriteToken.hxx>
 
-DUECA_NS_START
+namespace dueca {
 class IncoCollaborator;
 class IntervalCalculation;
 typedef IntervalCalculation TrimCalculator;
@@ -85,13 +83,13 @@ class IncoCalculator: public Module
       calculations to be done in one go. Each calculation has a work
       id, and these must be given back when the data are to be fed
       into the calculator. */
-  list<int> work_ids;
+  std::list<int> work_ids;
 
   /** A list with all the collaborators. A collaborator handles the IO
       with one of the modules participating in the calculation,
       i.e. it will send out new values for the controls, and handle
       the results from that module. */
-  list<IncoCollaborator*> partners;
+  std::list<IncoCollaborator*> partners;
 
   /** Communication, for reception of inco specifications. */
   ChannelReadToken                        t_inco_spec;
@@ -163,6 +161,5 @@ public:
   /** Initiate a new calculation cycle. */
   void initiate(IncoMode mode);
 };
-DUECA_NS_END
+} // namespace dueca
 #endif
-

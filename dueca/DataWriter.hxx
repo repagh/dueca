@@ -19,7 +19,7 @@
 #include "DataWriterArraySize.hxx"
 #include "ChannelWriteToken.hxx"
 
-DUECA_NS_START
+namespace dueca {
 
 /** Common base class for DataWriter instantiations. */
 class DataWriterBase
@@ -327,6 +327,6 @@ private:
   static void* operator new(size_t s);
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

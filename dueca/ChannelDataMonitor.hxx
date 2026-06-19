@@ -16,7 +16,7 @@
 
 #include <dueca_ns.h>
 
-DUECA_NS_START
+namespace dueca {
 
 
 class ChannelOverview;
@@ -58,6 +58,6 @@ public:
   virtual bool isOpen() const;
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

@@ -14,7 +14,7 @@
 #define EntryHandler_cxx
 #include "EntryHandler.hxx"
 
-STARTNSREPLICATOR;
+namespace dueca {
 
 EntryHandler::EntryHandler(const dueca::ChannelEntryInfo& entryinfo,
                            const std::string& channelname,
@@ -41,4 +41,4 @@ const dueca::GlobalId& EntryHandler::getId() const
   return master_id;
 }
 
-ENDNSREPLICATOR;
+} // namespace dueca

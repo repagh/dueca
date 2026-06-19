@@ -36,7 +36,7 @@
 #endif
 
 #if  defined(USE_GTK2) && defined(USE_FLTK)
-DUECA_NS_START
+namespace dueca {
 
 GtkFltkGLHandler::GtkFltkGLHandler(const std::string& name) :
   GuiHandler(name)
@@ -90,6 +90,6 @@ void GtkFltkGLHandler::returnControl()
   gtk_main_quit();
 }
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

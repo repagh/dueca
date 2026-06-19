@@ -40,7 +40,7 @@ typedef Eigen::VectorXd Vector;
 typedef Eigen::Map<Eigen::VectorXd> VectorE;
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 /** Objects of this class acts as a specification for a "player" in
     the trim condition calculation.
@@ -73,7 +73,7 @@ class IncoCollaborator
       may come in in a block, before these are needed (several
       calculations can be requested in one go). Therefore a list of
       results is kept. */
-  list< vector<double> > results;
+  std::list< std::vector<double> > results;
 
   /** Access token for receiving trim calculation results. */
   ChannelReadToken                t_inco_feedback;
@@ -152,5 +152,5 @@ public:
       triggering conditions of the IncoCalculator. */
   TriggerPuller& getTrigger() { return t_inco_feedback; }
 };
-DUECA_NS_END
+} // namespace dueca
 #endif

@@ -16,7 +16,7 @@
 #include "NamedChannel.hxx"
 #include "NameSet.hxx"
 #include "ChannelManager.hxx"
-DUECA_NS_START
+namespace dueca {
 
 NamedChannel::NamedChannel(const NameSet& nameset) :
   my_id(),
@@ -62,4 +62,4 @@ void NamedChannel::setId(const GlobalId& gid)
   my_id = gid;
 }
 
-DUECA_NS_END
+} // namespace dueca

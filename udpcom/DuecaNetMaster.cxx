@@ -47,7 +47,7 @@
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 int DuecaNetMaster::sequence = 0;
 
@@ -148,7 +148,7 @@ DuecaNetMaster::DuecaNetMaster() :
   NetCommunicatorMaster(),
   priority(0, 0),
   time_spec(0, Ticker::single()->getCompatibleIncrement()),
-  fill_minimum(max(uint32_t(32), buffer_size / 8)),
+  fill_minimum(std::max(uint32_t(32), buffer_size / 8)),
   peer_nodeids(),
   metainfo(),
   send_order_counter(1),
@@ -379,6 +379,9 @@ void DuecaNetMaster::clientDecodeConfig(AmorphReStore &s, unsigned peer_id)
     DEB("metainfo, id=" << peer_id << " node=" << nodeid << " host=" << hostname
                         << " sendorder=" << sendorder);
 
+    /* DUECA network.
+
+       Information about a peer joining, and its order in the network. */
     I_NET("Accepting peer, id=" << peer_id << " node=" << nodeid << " name="
                                 << hostname << " sendorder=" << sendorder);
   }
@@ -563,4 +566,6 @@ void DuecaNetMaster::clientWelcomeConfig(AmorphStore &s, unsigned peer_id)
   s.packData(group_magic);
 }
 
-DUECA_NS_END;
+template <> const char *getclassname<DuecaNetMaster>() { return "DuecaNetMaster"; }
+
+} // namespace dueca

@@ -24,7 +24,7 @@
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 
 template<class T>
@@ -395,4 +395,4 @@ void JSONtoDCO(const JValue &doc, CommObjectWriter& writer)
   }
 }
 
-DUECA_NS_END;
+} // namespace dueca

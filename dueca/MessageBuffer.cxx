@@ -20,7 +20,7 @@
 #include <exception>
 #include <algorithm>
 
-DUECA_NS_START;
+namespace dueca {
 
 #define DEBPRINTLEVEL -1
 #include "debprint.h"
@@ -141,4 +141,4 @@ MessageBuffer::Iterator& MessageBuffer::Iterator::operator=(const Iterator& othe
 }
 MessageBuffer::Iterator::~Iterator() {}
 
-DUECA_NS_END;
+} // namespace dueca

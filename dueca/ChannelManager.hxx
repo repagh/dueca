@@ -35,7 +35,7 @@
 #include <fstream>
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 struct ChannelDistribution;
 struct ParameterTable;
@@ -68,7 +68,7 @@ class ChannelManager: public ScriptCreatable,
   ObjectId channel_id_count;
 
   /// temporary storage space for channels that await the global-id
-  map<NameSet,UnifiedChannel*> channel_waitroom;
+  std::map<NameSet,UnifiedChannel*> channel_waitroom;
 
   /** Define a collection of information for the locally present
       channel ends */
@@ -144,7 +144,7 @@ class ChannelManager: public ScriptCreatable,
 
   /** A stream, for debugging purposes, on which the list of channels
       is written. */
-  ofstream channel_dump;
+  std::ofstream channel_dump;
 
   /** A flag to indicate that the next channel that is made is a local
       channel. */
@@ -262,11 +262,11 @@ private:
 };
 
 
-DUECA_NS_END
+} // namespace dueca
 
-PRINT_NS_START
-//inline ostream& operator << (ostream& o, const DUECA_NS::ChannelManager& m)
+namespace std {
+//inline ostream& operator << (ostream& o, const dueca::ChannelManager& m)
 //{ return m.print(o); }
-PRINT_NS_END
+} // namespace std
 
 #endif

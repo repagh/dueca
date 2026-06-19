@@ -20,10 +20,10 @@
 // source file with template code
 #include <Summary.cxx>
 
-DUECA_NS_START
+namespace dueca {
 // template instantiation
 template class Summary<TrimId,TrimLink,TrimView>;
 template ostream& operator << <TrimId,TrimLink,TrimView>
 (ostream& os, const Summary<TrimId,TrimLink,TrimView> & o);
 
-DUECA_NS_END
+} // namespace dueca

@@ -17,7 +17,7 @@
 #include <DuecaGLCanvas.hxx>
 //#include "GtkGLWidgetHelper.hxx"
 
-DUECA_NS_START;
+namespace dueca {
 
 class GtkGLWidgetHelper;
 // this define is for hmilib; compatibility with gtk2 and gtk3
@@ -41,5 +41,5 @@ public:
   void InitArea();
 };
 
-DUECA_NS_END;
+} // namespace dueca
 #endif

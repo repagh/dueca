@@ -40,7 +40,7 @@
 #define NO_TYPE_CREATION
 #include <dueca/dueca.h>
 
-DUECA_NS_START
+namespace dueca {
 
 // class/module name
 const char* const ChannelOverviewGtk2::classname = "channel-view";
@@ -583,7 +583,7 @@ void ChannelOverviewGtk2::reflectChanges(unsigned ichan, unsigned ientry,
        11, 0, // count, for now
        12, (*re)->rdata.creationid,
        15, TRUE,
-       16, select_icon[min(2, int((*re)->rdata.action))],
+       16, select_icon[std::min(2, int((*re)->rdata.action))],
        17, (*re)->rdata.sequential ? sequent_icon[0] : sequent_icon[1],
        -1);
   }
@@ -871,7 +871,4 @@ void ChannelOverviewGtk2::monitorToggle(GtkCellRendererToggle *cell,
   showChanges();
 }
 
-DUECA_NS_END
-
-
-
+} // namespace dueca

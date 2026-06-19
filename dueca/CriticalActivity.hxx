@@ -17,7 +17,7 @@
 
 #include <dueca/Activity.hxx>
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 class Module;
 
@@ -104,6 +104,11 @@ public:
 
   /** Destructor. */
   ~CriticalActivity();
+
+  /** Immediately report ready, without first running in safe.
+
+      @warning Do not use this with sensitive hardware */
+  inline void readyForWork() { run_state = Running; }
 
   /** Specify the time from which the activity will be switched to
       working mode. */
@@ -197,5 +202,5 @@ private:
   friend class ActivityItem;
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

@@ -14,7 +14,7 @@
 #define HDF5DCOMetaFunctor_cxx
 #include "HDF5DCOMetaFunctor.hxx"
 
-STARTHDF5LOG;
+namespace dueca { namespace hdf5log {
 
 HDF5DCOMetaFunctor::HDF5DCOMetaFunctor()
 {
@@ -32,4 +32,4 @@ const H5::DataType* HDF5DCOMetaFunctor::operator() ()
   return NULL;
 }
 
-ENDHDF5LOG;
+} } // namespace dueca namespace hdf5log

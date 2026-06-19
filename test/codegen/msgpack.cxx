@@ -21,10 +21,9 @@
 #include <dueca/CommObjectWriter.hxx>
 #include <AmorphStore.hxx>
 #include <dueca/MessageBuffer.hxx>
+using namespace std;
 
-
-
-USING_DUECA_NS;
+using namespace dueca;
 
 int main()
 {

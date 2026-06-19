@@ -26,7 +26,7 @@
 #include <DataReader.hxx>
 #include <dueca_ns.h>
 
-DUECA_NS_START
+namespace dueca {
 
 /** This is a facilitator for reading stream data. By creating a
     "StreamReader", the access token is used to gain access to the
@@ -78,5 +78,5 @@ private:
 /** \example StreamReaderExample.cxx
     Here is an example of how to use stream readers. */
 
-DUECA_NS_END
+} // namespace dueca
 #endif

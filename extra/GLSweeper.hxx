@@ -22,7 +22,7 @@
 #include <dueca.h>
 #include <PeriodicAlarm.hxx>
 
-DUECA_NS_START;
+namespace dueca {
 
 /*# Forward declaration */
 class WindowingProtocol;
@@ -192,7 +192,7 @@ private: // member functions for cooperation with DUECA
   bool setTimeSpec(const TimeSpec& ts);
 
   /** Request check on the timing. */
-  bool checkTiming(const vector<int>& i);
+  bool checkTiming(const std::vector<int>& i);
 
   /** Specify a certain windowing protocol */
   bool setProtocol(ScriptCreatable& prot, bool dir_in);
@@ -227,12 +227,9 @@ public:
       \returns The number of bits in the stencil buffer */
   inline int getStencilBufferSize() const { return depth_buffer_size; }
 
-
-
-
 };
 
 
 #endif
 
-DUECA_NS_END
+} // namespace dueca

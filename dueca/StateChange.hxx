@@ -18,7 +18,7 @@
 #endif
 #include "SimTime.hxx"
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 /** Templated class, generic for the request of a change of state of
     some module, at some (normally future) time. */
@@ -47,7 +47,7 @@ public:
   bool operator < (const StateChange<T>& other) const;
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif
 
 //--------------------------------------------------------------------
@@ -58,7 +58,7 @@ DUECA_NS_END
 #ifndef StateChange_ii
 #define StateChange_ii
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 template<class T>
 StateChange<T>::StateChange() :
@@ -86,6 +86,6 @@ bool StateChange<T>::operator < (const StateChange<T>& other) const
   return time < other.time;
 }
 
-DUECA_NS_END
+} // namespace dueca
 #endif
 #endif

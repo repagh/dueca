@@ -29,8 +29,9 @@
 #ifndef TESTSPAN
 #define TESTSPAN assert(validity_end >= validity_start)
 #endif
+using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 // -------------- normal TimeSpec ---------------------------
 
@@ -195,7 +196,7 @@ TimeSpec TimeSpec::operator+ (const double delta) const
   return TimeSpec(getValidityStart() + idelta,
                   getValidityEnd() + idelta);
 }
-    
+
 TimeSpec TimeSpec::operator- (const int delta) const
 {
   return TimeSpec(getValidityStart() - delta,
@@ -222,7 +223,7 @@ TimeSpec TimeSpec::operator- (const double delta) const
   return TimeSpec(getValidityStart() - idelta,
                   getValidityEnd() - idelta);
 }
-    
+
 TimeSpec& TimeSpec::operator = (const DataTimeSpec& other)
 {
   validity_start = other.validity_start;
@@ -461,10 +462,14 @@ TimeSpec operator + (const PeriodicTimeSpec& t,
                   t.getValidityEnd() + dt*t.getPeriod());
 }
 
+template <> const char *getclassname<TimeSpec>() { return "TimeSpec"; }
+
+template <> const char *getclassname<PeriodicTimeSpec>() { return "PeriodicTimeSpec"; }
+
 /* const PeriodicTimeSpec& operator++()
 {
   validity_start += period;
   validity_end += period;
   return *this;
 } */
-DUECA_NS_END
+} // namespace dueca

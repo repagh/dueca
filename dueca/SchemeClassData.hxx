@@ -18,10 +18,8 @@
 #include "scriptinterface.h"
 #include <sstream>
 
-
-using namespace std;
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 
 class ScriptCreatable;
@@ -43,7 +41,7 @@ protected:
 
   /** A list of tags for the descendants that can also be accepted as
       valid for this class. */
-  list<scm_t_bits> scheme_tags;
+  std::list<scm_t_bits> scheme_tags;
 
   /** Identifying tag, given by Scheme, at creation of the type/class
       in Scheme. */
@@ -124,7 +122,7 @@ template<> \
 
 
 
-DUECA_NS_END
+} // namespace dueca
 
 
 #endif

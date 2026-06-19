@@ -14,7 +14,10 @@
 
 
 ;; basic type is normally an uint32_t, defined in above header
-(Type TimeTickType "using namespace dueca;")
+(Type dueca::TimeTickType "#include <dueca/SimTime.hxx>
+namespace dueca {
+class TimeSpec;
+} // namespace dueca")
 
 ;; DataTimeSpec is a special bare-bones version of TimeSpec. It is
 ;; used for storage of the time specification with the data in
@@ -27,14 +30,8 @@
 
         (Option msgpack)
         (IncludeFile DataTimeSpecExtra)
-        (AddToHeader "DUECA_NS_START;
-typedef uint32_t TimeTickType;
-class TimeSpec;
-class PeriodicTimeSpec;
-DUECA_NS_END;
-#include <algorithm>")
                 ;; The time interval starts here
-                (TimeTickType validity_start (Default 0))
+                (dueca::TimeTickType validity_start (Default 0))
                 ;; The time interval ends <em>before</em> this
-                (TimeTickType validity_end (Default 0))
+                (dueca::TimeTickType validity_end (Default 0))
                 )

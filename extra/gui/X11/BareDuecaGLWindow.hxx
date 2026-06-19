@@ -19,7 +19,7 @@
 #include <vector>
 #include <string>
 
-DUECA_NS_START;
+namespace dueca {
 
 /** Advance definition */
 struct BareDuecaGLWindow_XWindowData;
@@ -318,6 +318,6 @@ public:
   inline void swapBuffers() {}
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

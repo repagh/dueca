@@ -38,11 +38,12 @@
 #include <Callback.hxx>
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
+using namespace std;
 
 // WARNING. This code may not use normal notification/logging facilities
 // Since that would lead to recursive loops!
 
-DUECA_NS_START
+namespace dueca {
 
 void LogConcentrator::print(std::ostream& os, const LogMessage& msg)
 {
@@ -223,4 +224,4 @@ const GlobalId& LogConcentrator::getId() const
   return no_id;
 }
 
-DUECA_NS_END
+} // namespace dueca

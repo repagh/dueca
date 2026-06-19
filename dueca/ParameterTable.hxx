@@ -19,7 +19,7 @@
 #endif
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 class GenericVarIO;
 
 /** Element of a parameter table for configuration of modules.
@@ -88,5 +88,5 @@ struct ParameterTable
 extern const char* set_timing_description;
 extern const char* check_timing_description;
 
-DUECA_NS_END
+} // namespace dueca
 #endif

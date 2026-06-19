@@ -19,7 +19,7 @@
 #include "DuecaEnv.hxx"
 #include <string>
 
-USING_DUECA_NS;
+using namespace dueca;
 
 extern "C"
 LNK_PUBLICC void InitExtraGtk2()

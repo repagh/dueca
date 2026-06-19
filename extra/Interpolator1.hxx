@@ -15,7 +15,7 @@
 #pragma once
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 template <class T> class InterpIndex;
 
@@ -62,4 +62,4 @@ public:
            frac1 * table.getValue(idx1 + 1);
   }
 };
-DUECA_NS_END
+} // namespace dueca

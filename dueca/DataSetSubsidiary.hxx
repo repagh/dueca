@@ -16,7 +16,7 @@
 
 #include "DataSetConverter.hxx"
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 /** Templated class for conversion of data to and from packed
     format. Implements the interface given by DataSetConverter. */
@@ -71,7 +71,7 @@ public:
   /** Return the class name */
   const char* getClassname() const;
 };
-DUECA_NS_END
+} // namespace dueca
 
 #endif
 
@@ -86,7 +86,7 @@ DUECA_NS_END
 
 #include "AmorphStore.hxx"
 
-DUECA_NS_START
+namespace dueca {
 template<class T>
 DataSetSubsidiary<T>::DataSetSubsidiary()
 {
@@ -174,6 +174,6 @@ getClassname() const
   return getclassname<T>();
 }
 
-DUECA_NS_END
+} // namespace dueca
 #endif
 #endif

@@ -24,7 +24,7 @@
 #include "ReflectoryData.hxx"
 #include "ReflectoryLocal.hxx"
 
-DUECA_NS_START;
+namespace dueca {
 
 
 /** \file Reflectory.hxx
@@ -164,6 +164,6 @@ public:
 
 
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

@@ -19,10 +19,9 @@
 
 #include <inttypes.h>
 #include <iostream>
-using namespace std;
 #include <dueca_ns.h>
 
-DUECA_NS_START
+namespace dueca {
 class ReflectiveAccessor;
 
 /** Set of information for initialisation of packers by their media
@@ -79,7 +78,7 @@ public:
                              int node_id);
 
   /** Print to a stream. */
-  friend ostream& operator << (ostream& os, const
+  friend std::ostream& operator << (std::ostream& os, const
                                ReflectiveStoreInformation& o);
 };
 
@@ -108,5 +107,5 @@ public:
 };
 #endif /* DELTED_BY_WEST */
 
-DUECA_NS_END
+} // namespace dueca
 #endif

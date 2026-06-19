@@ -20,7 +20,7 @@
 #include "GuiHandler.hxx"
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 /** This encapsulates the top-level handling of cooperation with the
     Fltk library. */
@@ -44,5 +44,5 @@ public:
   void returnControl();
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

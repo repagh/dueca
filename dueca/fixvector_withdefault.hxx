@@ -21,7 +21,7 @@
 #include <fixvector.hxx>
 #include <boost/format.hpp>
 
-DUECA_NS_START;
+namespace dueca {
 
 /** Fixed-sized vector, with a numeric default
 
@@ -168,9 +168,9 @@ struct dco_nested<fixvector_withdefault<N, D, DEFLT, BASE>> :
   public dco_nested<D>
 {};
 
-DUECA_NS_END;
+} // namespace dueca
 
-PRINT_NS_START;
+namespace std {
 
 /** Print a fixvector */
 template <size_t N, typename T, int DEFLT, unsigned BASE>
@@ -183,16 +183,16 @@ ostream &operator<<(ostream &os,
   return os << "}";
 }
 
-PRINT_NS_END;
+} // namespace std
 
 #define fixvector_withdefault_hxx
 #include <msgpack.hxx>
 
-MSGPACKUS_NS_START;
+namespace msgunpack {
 
 /** unstream/unpack a fixvector_default */
 template <typename S, size_t N, typename T, int DEFLT, unsigned BASE>
 void msg_unpack(S &i0, const S &iend,
                 dueca::fixvector_withdefault<N, T, DEFLT, BASE> &i);
 
-MSGPACKUS_NS_END;
+} // namespace msgunpack

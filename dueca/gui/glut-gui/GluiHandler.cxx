@@ -44,8 +44,9 @@
 #include <dassert.h>
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
+using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 GluiHandler::GluiHandler(const std::string& name) :
   GuiHandler(name),
@@ -150,4 +151,4 @@ void GluiHandler::returnControl()
 #endif
 
 
-DUECA_NS_END
+} // namespace dueca

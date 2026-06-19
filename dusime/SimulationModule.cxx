@@ -27,7 +27,7 @@
 #include <NameSet.hxx>
 #include <debprint.h>
 
-DUECA_NS_START
+namespace dueca {
 
 SimulationModule::SimulationModule(Entity *e, const char *m_class,
                                    const char *part,
@@ -199,4 +199,4 @@ void SimulationModule::processEntityCommands(const TimeSpec &ts)
     }
   }
 }
-DUECA_NS_END
+} // namespace dueca

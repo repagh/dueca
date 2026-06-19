@@ -19,9 +19,8 @@
 
 #include <iostream>
 #include <cmath>
-using namespace std;
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 /** This forms a link between a trim calculation variable, and the
     visual display -- and possibly manipulation -- of this variable. */
@@ -62,7 +61,7 @@ public:
   static void* getTree();
 
   /** Print the link to stream. */
-  friend ostream& operator << (ostream& os, const TrimLink& l);
+  friend std::ostream& operator << (std::ostream& os, const TrimLink& l);
 
   /** Equality test. */
   inline bool operator == (const TrimLink & o) const
@@ -77,6 +76,6 @@ public:
   { }
 
 };
-DUECA_NS_END
+} // namespace dueca
 
 #endif

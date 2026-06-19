@@ -39,7 +39,8 @@
 #define debug_direct_h
 
 #ifndef debug_h
-#warning "This file is not meant for direct inclusion; better use through debug.h"
+#warning                                                                       \
+  "This file is not meant for direct inclusion; better use through debug.h"
 #endif
 
 #include <dueca_ns.h>
@@ -49,10 +50,9 @@
 /** For now, the debug output stream is standard error. */
 #define cdebug std::cerr
 
-
-DUECA_NS_START;
+namespace dueca {
 void writeclock();
-DUECA_NS_END;
+}
 
 /** Messages regarding the basic configuration of dueca, so
     about all you do wrong in dueca.cnf and dueca.mod
@@ -60,8 +60,12 @@ DUECA_NS_END;
 #ifdef D_CNF
 #undef D_CNF
 #define D_CNF_ACTIVE
-#define D_CNF(A) { DUECA_NS::writeclock(); cdebug << " dCNF:" <<  A \
-                  << std::endl; cdebug.flush(); }
+#define D_CNF(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " dCNF:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Debug messages. */
 #define D_CNF(A)
@@ -70,8 +74,12 @@ DUECA_NS_END;
 #ifdef I_CNF
 #undef I_CNF
 #define I_CNF_ACTIVE
-#define I_CNF(A) { DUECA_NS::writeclock(); cdebug << " iCNF:" <<  A \
-                  << std::endl; cdebug.flush(); }
+#define I_CNF(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " iCNF:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Information messages. */
 #define I_CNF(A)
@@ -80,8 +88,12 @@ DUECA_NS_END;
 #ifdef W_CNF
 #undef W_CNF
 #define W_CNF_ACTIVE
-#define W_CNF(A) { DUECA_NS::writeclock(); cdebug << " wCNF:" <<  A \
-                  << std::endl; cdebug.flush(); }
+#define W_CNF(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " wCNF:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Warning messages */
 #define W_CNF(A)
@@ -90,8 +102,12 @@ DUECA_NS_END;
 #ifdef E_CNF
 #undef E_CNF
 #define E_CNF_ACTIVE
-#define E_CNF(A) { DUECA_NS::writeclock(); cdebug << " eCNF:" <<  A \
-                  << std::endl; cdebug.flush(); }
+#define E_CNF(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " eCNF:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Error messages */
 #define E_CNF(A)
@@ -103,8 +119,12 @@ DUECA_NS_END;
 #ifdef D_SYS
 #undef D_SYS
 #define D_SYS_ACTIVE
-#define D_SYS(A) { DUECA_NS::writeclock(); cdebug << " dSYS:" <<  A \
-                  << std::endl; cdebug.flush(); }
+#define D_SYS(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " dSYS:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Debug messages */
 #define D_SYS(A)
@@ -113,8 +133,12 @@ DUECA_NS_END;
 #ifdef I_SYS
 #undef I_SYS
 #define I_SYS_ACTIVE
-#define I_SYS(A) { DUECA_NS::writeclock(); cdebug << " iSYS:" <<  A \
-                  << std::endl; cdebug.flush(); }
+#define I_SYS(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " iSYS:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Information messages */
 #define I_SYS(A)
@@ -123,8 +147,12 @@ DUECA_NS_END;
 #ifdef W_SYS
 #undef W_SYS
 #define W_SYS_ACTIVE
-#define W_SYS(A) { DUECA_NS::writeclock(); cdebug << " wSYS:" <<  A \
-                  << std::endl; cdebug.flush(); }
+#define W_SYS(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " wSYS:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Warning messages */
 #define W_SYS(A)
@@ -133,8 +161,12 @@ DUECA_NS_END;
 #ifdef E_SYS
 #undef E_SYS
 #define E_SYS_ACTIVE
-#define E_SYS(A) { DUECA_NS::writeclock(); cdebug << " eSYS:" <<  A \
-                  << std::endl; cdebug.flush(); }
+#define E_SYS(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " eSYS:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Error messages. */
 #define E_SYS(A)
@@ -146,8 +178,12 @@ DUECA_NS_END;
 #ifdef D_ACT
 #undef D_ACT
 #define D_ACT_ACTIVE
-#define D_ACT(A) { DUECA_NS::writeclock(); cdebug << " dACT:" <<  A \
-                  << std::endl; cdebug.flush(); }
+#define D_ACT(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " dACT:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Debug messages */
 #define D_ACT(A)
@@ -156,8 +192,12 @@ DUECA_NS_END;
 #ifdef I_ACT
 #undef I_ACT
 #define I_ACT_ACTIVE
-#define I_ACT(A) { DUECA_NS::writeclock(); cdebug << " iACT:" <<  A \
-                  << std::endl; cdebug.flush(); }
+#define I_ACT(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " iACT:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Information messages */
 #define I_ACT(A)
@@ -166,8 +206,12 @@ DUECA_NS_END;
 #ifdef W_ACT
 #undef W_ACT
 #define W_ACT_ACTIVE
-#define W_ACT(A) { DUECA_NS::writeclock(); cdebug << " wACT:" <<  A \
-                  << std::endl; cdebug.flush(); }
+#define W_ACT(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " wACT:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Warning messages */
 #define W_ACT(A)
@@ -176,8 +220,12 @@ DUECA_NS_END;
 #ifdef E_ACT
 #undef E_ACT
 #define E_ACT_ACTIVE
-#define E_ACT(A) { DUECA_NS::writeclock(); cdebug << " eACT:" <<  A \
-                  << std::endl; cdebug.flush(); }
+#define E_ACT(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " eACT:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Error messages. */
 #define E_ACT(A)
@@ -190,8 +238,12 @@ DUECA_NS_END;
 #ifdef D_CHN
 #undef D_CHN
 #define D_CHN_ACTIVE
-#define D_CHN(A) { DUECA_NS::writeclock(); cdebug << " dCHN:" <<  A \
-                  << std::endl; cdebug.flush(); }
+#define D_CHN(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " dCHN:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Debug messages */
 #define D_CHN(A)
@@ -200,8 +252,12 @@ DUECA_NS_END;
 #ifdef I_CHN
 #undef I_CHN
 #define I_CHN_ACTIVE
-#define I_CHN(A) { DUECA_NS::writeclock(); cdebug << " iCHN:" <<  A \
-                  << std::endl; cdebug.flush(); }
+#define I_CHN(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " iCHN:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Information messages */
 #define I_CHN(A)
@@ -210,8 +266,12 @@ DUECA_NS_END;
 #ifdef W_CHN
 #undef W_CHN
 #define W_CHN_ACTIVE
-#define W_CHN(A) { DUECA_NS::writeclock(); cdebug << " wCHN:" <<  A \
-                  << std::endl; cdebug.flush(); }
+#define W_CHN(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " wCHN:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Warning messages */
 #define W_CHN(A)
@@ -220,8 +280,12 @@ DUECA_NS_END;
 #ifdef E_CHN
 #undef E_CHN
 #define E_CHN_ACTIVE
-#define E_CHN(A) { DUECA_NS::writeclock(); cdebug << " eCHN:" <<  A \
-                  << std::endl; cdebug.flush(); }
+#define E_CHN(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " eCHN:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Error messages. */
 #define E_CHN(A)
@@ -234,8 +298,12 @@ DUECA_NS_END;
 #ifdef D_SHM
 #undef D_SHM
 #define D_SHM_ACTIVE
-#define D_SHM(A) { DUECA_NS::writeclock(); cdebug << " dSHM:" <<  A \
-                  << std::endl; cdebug.flush(); }
+#define D_SHM(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " dSHM:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Debug messages */
 #define D_SHM(A)
@@ -244,8 +312,12 @@ DUECA_NS_END;
 #ifdef I_SHM
 #undef I_SHM
 #define I_SHM_ACTIVE
-#define I_SHM(A) { DUECA_NS::writeclock(); cdebug << " iSHM:" <<  A \
-                  << std::endl; cdebug.flush(); }
+#define I_SHM(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " iSHM:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Information messages */
 #define I_SHM(A)
@@ -254,8 +326,12 @@ DUECA_NS_END;
 #ifdef W_SHM
 #undef W_SHM
 #define W_SHM_ACTIVE
-#define W_SHM(A) { DUECA_NS::writeclock(); cdebug << " wSHM:" <<  A \
-                  << std::endl; cdebug.flush(); }
+#define W_SHM(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " wSHM:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Warning messages */
 #define W_SHM(A)
@@ -264,8 +340,12 @@ DUECA_NS_END;
 #ifdef E_SHM
 #undef E_SHM
 #define E_SHM_ACTIVE
-#define E_SHM(A) { DUECA_NS::writeclock(); cdebug << " eSHM:" <<  A \
-                  << std::endl; cdebug.flush(); }
+#define E_SHM(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " eSHM:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Error messages. */
 #define E_SHM(A)
@@ -278,8 +358,12 @@ DUECA_NS_END;
 #ifdef D_TIM
 #undef D_TIM
 #define D_TIM_ACTIVE
-#define D_TIM(A) { DUECA_NS::writeclock(); cdebug << " dTIM:" <<  A \
-                  << std::endl; cdebug.flush(); }
+#define D_TIM(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " dTIM:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Debug messages */
 #define D_TIM(A)
@@ -288,8 +372,12 @@ DUECA_NS_END;
 #ifdef I_TIM
 #undef I_TIM
 #define I_TIM_ACTIVE
-#define I_TIM(A) { DUECA_NS::writeclock(); cdebug << " iTIM:" <<  A \
-                  << std::endl; cdebug.flush(); }
+#define I_TIM(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " iTIM:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Information messages */
 #define I_TIM(A)
@@ -298,8 +386,12 @@ DUECA_NS_END;
 #ifdef W_TIM
 #undef W_TIM
 #define W_TIM_ACTIVE
-#define W_TIM(A) { DUECA_NS::writeclock(); cdebug << " wTIM:" <<  A \
-                  << std::endl; cdebug.flush(); }
+#define W_TIM(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " wTIM:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Warning messages */
 #define W_TIM(A)
@@ -308,8 +400,12 @@ DUECA_NS_END;
 #ifdef E_TIM
 #undef E_TIM
 #define E_TIM_ACTIVE
-#define E_TIM(A) { DUECA_NS::writeclock(); cdebug << " eTIM:" <<  A \
-                  << std::endl; cdebug.flush(); }
+#define E_TIM(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " eTIM:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Error messages */
 #define E_TIM(A)
@@ -322,8 +418,12 @@ DUECA_NS_END;
 #ifdef D_NET
 #undef D_NET
 #define D_NET_ACTIVE
-#define D_NET(A) { DUECA_NS::writeclock(); cdebug << " dNET:" <<  A \
-                  << std::endl; cdebug.flush(); }
+#define D_NET(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " dNET:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Debug messages */
 #define D_NET(A)
@@ -332,8 +432,12 @@ DUECA_NS_END;
 #ifdef I_NET
 #undef I_NET
 #define I_NET_ACTIVE
-#define I_NET(A) { DUECA_NS::writeclock(); cdebug << " iNET:" <<  A \
-                  << std::endl; cdebug.flush(); }
+#define I_NET(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " iNET:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Information messages */
 #define I_NET(A)
@@ -342,8 +446,12 @@ DUECA_NS_END;
 #ifdef W_NET
 #undef W_NET
 #define W_NET_ACTIVE
-#define W_NET(A) { DUECA_NS::writeclock(); cdebug << " wNET:" <<  A \
-                  << std::endl; cdebug.flush(); }
+#define W_NET(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " wNET:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Warning messages */
 #define W_NET(A)
@@ -352,8 +460,12 @@ DUECA_NS_END;
 #ifdef E_NET
 #undef E_NET
 #define E_NET_ACTIVE
-#define E_NET(A) { DUECA_NS::writeclock(); cdebug << " eNET:" <<  A \
-                  << std::endl; cdebug.flush(); }
+#define E_NET(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " eNET:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Error messages */
 #define E_NET(A)
@@ -365,8 +477,12 @@ DUECA_NS_END;
 #ifdef D_MOD
 #undef D_MOD
 #define D_MOD_ACTIVE
-#define D_MOD(A) { DUECA_NS::writeclock(); cdebug << " dMOD:" <<  A \
-                  << std::endl; cdebug.flush(); }
+#define D_MOD(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " dMOD:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Debug messages. */
 #define D_MOD(A)
@@ -375,8 +491,12 @@ DUECA_NS_END;
 #ifdef I_MOD
 #undef I_MOD
 #define I_MOD_ACTIVE
-#define I_MOD(A) { DUECA_NS::writeclock(); cdebug << " iMOD:" <<  A \
-                  << std::endl; cdebug.flush(); }
+#define I_MOD(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " iMOD:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Information messages */
 #define I_MOD(A)
@@ -385,8 +505,12 @@ DUECA_NS_END;
 #ifdef W_MOD
 #undef W_MOD
 #define W_MOD_ACTIVE
-#define W_MOD(A) { DUECA_NS::writeclock(); cdebug << " wMOD:" <<  A \
-                  << std::endl; cdebug.flush(); }
+#define W_MOD(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " wMOD:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Warning messages */
 #define W_MOD(A)
@@ -395,8 +519,12 @@ DUECA_NS_END;
 #ifdef E_MOD
 #undef E_MOD
 #define E_MOD_ACTIVE
-#define E_MOD(A) { DUECA_NS::writeclock(); cdebug << " eMOD:" <<  A \
-                  << std::endl; cdebug.flush(); }
+#define E_MOD(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " eMOD:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Error messages */
 #define E_MOD(A)
@@ -408,8 +536,12 @@ DUECA_NS_END;
 #ifdef D_STS
 #undef D_STS
 #define D_STS_ACTIVE
-#define D_STS(A) { DUECA_NS::writeclock(); cdebug << " dSTS:" <<  A \
-                  << std::endl; cdebug.flush(); }
+#define D_STS(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " dSTS:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Debug messages */
 #define D_STS(A)
@@ -418,8 +550,12 @@ DUECA_NS_END;
 #ifdef I_STS
 #undef I_STS
 #define I_STS_ACTIVE
-#define I_STS(A) { DUECA_NS::writeclock(); cdebug << " iSTS:" <<  A \
-                  << std::endl; cdebug.flush(); }
+#define I_STS(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " iSTS:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Information messages */
 #define I_STS(A)
@@ -428,8 +564,12 @@ DUECA_NS_END;
 #ifdef W_STS
 #undef W_STS
 #define W_STS_ACTIVE
-#define W_STS(A) { DUECA_NS::writeclock(); cdebug << " wSTS:" <<  A \
-                  << std::endl; cdebug.flush(); }
+#define W_STS(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " wSTS:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Warning messages */
 #define W_STS(A)
@@ -438,8 +578,12 @@ DUECA_NS_END;
 #ifdef E_STS
 #undef E_STS
 #define E_STS_ACTIVE
-#define E_STS(A) { DUECA_NS::writeclock(); cdebug << " eSTS:" <<  A \
-                  << std::endl; cdebug.flush(); }
+#define E_STS(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " eSTS:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Error messages */
 #define E_STS(A)
@@ -451,8 +595,12 @@ DUECA_NS_END;
 #ifdef D_TRM
 #undef D_TRM
 #define D_TRM_ACTIVE
-#define D_TRM(A) { DUECA_NS::writeclock(); cdebug << " dTRM:" <<  A \
-                  << std::endl; cdebug.flush(); }
+#define D_TRM(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " dTRM:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Debug messages */
 #define D_TRM(A)
@@ -461,8 +609,12 @@ DUECA_NS_END;
 #ifdef I_TRM
 #undef I_TRM
 #define I_TRM_ACTIVE
-#define I_TRM(A) { DUECA_NS::writeclock(); cdebug << " iTRM:" <<  A \
-                  << std::endl; cdebug.flush(); }
+#define I_TRM(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " iTRM:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Information messages */
 #define I_TRM(A)
@@ -471,8 +623,12 @@ DUECA_NS_END;
 #ifdef W_TRM
 #undef W_TRM
 #define W_TRM_ACTIVE
-#define W_TRM(A) { DUECA_NS::writeclock(); cdebug << " wTRM:" <<  A \
-                  << std::endl; cdebug.flush(); }
+#define W_TRM(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " wTRM:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Warning messages */
 #define W_TRM(A)
@@ -481,8 +637,12 @@ DUECA_NS_END;
 #ifdef E_TRM
 #undef E_TRM
 #define E_TRM_ACTIVE
-#define E_TRM(A) { DUECA_NS::writeclock(); cdebug << " eTRM:" <<  A \
-                  << std::endl; cdebug.flush(); }
+#define E_TRM(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " eTRM:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Error messages */
 #define E_TRM(A)
@@ -494,8 +654,12 @@ DUECA_NS_END;
 #ifdef D_MEM
 #undef D_MEM
 #define D_MEM_ACTIVE
-#define D_MEM(A) { DUECA_NS::writeclock(); cdebug << " dMEM:" <<  A \
-                  << std::endl; cdebug.flush(); }
+#define D_MEM(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " dMEM:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Debug messages */
 #define D_MEM(A)
@@ -504,8 +668,12 @@ DUECA_NS_END;
 #ifdef I_MEM
 #undef I_MEM
 #define I_MEM_ACTIVE
-#define I_MEM(A) { DUECA_NS::writeclock(); cdebug << " iMEM:" <<  A \
-                  << std::endl; cdebug.flush(); }
+#define I_MEM(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " iMEM:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Information messages */
 #define I_MEM(A)
@@ -514,8 +682,12 @@ DUECA_NS_END;
 #ifdef W_MEM
 #undef W_MEM
 #define W_MEM_ACTIVE
-#define W_MEM(A) { DUECA_NS::writeclock(); cdebug << " wMEM:" <<  A \
-                  << std::endl; cdebug.flush(); }
+#define W_MEM(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " wMEM:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Warning messages */
 #define W_MEM(A)
@@ -524,8 +696,12 @@ DUECA_NS_END;
 #ifdef E_MEM
 #undef E_MEM
 #define E_MEM_ACTIVE
-#define E_MEM(A) { DUECA_NS::writeclock(); cdebug << " eMEM:" << A \
-                  << std::endl; cdebug.flush(); }
+#define E_MEM(A)                                                               \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " eMEM:" << A << std::endl;                                      \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Error messages */
 #define E_MEM(A)
@@ -533,51 +709,66 @@ DUECA_NS_END;
 /** @} */
 // <<  A << std::endl;
 
-inline const char* logcat_cnf() { return "CNF";}
-inline const char* logcat_sys() { return "SYS";}
-inline const char* logcat_act() { return "ACT";}
-inline const char* logcat_chn() { return "CHN";}
-inline const char* logcat_shm() { return "SHM";}
-inline const char* logcat_tim() { return "TIM";}
-inline const char* logcat_net() { return "NET";}
-inline const char* logcat_mod() { return "MOD";}
-inline const char* logcat_sts() { return "STS";}
-inline const char* logcat_trm() { return "TRM";}
-inline const char* logcat_mem() { return "MEM";}
+inline const char *logcat_cnf() { return "CNF"; }
+inline const char *logcat_sys() { return "SYS"; }
+inline const char *logcat_act() { return "ACT"; }
+inline const char *logcat_chn() { return "CHN"; }
+inline const char *logcat_shm() { return "SHM"; }
+inline const char *logcat_tim() { return "TIM"; }
+inline const char *logcat_net() { return "NET"; }
+inline const char *logcat_mod() { return "MOD"; }
+inline const char *logcat_sts() { return "STS"; }
+inline const char *logcat_trm() { return "TRM"; }
+inline const char *logcat_mem() { return "MEM"; }
 
 /** Four generic defines for messages.
     @{ */
 #ifdef D_MSG
 #undef D_MSG
 #define D_MSG_ACTIVE
-#define D_MSG(C,A) { DUECA_NS::writeclock(); cdebug << " d" << C () << ' ' \
-                          << ' ' << A << std::endl; cdebug.flush(); }
+#define D_MSG(C, A)                                                            \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " d" << C() << ' ' << ' ' << A << std::endl;                     \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Debug messages */
-#define D_MSG(C,A)
+#define D_MSG(C, A)
 #endif
 
 #ifdef I_MSG
 #undef I_MSG
 #define I_MSG_ACTIVE
-#define I_MSG(C,A) { DUECA_NS::writeclock(); cdebug << " i" << C () << ' ' \
-                          << ' ' << A << std::endl; cdebug.flush(); }
+#define I_MSG(C, A)                                                            \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " i" << C() << ' ' << ' ' << A << std::endl;                     \
+    cdebug.flush();                                                            \
+  }
 #else
 /** Information messages */
-#define I_MSG(C,A)
+#define I_MSG(C, A)
 #endif
 
 #undef W_MSG
 #define W_MSG_ACTIVE
-#define W_MSG(C,A) { DUECA_NS::writeclock(); cdebug << " w" << C () << ' ' \
-                          << ' ' << A << std::endl; cdebug.flush(); }
+#define W_MSG(C, A)                                                            \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " w" << C() << ' ' << ' ' << A << std::endl;                     \
+    cdebug.flush();                                                            \
+  }
 
 #undef E_MSG
 #define E_MSG_ACTIVE
-#define E_MSG(C,A) { DUECA_NS::writeclock(); cdebug << " e" << C () << ' ' \
-                          << ' ' << A << std::endl; cdebug.flush(); }
+#define E_MSG(C, A)                                                            \
+  {                                                                            \
+    dueca::writeclock();                                                    \
+    cdebug << " e" << C() << ' ' << ' ' << A << std::endl;                     \
+    cdebug.flush();                                                            \
+  }
 
 /** @} */
 
 #endif
-

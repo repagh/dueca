@@ -26,7 +26,7 @@
 #include <boost/scoped_ptr.hpp>
 
 // include headers for functions/classes you need in the module
-DUECA_NS_START;
+namespace dueca {
 
 /** Store configuration files
 
@@ -162,6 +162,6 @@ public: // member functions for cooperation with DUECA
   void entryRemoved(const ChannelEntryInfo& i);
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

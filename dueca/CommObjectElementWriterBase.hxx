@@ -23,7 +23,7 @@
 #include <CommObjectMemberArity.hxx>
 #include <DCOTypeIndex.hxx>
 
-DUECA_NS_START;
+namespace dueca {
 
 /** Base class defining writing interaction with a member of a DCO object
 
@@ -466,5 +466,5 @@ private:
   { return false; }
 };
 
-DUECA_NS_END;
+} // namespace dueca
 #endif

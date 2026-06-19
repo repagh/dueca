@@ -19,7 +19,7 @@
 #include <dueca_ns.h>
 #include <boost/intrusive_ptr.hpp>
 
-DUECA_NS_START;
+namespace dueca {
 
 /** Base class for callback mechanism, 1 parameter
 
@@ -145,6 +145,6 @@ typename CommonCallbackBase<RET,A1>::smart_ptr_type common_callback
     (new CommonCallback<RET,A1,M>(obj, call));
 }
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

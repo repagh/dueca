@@ -18,7 +18,7 @@
 #include <glob.h>
 #include <iostream>
 
-DUECA_NS_START
+namespace dueca {
 
 FindFiles::FindFiles()
 {
@@ -80,4 +80,4 @@ FindFilesError::~FindFilesError()
   //
 }
 
-DUECA_NS_END
+} // namespace dueca

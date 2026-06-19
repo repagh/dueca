@@ -21,7 +21,7 @@
 #include <dueca_ns.h>
 #include <dassert.h>
 #include <AsyncList.hxx>
-DUECA_NS_START
+namespace dueca {
 
 /** Time reading and time management (waiting periods etcetera)
     object. Helper to the Ticker, this functionality was separated off
@@ -283,5 +283,5 @@ public:
   { assert(singleton != NULL); return singleton; }
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

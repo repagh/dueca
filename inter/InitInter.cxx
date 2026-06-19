@@ -24,7 +24,7 @@
 #include <dueca_ns.h>
 #include <iostream>
 
-USING_DUECA_NS;
+using namespace dueca;
 
 extern "C"
 LNK_PUBLICC void InitInter()

@@ -25,7 +25,7 @@
 #include "GtkGladeWindow.hxx"
 #include <gtk/gtk.h>
 
-DUECA_NS_START
+namespace dueca {
 
 // GObject derived struct to pass data between interface and application
 struct _DChannelInfo;
@@ -104,7 +104,7 @@ public: // construction and further specification
   bool setTimeSpec(const TimeSpec &ts);
 
   /** Request check on the timing. */
-  bool checkTiming(const vector<int> &i);
+  bool checkTiming(const std::vector<int> &i);
 
 protected:
   /** update view */
@@ -209,6 +209,6 @@ public:
   void monitorToggle(GtkCheckButton *btn, _DChannelInfo *path_str);
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

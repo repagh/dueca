@@ -16,11 +16,10 @@
 
 #include <map>
 #include <sys/types.h>
-using namespace std;
 
 // forward declaration
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 class Arena;
 
 /** Specification of an Arena. */
@@ -43,7 +42,7 @@ class ArenaPool
 {
 
   /** Array with a pool of arenas. */
-  map<size_t,Arena*> pool;
+  std::map<size_t,Arena*> pool;
 
   /** Maximum size available in the arenas. */
   size_t             max_size;
@@ -72,8 +71,8 @@ public:
       this pool. */
   inline size_t getMaxSize() const { return max_size;}
 };
-DUECA_NS_END
+} // namespace dueca
 
-#define arena_pool DUECA_NS ::ArenaPool::single()
+#define arena_pool dueca ::ArenaPool::single()
 
 #endif

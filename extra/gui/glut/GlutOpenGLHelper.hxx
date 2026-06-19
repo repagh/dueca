@@ -17,7 +17,7 @@
 
 #include <OpenGLHelper.hxx>
 
-DUECA_NS_START;
+namespace dueca {
 
 /** This class defines the basic opengl operations. Derived classes
     implement these for specific windowing interfaces. */
@@ -74,6 +74,6 @@ public:
   ~GlutOpenGLHelper();
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

@@ -19,7 +19,7 @@
 #include <dueca/SimTime.hxx>
 #include <exception>
 
-DUECA_NS_START
+namespace dueca {
 
 /** Thrown when the DUECA entity cannot be found */
 class dueca_entity_missing: public std::exception
@@ -103,6 +103,6 @@ public:
 
 
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

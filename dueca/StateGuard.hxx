@@ -17,7 +17,7 @@
 
 #include <stringoptions.h>
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 // forward declarations
 class StateGuardData;
@@ -107,7 +107,7 @@ private:
 };
 
 
-DUECA_NS_END
+} // namespace dueca
 #endif
 
 

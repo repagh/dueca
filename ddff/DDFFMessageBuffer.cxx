@@ -18,7 +18,7 @@
 #include <exception>
 #include <limits>
 
-DUECA_NS_START;
+namespace dueca {
 
 #define DEBPRINTLEVEL -1
 #include "debprint.h"
@@ -93,4 +93,4 @@ void DDFFMessageBuffer::zeroUnused()
   }
 }
 
-DUECA_NS_END;
+} // namespace dueca

@@ -27,7 +27,7 @@
 #include <boost/scoped_ptr.hpp>
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 class TriggerPuller;
 struct Snapshot;
 struct IncoSpec;
@@ -207,5 +207,5 @@ protected:
       condition calculations. */
   virtual void trimCalculation(const TimeSpec& ts, const TrimMode& mode);
 };
-DUECA_NS_END
+} // namespace dueca
 #endif

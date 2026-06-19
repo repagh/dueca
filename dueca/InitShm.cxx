@@ -30,7 +30,7 @@
 #include "dueca_ns.h"
 
 
-DUECA_NS_START
+namespace dueca {
 
 #if defined(SCRIPT_SCHEME)
 template<>
@@ -78,6 +78,6 @@ LNK_PUBLICC void InitShm()
   init_dueca_shmdeps();
 }
 
-DUECA_NS_END
+} // namespace dueca
 
 

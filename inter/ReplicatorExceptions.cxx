@@ -14,7 +14,7 @@
 #define ReplicatorExceptions_cxx
 #include "ReplicatorExceptions.hxx"
 
-STARTNSREPLICATOR;
+namespace dueca {
 
 const char* dataclassdiffers::what() const throw()
 {
@@ -27,4 +27,4 @@ dataclassdiffers::dataclassdiffers():
   //
 }
 
-ENDNSREPLICATOR;
+} // namespace dueca

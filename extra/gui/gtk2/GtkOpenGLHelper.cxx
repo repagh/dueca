@@ -21,7 +21,7 @@
 #include <dassert.h>
 #include <GuiHandler.hxx>
 
-DUECA_NS_START;
+namespace dueca {
 
 /** A struct for translation of Gtk keycodes to the Glut key codes
     adopted in DUECA. */
@@ -136,7 +136,7 @@ static gboolean on_gtk_gl_key_press_event(GtkWidget *w,
   }
 
   // cannot find anything here
-  cerr << "No key for GTK keycode " << event->keyval << std::endl;
+  std::cerr << "No key for GTK keycode " << event->keyval << std::endl;
   return TRUE;
 }
 
@@ -296,4 +296,4 @@ void GtkGLWindowHelper::show()
   gtk_widget_show_all(gtk_win_id);
 }
 
-DUECA_NS_END;
+} // namespace dueca

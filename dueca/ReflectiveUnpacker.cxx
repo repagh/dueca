@@ -40,6 +40,7 @@
 
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
+using namespace std;
 
 /** Macros for calculating check number. */
 #define ROTATE_RIGHT(c) \
@@ -47,7 +48,7 @@ if ((c) & 01) (c) = ((c) >>1) + 0x80000000; else (c) >>= 1;
 #define AMALGI(d, I) \
 { ROTATE_RIGHT(I); I = (I ^ d); }
 
-DUECA_NS_START
+namespace dueca {
 
 int ReflectiveUnpacker::unpacker_no;
 
@@ -415,7 +416,6 @@ ostream& HeadInfo::print(ostream& os) const
      << " sender=" << sender << ")";
   return os;
 }
+template <> const char *getclassname<ReflectiveUnpacker>() { return "ReflectiveUnpacker"; }
 
-DUECA_NS_END
-
-
+} // namespace dueca

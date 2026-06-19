@@ -13,7 +13,7 @@
 
 #include "ModuleIdList.hxx"
 #include <iostream>
-DUECA_NS_START
+namespace dueca {
 
 ModuleIdList::ModuleIdList() :
   ns(NameSet("", "", "")),
@@ -57,4 +57,4 @@ std::ostream& operator << (std::ostream& os, const ModuleIdList& il)
   return os << "ModuleIdList(ns=" << il.ns << ",object=" << il.object
             << ')';
 }
-DUECA_NS_END
+} // namespace dueca

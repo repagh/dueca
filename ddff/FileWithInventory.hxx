@@ -18,7 +18,7 @@
 #include "FileHandler.hxx"
 #include <string>
 
-DDFF_NS_START
+namespace dueca { namespace ddff {
 
 /** Derived file handler for the DDFF file format.
 
@@ -164,14 +164,14 @@ public:
                                         bool slice_indexed=false);
 };
 
-DDFF_NS_END
+} } // namespace ddff namespace dueca
 
-PRINT_NS_START
+namespace std {
 inline ostream & operator <<
 (ostream& os, const dueca::ddff::FileWithInventory::Entry& o)
 {
   return os << "Entry(" << o.key << "/" << o.id << " " << o.label << ")";
 }
-PRINT_NS_END
+} // namespace std
 
 #endif

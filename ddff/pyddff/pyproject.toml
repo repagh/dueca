@@ -17,13 +17,13 @@ requires-python = ">=3.6"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: EUPL License",
     "Operating System :: OS Independent" ]
 dependencies = [
   "msgpack>=1.0.3",
   "crcmod>=1.7",
   "h5py"
 ]
+license = "EUPL-1.2"
 
 [project.scripts]
 ddff-convert = "pyddff.ddff_convert:main"

@@ -18,6 +18,6 @@
 
 #define LSSIZE 236
 
-typedef DUECA_NS ::Dstring<LSSIZE> LogString;
+typedef dueca ::Dstring<LSSIZE> LogString;
 
 #endif

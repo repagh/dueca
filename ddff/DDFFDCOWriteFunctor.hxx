@@ -20,7 +20,7 @@
 #include <dueca/DataTimeSpec.hxx>
 #include "DDFFExceptions.hxx"
 
-DDFF_NS_START
+namespace dueca { namespace ddff {
 
 /** Base class for reading DCO data from file. */
 class DDFFDCOWriteFunctor: public ::dueca::DCOFunctor
@@ -54,6 +54,6 @@ public:
   virtual ~DDFFDCOWriteFunctor();
 };
 
-DDFF_NS_END
+} } // namespace ddff namespace dueca
 
 #endif

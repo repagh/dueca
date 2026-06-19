@@ -17,7 +17,7 @@
 #include "DusimeController.hxx"
 #include "GtkGladeWindow.hxx"
 
-DUECA_NS_START
+namespace dueca {
 
 struct ParameterTable;
 
@@ -95,5 +95,5 @@ private:
   /** call from Replay supporting modules that replay is enabled */
   void setReplayPrepared(bool replay_prepared);
 };
-DUECA_NS_END
+} // namespace dueca
 #endif

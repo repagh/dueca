@@ -16,7 +16,7 @@
 #define CommObjectMemberArity_hxx
 #include <dueca_ns.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 /** Enumeration value defining the different possibilities for members. */
 enum MemberArity {
@@ -27,6 +27,6 @@ enum MemberArity {
                        cannot use push_back */
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

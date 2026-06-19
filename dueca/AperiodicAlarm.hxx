@@ -20,7 +20,7 @@
 #include <Trigger.hxx>
 #include <AsyncList.hxx>
 
-DUECA_NS_START
+namespace dueca {
 
 /** This is a triggering device that can provide your activity with
     user-controlled, a-periodic triggering. Create an a-periodic
@@ -86,6 +86,6 @@ public:
   void requestAlarm();
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

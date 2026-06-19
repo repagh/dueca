@@ -19,7 +19,7 @@
 
 #include <dueca_ns.h>
 
-DUECA_NS_START
+namespace dueca {
 
 class GenericTypeCreator;
 class ModuleCreator;
@@ -31,7 +31,7 @@ class CreationCenter
 {
   /** Map of module names to the (pointers of) the objects that can
       actually create these modules. */
-  map<vstring, GenericTypeCreator*> type_map;
+  std::map<vstring, GenericTypeCreator*> type_map;
 
   /** Only one factory of this kind may exist. */
   static CreationCenter* singleton;
@@ -66,6 +66,6 @@ public:
 
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

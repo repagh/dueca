@@ -12,7 +12,7 @@
 #pragma once
 #include "dueca_ns.h"
 
-DUECA_NS_START;
+namespace dueca {
 
 // advance definitions
 struct EntryConfigurationChange;
@@ -64,4 +64,4 @@ struct EntryConfigurationChange {
   void insert(EntryConfigurationChangePtr toinsert);
 };
 
-DUECA_NS_END;
+} // namespace dueca

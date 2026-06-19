@@ -28,7 +28,7 @@
 #include <dueca_ns.h>
 #include <gtk/gtk.h>
 
-DUECA_NS_START
+namespace dueca {
 struct ParameterTable;
 
 /** Handles -- at least part of -- the communication with the
@@ -136,7 +136,7 @@ public:
   ~GtkDuecaView();
 
   /** Specification of window size. */
-  bool setPositionAndSize(const vector<int> &p);
+  bool setPositionAndSize(const std::vector<int> &p);
 
   /** Start the GtkDuecaView module. Is not really used, GtkDuecaView is
       intrinsically started. */
@@ -248,5 +248,5 @@ public:
   void requestToKeepRunning(bool keep_running) override;
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

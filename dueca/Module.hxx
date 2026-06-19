@@ -21,7 +21,7 @@
 #include <memory>
 #include <ReferenceHolder.hxx>
 
-DUECA_NS_START
+namespace dueca {
 class Entity;
 class TimeSpec;
 class CriticalActivity;
@@ -202,5 +202,5 @@ private:
   inline std::shared_ptr<ReferenceHolder> getHolder() { return holder; }
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

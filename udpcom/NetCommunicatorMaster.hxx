@@ -18,7 +18,7 @@
 #include "ConfigBuffer.hxx"
 #include <UDPPeerAcknowledge.hxx>
 
-DUECA_NS_START;
+namespace dueca {
 
 class WebsockCommunicatorConfig;
 
@@ -292,6 +292,6 @@ protected:
   void communicatorAddTiming(ControlBlockWriter &cb) final;
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

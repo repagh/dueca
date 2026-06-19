@@ -28,8 +28,8 @@
 #include <rapidjson/writer.h>
 
 
-DUECA_NS_START;
-WEBSOCK_NS_START;
+namespace dueca {
+namespace websock {
 
 /** Encoder that packs to json, or decodes from json */
 struct jsonpacker
@@ -168,5 +168,5 @@ struct jsonunpacker
 };
 #include <undebug.h>
 
-WEBSOCK_NS_END;
-DUECA_NS_END;
+} // namespace websock
+} // namespace dueca

@@ -38,7 +38,7 @@
 #include "dueca_ns.h"
 #include <dueca/stringoptions.h>
 
-DUECA_NS_START
+namespace dueca {
 
 // forward declarations
 class Transporter;
@@ -245,7 +245,7 @@ public:
   void changePriority(const PrioritySpec& s);
 
   /** Print to stream, for debugging purposes. */
-  void print(ostream& os);
+  std::ostream& print(std::ostream& os) const;
 
   /** Find out how many more instances of this activity are
       scheduled. This can be used in display drawing modules, to exit
@@ -360,5 +360,5 @@ private:
   friend class ActivityItem;
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

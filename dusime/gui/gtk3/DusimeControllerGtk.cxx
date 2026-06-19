@@ -31,7 +31,7 @@
 
 #include <debug.h>
 
-DUECA_NS_START
+namespace dueca {
 
 const char* const DusimeControllerGtk::classname = "dusime";
 
@@ -288,4 +288,4 @@ gboolean DusimeControllerGtk::cbAdvance(GtkWidget *widget,
 }
 
 
-DUECA_NS_END;
+} // namespace dueca

@@ -42,6 +42,8 @@
 const static double test_failprob = 0.0001;
 #endif
 
+namespace dueca {
+
 // constructor
 NetCommunicatorPeer::NetCommunicatorPeer() :
   NetCommunicator(),
@@ -828,3 +830,4 @@ void NetCommunicatorPeer::setStopTime(const TimeTickType &last_tick)
     last_run_tick = last_tick + Ticker::single()->getIncrement(5.0);
   }
 };
+} // namespace dueca

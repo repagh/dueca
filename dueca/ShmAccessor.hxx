@@ -20,7 +20,7 @@
 #include <ReflectiveAccessor.hxx>
 #include <dueca_ns.h>
 
-DUECA_NS_START
+namespace dueca {
 class Activitymanager;
 
 /** This is a media accessor based on a common memory principle. This
@@ -100,5 +100,5 @@ public:
   void write(volatile uint32_t* address, uint32_t value);
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

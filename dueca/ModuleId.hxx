@@ -19,10 +19,9 @@
 #include <stringoptions.h>
 #include <vector>
 #include <map>
-using namespace std;
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 struct NameSet;
 class NotFound;
 
@@ -75,7 +74,7 @@ class ModuleId
   static std::vector<vpernode> module_id_map;
 
   /** Constructor, using a name */
-  ModuleId(const vector<vstring>& nameparts,
+  ModuleId(const std::vector<vstring>& nameparts,
            const GlobalId& id);
 
   /** Copy constructor, private, not implemented. Should never copy */
@@ -99,7 +98,7 @@ public:
   static ModuleId& create(const NameSet& ns, const GlobalId& id);
 
   /** Create a new ModuleId. */
-  static ModuleId& create(const vector<vstring>& nameparts,
+  static ModuleId& create(const std::vector<vstring>& nameparts,
                           const GlobalId& id);
 
   /** Create a new ModuleId with a limited number of parts. */
@@ -144,10 +143,10 @@ private:
   static bool exists(const GlobalId& id);
 };
 
-DUECA_NS_END
+} // namespace dueca
 
-PRINT_NS_START
-inline ostream& operator << (ostream& o, const DUECA_NS::ModuleId& cl)
+namespace std {
+inline ostream& operator << (ostream& o, const dueca::ModuleId& cl)
 { return cl.print(o); }
-PRINT_NS_END
+} // namespace std
 #endif

@@ -23,7 +23,7 @@
 #include <cstddef>
 #include <dueca_ns.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 class Activity;
 class GenericCallback;
@@ -229,6 +229,6 @@ private:
   ChannelWriteToken &operator=(const ChannelWriteToken &);
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

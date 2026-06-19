@@ -34,14 +34,28 @@ class PolicyCondition:
     # dictionary of available conditions
     _conditions = {}
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.condition = []
+        unused = [ ka for ka in kwargs.keys() if not (ka.startswith('_') or ka.startswith('p_')) ]
+        if unused:
+            dprint("Unused parameters:", unused)
 
     def holds(self, **kwargs):
-        raise(Exception("Cannot determine holds, use a derived class, not PolicyCondition"))
+        """Test this condition, impossible for base PolicyCondition
+        """
+        raise ValueError("Cannot determine holds, use a derived class, not PolicyCondition")
 
     @classmethod
     def register(cls, name, action):
+        """Register a new condition type
+
+        Parameters
+        ----------
+        name : str
+            XML name for the condition
+        action : PolicyCondition
+            Condition class
+        """
         if name in cls._conditions:
             raise(IndexError(
                     f"Attempting double registration for condition {name}"))
@@ -49,6 +63,18 @@ class PolicyCondition:
 
     @classmethod
     def create(cls, node):
+        """Create a condition based on an XML node
+
+        Parameters
+        ----------
+        node : XML node
+            Node with parameters etc for the condition
+
+        Returns
+        -------
+        PolicyCondition
+            One of the condition objects
+        """
 
         # condition type
         name = node.get('type')
@@ -70,35 +96,31 @@ class PolicyCondition:
 
 class ComplexCondition(PolicyCondition):
 
-    def __init__(self, _node, resultvar=None, inputvar=None, **kwargs):
+    def __init__(self, _node, resultvar='', inputvar='', **kwargs):
+        """Base class for combining / altering conditions
+
+        Parameters
+        ----------
+        _node : XMLNode
+            Current node from which class is made
+        resultvar : str, optional
+            Name of the result variable, by default ''
+        inputvar : str, optional
+            Name of detail input variables comma-separated, by default ''
+        """
 
         self.subconditions = []
-        self.inputvars = []
-        if not hasattr(self, 'resultvar'):
-            self.resultvar = None
-        try:
-            if self.resultvar is not None:
-                self.resultvar = str(resultvar).strip()
-            if inputvar is not None:
-                self.inputvars = list(map(str.strip, str(inputvar).split(',')))
-            dprint(f"Compound condition, input {self.inputvars} ({len(self.inputvars)})"
-                   f" output {self.resultvar}")
-        except AttributeError as e:
-            if not(inputvar is None and resultvar is None):
-                print(
-                    f"Cannot create compound condition, parameter error {e},"
-                    f" resultvar:{resultvar} inputvar:{inputvar}"
-                    f" kwargs:{kwargs}", file=sys.stderr)
-                raise e
-            pass
+        self.resultvar = str(resultvar).strip()
+        self.inputvars = (str(inputvar) and list(map(str.strip, str(inputvar).split(',')))) or []
 
+        # create the subconditions
         for sub in _node:
             if XML_comment(sub):
                 continue
             elif XML_tag(sub, 'condition'):
                 self.subconditions.append(
                         PolicyCondition.create(sub))
-
+        super().__init__(**kwargs)
 
 class ConditionConstant(PolicyCondition):
     """ True or false condition
@@ -119,8 +141,22 @@ class ConditionConstant(PolicyCondition):
 PolicyCondition.register("constant", ConditionConstant)
 
 
-def checkAndSet(pname, params, value):
-    if pname is not None:
+def check_and_set(pname:str, params:dict, value:list):
+    """Helper, to update a parameter workspace with new result values
+
+    Parameters
+    ----------
+    pname : str|None
+        Parameter name
+    params : dict
+        Current dictionary with parameter
+    value : list
+        List of result values
+    """
+    if pname:
         if pname in params:
             print(f"Warning, overwriting parameter {pname}")
         params[str(pname).strip()] = value
+        dprint(f"Result: {pname}")
+        for r in value:
+            dprint(f"  {r}")

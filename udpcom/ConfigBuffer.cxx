@@ -18,6 +18,7 @@
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
 
+namespace dueca {
 ConfigBuffer::ConfigBuffer(size_t defsize) :
   buffer(new char[defsize]),
   cindex(0),
@@ -96,4 +97,4 @@ void ConfigBuffer::saveForLater(unsigned level)
   }
 }
 
-
+}

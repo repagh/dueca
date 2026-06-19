@@ -23,7 +23,7 @@
 #include <inttypes.h>
 #include <boost/format.hpp>
 
-DUECA_NS_START;
+namespace dueca {
 
 /** Variable-sized vector, allocates its for the data from the heap,
     so not the most efficient for high-rate real-time data sending.
@@ -306,11 +306,11 @@ struct dco_traits<varvector<D>> :
 template <typename D>
 struct dco_nested<varvector<D>> : public dco_nested<D> {};
 
-DUECA_NS_END;
+} // namespace dueca
 #define varvector_hxx
 #include <msgpack.hxx>
 
-MSGPACKUS_NS_START;
+namespace msgunpack {
 template <typename S, typename T>
 void msg_unpack(S &i0, const S &iend, dueca::varvector<T> &i);
-MSGPACKUS_NS_END;
+} // namespace msgunpack

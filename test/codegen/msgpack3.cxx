@@ -21,8 +21,9 @@
 #include <dueca/MessageBuffer.hxx>
 #include <dueca/msgpack.hxx>
 #include <dueca/msgpack-unstream-iter.ixx>
+using namespace std;
 
-USING_DUECA_NS;
+using namespace dueca;
 
 int main()
 {

@@ -26,7 +26,7 @@
 
     Conversion routines for JSON to DCO */
 
-DUECA_NS_START;
+namespace dueca {
 class CommObjectWriter;
 
 /** Shorthand for the used JSON type */
@@ -39,9 +39,6 @@ typedef rapidjson::GenericValue<rapidjson::UTF8<> > JValue;
 */
 void JSONtoDCO(const JValue &reader,
                CommObjectWriter& writer);
-
-/** classname function, should exist for DCO objects */
-template <typename T> const char* getclassname();
 
 /** Convert the data from a JSON representation into
     a DCO object.
@@ -60,5 +57,5 @@ void json_to_dco(RD &reader, DCO& object)
 }
 
 
-DUECA_NS_END;
+} // namespace dueca
 #endif

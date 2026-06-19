@@ -71,7 +71,7 @@ public:
 
  */
 
-DUECA_NS_START
+namespace dueca {
 
 /* Simple singleton with an InformationStash object. This initially stores
    and later sends all changes regarding read access to channel entries */
@@ -1150,7 +1150,7 @@ void UnifiedChannel::addRemoteDestination(const LocationId &location_id)
     PackerManager::findMatchingTransport(location_id, transport_class);
   // bool firsttransport = transporters.size() == 0;
   transporters_type::iterator t2 =
-    find(transporters.begin(), transporters.end(), t);
+    std::find(transporters.begin(), transporters.end(), t);
   if (t2 == transporters.end()) {
     ScopeLock l(entries_lock);
     config_version++;
@@ -1793,7 +1793,7 @@ void UnifiedChannel::releaseMonitor(entryid_type entry)
   entries[entry]->monitorReleaseData();
 }
 
-DUECA_NS_END
+} // namespace dueca
 
 // added here, to remove conflicts with DEB definition
 #include <undebprint.h>

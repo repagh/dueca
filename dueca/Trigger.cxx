@@ -20,6 +20,7 @@
 #include "debug.h"
 #include <algorithm>
 #include <dueca-conf.h>
+using namespace std;
 
 #define DEBPRINTLEVEL -1
 #define DEBA(A)
@@ -43,7 +44,7 @@
 #endif
 #endif
 
-DUECA_NS_START
+namespace dueca {
 
 CODE_REFCOUNT(TriggerTarget);
 
@@ -698,4 +699,4 @@ ConditionAndPtr operator&&(TriggerPuller &c1, ConditionAndPtr c2)
   return c2;
 }
 
-DUECA_NS_END
+} // namespace dueca

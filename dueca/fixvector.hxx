@@ -22,7 +22,7 @@
 #include <vectorexceptions.hxx>
 #include <boost/format.hpp>
 
-DUECA_NS_START;
+namespace dueca {
 
 /** Fixed-sized vector
 
@@ -242,9 +242,9 @@ struct dco_traits<fixvector<N, D>> : public dco_traits_iterablefix,
 template <size_t N, typename D>
 struct dco_nested<fixvector<N, D>> : public dco_nested<D> {};
 
-DUECA_NS_END;
+} // namespace dueca
 
-PRINT_NS_START;
+namespace std {
 /** Print a fixvector */
 template <size_t N, typename D>
 ostream &operator<<(ostream &os, const dueca::fixvector<N, D> &v)
@@ -254,13 +254,13 @@ ostream &operator<<(ostream &os, const dueca::fixvector<N, D> &v)
     os << x << ",";
   return os << "}";
 }
-PRINT_NS_END;
+} // namespace std
 
 #define fixvector_hxx
 #include "msgpack.hxx"
 
-MSGPACKUS_NS_START;
+namespace msgunpack {
 template <typename S, size_t N, typename T>
 void msg_unpack(S &i0, const S &iend, dueca::fixvector<N, T> &i);
 
-MSGPACKUS_NS_END;
+} // namespace msgunpack

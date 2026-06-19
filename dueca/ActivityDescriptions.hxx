@@ -25,7 +25,7 @@
 #include <fstream>
 #include <boost/scoped_ptr.hpp>
 
-DUECA_NS_START
+namespace dueca {
 
 /** Container for activity descriptions. */
 class ActivityDescriptions
@@ -43,7 +43,7 @@ class ActivityDescriptions
   boost::scoped_ptr<ChannelReadToken> r_description;
 
   /** File for dumping activity description information. */
-  ofstream                       activity_dump;
+  std::ofstream    activity_dump;
 
   /** Callback object. */
   Callback<ActivityDescriptions> cb;
@@ -72,5 +72,5 @@ public:
   const GlobalId& getId() const;
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

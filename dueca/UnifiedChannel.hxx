@@ -33,7 +33,7 @@
 #include "UCDataclassLink.hxx"
 #include <ChannelReadInfo.hxx>
 
-DUECA_NS_START
+namespace dueca {
 class TimeSpec;
 struct ChannelEndUpdate;
 class GenericCallback;
@@ -549,7 +549,7 @@ public:
   void detachClientlinks(UCClientHandlePtr client);
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 
 /* Design documentation

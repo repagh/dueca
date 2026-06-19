@@ -19,7 +19,7 @@
 #define DO_INSTANTIATE
 #include "AsyncList.hxx"
 
-DUECA_NS_START;
+namespace dueca {
 
 void intrusive_ptr_add_ref(const ReflectoryParent* t)
 { t->intrusive_refcount++; }
@@ -35,4 +35,4 @@ ReflectoryParent::~ReflectoryParent()
 
 template class ReflectoryBase<dueca::TimeTickType>;
 
-DUECA_NS_END;
+} // namespace dueca

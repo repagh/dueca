@@ -48,8 +48,13 @@ class MatchSpan:
         self.matchre = matchre
 
     def explain(self, label='default'):
-        return f"Match in category {label}, l: {self.line}, {self.span[0]}-{self.span[1]} on {self.matchre}"
+        return f"Match in category {label}, l: {self.line}, {self.span[0]}-{self.span[1]} on '{self.matchre.group(0)}'"
 
+    def __str__(self):
+        return f"Match(l={self.line} {self.span[0]}-{self.span[1]})"
+
+    def __repr__(self):
+        return str(self)
 
 class MatchReference:
 
@@ -76,24 +81,28 @@ class MatchReferenceDco(MatchReference):
                  commobjects: CommObjectsList):
         self.matchFunction = matchFunction
         self.commobjects = commobjects
-        value = bool([c for c in commobjects if matchFunction(c.base_project, c.dco)])
+        self.filename = commobjects.fname
+        #print(self.commobjects)
+        #for c in self.commobjects:
+        #    print(c.base_project, c.dco, c.homedco)
+        value = bool([c for c in commobjects if matchFunction(c.base_project, c.dco, c.homedco)])
 
         super(MatchReferenceDco, self).__init__(value)
 
     def explain(self):
+
         res = [ f'For {self.commobjects.fname}:' ]
         if self.value:
             res.extend([ self.matchFunction.explain(c.base_project, c.dco)
                          for c in self.commobjects
-                         if self.matchFunction(c.base_project, c.dco) ])
+                         if self.matchFunction(c.base_project, c.dco, c.homedco) ])
         else:
             res.append(self.matchFunction.explain())
 
         return '\n'.join(res)
 
-    @property
-    def filename(self):
-        return self.commobjects.fname
+    def __str__(self):
+        return f"MatchReferenceDco={self.value} {[c.dco for c in self.commobjects if self.matchFunction(c.base_project, c.dco, c.homedco)]} :{self.filename}"
 
 
 class MatchReferenceModule(MatchReference):
@@ -124,8 +133,14 @@ class MatchReferenceModule(MatchReference):
 
     @property
     def filename(self):
-        return modules.fname
+        return self.modules.fname
 
+    def __str__(self):
+        return f"MatchReferenceModule={self.value}[" + \
+                ', '.join([f"{m['project']}/{m['module']}"
+                        for m in self.modules
+                        if self.matchFunction(m['project'], m['module'])]) + \
+                f"] :{self.filename}"
 
 class MatchReferenceFile(MatchReference):
     """Match on a file (typically given by a pattern)
@@ -166,6 +181,8 @@ class MatchReferenceFile(MatchReference):
             res.append(m.explain())
         return '\n'.join(res)
 
+    def __str__(self):
+        return f"MatchReferenceFile={self.value} {[(str(m)) for m in self.matches]} :{self.filename}"
 
 def trimList(l: list):
     return [ e for e in l if e.value ]

@@ -18,7 +18,7 @@
 #include "DDFFMessageBuffer.hxx"
 #include <new>
 
-DDFF_NS_START
+namespace dueca { namespace ddff {
 
 /** Specific allocator for MessageBuffer objects in async queue list.
 
@@ -95,6 +95,6 @@ struct AQMTMessageBufferAlloc
   AQMTMessageBufferAlloc(): bufsize(4096U) {}
 };
 
-DDFF_NS_END
+} } // namespace ddff namespace dueca
 
 #endif

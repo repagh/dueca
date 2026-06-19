@@ -65,6 +65,7 @@
 #include <Callback.hxx>
 #include <InformationStash.ixx>
 #include <debprint.h>
+using namespace std;
 
 /* PRIORITY_BASE is a base number of priority levels that is
    added to the minimum priority level, and at that level the
@@ -81,7 +82,7 @@
 #define PRIORITY_BASE 10
 #endif
 
-DUECA_NS_START
+namespace dueca {
 
 #ifdef USE_POSIX_THREADS
 /** A condition variable for the thread coordination. */
@@ -1300,4 +1301,7 @@ void Environment::setExitCode(int ecode)
   exitcode = ecode;
 }
 
-DUECA_NS_END
+template <> const char *getclassname<Environment>() { return "Environment"; }
+
+
+} // namespace dueca

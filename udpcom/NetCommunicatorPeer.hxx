@@ -24,6 +24,8 @@
 
 #include <Ticker.hxx>
 
+namespace dueca {
+
 /** Generic TCP/IP + packet (UDP or websocket) communication base
     class.
 
@@ -46,7 +48,7 @@
     NetCommunicatorPeer class itself. The callback functions only add
     possibilities for client configuration.
  */
-class NetCommunicatorPeer: public NetCommunicator
+class NetCommunicatorPeer : public NetCommunicator
 {
 private:
   /** restrict these */
@@ -57,55 +59,53 @@ protected:
       @{ */
 
   /** Master url, websocket URL for contacting the master. */
-  std::string                         master_url;
+  std::string master_url;
 
   /** Data url override, for cases where port mapping alters the data
       port */
-  std::string                         override_data_url;
+  std::string override_data_url;
   /** @} */
 
   /** connection to master for configuration */
-  boost::intrusive_ptr<WebsockCommunicatorPeerConfig>
-                                      conf_comm;
+  boost::intrusive_ptr<WebsockCommunicatorPeerConfig> conf_comm;
 
 private:
-
   /** Communication handling buffer */
-  ConfigBuffer                        commbuf;
+  ConfigBuffer commbuf;
 
   /** Preceding id, one to react to with UDP messages */
-  uint16_t                            follow_id;
+  uint16_t follow_id;
 
   /** Last communication cycle */
-  uint32_t                            last_cycle;
+  uint32_t last_cycle;
 
   /** Flag to report stop */
-  volatile bool                       stop_commanded;
+  volatile bool stop_commanded;
 
   /** List with changes in follow id */
-  AsyncList<UDPPeerConfig>            follow_changes;
+  AsyncList<UDPPeerConfig> follow_changes;
 
   /** Connection established flag */
-  bool                                connection;
+  bool connection;
 
   /** UDP cycle tracking flag */
-  bool                                trackingudpcycle;
+  bool trackingudpcycle;
 
   /** Tick time */
-  TimeTickType                        current_tick;
+  TimeTickType current_tick;
 
   /** Node ID claimed by the incoming message */
-  uint16_t                            i_nodeid;
+  uint16_t i_nodeid;
 
   /** New number of peers */
-  uint16_t                            lastround_npeers;
+  uint16_t lastround_npeers;
 
   /** Time to send */
-  bool                                myturntosend;
+  bool myturntosend;
 
   /** Last tick for checkup */
-  TimeTickType                        last_run_tick;
-  
+  TimeTickType last_run_tick;
+
 protected:
   /** Constructor */
   NetCommunicatorPeer();
@@ -118,22 +118,22 @@ private:
   unsigned readConfigSocket(bool wait);
 
   /** Get the config message and pass these */
-  void receiveConfigMessage(MessageBuffer::ptr_type& buffer);
+  void receiveConfigMessage(MessageBuffer::ptr_type &buffer);
 
   /** decode configuration socket for additional data */
   bool decodeConfigData();
 
   /** setup connection */
-  void setupConnection(Activity& activity);
+  void setupConnection(Activity &activity);
 
   /** Do one loop cycle
 
       @param act    activity, used for signaling blocking actions */
-  void _oneCycle(Activity& act);
+  void _oneCycle(Activity &act);
 
   /** Unpack the data, this function is used as callback by the
       data_comm object. */
-  void unpackPeerData(MessageBuffer::ptr_type& buffer);
+  void unpackPeerData(MessageBuffer::ptr_type &buffer);
 
   /** Send any planned changes (leaving), and client data across */
   void peerSendConfig();
@@ -168,7 +168,7 @@ protected:
                      socket needs to be read further before the
                      information is complete).
   */
-  virtual void clientDecodeConfig(AmorphReStore& s) = 0;
+  virtual void clientDecodeConfig(AmorphReStore &s) = 0;
 
   /** encode configuration payload.
 
@@ -191,12 +191,12 @@ protected:
 
       @param last_tick Tick time for stopping
   */
-  void setStopTime(const TimeTickType& last_tick);
+  void setStopTime(const TimeTickType &last_tick);
 
   /** Do one loop cycle
 
       @param act    activity, used for signaling blocking actions */
-  void oneCycle(Activity& act);
+  void oneCycle(Activity &act);
 
   /** Enter blocking loop
 
@@ -205,7 +205,7 @@ protected:
 
       @param act    activity, used for signaling blocking actions
    */
-  void startCyclic(Activity& act);
+  void startCyclic(Activity &act);
 
   /** Break the connections */
   void clearConnections();
@@ -213,6 +213,7 @@ protected:
   /** @} */
 };
 
+} // namespace dueca
 #endif
 
 /* Send state logic:

@@ -21,7 +21,9 @@
 #include "debug.h"
 #define DO_INSTANTIATE
 #include "VarProbe.hxx"
-DUECA_NS_START
+using namespace std;
+
+namespace dueca {
 #include <debprint.h>
 
 // The parameter table describes the optional parameters that may be
@@ -87,4 +89,6 @@ PrioritySpec::~PrioritySpec()
   //
 }
 
-DUECA_NS_END
+template <> const char *getclassname<PrioritySpec>() { return "PrioritySpec"; }
+
+} // namespace dueca

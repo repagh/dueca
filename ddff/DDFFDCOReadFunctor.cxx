@@ -14,7 +14,7 @@
 #define DDFFDCOReadFunctor_cxx
 #include "DDFFDCOReadFunctor.hxx"
 
-DDFF_NS_START
+namespace dueca { namespace ddff {
 
 DDFFDCOReadFunctor::DDFFDCOReadFunctor(FileStreamWrite::pointer wstream,
                                        const dueca::DataTimeSpec* startend) :
@@ -30,4 +30,4 @@ DDFFDCOReadFunctor::~DDFFDCOReadFunctor()
 
 }
 
-DDFF_NS_END
+} } // namespace ddff namespace dueca

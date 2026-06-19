@@ -24,7 +24,7 @@
 #include <dueca/visibility.h>
 #include <dueca_ns.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 class EventChannelEnd;
 struct NameSet;
@@ -224,7 +224,7 @@ public:
   { _sendEvent(edata, t); }
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif
 
@@ -233,7 +233,7 @@ DUECA_NS_END;
 #define EventAccessToken_ii
 
 #include "Event.hxx"
-DUECA_NS_START;
+namespace dueca {
 
 template<class T> EventChannelReadToken<T>::
 EventChannelReadToken(const GlobalId& holder,
@@ -335,7 +335,7 @@ void EventChannelWriteToken<T>::_sendEvent(const T *edata,
   delete edata;
 }
 
-DUECA_NS_END
+} // namespace dueca
 #endif
 #endif
 

@@ -11,7 +11,7 @@
 #define DO_INSTANTIATE
 #include "TypeCreator.hxx"
 
-USING_DUECA_NS;
+using namespace dueca;
 
 
 extern "C"

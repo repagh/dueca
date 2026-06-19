@@ -11,18 +11,15 @@
         license         : EUPL-1.2
 */
 
-#ifndef Arena_hh
-#define Arena_hh
+#pragma once
 
 #include <iostream>
 #include <sys/types.h>
-using namespace std;
 #include <dueca_ns.h>
 #include <iostream>
 #include <inttypes.h>
 #include <DAtomics.hxx>
-
-#define USE_BOOST_LOCKFREE
+#include <ArenaOptions.hxx>
 
 #ifdef USE_BOOST_LOCKFREE
 #include <boost/lockfree/stack.hpp>
@@ -30,7 +27,7 @@ using namespace std;
 
 template <class E> class LockFreeLIFO;
 
-DUECA_NS_START
+namespace dueca {
 
 /** Implementation of a memory arena, for fast allocation of
     fixed-size data blocks.
@@ -119,10 +116,8 @@ public:
   friend class NoBody;
 };
 
-DUECA_NS_END
+} // namespace dueca
 
-void* operator new(size_t sz, DUECA_NS ::Arena *a);
+void* operator new(size_t sz, dueca ::Arena *a);
 
-std::ostream& operator << (std::ostream& os, DUECA_NS ::Arena& a);
-
-#endif
+std::ostream& operator << (std::ostream& os, dueca ::Arena& a);

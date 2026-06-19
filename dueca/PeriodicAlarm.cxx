@@ -21,7 +21,7 @@
 #define DO_INSTANTIATE
 #include "AsyncList.hxx"
 
-DUECA_NS_START
+namespace dueca {
 
 PeriodicAlarm::PeriodicAlarm(const TimeSpec& ts) :
   TargetAndPuller
@@ -113,4 +113,4 @@ void PeriodicAlarm::changePeriodAndOffset(const TimeSpec& ts)
 const std::string& PeriodicAlarm::getTargetName() const
 { return name; }
 
-DUECA_NS_END
+} // namespace dueca

@@ -27,7 +27,7 @@
 #include <iomanip>
 #include <dueca_ns.h>
 
-DUECA_NS_START
+namespace dueca {
 
 void writeclock()
 {
@@ -42,4 +42,4 @@ void writeclock()
 #endif
 }
 
-DUECA_NS_END
+} // namespace dueca

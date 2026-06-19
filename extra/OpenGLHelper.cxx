@@ -18,7 +18,7 @@
 #include <iostream>
 #include <dassert.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 GLWindowHelper::GLWindowHelper()
 {
@@ -69,4 +69,4 @@ bool OpenGLHelper::setSweeper(int priority)
 }
 
 
-DUECA_NS_END;
+} // namespace dueca

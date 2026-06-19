@@ -36,7 +36,9 @@
 #define DO_INSTANTIATE
 #include "VarProbe.hxx"
 #include <debprint.h>
-DUECA_NS_START
+using namespace std;
+
+namespace dueca {
 
 int ReflectiveFillUnpacker::unique = 0;
 
@@ -286,5 +288,6 @@ ostream& operator << (ostream& os, const ReflectiveFillUnpacker& o)
   return os << "ReflectiveFillUnpacker(" << o.getId() << ')';
 }
 
+template <> const char *getclassname<ReflectiveFillUnpacker>() { return "ReflectiveFillUnpacker"; }
 
-DUECA_NS_END
+} // namespace dueca

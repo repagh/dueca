@@ -18,7 +18,7 @@
 #include <inttypes.h>
 #include <cstddef>
 
-DUECA_NS_START;
+namespace dueca {
 
 
 /** Buffer struct */
@@ -109,6 +109,6 @@ private:
   DDFFMessageBuffer(const DDFFMessageBuffer& o);
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

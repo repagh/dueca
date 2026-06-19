@@ -20,7 +20,7 @@
 
 // include the dusime header
 #include <dusime.h>
-USING_DUECA_NS;
+
 
 // include headers for functions/classes you need in the module
 #include "HdfLogNamespace.hxx"
@@ -33,8 +33,8 @@ USING_DUECA_NS;
 #include <memory>
 #include <boost/scoped_ptr.hpp>
 
-STARTHDF5LOG;
-USING_DUECA_NS;
+namespace dueca { namespace hdf5log {
+
 
 /** Generic HDF5 replaying.
 
@@ -208,7 +208,7 @@ public: // construction and further specification
   bool setTimeSpec(const TimeSpec& ts);
 
   /** Request check on the timing. */
-  bool checkTiming(const vector<int>& i);
+  bool checkTiming(const std::vector<int>& i);
 
   /** Specify a channel for receiving configuration/reprogram events */
   bool setConfigChannel(const std::string& cname);
@@ -242,6 +242,6 @@ private:
   void reSpool(const TimeTickType& tick);
 };
 
-ENDHDF5LOG;
+} } // namespace dueca namespace hdf5log
 
 #endif

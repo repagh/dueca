@@ -19,13 +19,13 @@
 
 // include the dusime header
 #include <dueca.h>
-USING_DUECA_NS;
+
 
 // include headers for functions/classes you need in the module
 #include "ChannelReplicator.hxx"
 #include <udpcom/NetCommunicatorMaster.hxx>
 
-STARTNSREPLICATOR;
+namespace dueca {
 
 /** A simple module for watching and replicating channel data.
 
@@ -142,7 +142,7 @@ public: // construction and further specification
   bool setTimeSpec(const TimeSpec &ts);
 
   /** Request check on the timing. */
-  bool checkTiming(const vector<int> &i);
+  bool checkTiming(const std::vector<int> &i);
 
   /** Send notices when peer joins */
   bool setJoinNoticeChannel(const std::string &channelname);
@@ -260,6 +260,6 @@ private:
   }
 };
 
-ENDNSREPLICATOR;
+} // namespace dueca
 
 #endif

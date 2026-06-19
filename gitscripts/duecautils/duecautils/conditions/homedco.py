@@ -1,7 +1,37 @@
-from .policycondition import PolicyCondition, checkAndSet
+from fractions import Fraction
+from .policycondition import PolicyCondition, check_and_set
 from ..matchreference import MatchReferenceDco
 from ..param import Param
+from ..verboseprint import dprint
 
+class MatchFunctionHomeDCO:
+
+    # match union
+    matchon = set(('project', 'homedco'))
+    forall = set(('module',))
+
+    def __init__(self, project):
+        """Create a match check
+
+        Parameters
+        ----------
+        project : Param
+            name/regex of the project to match/filter
+        dco : Param
+            name/regex of the the dco
+        """
+        self.projectref = project
+        #self.dcoref = dco
+
+    def __call__(self, project, dco, homedco, **kwargs):
+
+        # dprint(f"homedco match {project} {homedco}")
+        return self.projectref.match(project) and not homedco
+
+    def explain(self, project=None, dco=None, homedco=None, **kwargs):
+        if project is None and dco is None:
+            return f'FALSE, no match on {self.projectref.val} / '
+        return f"Match: project '{project}' ~ '{self.projectref.val}' and {not homedco}"
 
 class MatchFunctionDCO:
     """ Function object indicating a match
@@ -28,7 +58,9 @@ class MatchFunctionDCO:
         self.projectref = project
         self.dcoref = dco
 
-    def __call__(self, project, dco, **kwargs):
+    def __call__(self, project, dco, homedco, **kwargs):
+
+        # dprint(f"testing {project}/{dco} ref {self.projectref.val}/{self.dcoref.val}")
         if self.projectref is None or self.dcoref is None:
             return False
 
@@ -64,7 +96,7 @@ class HomeDco(PolicyCondition):
     # Determine how param arguments need to be stripped
     default_strip = dict(dco='both', resultvar='both')
 
-    def __init__(self, dco=None, resultvar=None, **kwargs):
+    def __init__(self, dco=None, resultvar='', **kwargs):
         """
         Test whether a dco object is "home".
 
@@ -86,6 +118,7 @@ class HomeDco(PolicyCondition):
         """
         self.dco = dco
         self.resultvar = resultvar
+        super().__init__(**kwargs)
 
     def holds(self, p_project, p_commobjects, **kwargs):
         """Check whether a specific module uses a DCO file
@@ -109,18 +142,19 @@ class HomeDco(PolicyCondition):
         # project/dco or comment lines in that dco files
         for m, commobj in p_commobjects.items():
             res.append(MatchReferenceDco(
-                MatchFunctionDCO(Param(p_project), self.dco),
-                                       commobjects=commobj))
+                MatchFunctionHomeDCO(Param(p_project)),
+                commobjects=commobj))
 
         # the MatchReferenceDco objects have a truthy value, if any of the
         # dco match the isMatch function
 
         # if applicable assemble any result in newvars under the resultvar name
-        checkAndSet(self.resultvar, newvars, res)
+        check_and_set(self.resultvar, newvars, res)
 
-        result = [ r for r in res if r.value ]
+        result = Fraction(len([ r for r in res if r.value ]), max(1, len(p_commobjects)))
         # return true or false for the whole, a list of information on the
         # matches, and the new variables
-        return (result, map(self.__class__.matchresult.explain, result), newvars)
+        dprint("HomeDco", result)
+        return (result, map(self.__class__.matchresult.explain, res), newvars)
 
 PolicyCondition.register("home-dco", HomeDco)

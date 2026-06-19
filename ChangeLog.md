@@ -2,6 +2,35 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
+## [4.3.0] - 2026-06-17
+
+### Changed
+
+- Improved dueca-gproject policies, better tests and condition calculation
+- Removed "using namespace dueca;" "using namespace std;" from all headers.
+  This requires fixes on older projects, the policy updates support
+  mostly automatic fixing.
+- Adapted template files for new code accordingly.
+- Removed the `DUECA_NS` namespace macros.
+- Suppress warnings for pyparsing and argparse on newer platforms
+  TODO: when old platforms removed, use snake-cased functions.
+- Use ninja for the CI test build
+- Modify ddff and hdf5 loggers to close off the file after a node critical
+  error stop.
+- Modify the dueca-inter code, to complain but not fail on a missing DCO
+  definition or mismatch of the magic number.
+- Solved a segfault when using a ScriptCreatable DCO file from python
+
+### Added
+
+- Runtest with abort button use (dtcabort), checking correct behaviour from ddff
+  and hdf5 loggers
+- Runtest with an intentional mismatch in a DCO object (dtcintermagic), leading
+  to complaints but running anyhow.
+- Build config for Fedora 44
+- Option to not use boost lockfree, but revert to the older hand-crafted
+  implementation for ubuntu 26.04
+
 ## [4.2.9] - 2026-05-??
 
 ### Changed

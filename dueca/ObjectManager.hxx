@@ -26,10 +26,9 @@
 #include "Callback.hxx"
 #include "Activity.hxx"
 #include <boost/intrusive_ptr.hpp>
-using namespace std;
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 struct ObjectInfo;
 class ChannelReadToken;
 class ChannelWriteToken;
@@ -100,11 +99,11 @@ class ObjectManager:
 
   /** Only for node 0, the data area to keep information about all
       objects. */
-  vector< vector<NameSet> > all_object_names;
+  std::vector< std::vector<NameSet> > all_object_names;
 
   /** File, for debugging purposes, to which a list of all objects is
       dumped. */
-  ofstream                  object_dump;
+  std::ofstream                  object_dump;
 
 public:
   /** Constructor, normally called from scheme.
@@ -140,7 +139,7 @@ public:
   SCM_FEATURES_DEF;
 
   /** Print to stream, debugging. */
-  friend ostream& operator << (ostream& os, const
+  friend std::ostream& operator << (std::ostream& os, const
                                ObjectManager& a);
 
 public:
@@ -186,5 +185,5 @@ private:
   bool setNoNodes(const int& l);
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

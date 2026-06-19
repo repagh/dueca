@@ -13,11 +13,9 @@
 #pragma once
 #include <dueca_ns.h>
 #include <exception>
-#define WEBSOCK_NS_START namespace websock {
-#define WEBSOCK_NS_END }
 
-DUECA_NS_START;
-WEBSOCK_NS_START;
+namespace dueca {
+namespace websock {
 
 
 /** Indicate that a preset channel mis-matches.
@@ -53,5 +51,5 @@ class dataparseerror : public std::exception
   const char *what() const throw() final;
 };
 
-WEBSOCK_NS_END;
-DUECA_NS_END;
+} // namespace websock
+} // namespace dueca

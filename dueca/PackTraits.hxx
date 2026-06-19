@@ -25,7 +25,7 @@
 #include <string>
 #include <dueca_ns.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 /* traits, capturing an element for reading */
 
@@ -56,6 +56,6 @@ struct diffpack_fixedsize { };
 /** No specific method, simply do a complete pack or not */
 struct diffpack_complete { };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

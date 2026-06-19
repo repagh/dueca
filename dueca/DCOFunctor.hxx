@@ -19,7 +19,7 @@
 #include <dueca_ns.h>
 #include <DataTimeSpec.hxx>
 
-DUECA_NS_START;
+namespace dueca {
 
 /** Base class for service objects that can handle DCO data in channels.
  */
@@ -49,5 +49,5 @@ public:
   virtual bool operator() (void* dpointer);
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

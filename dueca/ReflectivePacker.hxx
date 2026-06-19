@@ -24,9 +24,8 @@
 #include <Callback.hxx>
 #include <Activity.hxx>
 #include <EasyId.hxx>
-using namespace std;
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 class ReflectiveAccessor;
 struct ParameterTable;
 
@@ -150,7 +149,7 @@ public:
   int changeCurrentStore(int& store_no);
 
   /** Print the packer, for debugging purposes. */
-  friend ostream& operator << (ostream& os, const ReflectivePacker& p);
+  friend std::ostream& operator << (std::ostream& os, const ReflectivePacker& p);
 
 private:
   /** Check the status of all reading nodes, and calculate how much
@@ -168,5 +167,5 @@ private:
   bool setPrioritySpec(const PrioritySpec& ps);
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

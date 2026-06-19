@@ -61,7 +61,7 @@
 #include <debug.h>
 
 
-DUECA_NS_START
+namespace dueca {
 
 
 const ParameterTable* IPMulticastAccessor::getParameterTable()
@@ -332,5 +332,7 @@ IPMulticastAccessor::~IPMulticastAccessor()
   //
 }
 
+template <> const char *getclassname<IPMulticastAccessor>() { return "IPMulticastAccessor"; }
 
-DUECA_NS_END
+
+} // namespace dueca

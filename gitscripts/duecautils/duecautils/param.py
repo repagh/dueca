@@ -1,4 +1,5 @@
 import re
+from .verboseprint import dprint
 
 class Param:
 
@@ -23,7 +24,7 @@ class Param:
         self.name = par.get('name').replace('-', '_')
         _regex = par.get('regex', False)
         self.format = par.get('format', False)
-        pstrip = par.get('strip', (_regex and 'both') or default_strip)
+        pstrip = par.get('strip', (_regex and 'both') or par.get('trim', default_strip))
 
         if pstrip.lower() == 'left':
             pval = par.text.lstrip()
@@ -35,8 +36,10 @@ class Param:
             pval = par.text
 
         if _regex:
+            dprint(f"Regex on {pval}")
             self.val = re.compile(pval)
         else:
+            dprint(f"Direct match on {pval}")
             self.val = pval
 
     def match(self, val: str):

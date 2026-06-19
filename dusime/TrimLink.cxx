@@ -17,7 +17,9 @@
 #include <dueca-conf.h>
 #include <TrimView.hxx>
 #include <dassert.h>
-DUECA_NS_START
+using namespace std;
+
+namespace dueca {
 
 TrimLink::TrimLink(float value, float min_accept, float max_accept) :
   value(value),
@@ -55,4 +57,4 @@ void* TrimLink::getTree()
   return NULL;
 #endif
 }
-DUECA_NS_END
+} // namespace dueca

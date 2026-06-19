@@ -19,7 +19,7 @@
 #include <gtk/gtk.h>
 #include <GtkGladeWindow.hxx>
 
-DUECA_NS_START;
+namespace dueca {
 
 class NetUseOverviewGtk2: public NetUseOverview
 {
@@ -85,6 +85,6 @@ public:
   void cbClose(GtkButton* button, gpointer gp);
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

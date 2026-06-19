@@ -30,7 +30,7 @@
 #define ddff_ns_h
 
 namespace dueca { namespace ddff { } };
-
+#if 0
 /** If defined, the dueca classes are encapsulated in the dueca
     namespace. */
 #define DDFF_NS_ON 1
@@ -49,6 +49,6 @@ namespace dueca { namespace ddff { } };
 /** Use this define in your code, if you want to use the dueca
     namespace. */
 #define USING_DDFF_NS using namespace dueca::ddff;
-
+#endif
 
 #endif

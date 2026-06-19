@@ -16,7 +16,7 @@
 
 #include "EntryHandler.hxx"
 
-STARTNSREPLICATOR;
+namespace dueca {
 
 
 class EntryReader: public EntryHandler
@@ -54,6 +54,6 @@ public:
 };
 
 
-ENDNSREPLICATOR;
+} // namespace dueca
 
 #endif

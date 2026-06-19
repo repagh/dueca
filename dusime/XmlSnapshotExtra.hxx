@@ -35,11 +35,11 @@
   XmlSnapshot(const std::string& xmldata, const NameSet& originator);
 };
 
-DUECA_NS_END;
-void packData(DUECA_NS::AmorphStore&s,
-              const DUECA_NS::XmlSnapshot::XmlSnapshotCommand& cmd);
+} // namespace dueca
+void packData(dueca::AmorphStore&s,
+              const dueca::XmlSnapshot::XmlSnapshotCommand& cmd);
 
-void unPackData(DUECA_NS::AmorphReStore&s,
-                DUECA_NS::XmlSnapshot::XmlSnapshotCommand& cmd);
-DUECA_NS_START;
+void unPackData(dueca::AmorphReStore&s,
+                dueca::XmlSnapshot::XmlSnapshotCommand& cmd);
+namespace dueca {
 struct dum {

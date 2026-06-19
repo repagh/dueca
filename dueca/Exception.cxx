@@ -16,7 +16,9 @@
 #include "DataClassRegistryPredef.hxx"
 #include <iostream>
 #include <cstring>
-DUECA_NS_START
+using namespace std;
+
+namespace dueca {
 
 Exception::
 Exception(const GlobalId& thrower, const GlobalId& client,
@@ -90,5 +92,4 @@ template class MsgException<128>;
 // this has the template definition
 #include "Exception.ixx"
 #include "all_exceptions.h"
-DUECA_NS_END
-
+} // namespace dueca

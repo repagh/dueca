@@ -19,7 +19,7 @@
 #include "CommObjectMemberAccess.hxx"
 #include <dueca/DataSetConverter.hxx>
 
-DUECA_NS_START;
+namespace dueca {
 
 void DCOtypeJSON(rapidjson::StringBuffer &doc,
                  const char* dcoclass)
@@ -121,4 +121,4 @@ void DCOtypeJSON(rapidjson::Writer<rapidjson::StringBuffer> &writer,
   writer.EndObject();
 }
 
-DUECA_NS_END;
+} // namespace dueca

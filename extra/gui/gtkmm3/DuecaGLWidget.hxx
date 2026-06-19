@@ -16,25 +16,25 @@
 #define DuecaGLWidget_hxx
 #include <gtkmm/drawingarea.h>
 #include <DuecaGLCanvas.hxx>
-//#include "GtkGLWidgetHelper.hxx"
 
-DUECA_NS_START;
+namespace dueca {
 
+// predefine?
 class GtkGLWidgetHelper;
 
 // this define is for hmilib; compatibility with gtk2 and gtk3
 class DuecaGLWidgetArea;
 
-class DuecaGLWidget : public Gtk::GLArea, public DuecaGLCanvas
+class DuecaGLWidget : public Gtk::DrawingArea, public DuecaGLCanvas
 {
   /** Defines a class for implementation-dependent data. The data
       needed depends on the GUI toolset(s) supported by this build of
       DUECA. */
-  GtkGLWidgetHelper *gtkgl_helper;
+  // GtkGLWidgetHelper *gtkgl_helper;
 
 public:
   /// Constructor
-  DuecaGLWidget(GtkWidget* ctype);
+  DuecaGLWidget(GtkWidget *ctype);
 
   /// Destructor
   ~DuecaGLWidget();
@@ -43,5 +43,5 @@ public:
   void InitArea();
 };
 
-DUECA_NS_END;
+} // namespace dueca
 #endif

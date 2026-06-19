@@ -15,7 +15,7 @@
 #define SimpleFunction_cxx
 #include "SimpleFunction.hxx"
 
-DUECA_NS_START
+namespace dueca {
 
 SimpleFunction::SimpleFunction()
 {
@@ -27,4 +27,4 @@ SimpleFunction::~SimpleFunction()
   //
 }
 
-DUECA_NS_END
+} // namespace dueca

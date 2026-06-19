@@ -19,7 +19,7 @@
 #include <dueca_ns.h>
 #include <iostream>
 
-DUECA_NS_START
+namespace dueca {
 
 
 /** Implementation of a rotary scaling/converting device, using a
@@ -88,11 +88,11 @@ public:
   std::ostream& print (std::ostream& os) const;
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 /** Print operator for Circular */
 inline std::ostream& operator << (std::ostream& os,
-                                  const DUECA_NS::Circular& o)
+                                  const dueca::Circular& o)
 { return o.print(os); }
 
 #endif

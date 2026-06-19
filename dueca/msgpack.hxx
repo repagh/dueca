@@ -637,7 +637,7 @@ struct msgpack_variant_enum: msgpack_container_none
   }                                                                            \
   }
 
-DUECA_NS_START;
+namespace dueca {
 namespace messagepack {
 struct VirtualVisitor;
 
@@ -647,14 +647,14 @@ enum class VVMode { Init, Map, Array, Exit };
 enum class MMode { Init, Key, Value, Exit };
 
 } // namespace messagepack
-DUECA_NS_END;
+} // namespace dueca
 
-PRINT_NS_START;
+namespace std {
 /** Print function */
 ostream &operator<<(ostream &os, const dueca::messagepack::VVMode mode);
 /** Print function */
 ostream &operator<<(ostream &os, const dueca::messagepack::MMode mode);
-PRINT_NS_END;
+} // namespace std
 
 /** Auxiliary struct for visitor-based DCO unpack */
 struct MemberVisitorTable
@@ -663,7 +663,7 @@ struct MemberVisitorTable
   dueca::messagepack::VirtualVisitor *visitor;
 };
 
-DUECA_NS_START;
+namespace dueca {
 namespace messagepack {
 
 /** Base structure for parsing msgpack data
@@ -1785,7 +1785,7 @@ template <typename A> struct UnpackVisitorMap : public VirtualVisitor
       if (depth)
         return nest_val.end_map_value();
       // back/still at base level, save the new pair to the map
-      DEB("m end_map_value in Value, accepting")
+      DEB1("m end_map_value in Value, accepting")
       obj.emplace(key, val);
       // Destructors, will remove any dynamically allocated memory
       key.~key_type();
@@ -1911,7 +1911,7 @@ struct msgpack_container_dco: public msgpack_container_base
 {};
 
 } // namespace messagepack
-DUECA_NS_END;
+} // namespace dueca
 
 // support for packing adaptors of DUECA containers
 namespace msgpack {

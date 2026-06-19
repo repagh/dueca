@@ -5,15 +5,13 @@ Created on Wed Jun 30 20:56:53 2021
 
 @author: repa
 """
-
-from .policycondition import PolicyCondition, checkAndSet
-from ..matchreference import MatchReferenceFile, MatchSpan
-from ..verboseprint import dprint
-from collections import defaultdict
+from fractions import Fraction
 import glob
 import re
-import os
 import sys
+from .policycondition import PolicyCondition, check_and_set
+from ..matchreference import MatchReferenceFile
+from ..verboseprint import dprint
 
 def _empty_list():
     return list()
@@ -66,6 +64,8 @@ class MatchFunctionDepend:
 
 
 class HomeDepend(PolicyCondition):
+    """Specific check, if a module depends on a sister module in the home project
+    """
 
     # type of result of a holds test
     matchresult = MatchReferenceFile
@@ -73,13 +73,13 @@ class HomeDepend(PolicyCondition):
     # Determine how param arguments need to be stripped
     default_strip = dict(resultvar='both')
 
-    def __init__(self, resultvar=None, **kwargs):
+    def __init__(self, resultvar='', **kwargs):
         """
         Check for a pattern in the indicated files.
 
         Parameters
         ----------
-        resultvar : str
+        resultvar : Param|str
             Result variable name. Details of the check Will be passed on
             to remaining checks and actions.
         **kwargs : dict
@@ -91,6 +91,7 @@ class HomeDepend(PolicyCondition):
 
         """
         self.resultvar = str(resultvar)
+        super().__init__(**kwargs)
 
     def holds(self, p_project, p_path, **kwargs):
 
@@ -100,30 +101,16 @@ class HomeDepend(PolicyCondition):
 
         matching = glob.glob('*/CMakeLists.txt', recursive=False)
 
-        dprint(f"Testing {matching}")
         for fn in matching:
             rf = MatchReferenceFile(MatchFunctionDepend(p_project),
                                     fname=f'{p_path}/{fn}')
             if rf.value:
                 result.append(rf)
 
-        checkAndSet(self.resultvar, newvars, result)
-        dprint(f"pattern setting {self.resultvar}, files: {len(result)}")
-        return (result,
+        check_and_set(self.resultvar, newvars, result)
+        res = Fraction(len(result), max(1, len(matching)))
+        dprint("HomeDepend", res)
+        return (res,
                 map(self.__class__.matchresult.explain, result), newvars)
 
 PolicyCondition.register('home-depend', HomeDepend)
-
-
-r"""
-test = re.compile('^find this')
-
-res = test.search('there is a string with find this in it')
-print(res)
-
-pattern = re.compile(r'([a-zA-Z0-9-_]+/)?([a-zA-Z0-9-_]+)(\ws)?(#.*)?(\w)?')
-
-res = pattern.match('  Aproject/a-module')
-res = pattern.search('  Aproject/a-module # and comment ')
-
-"""

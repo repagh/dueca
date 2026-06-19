@@ -38,11 +38,6 @@
 */
 
 // build forth on dueca.
-#ifdef NO_DUECA_NAMESPACE
-#define NO_DUECA_NAMESPACE_DEFINED
-#else
-#undef NO_DUECA_NAMESPACE
-#endif
 #include <dueca.h>
 
 #if !defined(DO_INSTANTIATE)
@@ -63,17 +58,14 @@
 // template implementation
 #define DO_INSTANTIATE
 
+// included in cxx
+// using namespace dueca;
+
 #endif
 
 #define CHECK_RECORDER(A) \
   if (! (A) .isValid() ) {                               \
-    W_MOD(getId() << '/' << getclassname(*this)          \
+    W_MOD(getId() << '/' << dueca::getclassname(*this)   \
           << " recorder " #A << " not (yet) valid");     \
     res = false; \
   }
-
-#ifdef NO_DUECA_NAMESPACE_DEFINED
-#undef NO_DUECA_NAMESPACE_DEFINED
-#else
-USING_DUECA_NS;
-#endif

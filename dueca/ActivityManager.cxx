@@ -60,8 +60,9 @@
 #define EXPECTED_QUEUE_SIZE 256
 #endif
 #define EXCESSIVE_QUEUE_SIZE 500
+using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 #ifndef AM_PLACEMENT
 static Arena activityitemarena(sizeof(ActivityItem), 256);
@@ -995,4 +996,4 @@ void ActivityManager::triggerNewLog(const TimeSpec &time)
   log_end = req.data().start + req.data().span;
 }
 
-DUECA_NS_END
+} // namespace dueca

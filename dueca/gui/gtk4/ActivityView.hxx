@@ -22,7 +22,7 @@
 #include <gtk/gtk.h>
 #include <ActivityViewBase.hxx>
 
-DUECA_NS_START
+namespace dueca {
 
 struct ParameterTable;
 struct ActivityViewGui;
@@ -106,5 +106,5 @@ public:
   void cbBindName(GtkSignalListItemFactory* f, GtkListItem* obj, gpointer user_data);
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

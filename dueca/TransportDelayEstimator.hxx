@@ -21,7 +21,7 @@
 #include <dueca_ns.h>
 #include <iostream>
 
-DUECA_NS_START
+namespace dueca {
 struct ParameterTable;
 
 /** Class to determine transport delays in messages sent over a
@@ -101,7 +101,7 @@ public:
                                     const TransportDelayEstimator& a);
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif
 
 

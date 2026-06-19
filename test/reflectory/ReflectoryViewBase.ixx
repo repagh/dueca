@@ -16,10 +16,10 @@
 #define ReflectoryViewBase_ixx
 #include "ReflectoryViewBase.hxx"
 
-DUECA_NS_START;
+namespace dueca {
 
 
 
 
-DUECA_NS_END;
+} // namespace dueca
 #endif

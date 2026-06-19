@@ -11,10 +11,10 @@
 
 #include "ReferenceHolder.hxx"
 
-DUECA_NS_START
+namespace dueca {
 
 ReferenceHolder::ReferenceHolder() {}
 
 ReferenceHolder::~ReferenceHolder() {}
 
-DUECA_NS_END
+} // namespace dueca

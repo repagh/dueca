@@ -18,7 +18,9 @@
 #include <unistd.h>
 #include "debug.h"
 #include "dueca-guile.h"
-DUECA_NS_START
+using namespace std;
+
+namespace dueca {
 
 static const unsigned int INVALID_TAG = -1;
 
@@ -94,4 +96,4 @@ char* GenericSchemeClassData::getName()
 }
 
 
-DUECA_NS_END
+} // namespace dueca

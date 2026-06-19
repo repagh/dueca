@@ -22,7 +22,7 @@
 #define DO_INSTANTIATE
 #include "CoreCreator.hxx"
 
-DUECA_NS_START
+namespace dueca {
 
 #ifdef SCRIPT_SCHEME
 SCHEME_CLASS_DEC(WindowingProtocol);
@@ -43,4 +43,4 @@ LNK_PUBLICC void InitGlutGui()
        "GluiProtocol");
 }
 
-DUECA_NS_END
+} // namespace dueca

@@ -17,7 +17,7 @@
 #ifdef Su_cxx
 #endif
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 /** Access super user or root capabilities. Note: there is no
     thread-safety built in, use in a sensible manner. */
@@ -62,5 +62,5 @@ public:
   bool revert();
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

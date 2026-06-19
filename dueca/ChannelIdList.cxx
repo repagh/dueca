@@ -14,7 +14,7 @@
 #include "ChannelIdList.hxx"
 #include "ChannelEndUpdate.hxx"
 #include <iostream>
-DUECA_NS_START
+namespace dueca {
 
 ChannelIdList::ChannelIdList() :
   ns(NameSet("", "", "")),
@@ -76,4 +76,4 @@ std::ostream& ChannelIdList::print (std::ostream& o) const
     << ", channel=" << channel;
   return o << ")\n";
 }
-DUECA_NS_END
+} // namespace dueca

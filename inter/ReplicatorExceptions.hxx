@@ -18,7 +18,7 @@
 #include <udpcom/NetCommunicatorExceptions.hxx>
 #include <exception>
 
-STARTNSREPLICATOR;
+namespace dueca {
 
 /** Exception to use for incorrect data types */
 class dataclassdiffers: public std::exception
@@ -31,6 +31,6 @@ public:
   dataclassdiffers();
 };
 
-ENDNSREPLICATOR;
+} // namespace dueca
 
 #endif

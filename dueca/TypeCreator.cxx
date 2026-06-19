@@ -20,7 +20,7 @@
 
 #if !defined(DO_INSTANTIATE)
 
-DUECA_NS_START
+namespace dueca {
 
 ScriptTypeCreator::ScriptTypeCreator(const std::string& type_name,
                                      const ParameterTable* table,
@@ -44,6 +44,6 @@ bool ScriptTypeCreator::injectValues(ArgElement::arglist_t& vals, void* object)
   return ArgListProcessor::injectValues(vals, object);
 }
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

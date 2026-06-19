@@ -21,7 +21,7 @@ include_directories(
 add_executable(InterpTest.x InterpTest.cxx)
 target_link_libraries(InterpTest.x dueca-extra${STATICSUFFIX})
 add_executable(StepsTest.x StepsTest.cxx)
-target_link_libraries(StepsTest.x dueca-extra${STATICSUFFIX})
+target_link_libraries(StepsTest.x dueca-extra${STATICSUFFIX} fmt::fmt)
 add_executable(PolynomialNTest.x PolynomialNTest.cxx)
 target_link_libraries(PolynomialNTest.x dueca-extra${STATICSUFFIX})
 add_executable(CircularWithPolyTest.x CircularWithPolyTest.cxx)

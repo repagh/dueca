@@ -31,8 +31,9 @@
 // up).
 
 #include <debug.h>
+using namespace std;
 
-DUECA_NS_START;
+namespace dueca {
 
 // constructor of the object
 DuecaGLWindow::DuecaGLWindow(const char* window_title,
@@ -183,4 +184,4 @@ void DuecaGLWindow::special(int key, int x, int y)
   // nothing, apparently
 }
 
-DUECA_NS_END;
+} // namespace dueca

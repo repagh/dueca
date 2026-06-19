@@ -32,8 +32,8 @@
 #include <simple-websocket-server/server_wss.hpp>
 #include <string>
 
-DUECA_NS_START;
-WEBSOCK_NS_START;
+namespace dueca {
+namespace websock {
 
 using WsServer = SimpleWeb::SocketServer<SimpleWeb::WS>;
 using WssServer = SimpleWeb::SocketServer<SimpleWeb::WSS>;
@@ -403,7 +403,7 @@ struct WriteEntry INHERIT_REFCOUNT(WriteEntry)
       @param datatype     Data class to be written
    */
   WriteEntry(const std::string &channelname, const std::string &datatype,
-             const WebSocketsServerBase *master, const PrioritySpec &ps,
+             const WebSocketsServerBase *imaster, const PrioritySpec &ps,
              bool bulk = false, bool diffpack = false,
              WriteEntry::WEState initstate = WriteEntry::Connected);
 
@@ -419,7 +419,7 @@ struct WriteEntry INHERIT_REFCOUNT(WriteEntry)
       @param master       ID of controlling entity, for assigning channel entry.
   */
   virtual void complete(const std::string &datatype, const std::string &label,
-                        bool stream, bool ctiming, bool bulk, bool diffpack);
+                        bool stream, bool _ctiming, bool bulk, bool diffpack);
 
   /** Check whether completion has been done
 
@@ -787,7 +787,7 @@ typedef std::map<void *, boost::intrusive_ptr<WriteEntry>> writers_t;
 /** Map with active writers/reader combination */
 typedef std::map<void *, boost::intrusive_ptr<WriteReadEntry>> writersreaders_t;
 
-DUECA_NS_END;
-WEBSOCK_NS_END;
+} // namespace dueca
+} // namespace websock
 
 #endif

@@ -17,7 +17,7 @@
 #define Reflectory_ixx
 #include "Reflectory.hxx"
 
-DUECA_NS_START;
+namespace dueca {
 
 template<class DATA, typename TICK>
 Reflectory<DATA,TICK>::Reflectory() :
@@ -37,6 +37,6 @@ Reflectory(typename ReflectoryBase<TICK>::ref_pointer root,
 };
 
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

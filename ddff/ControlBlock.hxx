@@ -20,7 +20,7 @@
 #include <iostream>
 #include "ddff_ns.h"
 
-DDFF_NS_START
+namespace dueca { namespace ddff {
 
 /** @file ControlBlock.hxx, definition of control information in ddff files
 
@@ -108,6 +108,6 @@ struct ControlBlockRead {
   ControlBlockRead(DDFFMessageBuffer& buffer, std::ios::off_type offset);
 };
 
-DDFF_NS_END
+} } // namespace ddff namespace dueca
 
 #endif

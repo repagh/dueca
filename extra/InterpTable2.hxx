@@ -16,7 +16,7 @@
 
 #include <dueca_ns.h>
 
-DUECA_NS_START
+namespace dueca {
 
 /** Interpolation data holder, for 2d interpolation tables. Either
     reads data from file, or uses a static array initialisation. */
@@ -70,4 +70,4 @@ public:
     return data[i1 * index2.nDim() + i2];
   }
 };
-DUECA_NS_END
+} // namespace dueca

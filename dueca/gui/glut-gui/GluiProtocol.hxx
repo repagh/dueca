@@ -17,7 +17,7 @@
 
 #include <WindowingProtocol.hxx>
 
-DUECA_NS_START
+namespace dueca {
 
 /** Class that implements/abstracts the connection to the glut + glui
     windowing toolkit.
@@ -62,6 +62,6 @@ public:
   SCM_FEATURES_DEF;
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

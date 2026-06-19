@@ -21,7 +21,7 @@
 
 #include <dueca_ns.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 /** Creates an observation of a reflectory entry.
 
@@ -74,6 +74,6 @@ protected:
   }
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

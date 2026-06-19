@@ -43,21 +43,21 @@
 #include "CommObjectTraits.hxx"
 
 template<typename A, typename B>
-void unPackData(DUECA_NS::AmorphReStore& s, std::pair<A,B>& x)
+void unPackData(dueca::AmorphReStore& s, std::pair<A,B>& x)
 {
   ::unPackData(s, x.first);
   ::unPackData(s, x.second);
 }
 
 template<typename A, typename B>
-void packData(DUECA_NS::AmorphStore& s, const std::pair<A, B>& x)
+void packData(dueca::AmorphStore& s, const std::pair<A, B>& x)
 {
   ::packData(s, x.first);
   ::packData(s, x.second);
 }
 
 
-DUECA_NS_START;
+namespace dueca {
 
 /** Reserve a size for object members */
 typedef uint8_t PackMemberIndex;
@@ -508,14 +508,14 @@ inline void unpackobject(AmorphReStore& s, D& a,
   }
 }
 
-DUECA_NS_END;
+} // namespace dueca
 
 
 
-PRINT_NS_START;
+namespace std {
 template<typename A, typename B>
 inline std::ostream& operator << (std::ostream& s, const std::pair<A, B>& o)
 { return s << o.first << ' ' << o.second; }
-PRINT_NS_END;
+} // namespace std
 
 #endif

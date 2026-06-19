@@ -12,11 +12,10 @@
 */
 
 /** Iterator for accessing pairs in the ivlist */
-typedef list<IndexValuePair>::iterator iterator;
+typedef std::list<IndexValuePair>::iterator iterator;
 
 /** Const version of that iterator */
-typedef list<IndexValuePair>::const_iterator const_iterator;
+typedef std::list<IndexValuePair>::const_iterator const_iterator;
 
 /** Adds an index+value pair to the notice. */
 void appendPair(int i, float value);
-

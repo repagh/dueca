@@ -18,7 +18,7 @@
 
 #include <dueca/dueca_ns.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 /** Exception to use for breaking connections */
 class configconnectionbroken: public std::exception
@@ -56,6 +56,6 @@ public:
 
 
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

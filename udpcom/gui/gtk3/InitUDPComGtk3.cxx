@@ -19,7 +19,7 @@
 #include "TypeCreator.hxx"
 #include <dueca_ns.h>
 
-USING_DUECA_NS
+using namespace dueca;
 
 extern "C"
 LNK_PUBLICC void InitUDPComGtk3()

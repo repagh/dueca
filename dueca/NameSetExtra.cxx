@@ -10,13 +10,14 @@
 
 // code originally written for this codegen version
 #define __CUSTOM_COMPATLEVEL_110
+
 #include <dueca/visibility.h>
 #include <sstream>
 
 NameSet::NameSet(const std::string &e, const std::string &c,
                  const std::string &p) :
-  name(p.size() ? c + string("://") + e + string("/") + p
-                : c + string("://") + e)
+  name(p.size() ? c + std::string("://") + e + std::string("/") + p
+                : c + std::string("://") + e)
 {
   validate_set();
 }
@@ -24,7 +25,7 @@ NameSet::NameSet(const std::string &e, const std::string &c,
 #include <boost/lexical_cast.hpp>
 
 NameSet::NameSet(const std::string &e, const std::string &c, int p) :
-  name(c + string("://") + e + string("/") +
+  name(c + std::string("://") + e + std::string("/") +
        boost::lexical_cast<std::string>(p))
 {
   validate_set();
@@ -43,7 +44,7 @@ const char *improper_nameset::what() const throw()
 void NameSet::validate_set()
 {
   size_t idxc = name.find("://");
-  if (idxc == string::npos) {
+  if (idxc == std::string::npos) {
     // no class specifier
     throw(improper_nameset(name));
   }
@@ -53,7 +54,7 @@ void NameSet::validate_set()
   size_t idx0 = idxc + 3;
   size_t idx1 = name.find('/', idx0);
 
-  for ( ; idx0 != string::npos; idx0 = name.find('/', idx0+1)) {
+  for ( ; idx0 != std::string::npos; idx0 = name.find('/', idx0+1)) {
     nelt++;
   }
 #endif
@@ -70,7 +71,7 @@ std::string NameSet::getPart() const
   const std::string empty("");
   size_t idxc = name.find("://");
   size_t idxe = name.find('/', idxc + 3);
-  if (idxe == string::npos)
+  if (idxe == std::string::npos)
     return empty;
   return name.substr(idxe + 1);
 }

@@ -19,7 +19,7 @@
 #include <iostream>
 #include <CommObjectTraits.hxx>
 
-DUECA_NS_START
+namespace dueca {
 
 /** A union/class capturing the context in which an activity took
     place: node, manager/priority, and id of the activity.
@@ -73,7 +73,7 @@ union ActivityContext
   /** prints the ActivityContext to a stream.
       \todo Print descriptive information using activity description
       lists. */
-  ostream & print(ostream& s) const;
+  std::ostream & print(std::ostream& s) const;
 
   /** inequality */
   inline bool operator != (const ActivityContext& other) const
@@ -87,28 +87,28 @@ union ActivityContext
 template <>
 const char* getclassname<ActivityContext>();
 
-DUECA_NS_END
+} // namespace dueca
 
 
 
 /** pack the object into amorphous storage. */
-inline void packData( DUECA_NS ::AmorphStore& s,
-                      const DUECA_NS ::ActivityContext& o)
+inline void packData( dueca ::AmorphStore& s,
+                      const dueca ::ActivityContext& o)
 { o.packData(s); }
 
-inline void unPackData(DUECA_NS ::AmorphReStore& s,
-                       DUECA_NS ::ActivityContext& o)
+inline void unPackData(dueca ::AmorphReStore& s,
+                       dueca ::ActivityContext& o)
 { o.unPackData(s); }
 
-PRINT_NS_START
+namespace std {
 
 /** print to a stream. */
-inline ostream & operator << (ostream& s, const DUECA_NS::ActivityContext& o)
+inline ostream & operator << (ostream& s, const dueca::ActivityContext& o)
 { return o.print(s); }
 
 
-istream& operator >> (istream&s, DUECA_NS::ActivityContext& o);
+istream& operator >> (istream&s, dueca::ActivityContext& o);
 
-PRINT_NS_END
+} // namespace std
 
 #endif

@@ -22,7 +22,7 @@
 #define DO_INSTANTIATE
 #include "TypeCreator.hxx"
 
-DUECA_NS_START
+namespace dueca {
 
 extern "C"
 LNK_PUBLICC void InitFltk()
@@ -34,4 +34,4 @@ LNK_PUBLICC void InitFltk()
   static FltkHandler h(std::string("fltk"));
 }
 
-DUECA_NS_END
+} // namespace dueca

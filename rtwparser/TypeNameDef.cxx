@@ -1,5 +1,6 @@
 #include "TypeNameDef.hxx"
 #include <sstream>
+using namespace std;
 
 TypeNameDef::TypeNameDef(const char* type, const char* name, const int size, const char* comm) :
     BaseObject(type, name),

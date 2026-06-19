@@ -24,11 +24,9 @@
 #include <nodes.h>
 #include "ChannelWriteToken.hxx"
 
-using namespace std;
-
 #include <dueca_ns.h>
 
-DUECA_NS_START
+namespace dueca {
 // class names
 class UnifiedChannel;
 class Environment;
@@ -69,7 +67,7 @@ public:
     inline const GlobalId& getId() const { return end_id;}
 
     /// Print one of these to an output stream
-    ostream& print(ostream& o) const;
+    std::ostream& print(std::ostream& o) const;
   };
 
 private:
@@ -86,7 +84,7 @@ private:
   uint8_t transportclass;
 
   /** Type of list */
-  typedef list<ChannelEndSpec> end_spec_type;
+  typedef std::list<ChannelEndSpec> end_spec_type;
 
   /** a list of specifications, with the id of the channel end, an
       indication of whether it sends or receives, or possibly both. */
@@ -154,23 +152,19 @@ public:
   //@}
 
   /** Print a ChannelOrganiser to a stream, for debugging mainly. */
-  ostream& print (ostream& o) const;
+  std::ostream& print (std::ostream& o) const;
 };
 
-DUECA_NS_END
+} // namespace dueca
 
-PRINT_NS_START
+namespace std {
 /// Print one of these to an output stream
-inline ostream& operator << (ostream& o, const DUECA_NS::ChannelOrganiser::
+inline std::ostream& operator << (std::ostream& o, const dueca::ChannelOrganiser::
                              ChannelEndSpec &ce)
 { return ce.print(o); }
 
 /** Print a ChannelOrganiser to a stream, for debugging mainly. */
-inline ostream& operator << (ostream& o, const DUECA_NS::ChannelOrganiser& cl)
+inline std::ostream& operator << (std::ostream& o, const dueca::ChannelOrganiser& cl)
 { return cl.print(o); }
-PRINT_NS_END
+} // namespace std
 #endif
-
-
-
-

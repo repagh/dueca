@@ -21,7 +21,7 @@
 #include <dueca/dueca_ns.h>
 
 /// \cond DO_NOT_DOCUMENT
-DUECA_NS_START
+namespace dueca {
 /// \endcond
 
 /** @file ChronoTimePoint.hxx  conversion between time point and string */
@@ -39,6 +39,6 @@ std::chrono::system_clock::time_point
 timePointFromString(const std::string& date);
 
 /// \cond DO_NOT_DOCUMENT
-DUECA_NS_END;
+} // namespace dueca
 /// \endcond
 #endif

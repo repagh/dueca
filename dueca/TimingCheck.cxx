@@ -34,8 +34,9 @@
 
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
+using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 static InformationStash<TimingResults>& timing_stash()
 {
@@ -154,4 +155,4 @@ void TimingCheck::userReportsAnomaly()
   result->n_user++;
 }
 
-DUECA_NS_END
+} // namespace dueca

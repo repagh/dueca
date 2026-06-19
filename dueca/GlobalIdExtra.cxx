@@ -16,10 +16,10 @@
 
 // include a boost header, and since we are in dueca namespace,
 // temporarily exit
-DUECA_NS_END;
+} // namespace dueca
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/lexical_cast.hpp>
-DUECA_NS_START;
+namespace dueca {
 
 // provide a custom function over the standard print function for an ID
 #define __CUSTOM_FUNCTION_PRINT

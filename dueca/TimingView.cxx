@@ -33,10 +33,11 @@
 #define DO_INSTANTIATE
 #include <Callback.hxx>
 #include <debprint.h>
+using namespace std;
 
 // only useful if interfaces present
 
-DUECA_NS_START
+namespace dueca {
 
 const char* const TimingView::classname = "timing-view";
 
@@ -90,7 +91,7 @@ TimingView::TimingView(Entity* e, const char* part,
   // check that the ActivityView has been made. The ActivityView
   // provides names for the activities
   if (ActivityViewBase::single() == NULL) {
-    /* DUECA UI. 
+    /* DUECA UI.
 
       Configuration error, when using the TimingView, the ActivityView
       must also be used, otherwise names for the activities cannot be
@@ -221,7 +222,4 @@ void TimingView::readSync(const TimeSpec& ts)
   updateSync(node, r.data());
 }
 
-DUECA_NS_END
-
-
-
+} // namespace dueca

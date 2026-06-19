@@ -17,8 +17,9 @@
 #include "Arena.hxx"
 #include "ArenaPool.hxx"
 #include "NodeManager.hxx"
+using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 ActivityContext::ActivityContext()
 {
@@ -86,7 +87,7 @@ std::ostream & ActivityContext::print(std::ostream& s) const
   return s;
 }
 
-istream& operator >> (istream&s, DUECA_NS::ActivityContext& o)
+istream& operator >> (istream&s, dueca::ActivityContext& o)
 {
   s >> o.total;
   return s;
@@ -95,4 +96,4 @@ istream& operator >> (istream&s, DUECA_NS::ActivityContext& o)
 template <>
 const char* getclassname<ActivityContext>() { return "ActivityContext"; }
 
-DUECA_NS_END
+} // namespace dueca

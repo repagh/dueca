@@ -19,7 +19,7 @@
 
 #include <GenericStatus.hxx>
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 /** This summarises the state of a DUECA module. */
 template <class S>
@@ -54,8 +54,8 @@ public:
   GenericStatus* clone() const;
 
   /** Print in a nice format to some stream. */
-  ostream& print(ostream& os) const;
+  std::ostream& print(std::ostream& os) const;
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

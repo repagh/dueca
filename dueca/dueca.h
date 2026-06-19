@@ -46,9 +46,9 @@
 #include "dueca_ns.h"
 #include "dueca-version.h"
 
-DUECA_NS_START
+namespace dueca {
 struct ParameterTable;
-DUECA_NS_END
+}
 
 // templated headers
 #include "Callback.hxx"
@@ -118,7 +118,7 @@ DUECA_NS_END
     \param   A    Channel token to be checked. */
 #define CHECK_TOKEN(A) \
   if (! (A) .isValid() ) {                              \
-    W_MOD(getId() << '/' << getclassname(*this)         \
+    W_MOD(getId() << '/' << dueca::getclassname(*this)         \
           << " channel token " #A " for channel "       \
           << (A) .getName() << " not (yet) valid");     \
     res = false; \
@@ -130,7 +130,7 @@ DUECA_NS_END
     \param   A    Condition to be checked. */
 #define CHECK_CONDITION(A) \
   if (! ( A ) ) { \
-    W_MOD(getId() << '/' << getclassname(*this)         \
+    W_MOD(getId() << '/' << dueca::getclassname(*this)         \
           << " condition " #A " not valid");            \
     res = false; \
   }
@@ -142,12 +142,8 @@ DUECA_NS_END
     \param   B    Message that will be printed */
 #define CHECK_CONDITION2(A,B) \
   if (! ( A ) ) {                                         \
-    W_MOD(getId() << '/' << getclassname(*this) << ' ' << B); \
+    W_MOD(getId() << '/' << dueca::getclassname(*this) << ' ' << B); \
     res = false; \
   }
 
-#endif
-
-#ifndef NO_DUECA_NAMESPACE
-USING_DUECA_NS;
 #endif

@@ -26,7 +26,7 @@
 
 #include <dueca_ns.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 /** Base class for the callback pointers. Objects of this class will be
     automatically generated from the gtk_callback templated
@@ -524,7 +524,7 @@ RET (* GtkCallerImp8<T,RET,P1,P2,P3,P4,P5,P6,P7,P8>::base)
   (P1, P2, P3, P4, P5, P6, P7, P8, gpointer) =
   &GtkCaller_callback<T,RET,P1,P2,P3,P4,P5,P6,P7,P8>;
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif
 

@@ -50,8 +50,9 @@
 #include <dueca.h>
 
 #include <debprint.h>
+using namespace std;
 
-STARTNSREPLICATOR;
+namespace dueca {
 
 // class/module name
 const char *const ChannelReplicatorMaster::classname =
@@ -791,7 +792,16 @@ void ChannelReplicatorMaster::clientDecodeConfig(AmorphReStore &s,
     case ReplicatorConfig::AddEntry: {
 
       // throws and stops all if the dataclass tree is wrong
-      verifyDataClass(cmd, peer_id);
+      if (!verifyDataClass(cmd, peer_id)) {
+        /* DUECA interconnect.
+
+           Peer's data class differs from the dataclass defined here,
+           ignoring.
+        */
+        I_INT("Ignoring entry from peer=" << peer_id
+                                          << " due to dataclass mismatch");
+        return;
+      }
 
       // add the entry to the candidate writers, this addition
       // will be processed in sendChannelConfigChanges
@@ -808,9 +818,8 @@ void ChannelReplicatorMaster::clientDecodeConfig(AmorphReStore &s,
          Information on adding a local entered entry. */
       I_INT("Adding writer entry to candidates, from "
             << cmd.slave_id << " RidT " << cmd.tmp_entry_id);
+    } break;
 
-      break;
-    }
     case ReplicatorConfig::RemoveEntry: {
 
       // find the entry, and move it to the obsoletes, so it can be
@@ -838,8 +847,8 @@ void ChannelReplicatorMaster::clientDecodeConfig(AmorphReStore &s,
       obsolete_writers.push_back(make_pair(cmd.channel_id, ww->second));
       watched[cmd.channel_id]->writers.erase(ww);
 
-      break;
-    }
+    } break;
+
     default:
       /* DUECA interconnect.
 
@@ -970,7 +979,7 @@ void ChannelReplicatorMaster::clientUnpackPayload(
                                           peer_timing[peer_id]);
 }
 
-ENDNSREPLICATOR
+} // namespace dueca
 
 // Make a TypeCreator object for this module, the TypeCreator
 // will check in with the script code, and enable the

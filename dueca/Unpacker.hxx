@@ -27,7 +27,7 @@
 #include <dueca/Callback.hxx>
 #include <dueca/AperiodicAlarm.hxx>
 
-DUECA_NS_START
+namespace dueca {
 
 class AmorphReStore;
 class TimeSpec;
@@ -133,11 +133,11 @@ public:
   void acceptBuffer(struct MessageBuffer* buffer, const TimeSpec&ts);
 
   /** Print to stream. */
-  friend ostream& operator << (ostream& os, const Unpacker& p);
+  friend std::ostream& operator << (std::ostream& os, const Unpacker& p);
 
   /** Remember accessor */
   inline void setAccessor(Accessor* ac) {accessor = ac;}
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

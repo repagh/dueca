@@ -39,7 +39,7 @@ set(INCDIRS
 
 dueca_add_library(dueca-extra
   SOURCES ${SOURCES}
-  LINKLIBS dueca
+  LINKLIBS dueca fmt::fmt
   COMPILEOPTIONS ${EIGEN_CFLAGS}
   INCLUDEDIRS ${INCDIRS})
 

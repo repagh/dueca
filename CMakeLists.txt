@@ -20,11 +20,11 @@ endforeach()
 
 # version information, please update accordingly
 set(VERMAJOR 4)
-set(VERMINOR 2)
-set(REVISION 9)
+set(VERMINOR 3)
+set(REVISION 0)
 set(GENCODEGEN 111)
 set(SOVERSION "${VERMAJOR}.${VERMINOR}")
-set(VERSION_DATE "09 May 2026")
+set(VERSION_DATE "17 Jun 2026")
 string(REPLACE " " "" "${VERSION_DATE}" CLIENT_DATE)
 set(versioned "${VERMAJOR}-${VERMINOR}-${REVISION}")
 
@@ -112,6 +112,7 @@ set(UNREAD_DATAPOINTS_THRESHOLD 1000 CACHE STRING
   "Threshold for warning about unread data in channels")
 set(RUNTEST_SERVER "Xephyr" CACHE STRING
                            "Nested X server to use for runtest")
+option(USE_BOOST_LOCKFREE  "Use the boost lockfree stack for memory arena" ON)
 
 if (APPLE)
   set(CMAKE_FIND_FRAMEWORK LAST)
@@ -375,6 +376,7 @@ using namespace std; int main() { ios::openmode t;}" NAMESPACE_IOS)
 pkg_check_modules(EIGEN REQUIRED eigen3)
 
 # gtk variants, these are re-checked with required in specific files
+pkg_check_modules(GTK2 gtk+-2.0)
 pkg_check_modules(GTKMM24 gtkmm-2.4)
 pkg_check_modules(GTKGLEXT gtkglext-1.0)
 pkg_check_modules(GTK3 gtk+-3.0)

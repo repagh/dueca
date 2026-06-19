@@ -60,7 +60,7 @@ GtkWidget* NewGtkDuecaButton_pixmaps()
   pm = gdk_pixmap_create_from_xpm
     (gtk_widget_get_window(dummyWindow()), &mask,
       &(gtk_widget_get_style(dummyWindow())->bg[GTK_STATE_NORMAL]),
-      DUECA_NS ::DuecaPath::prepend("pixmaps/inactive.xpm").c_str());
+      dueca ::DuecaPath::prepend("pixmaps/inactive.xpm").c_str());
   pixmap = gtk_image_new_from_pixmap(pm, mask);
   gtk_container_add(box, pixmap);
   gtk_widget_show(pixmap);
@@ -69,28 +69,28 @@ GtkWidget* NewGtkDuecaButton_pixmaps()
   pm = gdk_pixmap_create_from_xpm
     (gtk_widget_get_window(dummyWindow()), &mask,
      &(gtk_widget_get_style(dummyWindow())->bg[GTK_STATE_NORMAL]),
-     DUECA_NS ::DuecaPath::prepend("pixmaps/inprogress.xpm").c_str());
+     dueca ::DuecaPath::prepend("pixmaps/inprogress.xpm").c_str());
   gtk_container_add(box, gtk_image_new_from_pixmap(pm, mask));
 
   // final pixmap
   pm = gdk_pixmap_create_from_xpm
     (gtk_widget_get_window(dummyWindow()), &mask,
      &(gtk_widget_get_style(dummyWindow())->bg[GTK_STATE_NORMAL]),
-     DUECA_NS ::DuecaPath::prepend("pixmaps/active.xpm").c_str());
+     dueca ::DuecaPath::prepend("pixmaps/active.xpm").c_str());
   gtk_container_add(box, gtk_image_new_from_pixmap(pm, mask));
 
   // broken consistency pixmap
   pm = gdk_pixmap_create_from_xpm
     (gtk_widget_get_window(dummyWindow()), &mask,
      &(gtk_widget_get_style(dummyWindow())->bg[GTK_STATE_NORMAL]),
-     DUECA_NS ::DuecaPath::prepend("pixmaps/incomplete.xpm").c_str());
+     dueca ::DuecaPath::prepend("pixmaps/incomplete.xpm").c_str());
   gtk_container_add(box, gtk_image_new_from_pixmap(pm, mask));
 
   // fallback pixmap
   pm = gdk_pixmap_create_from_xpm
     (gtk_widget_get_window(dummyWindow()), &mask,
      &(gtk_widget_get_style(dummyWindow())->bg[GTK_STATE_NORMAL]),
-     DUECA_NS ::DuecaPath::prepend("pixmaps/fell-back.xpm").c_str());
+     dueca ::DuecaPath::prepend("pixmaps/fell-back.xpm").c_str());
   gtk_container_add(box, gtk_image_new_from_pixmap(pm, mask));
 
   // show the box
@@ -110,7 +110,7 @@ GtkWidget* NewGtkDuecaAbortButton_pixmaps()
   pm = gdk_pixmap_create_from_xpm
     (gtk_widget_get_window(dummyWindow()), &mask,
      &(gtk_widget_get_style(dummyWindow())->bg[GTK_STATE_NORMAL]),
-     DUECA_NS ::DuecaPath::prepend("pixmaps/abort.xpm").c_str());
+     dueca ::DuecaPath::prepend("pixmaps/abort.xpm").c_str());
   pixmap = gtk_image_new_from_pixmap(pm, mask);
   gtk_container_add(box, pixmap);
   gtk_widget_show(pixmap);
@@ -119,7 +119,7 @@ GtkWidget* NewGtkDuecaAbortButton_pixmaps()
   pm = gdk_pixmap_create_from_xpm
     (gtk_widget_get_window(dummyWindow()), &mask,
      &(gtk_widget_get_style(dummyWindow())->bg[GTK_STATE_NORMAL]),
-     DUECA_NS ::DuecaPath::prepend("pixmaps/confirm-abort.xpm").c_str());
+     dueca ::DuecaPath::prepend("pixmaps/confirm-abort.xpm").c_str());
   gtk_container_add(box, gtk_image_new_from_pixmap(pm, mask));
   gtk_widget_show(GTK_WIDGET(box));
 

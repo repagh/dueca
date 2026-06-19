@@ -23,7 +23,7 @@
 #include <string>
 #include <boost/scoped_ptr.hpp>
 
-DUECA_NS_START;
+namespace dueca {
 
 
 /** Comparison for CommObjectMemberAccessBasePtr names */
@@ -335,4 +335,4 @@ UndefinedFunctor::UndefinedFunctor(const std::string& msg) :
   MsgException("functor type is not defined for DCO class ", msg.c_str())
 { }
 
-DUECA_NS_END;
+} // namespace dueca

@@ -24,8 +24,9 @@
 #include <dassert.h>
 //#define DEBPRINTLEVEL -1
 #include <debprint.h>
+using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 const ParameterTable* Packer::getParameterTable()
 {
@@ -132,7 +133,7 @@ void Packer::packWork(AmorphStore& store)
 
      NoDataAvailable is an old error, should no longer happen.
   */
-  int old_state;
+  int old_state = 0;
   try {
     while (work_queue.notEmpty()) {
 
@@ -171,5 +172,6 @@ int Packer::changeCurrentStore(int& store_no)
   return fill_level;
 }
 
+template <> const char *getclassname<Packer>() { return "Packer"; }
 
-DUECA_NS_END
+} // namespace dueca

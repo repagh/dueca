@@ -16,7 +16,7 @@
 #include <CommObjectMemberAccess.hxx>
 #include <DataClassRegistry.hxx>
 
-DUECA_NS_START;
+namespace dueca {
 
 CommObjectReaderWriter::CommObjectReaderWriter(const char* classname) :
   entry(DataClassRegistry::single().getEntry(classname))
@@ -81,4 +81,4 @@ CommObjectReaderWriter& CommObjectReaderWriter::operator =
 }
 
 
-DUECA_NS_END;
+} // namespace dueca

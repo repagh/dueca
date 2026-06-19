@@ -16,7 +16,7 @@
 #define GtkOpenGLHelper_hxx
 
 #include "GtkGLWidgetHelper.hxx"
-DUECA_NS_START;
+namespace dueca {
 
 /** This class defines the basic opengl operations. Derived classes
     implement these for specific windowing interfaces. */
@@ -42,6 +42,6 @@ public:
   ~GtkGLWindowHelper();
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

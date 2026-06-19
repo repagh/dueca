@@ -30,7 +30,7 @@
 
 #define AM_PLACEMENT
 
-DUECA_NS_START
+namespace dueca {
 
 // forward declarations
 class ChannelReadToken;
@@ -461,6 +461,6 @@ public:
   void logBlockingWaitOver();
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif
 

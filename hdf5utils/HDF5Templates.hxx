@@ -27,7 +27,7 @@
 #include <dueca_ns.h>
 #include <map>
 
-DUECA_NS_START;
+namespace dueca {
 
 /** @file HDF5Templates.hxx
 
@@ -414,6 +414,6 @@ const H5::DataType* get_hdf5_type(T& t)
 }
 
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

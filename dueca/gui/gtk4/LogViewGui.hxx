@@ -21,7 +21,7 @@
 #include <ActivityDescriptions.hxx>
 #include <gtk/gtk.h>
 
-DUECA_NS_START
+namespace dueca {
 
 class LogView;
 
@@ -140,6 +140,6 @@ public:
                         gpointer user_data);
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

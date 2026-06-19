@@ -21,7 +21,7 @@
 #include <EndRole.hxx>
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 // class names
 class UnifiedChannel;
 struct ChannelEndUpdate;
@@ -92,10 +92,10 @@ public:
   std::ostream& print(std::ostream& o) const;
 };
 
-DUECA_NS_END
+} // namespace dueca
 
-PRINT_NS_START
-inline ostream& operator << (ostream& o, const DUECA_NS::ChannelIdList& cl)
+namespace std {
+inline ostream& operator << (ostream& o, const dueca::ChannelIdList& cl)
 { return cl.print(o); }
-PRINT_NS_END
+} // namespace std
 #endif

@@ -28,7 +28,7 @@
 #include <ActivityContext.hxx>
 #include <cmath>
 
-DUECA_NS_START;
+namespace dueca {
 
 template<class T>
 void writeAny(pugi::xml_node& writer,
@@ -278,4 +278,4 @@ void DCOtoXML(pugi::xml_node &writer,
 
 
 
-DUECA_NS_END;
+} // namespace dueca

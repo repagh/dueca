@@ -14,7 +14,7 @@
 #define DCOFunctor_cxx
 #include "DCOFunctor.hxx"
 
-DUECA_NS_START;
+namespace dueca {
 
 DCOFunctor::DCOFunctor() { }
 
@@ -25,4 +25,4 @@ bool DCOFunctor::operator() (const void* dpointer, const DataTimeSpec& ts)
 bool DCOFunctor::operator() (void* pointer)
 { return false; }
 
-DUECA_NS_END;
+} // namespace dueca

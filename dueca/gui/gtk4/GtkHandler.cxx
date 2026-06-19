@@ -42,8 +42,9 @@
 
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
+using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 #if GTK_MAJOR_VERSION != 4
 #error "Wrong GTK version headers!"
@@ -157,6 +158,4 @@ void GtkHandler::returnControl()
   g_application_release(G_APPLICATION(app));
   //gtk_main_quit();
 }
-DUECA_NS_END
-
-
+} // namespace dueca

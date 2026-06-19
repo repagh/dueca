@@ -9,8 +9,12 @@ Created on Mon Feb 22 15:38:47 2021
 import argparse
 import sys
 
+import warnings
+
 from duecautils.modules import Modules
 from duecautils import verboseprint
+
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 parser = argparse.ArgumentParser(
     description="""List modules of a DUECA project
@@ -23,7 +27,7 @@ parser.add_argument(
     '--machineclass', type=str,
     help="Project folder")
 parser.add_argument(
-    '--compact', action='store_true', 
+    '--compact', action='store_true',
     help="Compact listing output")
 parser.add_argument(
     '--only-active', action='store_true',

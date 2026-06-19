@@ -26,7 +26,7 @@
 */
 
 
-MSGPACKUS_NS_START;
+namespace msgunpack {
 
 #if defined(_STL_VECTOR_H) && !defined(msgpack_unstream_iter_STL_VECTOR)
 #define msgpack_unstream_iter_STL_VECTOR
@@ -171,4 +171,4 @@ inline void msg_unpack(S &i0, const S &iend,
 }
 #endif
 
-MSGPACKUS_NS_END;
+} // namespace msgunpack

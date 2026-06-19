@@ -19,7 +19,7 @@
 #include <sstream>
 #include <dueca_ns.h>
 
-DUECA_NS_START
+namespace dueca {
 
 /** A class for logging messages about the running system. Do not use
     these objects directly, use the D_MSG etc. macros */
@@ -101,6 +101,6 @@ public:
   void showType(std::ostream& os) const;
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

@@ -15,7 +15,7 @@
 #include "DUSIMEExceptions.hxx"
 #include <stdio.h>
 
-DUECA_NS_START
+namespace dueca {
 
 
 
@@ -49,4 +49,4 @@ cannot_convert_snap_coding(const char* originator, const char* coding)
   snprintf(str, sizeof(str), "Cannot read/write coding %s for : %s", coding, originator);
 }
 
-DUECA_NS_END
+} // namespace dueca

@@ -35,8 +35,9 @@
 #include "AsyncList.hxx"
 #include "Callback.hxx"
 #include <debprint.h>
+using namespace std;
 
-DUECA_NS_START
+namespace dueca {
 
 int Unpacker::unpacker_no = 0;
 
@@ -174,7 +175,7 @@ void Unpacker::despatch(const TimeSpec& t)
         /* DUECA network.
 
            Serious error; unpacking of data for a channel used the
-           wrong data size from the network buffer. 
+           wrong data size from the network buffer.
         */
         E_NET("Wrong size data for channel " << idx);
       }
@@ -190,4 +191,6 @@ void Unpacker::despatch(const TimeSpec& t)
   work.pop();
 }
 
-DUECA_NS_END
+template <> const char *getclassname<Unpacker>() { return "Unpacker"; }
+
+} // namespace dueca

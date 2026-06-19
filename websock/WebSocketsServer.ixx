@@ -52,8 +52,8 @@
 #define BOOST_POSTARG1 *runcontext,
 #endif
 
-DUECA_NS_START;
-WEBSOCK_NS_START;
+namespace dueca {
+namespace websock {
 
 // class/module names
 
@@ -1268,8 +1268,8 @@ template <typename Decoder> void WriteEntry::writeFromCoded(const Decoder &doc)
   }
 }
 
-WEBSOCK_NS_END;
-DUECA_NS_END;
+} // namespace websock
+} // namespace dueca
 
 #include <dueca/undebug.h>
 #include <undebprint.h>

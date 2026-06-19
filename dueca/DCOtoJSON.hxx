@@ -28,7 +28,7 @@
 
     Conversion routines for DCO to JSON */
 
-DUECA_NS_START;
+namespace dueca {
 class CommObjectReader;
 
 /** Convert the data from a DCO object to a JSON stringbuffer
@@ -111,9 +111,6 @@ void DCOtoJSONstrict(rapidjson::Writer<rapidjson::OStreamWrapper> &writer,
 void DCOtoJSONstrict(rapidjson::StringBuffer &doc,
                      const char* dcoclass, const void* object);
 
-/** classname function, should exist for DCO objects */
-template <typename T> const char* getclassname();
-
 /** Convert the data from a DCO object into a JSON writer
     Templated version, directly access the (known) object.
 
@@ -130,6 +127,6 @@ void dco_to_json(WR &writer, const DCO& object)
   DCOtoJSONstrict(writer, reader);
 }
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

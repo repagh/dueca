@@ -27,7 +27,9 @@
 #define E_MOD
 #include <debug.h>
 #include "dueca_assert.h"
-DUECA_NS_START
+using namespace std;
+
+namespace dueca {
 
 Entity::Entity(const char* ename, const list<ModuleCreator*>& foetae) :
   NamedObject(NameSet(ename, "Entity",
@@ -153,5 +155,4 @@ ostream& Entity::print (ostream& os) const
   return os << "Entity(" << getEntity() << ',' << getPart() << ')';
 }
 
-DUECA_NS_END
-
+} // namespace dueca

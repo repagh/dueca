@@ -30,7 +30,7 @@ extern "C" {
 #define W_CNF
 #include "debug.h"
 
-DUECA_NS_START
+namespace dueca {
 
 bool GtkGladeWindow::initialised_glade = false;
 bool GtkGladeWindow::initialised_gtkmm = false;
@@ -75,7 +75,7 @@ bool GtkGladeWindow::readGladeFile(const char* file,
   std::string line;
   while (!testfile.eof()) {
     std::getline(testfile, line);
-    if (line.find("<glade-interface>") != string::npos) {
+    if (line.find("<glade-interface>") != std::string::npos) {
       chooseglade = true;
       break;
     }
@@ -281,5 +281,4 @@ void GtkGladeWindow::hide()
   gtk_widget_hide(window);
 }
 
-DUECA_NS_END
-
+} // namespace dueca

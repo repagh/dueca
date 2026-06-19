@@ -18,7 +18,7 @@
 #include <ChannelWatcher.hxx>
 #include <string>
 
-STARTNSREPLICATOR;
+namespace dueca {
 
 /** Base class for reading/writing local entry copies */
 class EntryHandler
@@ -103,6 +103,6 @@ public:
   { return entryinfo.transportclass; }
 };
 
-ENDNSREPLICATOR;
+} // namespace dueca
 
 #endif

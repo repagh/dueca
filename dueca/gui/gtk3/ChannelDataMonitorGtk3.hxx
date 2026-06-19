@@ -21,7 +21,7 @@
 #include <rapidjson/reader.h>
 #include <dueca_ns.h>
 
-DUECA_NS_START
+namespace dueca {
 
 namespace json = rapidjson;
 typedef json::GenericDocument<json::UTF8<> > JDocument;
@@ -97,6 +97,6 @@ private:
               GtkTreeIter* itparent);
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif

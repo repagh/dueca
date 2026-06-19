@@ -77,7 +77,7 @@ GtkWidget *NewGtkDuecaButton_pixmaps()
 
   // inactive pixmap
   //pm = cairo_image_surface_create_from_xpm
-  //  (DUECA_NS ::DuecaPath::prepend("pixmaps/inactive.xpm").c_str());
+  //  (dueca ::DuecaPath::prepend("pixmaps/inactive.xpm").c_str());
 
   pixmap = gtk_image_new_from_pixbuf(button_icons[0]);
   gtk_container_add(box, pixmap);

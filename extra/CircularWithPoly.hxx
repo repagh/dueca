@@ -17,16 +17,16 @@
 
 #include "SimpleFunction.hxx"
 #ifdef UNITTEST
-#define DUECA_NS_START
-#define DUECA_NS_END
-#define DUECA_NS
+#define namespace dueca {
+#define } // namespace dueca
+#define dueca
 #else
 #include <dueca_ns.h>
 #endif
 #include <iostream>
 #include <algorithm>
 
-DUECA_NS_START
+namespace dueca {
 
 /** Implementation of a rotary scaling/converting device, using a
     polynomial for final correction and optionally tracking of the
@@ -93,6 +93,18 @@ public:
   /** Copy constructor */
   CircularWithPoly(const CircularWithPoly &o);
 
+  /** Templated constructor, accepting any list/iterable type.
+
+      @param  K       Gain coefficient, 1.0/(increments in full rotation)
+      @param  xzero   Input value when angle is zero
+      @param  norm_start   Normalised start value of first step, for example
+                      -0.5, to get a -0.5 to 0.5 output, or zero to get a
+                      0 to 1 output
+      @param  n       Order of the calibrating polynomial
+      @param  ai      Array with polynomial coefficients, polynomial is
+                      \f$a_0 + a_1 x + \ldots + a_n x^n \f$
+      @tparam A       Type of the coefficients array.
+  */
   template <typename A>
   CircularWithPoly(double K, double xzero, double norm_start, const A &ai) :
     K(K),
@@ -117,11 +129,11 @@ public:
   std::ostream &print(std::ostream &os) const;
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 /** Print operator for CircularWithPoly */
 inline std::ostream &operator<<(std::ostream &os,
-                                const DUECA_NS::CircularWithPoly &o)
+                                const dueca::CircularWithPoly &o)
 {
   return o.print(os);
 }

@@ -16,7 +16,7 @@
 
 #include "ReflectoryBase.hxx"
 
-DUECA_NS_START;
+namespace dueca {
 
 /** Distributed configuration tree nodes, with the "master" end
     somewhere else.
@@ -65,6 +65,6 @@ public:
   ~ReflectoryLocal();
 };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

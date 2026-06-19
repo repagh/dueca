@@ -16,12 +16,12 @@
 
 #include <dueca_ns.h>
 
-DUECA_NS_START
+namespace dueca {
 void init_reflective_components();
 void init_copying_components();
 void init_dueca_accessor();
 void init_dueca_genericpacker();
 void init_dueca_ipdeps();
-DUECA_NS_END
+} // namespace dueca
 
 #endif

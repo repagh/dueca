@@ -27,9 +27,9 @@
 #include <string>
 #include <map>
 
-STARTHDF5LOG;
+namespace dueca { namespace hdf5log {
 
-USING_DUECA_NS;
+
 
 /** Functor class to write DCO objects elements to a HDF file.
 
@@ -250,6 +250,6 @@ public:
   virtual ~HDF5DCOWriteFunctor();
 };
 
-ENDHDF5LOG;
+} } // namespace dueca namespace hdf5log
 
 #endif

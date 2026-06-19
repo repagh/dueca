@@ -14,7 +14,7 @@
 #define HDF5Exceptions_cxx
 #include "HDF5Exceptions.hxx"
 
-DUECA_NS_START;
+namespace dueca {
 
 fileread_mismatch::fileread_mismatch():
   std::exception()
@@ -36,4 +36,4 @@ const char* fileread_exhausted::what() const throw()
 
 
 
-DUECA_NS_END;
+} // namespace dueca

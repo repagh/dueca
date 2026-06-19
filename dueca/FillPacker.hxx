@@ -20,7 +20,7 @@
 #include <dueca-conf.h>
 #include "MessageBuffer.hxx"
 
-DUECA_NS_START
+namespace dueca {
 
 class AmorphStore;
 struct ParameterTable;
@@ -85,5 +85,5 @@ public:
   void packWork();
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

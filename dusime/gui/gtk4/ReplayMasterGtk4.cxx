@@ -33,7 +33,7 @@
 #include <dueca/dueca.h>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-DUECA_NS_START
+namespace dueca {
 
 // class/module name
 const char *const ReplayMasterGtk4::classname = "replay-master";
@@ -576,4 +576,4 @@ bool ReplayMasterGtk4::setPositionAndSize(const std::vector<int> &p)
   return true;
 }
 
-DUECA_NS_END;
+} // namespace dueca

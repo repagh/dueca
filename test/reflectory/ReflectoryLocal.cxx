@@ -16,10 +16,10 @@
 #include "ReflectoryViewBase.hxx"
 #include "TimeSpec.hxx"
 
-DUECA_NS_START;
+namespace dueca {
 
 // template specialization
 template class ReflectoryLocal<dueca::TimeTickType>;
 
 
-DUECA_NS_END;
+} // namespace dueca

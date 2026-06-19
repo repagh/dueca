@@ -18,8 +18,9 @@
 #include "PupilRemoteGaze2.hxx"
 #include <iostream>
 #include <fstream>
+using namespace std;
 
-USING_DUECA_NS;
+using namespace dueca;
 
 int main()
 {

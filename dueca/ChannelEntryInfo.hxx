@@ -19,7 +19,7 @@
 #include <GlobalId.hxx>
 #include <iostream>
 
-DUECA_NS_START;
+namespace dueca {
 
 class UChannelEntry;
 
@@ -90,12 +90,12 @@ public:
 
 
 
-DUECA_NS_END;
+} // namespace dueca
 
-PRINT_NS_START;
+namespace std {
 /** Print a channel entry information object */
 std::ostream& operator << (std::ostream& is, const dueca::ChannelEntryInfo& i);
-PRINT_NS_END;
+} // namespace std
 
 
 #endif

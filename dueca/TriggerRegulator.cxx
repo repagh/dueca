@@ -15,7 +15,7 @@
 
 #include <boost/lexical_cast.hpp>
 #include "TriggerRegulator.hxx"
-DUECA_NS_START;
+namespace dueca {
 
 TriggerRegulator::TriggerRegulator(TriggerPuller& base, const TimeSpec& ts) :
   TargetAndPuller(),
@@ -147,4 +147,4 @@ const std::string& TriggerRegulator::getTargetName() const
 }
 
 
-DUECA_NS_END;
+} // namespace dueca

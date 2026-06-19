@@ -14,7 +14,7 @@
 #define CommObjectExceptions_cxx
 #include "CommObjectExceptions.hxx"
 
-DUECA_NS_START;
+namespace dueca {
 
 const char* TypeCannotBeIterated::msg = "this type cannot be iterated";
 const char* TypeIsNotNested::msg = "this type is not nested";
@@ -42,4 +42,4 @@ IndexExceeded::IndexExceeded()
 {
   //
 }
-DUECA_NS_END;
+} // namespace dueca

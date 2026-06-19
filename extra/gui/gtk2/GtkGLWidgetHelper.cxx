@@ -19,7 +19,7 @@
 #include <dassert.h>
 #include <GuiHandler.hxx>
 
-DUECA_NS_START;
+namespace dueca {
 
 GdkGLContext* GtkGLWidgetHelper::share_context = NULL;
 
@@ -153,7 +153,7 @@ int GtkGLWidgetHelper::yoffset()
 void GtkGLWidgetHelper::init_gl_area(DuecaGLCanvas* master)
 {
   if (!glconfig) {
-    cerr << "No opengl configuration" << endl;
+    std::cerr << "No opengl configuration" << std::endl;
     exit(1);
   }
 
@@ -161,7 +161,7 @@ void GtkGLWidgetHelper::init_gl_area(DuecaGLCanvas* master)
   gboolean res = gtk_widget_set_gl_capability
       (gtk_glwidget_id, glconfig, share_context, TRUE, GDK_GL_RGBA_TYPE);
   if (!res) {
-    cerr << "Cannot set openglcapability" << endl;
+    std::cerr << "Cannot set openglcapability" << std::endl;
     exit(1);
   }
 
@@ -215,14 +215,14 @@ static void initGtkGLext(const std::string& selected)
     glconfig = gdk_gl_config_new(attrlist);
 
     if (glconfig == NULL) {
-      cerr << "Cannot open double buffer GL visual, trying single" << endl;
+      std::cerr << "Cannot open double buffer GL visual, trying single" << std::endl;
       int attrlist[] =
       { GDK_GL_RGBA,
         GDK_GL_DEPTH_SIZE, CSE.getGraphicDepthBufferSize(),
         GDK_GL_ATTRIB_LIST_NONE};
       glconfig = gdk_gl_config_new(attrlist);
       if (glconfig == NULL) {
-        cerr << "No OpenGL visuals" << endl;
+        std::cerr << "No OpenGL visuals" << std::endl;
         exit(1);
       }
     }
@@ -246,4 +246,4 @@ GLWindowHelper* GtkOpenGLHelper::newWindow()
   return new GtkGLWindowHelper();
 }
 
-DUECA_NS_END;
+} // namespace dueca

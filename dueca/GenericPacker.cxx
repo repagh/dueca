@@ -17,7 +17,7 @@
 #include "CriticalActivity.hxx"
 #define E_CNF
 #include <debug.h>
-DUECA_NS_START
+namespace dueca {
 
 int GenericPacker::unique = 0;
 
@@ -85,4 +85,4 @@ void GenericPacker::packWork()
   assert(0);
 }
 
-DUECA_NS_END
+} // namespace dueca

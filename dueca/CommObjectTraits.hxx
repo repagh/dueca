@@ -55,14 +55,10 @@
       generated types/objects
  */
 
-DUECA_NS_START;
+namespace dueca {
 
 /* pre-define */
 class smartstring;
-
-/** Standard templated function */
-template <typename T>
-const char* getclassname();
 
 /** @name Class name return for common types
     @retval String with classname
@@ -423,6 +419,6 @@ inline const char* getclassname(const T& a)
 template <typename T>
 const char* getenumintrep() { return "int64_t"; };
 
-DUECA_NS_END;
+} // namespace dueca
 
 #endif

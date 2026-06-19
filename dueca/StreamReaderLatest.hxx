@@ -20,7 +20,7 @@
 #define StreamReaderLatest_hxx
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 #include <StreamAccessToken.hxx>
 #include <DataReader.hxx>
@@ -90,5 +90,5 @@ private:
   static void* operator new(size_t s);
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

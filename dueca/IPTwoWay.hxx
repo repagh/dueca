@@ -18,7 +18,7 @@
 #include "IPAccessor.hxx"
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 /** Two-way (send and receive) or one-way (only send) communication
     over IP.
 
@@ -65,5 +65,5 @@ private:
   IPTwoWay(const IPTwoWay&);
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif

@@ -34,7 +34,7 @@
   if (S .size() < ( O )) \
     throw msgpack_unpack_mismatch("buffer too small");
 
-MSGPACKUS_NS_START;
+namespace msgunpack {
 
 /** Specific exception to indicate unpacking failure */
 struct msgpack_unpack_mismatch: public std::exception
@@ -479,7 +479,7 @@ void msg_unpack(S& s, O& o, std::map<K,T> & i)
 }
 
 
-MSGPACKUS_NS_END;
+} // namespace msgunpack
 #endif
 
 #include <undebprint.h>

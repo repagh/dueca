@@ -20,7 +20,7 @@
 #include <cmath>
 
 #ifndef RANDNORMALTEST
-DUECA_NS_START
+namespace dueca {
 #endif
 
 #define RAND_NORMAL_BOX_MULLER
@@ -80,7 +80,7 @@ double randNormal()
 #endif
 
 #ifndef RANDNORMALTEST
-DUECA_NS_END
+} // namespace dueca
 #else
 
 using namespace std;

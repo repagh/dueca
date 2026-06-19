@@ -10,7 +10,7 @@
         documentation   : DUECA_API
 ")
 
-(Type NameSet "#include <NameSet.hxx>")
+(Type dueca::NameSet "#include <NameSet.hxx>")
 (Type dueca::smartstring "#include <smartstring.hxx>
 #include <toml.hpp>")
 
@@ -135,7 +135,7 @@
  ;; data (XML, JSON), or use an AmorphStore to pack as binary data.
  (dueca::smartstring data)
  ;; Identifies the object that sent the snapshot
- (NameSet originator)
+ (dueca::NameSet originator)
  ;; Snapshot encoding, if specified
  (SnapCoding coding (Default UnSpecified))
  )

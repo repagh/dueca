@@ -21,7 +21,7 @@
 #include "GlobalId.hxx"
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 /** Generic event class. Defines the generic event data, such as time
     stamp and originator of the event */
 
@@ -78,7 +78,7 @@ public:
   }
 
   /** Print the generic event to stream. */
-  ostream& print(ostream& os) const;
+  std::ostream& print(std::ostream& os) const;
 
   /** Returns true if this event is earlier than another one. */
   inline bool operator < (const GenericEvent& e2) const
@@ -101,22 +101,18 @@ public:
   void assumeDataOwnership(const GlobalId& new_owner) const;
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 /// packs the GenericEvent into amorphous storage
-inline void packData(DUECA_NS ::AmorphStore& s,
-                     const DUECA_NS ::GenericEvent& o)
+inline void packData(dueca ::AmorphStore& s,
+                     const dueca ::GenericEvent& o)
 { o.packData(s); }
 
-PRINT_NS_START
+namespace std {
 /// prints the GenericEvent to a stream
 inline ostream & operator << (ostream& s, const
-                              DUECA_NS ::GenericEvent& o)
+                              dueca ::GenericEvent& o)
 { return o.print(s); }
-PRINT_NS_END
+} // namespace std
 
 #endif
-
-
-
-

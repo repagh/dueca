@@ -47,6 +47,7 @@ static const double prob = 0.01/6.0;
 
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
+using namespace std;
 
 /** Macros for calculating check number. */
 #define ROTATE_RIGHT(c) \
@@ -54,7 +55,7 @@ if ((c) & 01) (c) = ((c) >>1) + 0x80000000; else (c) >>= 1;
 #define AMALGI(d, I) \
 { ROTATE_RIGHT(I); I = (I ^ d); }
 
-DUECA_NS_START
+namespace dueca {
 
 const ParameterTable* ReflectivePacker::getParameterTable()
 {
@@ -399,4 +400,7 @@ int ReflectivePacker::changeCurrentStore(int& store_no)
   return 0;
 }
 
-DUECA_NS_END
+template <> const char *getclassname<ReflectivePacker>() { return "ReflectivePacker"; }
+
+
+} // namespace dueca

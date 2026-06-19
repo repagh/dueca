@@ -44,7 +44,7 @@
 #include <cstdio>
 #endif
 
-DUECA_NS_START
+namespace dueca {
 
 /* Keep track of whether this is running multi thread. */
 #ifdef LATE_SYNC_PRIMITIVES
@@ -132,4 +132,4 @@ void ThreadSpecific::setPtr(const void* newpt)
 {
   my.set(newpt);
 }
-DUECA_NS_END
+} // namespace dueca

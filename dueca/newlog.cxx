@@ -15,7 +15,7 @@
 #define newlog_cxx
 #define debug_h
 #include "newlog.hxx"
-DUECA_NS_START
+namespace dueca {
 
 const LogCategory& logcat_cnf()
 {
@@ -95,4 +95,4 @@ const LogCategory& logcat_xtr()
   return cat;
 }
 
-DUECA_NS_END
+} // namespace dueca

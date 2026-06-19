@@ -25,7 +25,7 @@ https://stackoverflow.com/questions/33877467/set-a-python-variable-to-a-c-object
 #include "ArgListProcessor.hxx"
 #include <dueca_ns.h>
 
-DUECA_NS_START
+namespace dueca {
 
 /** Script-dependent type creator, still type-independent, fuses the
     ArgListProcessor with the type creator */
@@ -76,7 +76,7 @@ public:
                        PrioritySpec& ps);
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif
 
@@ -91,7 +91,7 @@ DUECA_NS_END
 #include <dueca_ns.h>
 #include <TypeCreator.hxx>
 
-DUECA_NS_START
+namespace dueca {
 
 template<class T>
 TypeCreator<T>* TypeCreator<T>::singleton = NULL;
@@ -131,7 +131,7 @@ Module* TypeCreator<T>::createModule(Entity* entity, const vstring&
   return new T(entity, part.c_str(), ps);
 }
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif
 #endif

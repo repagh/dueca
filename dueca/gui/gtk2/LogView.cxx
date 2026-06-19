@@ -32,7 +32,7 @@ using namespace std;
 #define NO_TYPE_CREATION
 #include <dueca.h>
 
-DUECA_NS_START
+namespace dueca {
 
 // class/module name
 const char* LogView::classname = "log-view";
@@ -273,4 +273,4 @@ void LogView::setLevel(const LogCategory* cat, int node,
   }
 }
 
-DUECA_NS_END
+} // namespace dueca

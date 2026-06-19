@@ -19,7 +19,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-DUECA_NS_START;
+namespace dueca {
 
 CPULowLatency::CPULowLatency(int32_t target) :
   ll_fd(-1)
@@ -55,4 +55,4 @@ CPULowLatency::~CPULowLatency()
   }
 }
 
-DUECA_NS_END;
+} // namespace dueca

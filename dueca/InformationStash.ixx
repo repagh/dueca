@@ -23,7 +23,7 @@
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
 
-DUECA_NS_START
+namespace dueca {
 
 template<class T>
 InformationStash<T>::InformationStash(const char* name) :
@@ -130,4 +130,4 @@ unsigned long InformationStash<T>::stash(const T* i)
 
 #include <undebprint.h>
 
-DUECA_NS_END
+} // namespace dueca

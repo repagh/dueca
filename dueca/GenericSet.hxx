@@ -15,7 +15,7 @@
 #include "TimeSpec.hxx"
 
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 /** Common base class for data sets. */
 class GenericSet
@@ -28,7 +28,7 @@ public:
   int32_t data;
 };
 
-DUECA_NS_END
+} // namespace dueca
 #endif
 
 

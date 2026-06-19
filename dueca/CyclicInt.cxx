@@ -15,7 +15,7 @@
 #define CyclicInt_cc
 #include "CyclicInt.hxx"
 #include <iostream>
-DUECA_NS_START
+namespace dueca {
 
 CyclicInt::CyclicInt(int value, int limit) :
   value(value % limit), limit(limit)
@@ -102,4 +102,4 @@ std::ostream& CyclicInt::print (std::ostream& o) const
 {
   return o << "CyclicInt(" << value << ',' << limit << ')';
 }
-DUECA_NS_END
+} // namespace dueca

@@ -1,9 +1,12 @@
 #!@Python_EXECUTABLE@
 
 import os
-import pyparsing as pp
-import argparse
+import warnings
 import sys
+import argparse
+import pyparsing as pp
+
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 # When the following conditions are present
 #
@@ -13,7 +16,7 @@ import sys
 #
 # Then a symbolic link is created from the ${HOME}/scripts to the start file(s)
 
-# default 
+# default
 node_number = None
 number_of_nodes = None
 
@@ -120,4 +123,3 @@ if node_number == 0 and os.path.isdir(scriptdir):
                     print(f"Created a link to start file {f}")
                 except:
                     print(f"Failed to create symlink to {f} in folder {scriptdir}")
-

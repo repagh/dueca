@@ -20,7 +20,7 @@
 #include <CommObjectTraits.hxx>
 #include <Dstring.hxx>
 
-DUECA_NS_START
+namespace dueca {
 
 /** Defines different possible categories for logging data. Note that for
     packing/unpacking this one is treated as a basic type; has no name. */
@@ -98,29 +98,29 @@ public:
 template<>
 const char* getclassname<LogCategory>();
 
-DUECA_NS_END
+} // namespace dueca
 
-inline void packData(DUECA_NS::AmorphStore &s, const DUECA_NS::LogCategory& l)
+inline void packData(dueca::AmorphStore &s, const dueca::LogCategory& l)
 { l.packData(s); }
-inline void unPackData(DUECA_NS::AmorphReStore &s, DUECA_NS::LogCategory& l)
+inline void unPackData(dueca::AmorphReStore &s, dueca::LogCategory& l)
 { l.unPackData(s); }
-inline void packDataDiff(DUECA_NS::AmorphStore &s, const DUECA_NS::LogCategory& l, const DUECA_NS::LogCategory& ref)
+inline void packDataDiff(dueca::AmorphStore &s, const dueca::LogCategory& l, const dueca::LogCategory& ref)
 { l.packData(s); }
-inline void unPackDataDiff(DUECA_NS::AmorphReStore &s, DUECA_NS::LogCategory& l)
+inline void unPackDataDiff(dueca::AmorphReStore &s, dueca::LogCategory& l)
 { l.unPackData(s); }
 
-PRINT_NS_START
+namespace std {
 inline std::ostream& operator << (std::ostream& os,
-                                  const DUECA_NS::LogCategory& o)
+                                  const dueca::LogCategory& o)
 {
   o.print(os); return os;
 }
-inline std::istream& operator >> (std::istream& is, DUECA_NS::LogCategory& o)
+inline std::istream& operator >> (std::istream& is, dueca::LogCategory& o)
 {
   std::string tmp; is >> tmp; o.read(tmp);
   return is;
 }
-PRINT_NS_END
+} // namespace std
 
 // specialization of classname
 template<>

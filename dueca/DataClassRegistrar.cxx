@@ -14,7 +14,7 @@
 #define DataClassRegistrar_cxx
 #include "DataClassRegistrar.hxx"
 #include "DataClassRegistry.hxx"
-DUECA_NS_START;
+namespace dueca {
 
 DataClassRegistrar::DataClassRegistrar(const char* classname,
                                        const char* parent,
@@ -25,5 +25,5 @@ DataClassRegistrar::DataClassRegistrar(const char* classname,
   DataClassRegistry::single().registerClass
     (classname, parent, table, functortable, converter);
 }
-DUECA_NS_END;
+} // namespace dueca
 

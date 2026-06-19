@@ -22,7 +22,7 @@ using namespace std;
 #endif
 #include <dassert.h>
 
-DUECA_NS_START
+namespace dueca {
 
 #if 0
 ChunkAllocator::ChunkAllocator(unsigned int nchunks, size_t size,
@@ -75,4 +75,4 @@ void* ChunkAllocator::getMore(ChunkAllocator *& chunks)
 }
 
 #endif
-DUECA_NS_END
+} // namespace dueca

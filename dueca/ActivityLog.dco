@@ -12,7 +12,11 @@
 (Type uint8_t)
 (Type uint16_t)
 (Type double)
-(Type TimeTickType)
+(Type TimeTickType "#include <dueca/SimTime.hxx>
+#include <dueca/ActivityBit.hxx>
+namespace dueca {
+typedef ActivityBit* ActivityBitPtr;
+} // namespace dueca")
 
 ;; This object contains a log of the activities handled by one
 ;; ActivityManager in one node. The log is constructed upon request
@@ -22,11 +26,6 @@
 
        (Option msgpack)
        (IncludeFile ActivityLogExtra)
-       (AddToHeader "#include <ActivityBit.hxx>
-DUECA_NS_START;
-typedef uint32_t TimeTickType;
-typedef ActivityBit* ActivityBitPtr;
-DUECA_NS_END;")
 
        ;; Node where this log was created
        (uint8_t node_id)

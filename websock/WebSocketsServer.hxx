@@ -42,8 +42,8 @@ typedef io_service io_context;
 
 #include "CommonChannelServer.hxx"
 
-DUECA_NS_START;
-WEBSOCK_NS_START;
+namespace dueca {
+namespace websock {
 
 using HttpServer = SimpleWeb::Server<SimpleWeb::HTTP>;
 using HttpsServer = SimpleWeb::Server<SimpleWeb::HTTPS>;
@@ -222,7 +222,7 @@ public: // construction and further specification
   bool setTimeSpec(const TimeSpec &ts);
 
   /** Request check on the timing. */
-  bool checkTiming(const vector<int> &i);
+  bool checkTiming(const std::vector<int> &i);
 
   /** Define a URL for reading latest data */
   bool setCurrentData(const std::vector<std::string> &i);
@@ -548,7 +548,7 @@ public: // construction and further specification
   ~WebSocketsServer();
 };
 
-WEBSOCK_NS_END;
-DUECA_NS_END;
+} // namespace websock
+} // namespace dueca
 
 #endif

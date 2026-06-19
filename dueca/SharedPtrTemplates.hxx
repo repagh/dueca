@@ -21,7 +21,7 @@
 #define USING_BOOST_INHERIT 1
 #include <boost/smart_ptr/intrusive_ref_counter.hpp>
 #else
-#define USING_BOOST_INHERIT 1
+#define USING_BOOST_INHERIT 0
 #endif
 
 

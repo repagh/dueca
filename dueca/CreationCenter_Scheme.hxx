@@ -20,7 +20,7 @@
 #define DEBPRINTLEVEL -1
 #include <debprint.h>
 
-DUECA_NS_START
+namespace dueca {
 
 template<>
 SchemeClassData<CreationCenter>* SchemeClassData<CreationCenter>::single()
@@ -100,7 +100,7 @@ SCM make_module(SCM module_type, SCM partname, SCM specifications)
   DEB("make_module " << dueca_scm_chars(module_type));
 
   DUECA_SCM_ASSERT(SCM_SYMBOLP(module_type) &&
-                   DUECA_NS::CreationCenter::single()->
+                   dueca::CreationCenter::single()->
                    hasType(dueca_scm_chars(module_type)),
                    module_type, SCM_ARG1, s_make_module);
   DUECA_SCM_ASSERT(scm_is_string(partname),
@@ -218,7 +218,7 @@ void scheme_init<CreationCenter>()
 
 
 
-DUECA_NS_END
+} // namespace dueca
 
 #include <undebprint.h>
 

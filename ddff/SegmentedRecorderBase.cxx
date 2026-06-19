@@ -13,7 +13,7 @@
 #include "DDFFExceptions.hxx"
 #include <dueca/TimeSpec.hxx>
 
-DDFF_NS_START
+namespace dueca { namespace ddff {
 
 SegmentedRecorderBase::SegmentedRecorderBase() :
   marked_tick(0U),
@@ -55,4 +55,4 @@ bool SegmentedRecorderBase::checkOrMakeClean()
   return true;
 }
 
-DDFF_NS_END
+} } // namespace ddff namespace dueca

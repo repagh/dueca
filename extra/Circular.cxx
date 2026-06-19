@@ -16,7 +16,7 @@
 
 #include "Circular.hxx"
 
-DUECA_NS_START
+namespace dueca {
 
 Circular::Circular(double K, double izero, double range, double start) :
   K(K),
@@ -46,5 +46,5 @@ std::ostream& Circular::print(std::ostream& os) const
   return os << "Circular(K=" << K << ", izero=" << izero
             << ", range=" << range << ", start=" << norm_start << ")";
 }
-DUECA_NS_END
+} // namespace dueca
 

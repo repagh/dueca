@@ -37,10 +37,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define D_CNF(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,			\
-        CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Debug),              \
-        CCDUECA_NS::logcat_cnf(), D_CNF_INITIAL_ON);                    \
+        ::dueca::LogLevel(::dueca::LogLevel::Debug),              \
+        ::dueca::logcat_cnf(), D_CNF_INITIAL_ON);                    \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -57,10 +57,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define I_CNF(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-       CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Info),                \
-        CCDUECA_NS::logcat_cnf(), I_CNF_INITIAL_ON);                    \
+       ::dueca::LogLevel(::dueca::LogLevel::Info),                \
+        ::dueca::logcat_cnf(), I_CNF_INITIAL_ON);                    \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -77,10 +77,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define W_CNF(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-       CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Warning),             \
-        CCDUECA_NS::logcat_cnf(), W_CNF_INITIAL_ON);                    \
+       ::dueca::LogLevel(::dueca::LogLevel::Warning),             \
+        ::dueca::logcat_cnf(), W_CNF_INITIAL_ON);                    \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -90,10 +90,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define E_CNF(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-        CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Error),              \
-        CCDUECA_NS::logcat_cnf());                                      \
+        ::dueca::LogLevel(::dueca::LogLevel::Error),              \
+        ::dueca::logcat_cnf());                                      \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -111,10 +111,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define D_SYS(A)                                                        \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-        CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Debug),              \
-        CCDUECA_NS::logcat_sys(), D_SYS_INITIAL_ON);                    \
+        ::dueca::LogLevel(::dueca::LogLevel::Debug),              \
+        ::dueca::logcat_sys(), D_SYS_INITIAL_ON);                    \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -131,10 +131,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define I_SYS(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-       CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Info),                \
-        CCDUECA_NS::logcat_sys(), I_SYS_INITIAL_ON);                    \
+       ::dueca::LogLevel(::dueca::LogLevel::Info),                \
+        ::dueca::logcat_sys(), I_SYS_INITIAL_ON);                    \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -151,10 +151,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define W_SYS(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-       CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Warning),             \
-        CCDUECA_NS::logcat_sys(), W_SYS_INITIAL_ON);                    \
+       ::dueca::LogLevel(::dueca::LogLevel::Warning),             \
+        ::dueca::logcat_sys(), W_SYS_INITIAL_ON);                    \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -164,10 +164,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define E_SYS(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-        CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Error),              \
-        CCDUECA_NS::logcat_sys());                                      \
+        ::dueca::LogLevel(::dueca::LogLevel::Error),              \
+        ::dueca::logcat_sys());                                      \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -186,10 +186,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define D_ACT(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-        CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Debug),              \
-        CCDUECA_NS::logcat_act(), D_ACT_INITIAL_ON);                    \
+        ::dueca::LogLevel(::dueca::LogLevel::Debug),              \
+        ::dueca::logcat_act(), D_ACT_INITIAL_ON);                    \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -206,10 +206,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define I_ACT(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-       CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Info),                \
-        CCDUECA_NS::logcat_act(), I_ACT_INITIAL_ON);                    \
+       ::dueca::LogLevel(::dueca::LogLevel::Info),                \
+        ::dueca::logcat_act(), I_ACT_INITIAL_ON);                    \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -226,10 +226,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define W_ACT(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-       CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Warning),             \
-        CCDUECA_NS::logcat_act(), W_ACT_INITIAL_ON);                    \
+       ::dueca::LogLevel(::dueca::LogLevel::Warning),             \
+        ::dueca::logcat_act(), W_ACT_INITIAL_ON);                    \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -239,10 +239,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define E_ACT(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-        CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Error),              \
-        CCDUECA_NS::logcat_act());                                      \
+        ::dueca::LogLevel(::dueca::LogLevel::Error),              \
+        ::dueca::logcat_act());                                      \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -261,10 +261,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define D_CHN(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-        CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Debug),              \
-        CCDUECA_NS::logcat_chn(), D_CHN_INITIAL_ON);                    \
+        ::dueca::LogLevel(::dueca::LogLevel::Debug),              \
+        ::dueca::logcat_chn(), D_CHN_INITIAL_ON);                    \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -281,10 +281,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define I_CHN(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-       CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Info),                \
-        CCDUECA_NS::logcat_chn(), I_CHN_INITIAL_ON);                    \
+       ::dueca::LogLevel(::dueca::LogLevel::Info),                \
+        ::dueca::logcat_chn(), I_CHN_INITIAL_ON);                    \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -301,10 +301,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define W_CHN(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-       CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Warning),             \
-        CCDUECA_NS::logcat_chn(), W_CHN_INITIAL_ON);                    \
+       ::dueca::LogLevel(::dueca::LogLevel::Warning),             \
+        ::dueca::logcat_chn(), W_CHN_INITIAL_ON);                    \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -314,10 +314,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define E_CHN(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-        CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Error),              \
-        CCDUECA_NS::logcat_chn());                                      \
+        ::dueca::LogLevel(::dueca::LogLevel::Error),              \
+        ::dueca::logcat_chn());                                      \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -336,10 +336,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define D_SHM(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-        CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Debug),              \
-        CCDUECA_NS::logcat_shm(), D_SHM_INITIAL_ON);                    \
+        ::dueca::LogLevel(::dueca::LogLevel::Debug),              \
+        ::dueca::logcat_shm(), D_SHM_INITIAL_ON);                    \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -356,10 +356,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define I_SHM(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-       CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Info),                \
-        CCDUECA_NS::logcat_shm(), I_SHM_INITIAL_ON);                    \
+       ::dueca::LogLevel(::dueca::LogLevel::Info),                \
+        ::dueca::logcat_shm(), I_SHM_INITIAL_ON);                    \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -376,10 +376,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define W_SHM(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-       CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Warning),             \
-        CCDUECA_NS::logcat_shm(), W_SHM_INITIAL_ON);                    \
+       ::dueca::LogLevel(::dueca::LogLevel::Warning),             \
+        ::dueca::logcat_shm(), W_SHM_INITIAL_ON);                    \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -389,10 +389,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define E_SHM(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-        CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Error),              \
-        CCDUECA_NS::logcat_shm());                                      \
+        ::dueca::LogLevel(::dueca::LogLevel::Error),              \
+        ::dueca::logcat_shm());                                      \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -411,10 +411,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define D_TIM(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-        CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Debug),              \
-        CCDUECA_NS::logcat_tim(), D_TIM_INITIAL_ON);                    \
+        ::dueca::LogLevel(::dueca::LogLevel::Debug),              \
+        ::dueca::logcat_tim(), D_TIM_INITIAL_ON);                    \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -431,10 +431,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define I_TIM(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-       CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Info),                \
-        CCDUECA_NS::logcat_tim(), I_TIM_INITIAL_ON);                    \
+       ::dueca::LogLevel(::dueca::LogLevel::Info),                \
+        ::dueca::logcat_tim(), I_TIM_INITIAL_ON);                    \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -451,10 +451,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define W_TIM(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-       CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Warning),             \
-        CCDUECA_NS::logcat_tim(), W_TIM_INITIAL_ON);                    \
+       ::dueca::LogLevel(::dueca::LogLevel::Warning),             \
+        ::dueca::logcat_tim(), W_TIM_INITIAL_ON);                    \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -464,10 +464,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define E_TIM(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-        CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Error),              \
-        CCDUECA_NS::logcat_tim());                                      \
+        ::dueca::LogLevel(::dueca::LogLevel::Error),              \
+        ::dueca::logcat_tim());                                      \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -486,10 +486,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define D_NET(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-        CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Debug),              \
-        CCDUECA_NS::logcat_net(), D_NET_INITIAL_ON);                    \
+        ::dueca::LogLevel(::dueca::LogLevel::Debug),              \
+        ::dueca::logcat_net(), D_NET_INITIAL_ON);                    \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -506,10 +506,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define I_NET(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-       CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Info),                \
-        CCDUECA_NS::logcat_net(), I_NET_INITIAL_ON);                    \
+       ::dueca::LogLevel(::dueca::LogLevel::Info),                \
+        ::dueca::logcat_net(), I_NET_INITIAL_ON);                    \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -526,10 +526,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define W_NET(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-       CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Warning),             \
-        CCDUECA_NS::logcat_net(), W_NET_INITIAL_ON);                    \
+       ::dueca::LogLevel(::dueca::LogLevel::Warning),             \
+        ::dueca::logcat_net(), W_NET_INITIAL_ON);                    \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -539,10 +539,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define E_NET(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-        CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Error),              \
-        CCDUECA_NS::logcat_net());                                      \
+        ::dueca::LogLevel(::dueca::LogLevel::Error),              \
+        ::dueca::logcat_net());                                      \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -563,10 +563,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define D_MOD(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-        CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Debug),              \
-        CCDUECA_NS::logcat_mod(), D_MOD_INITIAL_ON);                    \
+        ::dueca::LogLevel(::dueca::LogLevel::Debug),              \
+        ::dueca::logcat_mod(), D_MOD_INITIAL_ON);                    \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -585,10 +585,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define I_MOD(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-       CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Info),                \
-        CCDUECA_NS::logcat_mod(), I_MOD_INITIAL_ON);                    \
+       ::dueca::LogLevel(::dueca::LogLevel::Info),                \
+        ::dueca::logcat_mod(), I_MOD_INITIAL_ON);                    \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -605,10 +605,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define W_MOD(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-       CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Warning),             \
-        CCDUECA_NS::logcat_mod(), W_MOD_INITIAL_ON);                    \
+       ::dueca::LogLevel(::dueca::LogLevel::Warning),             \
+        ::dueca::logcat_mod(), W_MOD_INITIAL_ON);                    \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -618,10 +618,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define E_MOD(A)                                                        \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-        CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Error),              \
-        CCDUECA_NS::logcat_mod());                                      \
+        ::dueca::LogLevel(::dueca::LogLevel::Error),              \
+        ::dueca::logcat_mod());                                      \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -640,10 +640,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define D_STS(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-        CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Debug),              \
-        CCDUECA_NS::logcat_sts(), D_STS_INITIAL_ON);                    \
+        ::dueca::LogLevel(::dueca::LogLevel::Debug),              \
+        ::dueca::logcat_sts(), D_STS_INITIAL_ON);                    \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -660,10 +660,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define I_STS(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-       CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Info),                \
-        CCDUECA_NS::logcat_sts(), I_STS_INITIAL_ON);                    \
+       ::dueca::LogLevel(::dueca::LogLevel::Info),                \
+        ::dueca::logcat_sts(), I_STS_INITIAL_ON);                    \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -680,10 +680,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define W_STS(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-       CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Warning),             \
-        CCDUECA_NS::logcat_sts(), W_STS_INITIAL_ON);                    \
+       ::dueca::LogLevel(::dueca::LogLevel::Warning),             \
+        ::dueca::logcat_sts(), W_STS_INITIAL_ON);                    \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -693,10 +693,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define E_STS(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-        CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Error),              \
-        CCDUECA_NS::logcat_sts());                                      \
+        ::dueca::LogLevel(::dueca::LogLevel::Error),              \
+        ::dueca::logcat_sts());                                      \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -715,10 +715,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define D_TRM(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-        CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Debug),              \
-        CCDUECA_NS::logcat_trm(), D_TRM_INITIAL_ON);                    \
+        ::dueca::LogLevel(::dueca::LogLevel::Debug),              \
+        ::dueca::logcat_trm(), D_TRM_INITIAL_ON);                    \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -735,10 +735,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define I_TRM(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-       CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Info),                \
-        CCDUECA_NS::logcat_trm(), I_TRM_INITIAL_ON);                    \
+       ::dueca::LogLevel(::dueca::LogLevel::Info),                \
+        ::dueca::logcat_trm(), I_TRM_INITIAL_ON);                    \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -755,10 +755,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define W_TRM(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-       CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Warning),             \
-        CCDUECA_NS::logcat_trm(), W_TRM_INITIAL_ON);                    \
+       ::dueca::LogLevel(::dueca::LogLevel::Warning),             \
+        ::dueca::logcat_trm(), W_TRM_INITIAL_ON);                    \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -768,10 +768,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define E_TRM(A)                                                        \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-        CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Error),              \
-        CCDUECA_NS::logcat_trm());                                      \
+        ::dueca::LogLevel(::dueca::LogLevel::Error),              \
+        ::dueca::logcat_trm());                                      \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -790,10 +790,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define D_MEM(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-        CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Debug),              \
-        CCDUECA_NS::logcat_mem(), D_MEM_INITIAL_ON);                    \
+        ::dueca::LogLevel(::dueca::LogLevel::Debug),              \
+        ::dueca::logcat_mem(), D_MEM_INITIAL_ON);                    \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -810,10 +810,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define I_MEM(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-       CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Info),                \
-        CCDUECA_NS::logcat_mem(), I_MEM_INITIAL_ON);                    \
+       ::dueca::LogLevel(::dueca::LogLevel::Info),                \
+        ::dueca::logcat_mem(), I_MEM_INITIAL_ON);                    \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -830,10 +830,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define W_MEM(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-       CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Warning),             \
-        CCDUECA_NS::logcat_mem(), W_MEM_INITIAL_ON);                    \
+       ::dueca::LogLevel(::dueca::LogLevel::Warning),             \
+        ::dueca::logcat_mem(), W_MEM_INITIAL_ON);                    \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -843,10 +843,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define E_MEM(A)                                                        \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-        CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Error),              \
-        CCDUECA_NS::logcat_mem());                                      \
+        ::dueca::LogLevel(::dueca::LogLevel::Error),              \
+        ::dueca::logcat_mem());                                      \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -865,10 +865,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define D_INT(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-        CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Debug),              \
-        CCDUECA_NS::logcat_int(), D_INT_INITIAL_ON);                    \
+        ::dueca::LogLevel(::dueca::LogLevel::Debug),              \
+        ::dueca::logcat_int(), D_INT_INITIAL_ON);                    \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -885,10 +885,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define I_INT(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-       CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Info),                \
-        CCDUECA_NS::logcat_int(), I_INT_INITIAL_ON);                    \
+       ::dueca::LogLevel(::dueca::LogLevel::Info),                \
+        ::dueca::logcat_int(), I_INT_INITIAL_ON);                    \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -905,10 +905,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define W_INT(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-       CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Warning),             \
-        CCDUECA_NS::logcat_int(), W_INT_INITIAL_ON);                    \
+       ::dueca::LogLevel(::dueca::LogLevel::Warning),             \
+        ::dueca::logcat_int(), W_INT_INITIAL_ON);                    \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -918,10 +918,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define E_INT(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-        CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Error),              \
-        CCDUECA_NS::logcat_int());                                      \
+        ::dueca::LogLevel(::dueca::LogLevel::Error),              \
+        ::dueca::logcat_int());                                      \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -939,10 +939,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define D_XTR(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-        CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Debug),              \
-        CCDUECA_NS::logcat_xtr(), D_XTR_INITIAL_ON);                    \
+        ::dueca::LogLevel(::dueca::LogLevel::Debug),              \
+        ::dueca::logcat_xtr(), D_XTR_INITIAL_ON);                    \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -959,10 +959,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define I_XTR(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-       CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Info),                \
-        CCDUECA_NS::logcat_xtr(), I_XTR_INITIAL_ON);                    \
+       ::dueca::LogLevel(::dueca::LogLevel::Info),                \
+        ::dueca::logcat_xtr(), I_XTR_INITIAL_ON);                    \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -979,10 +979,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define W_XTR(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-       CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Warning),             \
-        CCDUECA_NS::logcat_xtr(), W_XTR_INITIAL_ON);                    \
+       ::dueca::LogLevel(::dueca::LogLevel::Warning),             \
+        ::dueca::logcat_xtr(), W_XTR_INITIAL_ON);                    \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 
@@ -992,10 +992,10 @@
     @param A    Message to be printed, as std::ostream expression.
 */
 #define E_XTR(A) \
-  { static CCDUECA_NS::Logger logger                                    \
+  { static ::dueca::Logger logger                                    \
       ( & __FILE__ [ SOURCE_PATH_SIZE ], __LINE__,                      \
-        CCDUECA_NS::LogLevel(CCDUECA_NS::LogLevel::Error),              \
-        CCDUECA_NS::logcat_xtr());                                      \
+        ::dueca::LogLevel(::dueca::LogLevel::Error),              \
+        ::dueca::logcat_xtr());                                      \
     if (logger) { logger << A << std::ends;                             \
       logger.transmit(); } }
 

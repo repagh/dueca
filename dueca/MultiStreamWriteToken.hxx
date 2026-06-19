@@ -20,7 +20,7 @@
 
 #include "ChannelWriteToken.hxx"
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 template<class T>
 class MultiStreamWriter;
@@ -102,7 +102,7 @@ private:
   void releaseWriteAccess();
 };
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif
 
@@ -124,7 +124,7 @@ DUECA_NS_END
 #include "Exception.hxx"
 #include "NameSet.hxx"
 #include <dueca_ns.h>
-DUECA_NS_START
+namespace dueca {
 
 template<class T> MultiStreamWriteToken<T>::
 MultiStreamWriteToken(const GlobalId& holder,
@@ -162,7 +162,7 @@ releaseWriteAccess()
   releaseAccess(rdata, rts);
 }
 
-DUECA_NS_END
+} // namespace dueca
 
 #endif
 #endif

@@ -11,13 +11,12 @@
         license         : EUPL-1.2
 */
 
-#ifndef ConfigBuffer_hxx
-#define ConfigBuffer_hxx
+#pragma once
 
-#include <sstream>
 #include <dueca.h>
 #include <dueca/MessageBuffer.hxx>
 
+namespace dueca {
 /** Configuration messages communication */
 class ConfigBuffer
 {
@@ -36,16 +35,16 @@ class ConfigBuffer
 public:
   /** Constructor
       @param defsize   Default buffer size */
-  ConfigBuffer(size_t defsize=1024);
+  ConfigBuffer(size_t defsize = 1024);
 
   /** Destructor */
   ~ConfigBuffer();
 
   /** Copy in a number of bytes */
-  void write(const char* bytes, size_t len);
+  void write(const char *bytes, size_t len);
 
   /** Copy in a messagebuffer */
-  void write( MessageBuffer::ptr_type msgbuf);
+  void write(MessageBuffer::ptr_type msgbuf);
 
   /** Return an AmorphStore with the current position and fill level */
   dueca::AmorphReStore getStore();
@@ -54,7 +53,4 @@ public:
       read out. */
   void saveForLater(unsigned level);
 };
-
-
-
-#endif
+} // namespace dueca

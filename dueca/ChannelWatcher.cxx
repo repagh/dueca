@@ -18,7 +18,7 @@
 #include <AsyncQueueMT.hxx>
 #include "UnifiedChannel.hxx"
 
-DUECA_NS_START;
+namespace dueca {
 
 
 
@@ -95,4 +95,4 @@ const NameSet& ChannelWatcher::getChannelName() const
 }
 
 
-DUECA_NS_END;
+} // namespace dueca
