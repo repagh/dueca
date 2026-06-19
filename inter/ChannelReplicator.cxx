@@ -16,7 +16,6 @@
         license         : EUPL-1.2
 */
 
-
 #define ChannelReplicator_cxx
 
 // include the definition of the module class
@@ -60,30 +59,32 @@
 namespace dueca {
 
 // class/module name
-const char* const ChannelReplicator::classname = "channel-replicator";
+const char *const ChannelReplicator::classname = "channel-replicator";
 
 const static struct timeval static_timeout = { 0, 10000 };
 
-ChannelReplicator::DetectedEntry::
-DetectedEntry(const uint16_t first, const ChannelEntryInfo& second) :
-  first(first), second(second)
-{ }
+ChannelReplicator::DetectedEntry::DetectedEntry(
+  const uint16_t first, const ChannelEntryInfo &second) :
+  first(first),
+  second(second)
+{}
 
-ChannelReplicator::DetectedEntry&
-ChannelReplicator::DetectedEntry::operator= (const DetectedEntry& o)
+ChannelReplicator::DetectedEntry &
+ChannelReplicator::DetectedEntry::operator=(const DetectedEntry &o)
 {
   this->first = o.first;
   this->second = o.second;
   return *this;
 }
 
-ChannelReplicator::DeletedEntry::
-DeletedEntry(const uint16_t first, const uint16_t second) :
-  first(first), second(second)
-{ }
+ChannelReplicator::DeletedEntry::DeletedEntry(const uint16_t first,
+                                              const uint16_t second) :
+  first(first),
+  second(second)
+{}
 
-ChannelReplicator::DeletedEntry&
-ChannelReplicator::DeletedEntry::operator= (const DeletedEntry& o)
+ChannelReplicator::DeletedEntry &
+ChannelReplicator::DeletedEntry::operator=(const DeletedEntry &o)
 {
   this->first = o.first;
   this->second = o.second;
@@ -91,8 +92,8 @@ ChannelReplicator::DeletedEntry::operator= (const DeletedEntry& o)
 }
 
 // constructor
-ChannelReplicator::ChannelReplicator
-(Entity* e, const char* classname2, const char* part, const PrioritySpec& ps) :
+ChannelReplicator::ChannelReplicator(Entity *e, const char *classname2,
+                                     const char *part, const PrioritySpec &ps) :
   /* The following line initialises the SimulationModule base class.
      You always pass the pointer to the entity, give the classname and the
      part arguments. */
@@ -111,33 +112,34 @@ ChannelReplicator::~ChannelReplicator()
   //
 }
 
-
 ChannelReplicator::channelmap_type::iterator
-ChannelReplicator::findChannelByName(const std::string& channelname)
+ChannelReplicator::findChannelByName(const std::string &channelname)
 {
   channelmap_type::iterator ii = watched.begin();
-  while (ii != watched.end() && ii->second->channelname != channelname) ii++;
+  while (ii != watched.end() && ii->second->channelname != channelname)
+    ii++;
   return ii;
 }
 
-void ChannelReplicator::entryAdded(const dueca::ChannelEntryInfo& i,
-                                   const std::string& channelname)
+void ChannelReplicator::entryAdded(const dueca::ChannelEntryInfo &i,
+                                   const std::string &channelname)
 {
   DEB("Entry found " << i);
   channelmap_type::iterator ii = findChannelByName(channelname);
-  detected_entries.push_back(new DetectedEntry(ii->first,i));
+  detected_entries.push_back(new DetectedEntry(ii->first, i));
 }
 
-void ChannelReplicator::entryRemoved(const dueca::ChannelEntryInfo& i,
-                                     const std::string& channelname)
+void ChannelReplicator::entryRemoved(const dueca::ChannelEntryInfo &i,
+                                     const std::string &channelname)
 {
   DEB("Entry removed " << i);
   channelmap_type::iterator ii = findChannelByName(channelname);
   deleted_entries.push_back(new DeletedEntry(ii->first, i.entry_id));
 }
 
-ChannelReplicator::WatchedChannel::
-WatchedChannel(const std::string& name, unsigned cid, ChannelReplicator* r) :
+ChannelReplicator::WatchedChannel::WatchedChannel(const std::string &name,
+                                                  unsigned cid,
+                                                  ChannelReplicator *r) :
   channelname(name),
   watcher(new EntryWatcher(name, r)),
   next_id(0),
@@ -159,10 +161,10 @@ void ChannelReplicator::_clientPackPayload(MessageBuffer::ptr_type buffer)
   s.setSize(buffer->fill);
 
   try {
-    for (channelmap_type::iterator ii = watched.begin();
-         ii != watched.end(); ii++) {
-      for (WatchedChannel::readerlist_type::iterator
-             jj = ii->second->readers.begin();
+    for (channelmap_type::iterator ii = watched.begin(); ii != watched.end();
+         ii++) {
+      for (WatchedChannel::readerlist_type::iterator jj =
+             ii->second->readers.begin();
            jj != ii->second->readers.end(); jj++) {
 
 #ifdef DEBDEF
@@ -170,18 +172,18 @@ void ChannelReplicator::_clientPackPayload(MessageBuffer::ptr_type buffer)
 #endif
         // readChannel packs the data, or returns false when no more
         // data available
-        while ( (*jj)->readChannel(s, ii->first)) {
+        while ((*jj)->readChannel(s, ii->first)) {
           buffer->fill = s.getSize();
 #ifdef DEBDEF
           cnt++;
 #endif
         }
-        DEB2("Channel " << ii->second->channelname << " entry " << (*jj)->getEntryId()
-            << " packed " << cnt);
+        DEB2("Channel " << ii->second->channelname << " entry "
+                        << (*jj)->getEntryId() << " packed " << cnt);
       }
     }
   }
-  catch (const AmorphStoreBoundary& e) {
+  catch (const AmorphStoreBoundary &e) {
 
     // store filled up too much, reset to previous level, not all data
     // packed
@@ -190,14 +192,13 @@ void ChannelReplicator::_clientPackPayload(MessageBuffer::ptr_type buffer)
        There is no more capacity in the send buffer, resetting a
        failed pack action. Will try to send the data in a new send
        cycle. */
-    I_INT("Data send buffer capacity exceeded, resetting to " <<
-          buffer->fill);
+    I_INT("Data send buffer capacity exceeded, resetting to " << buffer->fill);
   }
 }
 
-void ChannelReplicator::
-_clientUnpackPayload(MessageBuffer::ptr_type buffer,
-                     unsigned peer_id, const PeerTiming& timeshift)
+void ChannelReplicator::_clientUnpackPayload(MessageBuffer::ptr_type buffer,
+                                             unsigned peer_id,
+                                             const PeerTiming &timeshift)
 {
   // create unpacking store, set to skip the control data
   AmorphReStore r(buffer->buffer, buffer->fill);
@@ -227,14 +228,14 @@ _clientUnpackPayload(MessageBuffer::ptr_type buffer,
 
          There is no writer for this entry, discarding received
          data. */
-      I_INT("Channel " << (channelid & 0x7fff) << " entry "
-            << entryid << " no writer");
+      I_INT("Channel " << (channelid & 0x7fff) << " entry " << entryid
+                       << " no writer");
       r.gobble();
       continue;
     }
 
-    DEB2("Channel " << cc->second->channelname << " entry " <<
-         ee->second->getEntryId() << " write ");
+    DEB2("Channel " << cc->second->channelname << " entry "
+                    << ee->second->getEntryId() << " write ");
 
     ee->second->writeChannel(r, timeshift, (channelid & 0x8000) != 0);
   }
@@ -251,8 +252,8 @@ _clientUnpackPayload(MessageBuffer::ptr_type buffer,
 
 void ChannelReplicator::flushReaders()
 {
-  for (channelmap_type::iterator cc = watched.begin();
-       cc != watched.end(); cc++) {
+  for (channelmap_type::iterator cc = watched.begin(); cc != watched.end();
+       cc++) {
     for (WatchedChannel::readerlist_type::iterator rr =
            cc->second->readers.begin();
          rr != cc->second->readers.end(); rr++) {
@@ -262,7 +263,7 @@ void ChannelReplicator::flushReaders()
 }
 
 // small helper adding dataclass
-void ChannelReplicator::addDataClass(ReplicatorConfig& cf, std::string cname)
+void ChannelReplicator::addDataClass(ReplicatorConfig &cf, std::string cname)
 {
   while (cname.size()) {
     cf.dataclass.push_back(cname);
@@ -300,23 +301,26 @@ bool ChannelReplicator::verifyDataClass(const ReplicatorConfig& cf, unsigned nod
 
          There is a difference in definition of a DCO data class
          between the current node and a remote node. Fix the code,
-         probably by running an update and recompile, and ensure the DCO
-         definitions are identical. */
+         probably by running an update, refresh and recompile, and ensure
+         the DCO definitions are identical. */
       E_INT("data class magic for " << *ci << " differs with node " << node);
       return false;
+      return false;
     }
-    mi++; ci++;
+    mi++;
+    ci++;
     if (mi != cf.data_magic.end()) {
       if (*ci != DataClassRegistry::single().getParent(cname)) {
         /* DUECA interconnect.
 
            There is a difference in the definition of the DCO object
            for a parent class, between the current node and a remote
-           node.  Fix the code, probably by running an update and
+           node. Fix the code, probably by running an update, refresh and
            recompile, and ensure the DCO definitions are identical. */
-        E_INT("data class inheritance wrong " << cname << " parent here: " <<
-              DataClassRegistry::single().getParent(cname) <<
-              " parent node " << node << ": " << *ci);
+        E_INT("data class inheritance wrong "
+              << cname << " parent here: "
+              << DataClassRegistry::single().getParent(cname) << " parent node "
+              << node << ": " << *ci);
         return false;
       }
     }
@@ -326,16 +330,15 @@ bool ChannelReplicator::verifyDataClass(const ReplicatorConfig& cf, unsigned nod
            The data class inheritance path is different for a DCO
            object class, probably due to code not matching between
            DUECA processes. Fix the code, probably by running an
-           update and recompile, and ensure the DCO definitions and
+           update, refresh and recompile, and ensure the DCO definitions and
            specifically parent classes are identical.  */
-      E_INT("data class inheritance wrong " << cname << " parent here: " <<
-            DataClassRegistry::single().getParent(cname) <<
-            " no parent in node " << node);
+      E_INT("data class inheritance wrong "
+            << cname
+            << " parent here: " << DataClassRegistry::single().getParent(cname)
+            << " no parent in node " << node);
       return false;
     }
   }
-
-  // all checked at this point
   return true;
 }
 
