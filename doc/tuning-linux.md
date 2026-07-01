@@ -501,8 +501,48 @@ And in xorg, in the InputDevice, add:
 
 ## Sound tuning {#tunelinux_sound}
 
+For new Ubuntu workstations, the pipewire daemon is used.
+
+Add the user to the `audio` and `pipewire` groups.
+
+To inspect installed hardware, list these with aplay
+
+~~~~{.sh}
+aplay -l
+~~~~
+
+When logged in, enable pipewire for the user:
+
+~~~~{.sh}
+systemctl --user enable pipewire
+~~~~
+
+I found that a reboot was needed to get the rest working. Following steps
+
+- figure out which cards are available
+- select the right profile on the card you want
+- select the default output and optionally default input
+- set the card volume
+
+~~~~{.sh}
+# figure out which cards are present
+wpctl status
+
+# profile selection and check, give card ID and profile ID
+wpctl set-profile 50 7
+wpctl status
+
+# now select the default sink
+wpctl set-default 40
+~~~~
+
+To change volume, you can use `pipemixer`
+
+### Old instructions ...
+
+
 This description on sound tuning is not yet complete. Here, we assume an
-Ubuntu 20.04 or 22.04 workstation. Sound is controlled over pulseaudio.
+Ubuntu 22.04 workstation. Sound is controlled over pipewire.
 
 Add the simulation user to the groups `audio` and `pulse-access`.
 
@@ -537,8 +577,8 @@ journalctl log, and there is no bluetooth device to configure, run:
 
 ### The following may not be needed
 
-First try to auto-start the pulseaudio daemon for the user. It will start 
-automatically once you try to access the audio (pactl). Have all lines in 
+First try to auto-start the pulseaudio daemon for the user. It will start
+automatically once you try to access the audio (pactl). Have all lines in
 `/etc/pulse/client.conf` commented out.
 
 Since the dueca process is run over an ssh login -- unless you are
@@ -595,12 +635,12 @@ connection. To scan for sensors in range:
 	[CHG] Device 20:1B:88:03:85:AC Name: Mi True Wireless EBs Basic 2
 	[CHG] Device 20:1B:88:03:85:AC Alias: Mi True Wireless EBs Basic 2
 
-The example here is for a Mi wireless humidity and temperature sensor. 
+The example here is for a Mi wireless humidity and temperature sensor.
 
 When using python scripts to communicate with bluetooth low energy
 devices, the `bleak` module is quite succesful.
 
-`hcitool` can be used to modify latency of bluetooth connections, see this 
+`hcitool` can be used to modify latency of bluetooth connections, see this
 (discussion on an archlinus forum)[https://bbs.archlinux.org/viewtopic.php?id=248133]
 
 ### Control from DUECA
@@ -641,11 +681,11 @@ $ update-grub
 
 ## Starting a wayland kiosk server
 
-For starting a set of DUECA processes on a simulation lab, it may be 
+For starting a set of DUECA processes on a simulation lab, it may be
 handy to have ssh login to the remote machine, and use a start script
-to start a whole simulation. 
+to start a whole simulation.
 
-It you want to use wayland as your display server, and a wayland-compatible 
+It you want to use wayland as your display server, and a wayland-compatible
 you need to add your user to the following groups:
 
 - tty
@@ -661,7 +701,7 @@ The tty devices are usually created 640, they need to be fixed with a udev rule;
 SUBSYSTEM=="tty", KERNEL=="tty[0-9]*", GROUP="tty", MODE="0660"
 ~~~~
 
-The westonkiosk package provides a service file that starts weston in kiosk mode, 
+The westonkiosk package provides a service file that starts weston in kiosk mode,
 it needs a configuration `.config/weston.ini`
 
 ~~~~{.ini}
@@ -700,4 +740,3 @@ WantedBy=multi-user.target
 When trying this on ubuntu 24.04 with nvidia card and driver, it appeared
 that performance was significantly lower than with X11. Any ideas of fixes for
 this are appreciated.
-
