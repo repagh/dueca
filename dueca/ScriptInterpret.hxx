@@ -254,8 +254,8 @@ public:
   /** Get the number of current init functions */
   inline size_t getNumInitFunctions() const { return init_functions.size(); }
 
-  /** Run a piece of code in the interpreter. Only do this from the
-      priority 0 thread!
+  /** Run a piece of code in the interpreter. When using Python, this will
+      acquire the GIL, so make sure you don't already have that.
 
       @param code   Code to run
       @throws       boost::python::error_already_set if a problem occurs. */

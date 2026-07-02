@@ -450,8 +450,8 @@ static void *Environment_graphicRun(void *arg)
 #endif
 
 /** In case of single-thread running, this method is called directly
-    from within proceed. The complete GUILE calls are then on the
-    stack, and the method proceeds with some model code, and then
+    from within proceed. The complete GUILE or PYTHON calls are then on
+    the stack, and the method proceeds with some model code, and then
     enters the graphics toolkit main loop. When called in a
     multi-thread case, the thread doing this work is "clean", and only
     does the graphics work. This leaves the script thread free to read

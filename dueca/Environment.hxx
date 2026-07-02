@@ -63,9 +63,9 @@ private:
   /** Different options for running. */
   enum RunMode {
     SingleThread,   /**< Single threaded running, not adviseable for
-                       production environments, ok for testing. */
-    MultiThread,     /**< Preferred run mode for real-time
-                       simulations. */
+                         production environments, ok for testing. */
+    MultiThread,   /**< Multi-threading, with thread0 doing graphics
+                         and separate from script. */
     FastTime,       /**< For off-line simulations, just run asap. Note
                        that speed of time depends on computer. */
   };

@@ -536,7 +536,7 @@ wpctl status
 wpctl set-default 40
 ~~~~
 
-To change volume, you can use `pipemixer`
+To change volume from the terminal, you can use `pipemixer`
 
 ### Old instructions ...
 

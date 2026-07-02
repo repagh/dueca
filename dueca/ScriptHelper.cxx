@@ -41,4 +41,3 @@ void ScriptHelper::runCode(const char* code)
 }
 
 } // namespace dueca
-

@@ -34,8 +34,22 @@ namespace bpy = boost::python;
 
 namespace dueca {
 
+/** Gil state helper */
+class RunWithGIL
+{
+  PyGILState_STATE _state;
+
+public:
+    /// get GIL lock (or block)
+  RunWithGIL() { _state = PyGILState_Ensure(); }
+    /// Automatic release
+  ~RunWithGIL() { PyGILState_Release(_state); }
+  RunWithGIL(const RunWithGIL &) = delete;
+  RunWithGIL &operator=(const RunWithGIL &) = delete;
+};
+
 /** Implements the interface to Python */
-struct PythonScripting: public ScriptHelper
+struct PythonScripting : public ScriptHelper
 {
   /** scratch file */
   std::ofstream scratchfile;
@@ -62,13 +76,13 @@ struct PythonScripting: public ScriptHelper
   void interpreter();
 
   /** Read a single line from the module script file */
-  bool readline(std::string& line);
+  bool readline(std::string &line);
 
   /** Write a single line to a scratch file */
-  bool writeline(const std::string& line);
+  bool writeline(const std::string &line);
 
   /** Run a single string of code directly */
-  void runCode(const char* code);
+  void runCode(const char *code);
 };
 
 } // namespace dueca
