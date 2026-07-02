@@ -2,6 +2,19 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
+## [4.3.1] - 2026-07-14
+
+### Changed
+
+- Allocate and release GIL when interacting with Python script
+- Use kill -3 instead of -9 in the GenericStart script
+- Fix unitialized timing gain in inter communication
+- Provide more feedback on inter connect working
+
+### Added
+
+- Documentation for sound configuration with pipewire
+
 ## [4.3.0] - 2026-06-17
 
 ### Changed
