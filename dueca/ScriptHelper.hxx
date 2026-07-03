@@ -44,11 +44,17 @@ struct ScriptHelper
   /** Read a single line from the model script */
   virtual bool readline(std::string& line) = 0;
 
-  /** Write s single line to a scratch file */
+  /** Write a single line to a scratch file */
   virtual bool writeline(const std::string& line) = 0;
 
   /** Run a single string of code directly */
   virtual void runCode(const char* code);
+
+  /** Lock the scripting access */
+  virtual bool acquireScriptingLock();
+
+  /** Release the scripting access */
+  virtual void releaseScriptingLock();
 
   /** Constructor. */
   ScriptHelper(const char* phase2, const char* phase3,

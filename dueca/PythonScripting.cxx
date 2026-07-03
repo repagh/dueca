@@ -16,12 +16,38 @@
 #include <dueca/ScriptInterpret.hxx>
 #include <dueca/Environment.hxx>
 #include <dueca/debug.h>
-#define DEBPRINTLEVEL -1
+#define DEBPRINTLEVEL 0
 #include <debprint.h>
 #include <fstream>
 #include <dueca-conf.h>
 #include <boost/python/module.hpp>
 using namespace std;
+
+namespace {
+
+/** Gil state helper */
+class RunWithGIL
+{
+  // simple GIL, works from thread 0
+  PyGILState_STATE _state;
+
+public:
+    /// get GIL lock (or block)
+  RunWithGIL()
+  {
+    DEB("scripting lock scope");
+    _state = PyGILState_Ensure();
+  }
+    /// Automatic release
+  ~RunWithGIL()
+  {
+    DEB("scripting lock unscope");
+    PyGILState_Release(_state);
+  }
+  RunWithGIL(const RunWithGIL &) = delete;
+  RunWithGIL &operator=(const RunWithGIL &) = delete;
+};
+} // namespace
 
 namespace dueca {
 
@@ -31,6 +57,7 @@ extern char ***p_argv;
 PythonScripting::PythonScripting() :
   ScriptHelper("", "", "sys.exit(0)      # *Added by PythonScripting*",
                "#:end_of_input:#"),
+  _state{},
   running(true)
 {
   ScriptInterpret::single(this);
@@ -217,53 +244,58 @@ void PythonScripting::initiate()
 
 void PythonScripting::interpreter()
 {
-  // access the namespace
-  main_module = bpy::import("__main__");
-  main_namespace = main_module.attr("__dict__");
+  {
+    RunWithGIL gillock;
 
-  DEB("calling python with dueca_cnf.py");
-  try {
+    // access the namespace
+    main_module = bpy::import("__main__");
+    main_namespace = main_module.attr("__dict__");
 
-    bpy::object ignored =
-      bpy::exec("exec(open('dueca_cnf.py').read(), globals())", main_namespace,
-                main_namespace);
-  }
-  catch (const bpy::error_already_set &e) {
+    DEB("calling python with dueca_cnf.py");
+    try {
+
+      bpy::object ignored =
+        bpy::exec("exec(open('dueca_cnf.py').read(), globals())",
+                  main_namespace, main_namespace);
+    }
+    catch (const bpy::error_already_set &e) {
     /* DUECA scripting.
 
        Found an error in the dueca_cnf.py script. Locate the error
        using the messages and line number, and correct it.
     */
-    E_CNF("Error in the dueca_cnf.py script");
-    PyErr_PrintEx(1);
-    throw(e);
-  }
+      E_CNF("Error in the dueca_cnf.py script");
+      PyErr_PrintEx(1);
+      throw(e);
+    }
 
-  /* jump into environment thread */
-  Environment::getInstance()->proceed(1);
+    /* jump into environment thread */
+    Environment::getInstance()->proceed(1);
 
-  try {
-    RunWithGIL gillock;
+    try {
     /* After exiting, the scratch file has been filled with module
        creation and flushed */
-    bpy::object ignored =
-      bpy::exec("exec(open('dueca.scratch').read(), globals())", main_namespace,
-                main_namespace);
-  }
-  catch (const bpy::error_already_set &e) {
+      bpy::object ignored =
+        bpy::exec("exec(open('dueca.scratch').read(), globals())",
+                  main_namespace, main_namespace);
+    }
+    catch (const bpy::error_already_set &e) {
     /* DUECA scripting.
 
        An error occurred in the dueca_mod.py script. Check the script
        at the indicated error line (and above).
     */
-    E_CNF("Error in the dueca_mod.py script");
-    PyErr_PrintEx(1);
-    throw(e);
-  }
+      E_CNF("Error in the dueca_mod.py script");
+      PyErr_PrintEx(1);
+      throw(e);
+    }
 
-  /* recycle scratchfile */
-  scratchfile.close();
-  scratchfile.open("dueca.scratch", ios::out);
+    /* recycle scratchfile */
+    scratchfile.close();
+    scratchfile.open("dueca.scratch", ios::out);
+
+    // releases the GIL
+  }
 
   /* back to environment thread */
   Environment::getInstance()->proceed(2);
@@ -335,6 +367,19 @@ bool PythonScripting::writeline(const std::string &line)
   }
   scratchfile << line << std::endl;
   return false;
+}
+
+bool PythonScripting::acquireScriptingLock()
+{
+  DEB("aqcuireScriptingLock");
+  _state = PyGILState_Ensure();
+  return true; //PyGILState_Check();
+}
+
+void PythonScripting::releaseScriptingLock()
+{
+  DEB("release ScriptingLock");
+  PyGILState_Release(_state);
 }
 
 } // namespace dueca

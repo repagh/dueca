@@ -124,7 +124,7 @@ Environment::SchedPriority::SchedPriority(int mode, int prio) :
 Environment::Environment() :
   NamedObject(
     NameSet("dueca", "Environment", ObjectManager::single()->getLocation())),
-  run_mode(MultiThread),
+  run_mode(MultiThreadCombine),
   highest_priority(0),
   current_highprio(0),
   running_multithread(false),
@@ -356,7 +356,7 @@ bool Environment::setMultiThread(const bool &v)
   // this call is a relic to accomodate simulations that set/reset
   // multi-thread mode.
   if (v) {
-    run_mode = MultiThread;
+    run_mode = MultiThreadCombine;
   }
   else {
     run_mode = SingleThread;
@@ -371,6 +371,9 @@ bool Environment::setRunMode(const vstring &mode)
   }
   else if (mode == vstring("multi")) {
     run_mode = MultiThread;
+  }
+  else if (mode == vstring("multicombine")) {
+    run_mode = MultiThreadCombine;
   }
   else if (mode == vstring("fast")) {
     run_mode = FastTime;
@@ -544,6 +547,7 @@ void Environment::doLoop()
 
   switch (run_mode) {
   case MultiThread:
+  case MultiThreadCombine:
 
     if (need_to_start_others) {
 
@@ -566,9 +570,6 @@ void Environment::doLoop()
         if (static_node_id == 0) {
           ActivityDescriptions::single().initialise();
         }
-
-        // do start the others
-        Su::single().acquire();
 
         /* DUECA system.
 
@@ -606,9 +607,6 @@ void Environment::doLoop()
         // do not do this on QNX, since we will use all kinds of IO
         // (and thus need io permission), and this will work for the
         // entire process!
-#if !defined(__QNXNTO__)
-        //        Su::single().revert();
-#endif
       }
       else {
 
@@ -822,6 +820,60 @@ static void react_ctrlc(int signum)
   NodeManager::single()->breakUp();
 }
 
+void Environment::_lockMemory()
+{
+#ifdef HAVE_MLOCKALL
+  // first check the limit; it has no use (Ubuntu 22.04)
+  // requesting mlock when the limit is low, as this will lead
+  // to alloc failures
+  rlimit mlcklim;
+  int res = getrlimit(RLIMIT_MEMLOCK, &mlcklim);
+  if (res != 0) {
+    /* DUECA system.
+
+             Attempt to find out the memlock limit failed. */
+    W_SYS("Environment: Cannot detect memlock limit: " << strerror(errno));
+    mlcklim.rlim_cur = 0;
+  }
+
+  if (mlcklim.rlim_cur != RLIM_INFINITY) {
+
+    /* DUECA system.
+
+             The system indicates that there is a limited amount of
+             memory available for locking; avoiding the use of
+             mlockall, because this may lead to memory allocation
+             failure and crashes. Use ulimit and adapt with a
+             configuration file in /etc/security/limits.d if you want
+             memory locking and better real-time performance */
+    W_SYS("Environment: Not attempting to lock memory, raise limits if "
+          "needed");
+  }
+  else {
+
+    if (mlockall(MCL_CURRENT | MCL_FUTURE) == -1) {
+      /* DUECA system.
+
+               Attempt to load and lock the memory for the DUECA
+               executable failed. This is normal during development,
+               when real-time and memory locking priorities are not
+               used, but should be avoided during deployment. Check
+               the page on 'tuning linux workstations' for
+               guidance. This may also happen when not enough memory
+               is available.
+            */
+      W_SYS("Environment: Cannot memlock the DUECA executable: "
+            << strerror(errno));
+    }
+    else {
+      // succeeded in memory locking. Also attempt to set CPU
+      // to low latency mode
+      cpu_lowlatency.reset(new CPULowLatency(0));
+    }
+  }
+#endif // HAVE_MLOCKALL
+}
+
 void Environment::proceed(int stage)
 {
   /* DUECA system.
@@ -1008,93 +1060,19 @@ void Environment::proceed(int stage)
     // single-thread mode a bit more, and only then the other threads
     // are started.
 
-#ifdef USE_POSIX_THREADS
     if (run_mode == MultiThread) {
 
-      // first try to get memory locked.
-#ifdef HAVE_MLOCKALL
-      // check for begin root, if so, memlock the program
-      if (Su::single().isCapable()) {
-        Su::single().acquire();
+      // memory lock and cpu yield setting
+      _lockMemory();
 
-        if (mlockall(MCL_CURRENT | MCL_FUTURE) == -1) {
-          /* DUECA timing.
-
-             It was not possible to aacuire memlock and prevent
-             swap. If you are deploying a real-time system, consider
-             configuring the workstation for real-time running. When
-             developing, you may generally ignore this message. */
-          W_SYS("Environment: Cannot memlock the DUECA executable: " << strerror(errno));
-        }
-        else {
-          // also try to set the CPU to low-latency
-          cpu_lowlatency.reset(new CPULowLatency(0));
-        }
-
-#if !defined(__QNXNTO__)
-        Su::single().revert();
-#endif
-      }
-      else {
-
-        // first check the limit; it has no use (Ubuntu 22.04)
-        // requesting mlock when the limit is low, as this will lead
-        // to alloc failures
-        rlimit mlcklim;
-        int res = getrlimit(RLIMIT_MEMLOCK, &mlcklim);
-        if (res != 0) {
-          /* DUECA system.
-
-             Attempt to find out the memlock limit failed. */
-          W_SYS("Environment: Cannot detect memlock limit: " << strerror(errno));
-          mlcklim.rlim_cur = 0;
-        }
-
-        if (mlcklim.rlim_cur != RLIM_INFINITY) {
-
-          /* DUECA system.
-
-             The system indicates that there is a limited amount of
-             memory available for locking; avoiding the use of
-             mlockall, because this may lead to memory allocation
-             failure and crashes. Use ulimit and adapt with a
-             configuration file in /etc/security/limits.d if you want
-             memory locking and better real-time performance */
-          W_SYS("Environment: Not attempting to lock memory, raise limits if needed");
-        }
-        else {
-
-          if (mlockall(MCL_CURRENT | MCL_FUTURE) == -1) {
-            /* DUECA system.
-
-               Attempt to load and lock the memory for the DUECA
-               executable failed. This is normal during development,
-               when real-time and memory locking priorities are not
-               used, but should be avoided during deployment. Check
-               the page on 'tuning linux workstations' for
-               guidance. This may also happen when not enough memory
-               is available.
-            */
-            W_SYS("Environment: Cannot memlock the DUECA executable: " << strerror(errno));
-          }
-          else {
-            // succeeded in memory locking. Also attempt to set CPU
-            // to low latency mode
-            cpu_lowlatency.reset(new CPULowLatency(0));
-          }
-        }
-      }
-#endif // HAVE_MLOCKALL
-
-      // create the the thread for running dueca
+      // create the thread for running dueca graphics
       /* DUECA system.
 
          Starting a thread for priority 0 and graphics.
        */
-      I_SYS("Environment: Creating graphics thread with (e)uids: " << geteuid()
-                    << ", " << getuid());
+      I_SYS("Environment: Creating graphics thread with (e)uids: "
+            << geteuid() << ", " << getuid());
 
-#if defined(USE_POSIX_THREADS)
       pthread_attr_t thread_attrib;
       pthread_attr_init(&thread_attrib);
       pthread_attr_setstacksize(&thread_attrib, 8 * 1024 * 1024);
@@ -1105,7 +1083,8 @@ void Environment::proceed(int stage)
 
            Running into a problem creating the graphics
            thread. Re-trying with other options */
-        W_SYS("Environment: Cannot create graphics thread, trying with default stack size");
+        W_SYS("Environment: Cannot create graphics thread, trying with default "
+              "stack size");
         pthread_attr_init(&thread_attrib);
         err = pthread_create(&activity0_thread, &thread_attrib,
                              Environment_graphicRun, this);
@@ -1114,7 +1093,7 @@ void Environment::proceed(int stage)
         perror("Problem creating graphics thread");
         std::exit(1);
       }
-#endif
+
       // stop here until collected/called again
 
       /* DUECA system.
@@ -1137,9 +1116,8 @@ void Environment::proceed(int stage)
         create_control.leaveTest();
 
         // join with the graphics thread
-#if defined(USE_POSIX_THREADS)
         pthread_join(activity0_thread, NULL);
-#endif
+
         /* DUECA system.
 
           Script and graphics threads are combined again. */
@@ -1150,9 +1128,16 @@ void Environment::proceed(int stage)
       }
     }
 
-    else
-#endif
-    {
+    else if (run_mode == MultiThreadCombine) {
+
+      // memory lock and cpu yield setting
+      _lockMemory();
+
+      // enter graphics callback
+      graphicRun();
+    }
+
+    else {
       // in single thread mode, the only option is to run the
       // graphics on top of the guile code, meaning that we cannot
       // ever return to guile to read more configuration data
@@ -1165,143 +1150,145 @@ void Environment::proceed(int stage)
     break;
 
   case 3:
-    // have possibly done additional model reading, wait again for the
-    // commands from gui stop here until collected/called again
-    create_control.enterTest();
-    create_cmd = Wait;
-    create_control.signal();
-    while (create_cmd == Wait) {
-      create_control.wait();
-    }
-    if (create_cmd == Exit) {
-      create_control.leaveTest();
-      // join with the graphics thread
+
+    if (run_mode == MultiThread) {
+      // have possibly done additional model reading, wait again for the
+      // commands from gui stop here until collected/called again
+      create_control.enterTest();
+      create_cmd = Wait;
+      create_control.signal();
+      while (create_cmd == Wait) {
+        create_control.wait();
+      }
+      if (create_cmd == Exit) {
+        create_control.leaveTest();
+        // join with the graphics thread
 #if defined(USE_POSIX_THREADS)
-      pthread_join(activity0_thread, NULL);
+        pthread_join(activity0_thread, NULL);
 #endif
-      /* DUECA system.
+        /* DUECA system.
 
         Script and graphics threads are combined again. */
-      I_SYS("Environment: Joined script and graphics threads");
+        I_SYS("Environment: Joined script and graphics threads");
+      }
+      else {
+        create_control.leaveTest();
+      }
     }
-    else {
-      create_control.leaveTest();
-    }
-    break;
+      break;
 
-  default:
-    /* DUECA system.
+    default:
+      /* DUECA system.
 
       Internal error, a run stage that has not been configured is
       requested. */
-    E_SYS("Environment: no stage " << stage << " to proceed to");
-  }
+      E_SYS("Environment: no stage " << stage << " to proceed to");
+    }
 
 #if defined(ACTIV_NOCATCH)
-  if (create_cmd == Exit) {
-    // if catching the exit is not configured, deleting
-    // modules is done here
-    /* DUECA system.
+    if (create_cmd == Exit) {
+      // if catching the exit is not configured, deleting
+      // modules is done here
+      /* DUECA system.
 
       At this point the client modules will be deleted.
     */
-    I_SYS("Environment: Jettisoning everyone except crew members");
-    ObjectManager::single()->destructAllButCrew();
-  }
+      I_SYS("Environment: Jettisoning everyone except crew members");
+      ObjectManager::single()->destructAllButCrew();
+    }
 #endif
 
-  /* DUECA system.
+    /* DUECA system.
 
      Control returns to the scripting language interpretation.
   */
-  I_SYS("Environment: Returning to script");
-}
-
-void Environment::propagateTriggers(unsigned prio)
-{
-  if (activity_manager[prio]->propagateTriggers() &&
-      int(prio) > current_highprio) {
-    current_highprio = prio;
-  }
-}
-
-void Environment::wakeActivityManager(unsigned prio)
-{
-  activity_manager[prio]->wakeThis();
-}
-
-int Environment::update()
-{
-  // one call to the ticker; any new stuff because of elapsed time is
-  // inserted here
-  Ticker::single()->checkTick();
-  activity_manager[0]->scheduleAll();
-
-  while (current_highprio >= 0) {
-    current_highprio--;
-    activity_manager[int(current_highprio) + 1]->doActivities();
+    I_SYS("Environment: Returning to script");
   }
 
-  return in_control;
-}
+  void Environment::propagateTriggers(unsigned prio)
+  {
+    if (activity_manager[prio]->propagateTriggers() &&
+        int(prio) > current_highprio) {
+      current_highprio = prio;
+    }
+  }
 
-void Environment::quit(TimeTickType tick)
-{
-  in_control = false;
+  void Environment::wakeActivityManager(unsigned prio)
+  {
+    activity_manager[prio]->wakeThis();
+  }
 
-  // stop the ticker
-  Ticker::single()->stopTicking();
-  Ticker::single()->pauseTick();
+  int Environment::update()
+  {
+    // one call to the ticker; any new stuff because of elapsed time is
+    // inserted here
+    Ticker::single()->checkTick();
+    activity_manager[0]->scheduleAll();
 
-  /* DUECA system.
+    while (current_highprio >= 0) {
+      current_highprio--;
+      activity_manager[int(current_highprio) + 1]->doActivities();
+    }
+
+    return in_control;
+  }
+
+  void Environment::quit(TimeTickType tick)
+  {
+    in_control = false;
+
+    // stop the ticker
+    Ticker::single()->stopTicking();
+    Ticker::single()->pauseTick();
+
+    /* DUECA system.
 
     Data packing for transport is stopped, breaking communication with
     the other nodes.
   */
-  I_SYS("Environment: Stopping packers");
-  PackerManager::single()->stopPackers(tick);
+    I_SYS("Environment: Stopping packers");
+    PackerManager::single()->stopPackers(tick);
 
-  // flag that multithread running is over
-  running_multithread = false;
+    // flag that multithread running is over
+    running_multithread = false;
 
-  // do some "manual" ticks again, helps communicators to end their
-  // blocking, two seconds
-  for (int ii = 20; ii--;) {
-    usleep(100000); // 0.1 second
-    Ticker::single()->checkTick();
+    // do some "manual" ticks again, helps communicators to end their
+    // blocking, two seconds
+    for (int ii = 20; ii--;) {
+      usleep(100000); // 0.1 second
+      Ticker::single()->checkTick();
 
-    // all higher thread activities will go on
-  }
-
-  if (run_mode == MultiThread) {
-    // join all high-priority threads into this one
-    for (int ii = highest_priority; ii > 0; ii--) {
-      activity_manager[ii]->stopDoActivities();
+      // all higher thread activities will go on
     }
+
+    if (run_mode == MultiThread) {
+      // join all high-priority threads into this one
+      for (int ii = highest_priority; ii > 0; ii--) {
+        activity_manager[ii]->stopDoActivities();
+      }
+    }
+
+    // tell the gui to return control. This the call to
+    // gui_handler->passControl() should now return, so control will pop
+    // up in graphicRun. The story continues there
+    gui_handler->returnControl();
   }
 
-  // tell the gui to return control. This the call to
-  // gui_handler->passControl() should now return, so control will pop
-  // up in graphicRun. The story continues there
-  gui_handler->returnControl();
-}
-
-/** Set the exit code, mainly used in testing */
-void Environment::setExitCode(int ecode)
-{
-  if (exitcode != 0 && ecode == 0) {
-    /* DUECA system.
+  /** Set the exit code, mainly used in testing */
+  void Environment::setExitCode(int ecode)
+  {
+    if (exitcode != 0 && ecode == 0) {
+      /* DUECA system.
 
        A previous call to Environment::setExitCode set the exit code to
        nonzero, indicating an issue. Now the exitcode is reset to zero.
        Check that this is your desired behaviour.
     */
-    W_SYS("Environment: The application is resetting the exit code to zero");
+      W_SYS("Environment: The application is resetting the exit code to zero");
+    }
+    exitcode = ecode;
   }
-  exitcode = ecode;
-}
 
-template <> const char *getclassname<Environment>() { return "Environment"; }
-
+  template <> const char *getclassname<Environment>() { return "Environment"; }
 
 } // namespace dueca

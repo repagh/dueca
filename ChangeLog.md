@@ -2,7 +2,7 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
-## [4.3.1] - 2026-07-14
+## [4.3.1] - 2026-07-03
 
 ### Changed
 
@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 - Use kill -3 instead of -9 in the GenericStart script
 - Fix unitialized timing gain in inter communication
 - Provide more feedback on inter connect working
+- Use the same thread for graphics and script, for now.
 
 ### Added
 

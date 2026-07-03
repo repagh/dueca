@@ -27,6 +27,7 @@
 #include "DuecaView.hxx"
 #include "EntityUpdate.hxx"
 #include <boost/lexical_cast.hpp>
+#include "ScriptInterpret.hxx"
 #define E_MOD
 #define W_MOD
 #define I_MOD
@@ -135,11 +136,14 @@ void EntityManager::startStatusCheck()
 
 void EntityManager::createEntityModules()
 {
+  ScriptInterpret::single()->acquireScriptingLock();
+
   // all local entities should be triggered to create their modules.
   for (local_entity_iterator ii = local_entities.begin();
        ii != local_entities.end(); ii++) {
     ii->second->createModules();
   }
+  ScriptInterpret::single()->releaseScriptingLock();
 }
 
 void EntityManager::checkIn(Entity* e)
