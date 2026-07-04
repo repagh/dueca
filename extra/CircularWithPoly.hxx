@@ -100,7 +100,6 @@ public:
       @param  norm_start   Normalised start value of first step, for example
                       -0.5, to get a -0.5 to 0.5 output, or zero to get a
                       0 to 1 output
-      @param  n       Order of the calibrating polynomial
       @param  ai      Array with polynomial coefficients, polynomial is
                       \f$a_0 + a_1 x + \ldots + a_n x^n \f$
       @tparam A       Type of the coefficients array.

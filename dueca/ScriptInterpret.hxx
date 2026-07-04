@@ -259,6 +259,7 @@ public:
       @throws       boost::python::error_already_set if a problem occurs. */
   void runCode(const char *code);
 
+  /** Independently acquire script lock */
   bool acquireScriptingLock();
 
   /** Release the scripting access */
