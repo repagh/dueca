@@ -23,7 +23,7 @@ dependencies = [
   "crcmod>=1.7",
   "h5py"
 ]
-license = "EUPL-1.2"
+license = { text = "EUPL-1.2"}
 
 [project.scripts]
 ddff-convert = "pyddff.ddff_convert:main"

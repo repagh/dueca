@@ -16,23 +16,48 @@
 #include <dueca/ScriptInterpret.hxx>
 #include <dueca/Environment.hxx>
 #include <dueca/debug.h>
-#define DEBPRINTLEVEL -1
+#define DEBPRINTLEVEL 0
 #include <debprint.h>
 #include <fstream>
 #include <dueca-conf.h>
 #include <boost/python/module.hpp>
 using namespace std;
 
+namespace {
+
+/** Gil state helper */
+class RunWithGIL
+{
+  // simple GIL, works from thread 0
+  PyGILState_STATE _state;
+
+public:
+    /// get GIL lock (or block)
+  RunWithGIL()
+  {
+    DEB("scripting lock scope");
+    _state = PyGILState_Ensure();
+  }
+    /// Automatic release
+  ~RunWithGIL()
+  {
+    DEB("scripting lock unscope");
+    PyGILState_Release(_state);
+  }
+  RunWithGIL(const RunWithGIL &) = delete;
+  RunWithGIL &operator=(const RunWithGIL &) = delete;
+};
+} // namespace
+
 namespace dueca {
 
-extern int* p_argc;
-extern char*** p_argv;
+extern int *p_argc;
+extern char ***p_argv;
 
 PythonScripting::PythonScripting() :
-  ScriptHelper("",
-               "",
-               "sys.exit(0)      # *Added by PythonScripting*",
+  ScriptHelper("", "", "sys.exit(0)      # *Added by PythonScripting*",
                "#:end_of_input:#"),
+  _state{},
   running(true)
 {
   ScriptInterpret::single(this);
@@ -59,7 +84,7 @@ BOOST_PYTHON_MODULE(dueca)
   //  bpy::object inheritance_exception =
   //  bpy::import("exceptions").attr("RunTimeError");
 
-  size_t ninits = ScriptInterpret::single()->getNumInitFunctions()+1;
+  size_t ninits = ScriptInterpret::single()->getNumInitFunctions() + 1;
   const InitFunction *f = ScriptInterpret::single()->getNextInitFunction();
 
   /* The init functions might not be in the right order, typically
@@ -77,7 +102,7 @@ BOOST_PYTHON_MODULE(dueca)
       ninits = ScriptInterpret::single()->getNumInitFunctions() + 1;
       DEB("Init functions left " << ninits)
     }
-    catch(const bpy::error_already_set& ex) {
+    catch (const bpy::error_already_set &ex) {
 
       /* DUECA scripting.
 
@@ -132,7 +157,6 @@ void PythonScripting::initiate()
 
   // the appendtab adds the dueca namespace initialisation
   try {
-
 
 #if PY_VERSION_HEX >= 0x03080000
     // trying preconfig, does not work on Python 3.7 ?
@@ -205,7 +229,7 @@ void PythonScripting::initiate()
     Py_InitializeEx(0);
 #endif
   }
-  catch(const bpy::error_already_set& e) {
+  catch (const bpy::error_already_set &e) {
     /* DUECA scripting.
 
        Unspecified error in initializing the Python script language
@@ -218,65 +242,73 @@ void PythonScripting::initiate()
   }
 }
 
-
 void PythonScripting::interpreter()
 {
-  // access the namespace
-  main_module = bpy::import("__main__");
-  main_namespace = main_module.attr("__dict__");
+  {
+    RunWithGIL gillock;
 
-  DEB("calling python with dueca_cnf.py");
-  try {
-    bpy::object ignored = bpy::exec
-      ("exec(open('dueca_cnf.py').read(), globals())",
-       main_namespace, main_namespace);
-  }
-  catch(const bpy::error_already_set& e) {
+    // access the namespace
+    main_module = bpy::import("__main__");
+    main_namespace = main_module.attr("__dict__");
+
+    DEB("calling python with dueca_cnf.py");
+    try {
+
+      bpy::object ignored =
+        bpy::exec("exec(open('dueca_cnf.py').read(), globals())",
+                  main_namespace, main_namespace);
+    }
+    catch (const bpy::error_already_set &e) {
     /* DUECA scripting.
 
        Found an error in the dueca_cnf.py script. Locate the error
        using the messages and line number, and correct it.
     */
-    E_CNF("Error in the dueca_cnf.py script");
-    PyErr_PrintEx(1);
-    throw(e);
-  }
+      E_CNF("Error in the dueca_cnf.py script");
+      PyErr_PrintEx(1);
+      throw(e);
+    }
 
-  /* jump into environment thread */
-  Environment::getInstance()->proceed(1);
+    /* jump into environment thread */
+    Environment::getInstance()->proceed(1);
 
-  try {
+    try {
     /* After exiting, the scratch file has been filled with module
        creation and flushed */
-    bpy::object ignored = bpy::exec
-      ("exec(open('dueca.scratch').read(), globals())",
-       main_namespace, main_namespace);
-  }
-  catch(const bpy::error_already_set& e) {
+      bpy::object ignored =
+        bpy::exec("exec(open('dueca.scratch').read(), globals())",
+                  main_namespace, main_namespace);
+    }
+    catch (const bpy::error_already_set &e) {
     /* DUECA scripting.
 
        An error occurred in the dueca_mod.py script. Check the script
        at the indicated error line (and above).
     */
-    E_CNF("Error in the dueca_mod.py script");
-    PyErr_PrintEx(1);
-    throw(e);
-  }
+      E_CNF("Error in the dueca_mod.py script");
+      PyErr_PrintEx(1);
+      throw(e);
+    }
 
-  /* recycle scratchfile */
-  scratchfile.close(); scratchfile.open("dueca.scratch", ios::out);
+    /* recycle scratchfile */
+    scratchfile.close();
+    scratchfile.open("dueca.scratch", ios::out);
+
+    // releases the GIL
+  }
 
   /* back to environment thread */
   Environment::getInstance()->proceed(2);
 
   /* process additional script input */
-  while(running) {
+  while (running) {
     try {
-      bpy::object ignored = bpy::exec
-        ("exec(open('dueca.scratch').read(), globals())",
-         main_namespace, main_namespace);
+      RunWithGIL gillock;
+      bpy::object ignored =
+        bpy::exec("exec(open('dueca.scratch').read(), globals())",
+                  main_namespace, main_namespace);
     }
-    catch(const bpy::error_already_set& e) {
+    catch (const bpy::error_already_set &e) {
       /* DUECA scripting.
 
          A Python error occurred in an attempt to load an additional
@@ -284,21 +316,23 @@ void PythonScripting::interpreter()
          program.
       */
       E_CNF("Error in additional model code running");
-      PyErr_PrintEx(1); throw(e); } scratchfile.close();
-      scratchfile.open("dueca.scratch", ios::out);
+      PyErr_PrintEx(1);
+      throw(e);
+    }
+    scratchfile.close();
+    scratchfile.open("dueca.scratch", ios::out);
 
     Environment::getInstance()->proceed(3);
   }
-
 }
 
-void PythonScripting::runCode(const char* code)
+void PythonScripting::runCode(const char *code)
 {
   try {
-    bpy::object ignored = bpy::exec
-      (code, main_namespace, main_namespace);
+    RunWithGIL gillock;
+    bpy::object ignored = bpy::exec(code, main_namespace, main_namespace);
   }
-  catch(const bpy::error_already_set& e) {
+  catch (const bpy::error_already_set &e) {
     /* DUECA scripting.
 
        There is an error in a code snippet supplied from the DUECA C++
@@ -309,7 +343,7 @@ void PythonScripting::runCode(const char* code)
   }
 }
 
-bool PythonScripting::readline(std::string& line)
+bool PythonScripting::readline(std::string &line)
 {
   static ifstream mod("dueca_mod.py");
   if (!mod.good()) {
@@ -319,7 +353,7 @@ bool PythonScripting::readline(std::string& line)
   return bool(getline(mod, line));
 }
 
-bool PythonScripting::writeline(const std::string& line)
+bool PythonScripting::writeline(const std::string &line)
 {
   if (line == stopsign) {
 
@@ -335,5 +369,17 @@ bool PythonScripting::writeline(const std::string& line)
   return false;
 }
 
+bool PythonScripting::acquireScriptingLock()
+{
+  DEB("aqcuireScriptingLock");
+  _state = PyGILState_Ensure();
+  return true; //PyGILState_Check();
+}
+
+void PythonScripting::releaseScriptingLock()
+{
+  DEB("release ScriptingLock");
+  PyGILState_Release(_state);
+}
 
 } // namespace dueca

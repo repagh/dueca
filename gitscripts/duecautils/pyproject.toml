@@ -22,4 +22,4 @@ dependencies = [
   "lxml>=3.0.0",
   "git>=2017.0.0"
 ]
-license = "EUPL-1.2"
+license = {text = "EUPL-1.2"}

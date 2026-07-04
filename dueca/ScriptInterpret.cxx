@@ -415,6 +415,11 @@ void ScriptInterpret::runCode(const char* code)
   helper->runCode(code);
 }
 
+bool ScriptInterpret::acquireScriptingLock() { return helper->acquireScriptingLock(); }
+
+void ScriptInterpret::releaseScriptingLock() { helper->releaseScriptingLock(); }
+
+
 SetScriptInitFunction::SetScriptInitFunction(voidfunc ifunct)
 {
   if (!ScriptInterpret::singleton)

@@ -44,14 +44,11 @@ class ChannelReadToken;
 
 void environment_main_thread(int phase);
 
-
 /** This class handles the main thread of control. It will dip in and
     out of scripting code, start up the graphics thread and also start
     up the high-priority real-time threads. At closing DUECA, all
     threads will join here again. */
-class Environment:
-  public ScriptCreatable,
-  public NamedObject
+class Environment : public ScriptCreatable, public NamedObject
 {
 public: // scheme connectivity
   SCM_FEATURES_DEF;
@@ -63,9 +60,11 @@ private:
   /** Different options for running. */
   enum RunMode {
     SingleThread,   /**< Single threaded running, not adviseable for
-                       production environments, ok for testing. */
-    MultiThread,     /**< Preferred run mode for real-time
-                       simulations. */
+                         production environments, ok for testing. */
+    MultiThread,   /**< Multi-threading, with thread0 doing graphics
+                         and separate from script. */
+    MultiThreadCombine, /**< Multi-threading, but graphics and script
+                             both in 0 */
     FastTime,       /**< For off-line simulations, just run asap. Note
                        that speed of time depends on computer. */
   };
@@ -75,7 +74,8 @@ private:
 
   /** Data type to remember scheduling priorities for activity
       managers. */
-  struct SchedPriority {
+  struct SchedPriority
+  {
     /** Selected mode. */
     int sched_mode;
     /** Priority within the mode. */
@@ -97,14 +97,14 @@ private:
   EntityManager *entity_manager;
 
   /** the vector with the activity managers. */
-  std::vector<ActivityManager*> activity_manager;
+  std::vector<ActivityManager *> activity_manager;
 
   /** the cat checking that all nodes are up. */
   NodeManager *node_manager;
 
   /** an assorted list of callback for core components that wish to be
       notified when all of DUECA is up */
-  std::list<GenericCallback*> call_when_up;
+  std::list<GenericCallback *> call_when_up;
 
   /** the highest priority possible, no of activity managers + 1. */
   int highest_priority;
@@ -155,20 +155,20 @@ private:
 
   /** Event channel over which confirmation for additional read action
       comes. */
-  ChannelReadToken     *t_moreconf;
+  ChannelReadToken *t_moreconf;
 
   /** If additional data has been read, we have to wait for
       copying. This is the callback function. */
   Callback<Environment> cbw;
 
   /** The waiting action. */
-  ActivityCallback* wait_additional;
+  ActivityCallback *wait_additional;
 
   /** The function. */
-  void waitAdditional(const TimeSpec& ts);
+  void waitAdditional(const TimeSpec &ts);
 
   /** A friend function that initiates destruction of most objects. */
-  friend void destruct_most(int e_val, void* arg);
+  friend void destruct_most(int e_val, void *arg);
 
 public:
   /** Obtain reports from all activity managers, after an exit(n)
@@ -176,31 +176,31 @@ public:
   void activityManagerReports();
 
   /** Ask whether running already in multi-threading mode. */
-  inline bool runningMultiThread() const {return running_multithread;}
+  inline bool runningMultiThread() const { return running_multithread; }
 
   /** Ask whether initialisation phase is over */
-  inline bool initialisationComplete() const {return init_complete;}
+  inline bool initialisationComplete() const { return init_complete; }
 
 private:
   /** the name of the graphic interface library used (if any). */
   vstring graphic_interface;
 
   /** The option to use depth buffering on this grapic interface. */
-  int    graphic_depth_buffer_size;
+  int graphic_depth_buffer_size;
 
   /** Size of the stencil buffer. */
-  int    graphic_stencil_buffer_size;
+  int graphic_stencil_buffer_size;
 
   /** Initialising Xlib lock */
-  bool   xlib_lock;
+  bool xlib_lock;
 
   /** share gl contexts */
-  bool   share_gl_contexts;
+  bool share_gl_contexts;
 
   /** The object that intitialises and controls the graphics
       library. There is also a GuiHandler for graphics library "none",
       so that with or without Gui, the code acts the same. */
-  GuiHandler* gui_handler;
+  GuiHandler *gui_handler;
 
   /** interval for gui commands. */
   double command_interval;
@@ -215,7 +215,6 @@ private:
   TimeTickType command_lead_ticks;
 
 public:
-
   /** Constructor. */
   Environment();
 
@@ -224,10 +223,10 @@ public:
   bool complete();
 
   /** Type name information */
-  const char* getTypeName();
+  const char *getTypeName();
 
   /** Obtain a pointer to the parameter table. */
-  static const ParameterTable* getParameterTable();
+  static const ParameterTable *getParameterTable();
 
   /** Destructor. */
   ~Environment();
@@ -265,15 +264,15 @@ public:
 
 private:
   /** Copying is not allowed. */
-  Environment(const Environment& e);
+  Environment(const Environment &e);
 
   /** Neither is assignment. */
-  Environment& operator = (const Environment& e);
+  Environment &operator=(const Environment &e);
 
 public:
-
   /** the function that returns the sole instance of this singleton. */
-  inline static Environment *getInstance() {
+  inline static Environment *getInstance()
+  {
     if (instance == NULL) {
       std::cerr << "Environment says: Check your dueca.cnf" << std::endl;
       assert(0);
@@ -286,15 +285,15 @@ public:
   void propagateTriggers(unsigned prio);
 
   /** wake a manager */
-  void wakeActivityManager(unsigned  ii);
+  void wakeActivityManager(unsigned ii);
 
 public:
   /** request data on the shared memory, or elsewhere if no shmem is
       used. */
-  DataTimeSpec* requestDataSpace(int no_of_copies);
+  DataTimeSpec *requestDataSpace(int no_of_copies);
 
   /** Release data on the shared memory again. */
-  void releaseDataSpace(DataTimeSpec* zero, int no_of_copies);
+  void releaseDataSpace(DataTimeSpec *zero, int no_of_copies);
 
 private:
   /** This method transfers control to the CSE. The CSE calls all
@@ -318,66 +317,75 @@ public:
 
   /** This reads -- if possible -- the specified file and uses this to
       update the running modules. */
-  void readMod(const vstring& fname);
+  void readMod(const vstring &fname);
 
   /** Tell that this is a basic object of dueca. */
-  ObjectType getObjectType() const {return O_Dueca;}
+  ObjectType getObjectType() const { return O_Dueca; }
 
   /** Return the highest prirority. */
   inline int getHighestPrio() { return highest_priority; }
 
   /** Schedule a callback pointer */
-  void informWhenUp(GenericCallback* cb);
+  void informWhenUp(GenericCallback *cb);
 
   /** Return a pointer to a specific activity manager. */
-  inline ActivityManager* getActivityManager(int prio)
-  { return activity_manager[prio];}
+  inline ActivityManager *getActivityManager(int prio)
+  {
+    return activity_manager[prio];
+  }
 
   /** Specify (with a name) the graphic interface to be used. */
-  inline void setGraphicInterface(const char* iface)
-  { graphic_interface = iface; }
+  inline void setGraphicInterface(const char *iface)
+  {
+    graphic_interface = iface;
+  }
 
   /** Read out which graphic interface was chosen. */
-  inline const char* getGraphicInterface() const
-  {return graphic_interface.c_str(); }
+  inline const char *getGraphicInterface() const
+  {
+    return graphic_interface.c_str();
+  }
 
   /** Return the size of the depth buffer. */
   inline bool getGraphicDepthBufferSize() const
-  { return graphic_depth_buffer_size; }
+  {
+    return graphic_depth_buffer_size;
+  }
 
   /** Return the size of the stencil buffer. */
   inline bool getGraphicStencilBufferSize() const
-  { return graphic_stencil_buffer_size; }
+  {
+    return graphic_stencil_buffer_size;
+  }
 
-  inline bool getShareGLContexts() const
-  { return share_gl_contexts; }
+  inline bool getShareGLContexts() const { return share_gl_contexts; }
 
   /** Member call. */
-  bool setGraphicUseDepthBuffer(const bool& v);
+  bool setGraphicUseDepthBuffer(const bool &v);
 
   /** Deprecated call, selects or de-selects multi-thread mode. */
-  bool setMultiThread(const bool& v);
+  bool setMultiThread(const bool &v);
 
   /** Call to select any of a number of possible run modes. */
-  bool setRunMode(const vstring& mode);
+  bool setRunMode(const vstring &mode);
 
   /** Call to add non-real-time threads. */
-  bool setAMNice(const std::vector<int>& levels);
+  bool setAMNice(const std::vector<int> &levels);
 
   /** Call to add real-time threads with RR scheduling. */
-  bool setAMRoundRobin(const std::vector<int>& levels);
+  bool setAMRoundRobin(const std::vector<int> &levels);
 
   /** Call to add real-time threads with FIFO scheduling. */
-  bool setAMFiFo(const std::vector<int>& levels);
+  bool setAMFiFo(const std::vector<int> &levels);
 
   /** Call to add real-time threads with RTAI scheduling. */
-  bool setAMRTAI(const std::vector<int>& levels);
+  bool setAMRTAI(const std::vector<int> &levels);
 
   /** Call to add real-time threads with XENOMAI scheduling. */
-  bool setAMXENO(const std::vector<int>& levels);
+  bool setAMXENO(const std::vector<int> &levels);
 
   /** Get the current gui handler. */
-  inline GuiHandler* getActiveGuiHandler() {return gui_handler; }
+  inline GuiHandler *getActiveGuiHandler() { return gui_handler; }
 
   /** Command interval, for if other interfaces want to use this */
   inline unsigned getCommandInterval() { return command_interval_ticks; }
@@ -390,6 +398,10 @@ public:
 
   /** Get the current exit code, mainly used in testing */
   inline int getExitCode() { return exitcode; }
+
+private:
+  /** Helper, memory locking */
+  void _lockMemory();
 };
 
 } // namespace dueca

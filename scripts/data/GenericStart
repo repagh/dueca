@@ -44,7 +44,7 @@ $Usage $0 Invoke this script as the tail of another script,
                      e.g. dutmms2_SPECIAL=./mystartscript
          NODENAME_CLEANMORE [opt] for each (Linux) node, additional commands
                      to run for cleaning up (e.g.
-                     dutmms6_CLEANMORE="killall -9 fgfs")
+                     dutmms6_CLEANMORE="killall -3 fgfs")
          NODENAME_XOPTS [opt] Additional options for xinit start; these
                      are the options after the --, see man xinit
                      Useful: ":0 -br" start up with black screen
@@ -208,13 +208,13 @@ cleannode()
 
     echo "Cleaning Linux node $1"
     if [ "${ALIAS}" != "${ZERONODE}" ]; then
-	$RSHL $NODE $SUDO /usr/bin/killall -s 9 dueca_run.x
+	$RSHL $NODE $SUDO /usr/bin/killall -s 3 dueca_run.x
 	if eval echo "Running \${${ALIAS}_CLEANMORE:-no_such_command} on $1 "| \
 		grep --invert-match no_such_command; then
             eval $RSHL $NODE \$${ALIAS}_CLEANMORE
 	fi
     else
-	$SUDO /usr/bin/killall -s 9 dueca_run.x
+	$SUDO /usr/bin/killall -s 3 dueca_run.x
 	if eval echo "Running \${${ALIAS}_CLEANMORE:-no_such_command} on $1 "| \
 		grep --invert-match no_such_command; then
             eval \$${ALIAS}_CLEANMORE
@@ -231,4 +231,3 @@ if [ "x$1" = "xclean" ]; then
 fi
 
 echo "Usage: $0 {start|list|clean}"
-

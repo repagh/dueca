@@ -285,6 +285,9 @@ struct GladeCallbackTable
   values On and Off, for the enum member `choice`, label your buttons
   "myui_choice-On" and "myui_choice-Off".
 
+  Note for when you are transitioning to gtk4 interfaces: the GtkComboBox is
+  deprecated there, replace it by a GtkDropDown.
+
   These setting and getting actions that you can do with DCO objects, are
   also available for simple variables (float, double, integer types,
   std::string), through the setValue and getValue calls.

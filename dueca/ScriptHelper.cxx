@@ -18,18 +18,20 @@
 
 namespace dueca {
 
-ScriptHelper::ScriptHelper(const char* phase2, const char* phase3,
-                           const char* quitline, const char* stopsign) :
-  phase2(phase2), phase3(phase3),
-  quitline(quitline), stopsign(stopsign)
-{ }
+ScriptHelper::ScriptHelper(const char *phase2, const char *phase3,
+                           const char *quitline, const char *stopsign) :
+  phase2(phase2),
+  phase3(phase3),
+  quitline(quitline),
+  stopsign(stopsign)
+{}
 
 ScriptHelper::~ScriptHelper()
 {
   //
 }
 
-void ScriptHelper::runCode(const char* code)
+void ScriptHelper::runCode(const char *code)
 {
   /* DUECA scripting.
 
@@ -37,8 +39,11 @@ void ScriptHelper::runCode(const char* code)
      the script language. An attempt to run client code is made while
      using an incompatible script language. */
   W_SYS("this interpreter cannot run client code");
-  throw (scriptexception());
+  throw(scriptexception());
 }
 
-} // namespace dueca
+bool ScriptHelper::acquireScriptingLock() { return true; }
 
+void ScriptHelper::releaseScriptingLock() {}
+
+} // namespace dueca

@@ -28,7 +28,7 @@
 #include <dueca_ns.h>
 #include <dueca/visibility.h>
 
-int main(int argc, char* argv[]);
+int main(int argc, char *argv[]);
 
 namespace dueca {
 class GenericCallback;
@@ -49,30 +49,30 @@ typedef void (*voidfunc)(void);
 struct InitFunction
 {
   /** Name of the associated class */
-  const char* name;
+  const char *name;
 
   /** Name of a parent, if applicable */
-  const char* parent;
+  const char *parent;
 
   /** Function to call */
-  voidfunc    func;
+  voidfunc func;
 
   /** Constructor */
-  InitFunction(const char* name, const char* parent, voidfunc func);
+  InitFunction(const char *name, const char *parent, voidfunc func);
 
   /** Copy constructor */
-  InitFunction(const InitFunction& o);
+  InitFunction(const InitFunction &o);
 
   /** Call operator */
-  void operator () (void) const;
+  void operator()(void) const;
 };
 
 /** Flag problems with script reading */
-class LNK_PUBLIC scriptexception: public std::exception
+class scriptexception : public std::exception
 {
 public:
   /** Re-implementation of std:exception what. */
-  const char* what() const throw() {return "script exception";}
+  const char *what() const throw() { return "script exception"; }
 };
 
 /** Interaction with the scripting language.
@@ -87,24 +87,24 @@ public:
     modules can add init functions (for python scripting) and have the
     interpreter run pieces of code.
  */
-class ScriptInterpret: public NamedObject
+class ScriptInterpret : public NamedObject
 {
   /// Can only use one of these objects.
-  static ScriptInterpret* singleton;
+  static ScriptInterpret *singleton;
 
   /** Helper to process specific script language */
-  ScriptHelper           *helper;
+  ScriptHelper *helper;
 
   /** A list of all the functions that have to be added to scheme. The
       method addInitFunct can be used to add a function to this list. */
-  std::list<const InitFunction*>     init_functions;
+  std::list<const InitFunction *> init_functions;
 
   /** A list of all the functions that have to be added to scheme. The
       method addInitFunct can be used to add a function to this list. */
-  std::list<const InitFunction*>     unsorted_functions;
+  std::list<const InitFunction *> unsorted_functions;
 
   /** Script init function */
-  voidfunc       scriptinit;
+  voidfunc scriptinit;
 
   /** Flag to indicate that scheme has been entered. In principle we
       never get out again. */
@@ -118,66 +118,65 @@ class ScriptInterpret: public NamedObject
   std::vector<int> confirmation_count;
 
   /** My number of received sets of scheme lines for model */
-  uint16_t   received_sets;
+  uint16_t received_sets;
 
   /** Number of sets for which the read go-ahead has been issued. */
-  uint16_t   sent_sets;
+  uint16_t sent_sets;
 
   /** Callback on token completion */
-  Callback<ScriptInterpret>                        token_valid;
+  Callback<ScriptInterpret> token_valid;
 
   /** Function on token completion. */
-  void tokenValid(const TimeSpec& ts);
+  void tokenValid(const TimeSpec &ts);
 
   /** Flag to remember token completion. */
   bool token_action;
 
   /** Pointer to an access token for a channel to write the model
       script onto. This is only used by node 0. */
-  ChannelWriteToken  *w_creation;
+  ChannelWriteToken *w_creation;
 
   /** Access token for the channel from which the model script is
       received. */
-  ChannelReadToken   *t_creation;
+  ChannelReadToken *t_creation;
 
   /** Confirmation for the received scheme commands */
-  ChannelWriteToken  *w_confirm;
+  ChannelWriteToken *w_confirm;
 
   /** Confirmation for the received scheme commands */
-  ChannelReadToken   *t_confirm;
+  ChannelReadToken *t_confirm;
 
   /** Final command to go ahead and read the added configuration. */
-  ChannelWriteToken  *w_goahead;
+  ChannelWriteToken *w_goahead;
 
   /** \{ Callback function for reading model data. */
-  Callback<ScriptInterpret>           cb1, cb2; /// \}
+  Callback<ScriptInterpret> cb1, cb2; /// \}
 
   /** Activity that reads the model data. */
-  ActivityCallback*                   handle_lines;
+  ActivityCallback *handle_lines;
 
   /** Activity for checking arrival confirms, only used on node 0. */
-  ActivityCallback*                   process_confirm;
+  ActivityCallback *process_confirm;
 
 private:
-
   /** Constructor. Private, since an object of this class is
       automatically made after access to the single() method. */
   ScriptInterpret();
 
   /// Copy constructor, not implemented.
-  ScriptInterpret(const ScriptInterpret&);
+  ScriptInterpret(const ScriptInterpret &);
 
   /// Assignment operator, not implemented either
-  ScriptInterpret& operator = (const ScriptInterpret&);
+  ScriptInterpret &operator=(const ScriptInterpret &);
 
   /// Destructor
   ~ScriptInterpret();
 
   /// Method that performs the activity.
-  void handleConfigurationLines(const TimeSpec& time);
+  void handleConfigurationLines(const TimeSpec &time);
 
   /// Method to check the confirmations
-  void checkConfirms(const TimeSpec& time);
+  void checkConfirms(const TimeSpec &time);
 
   /// Initialize scripting language and core modules
   static void initializeScriptLang();
@@ -186,10 +185,10 @@ private:
   void sortInitFunctions();
 
 private:
-  friend void scheme_inner_main (void *closure, int argc, char **argv);
+  friend void scheme_inner_main(void *closure, int argc, char **argv);
   friend class Environment;
   friend class NodeManager;
-  friend int ::main(int argc, char* argv[]);
+  friend int ::main(int argc, char *argv[]);
   friend struct PythonScripting;
   friend void init_module_dueca();
   friend struct SetScriptInitFunction;
@@ -202,7 +201,7 @@ private:
   void completeCreation();
 
   /** Read modification of modules, or create new modules. */
-  bool readAdditionalModuleConf(const vstring& fname);
+  bool readAdditionalModuleConf(const vstring &fname);
 
   /** Write (quit) onto the scheme file, for ovbious reasons. */
   void writeQuit();
@@ -212,18 +211,17 @@ private:
 
   /** A flag to indicate that the complete model has been
       received. Only then we can return to scheme again. */
-  inline bool modelCopied() { return model_copied;}
+  inline bool modelCopied() { return model_copied; }
 
   /** Get the next init function */
-  const InitFunction* getNextInitFunction();
+  const InitFunction *getNextInitFunction();
 
   /** phase 2 */
   void createObjects();
 
 public:
-
   /** Return the singleton. */
-  static ScriptInterpret* single(ScriptHelper* helper = NULL);
+  static ScriptInterpret *single(ScriptHelper *helper = NULL);
 
   /// @cond DO_NOT_DOCUMENT
   /// @endcond DO_NOT_DOCUMENT
@@ -245,26 +243,31 @@ public:
       @param parent Parent class, if name is a class, NULL, if no parent.
       @param ifunct A void function
   */
-  static void addInitFunction(const char* name, const char* parent,
+  static void addInitFunction(const char *name, const char *parent,
                               voidfunc ifunct);
 
   /** Add a new init function to the script language */
-  static void addInitFunction(const InitFunction* ifunct);
+  static void addInitFunction(const InitFunction *ifunct);
 
   /** Get the number of current init functions */
   inline size_t getNumInitFunctions() const { return init_functions.size(); }
 
-  /** Run a piece of code in the interpreter. Only do this from the
-      priority 0 thread!
+  /** Run a piece of code in the interpreter. When using Python, this will
+      acquire the GIL, so make sure you don't already have that.
 
       @param code   Code to run
       @throws       boost::python::error_already_set if a problem occurs. */
-  void runCode(const char* code);
+  void runCode(const char *code);
+
+  /** Independently acquire script lock */
+  bool acquireScriptingLock();
+
+  /** Release the scripting access */
+  void releaseScriptingLock();
 
   /** Tell that we are a part of the DUECA core. */
-  ObjectType getObjectType() const {return O_Dueca;}
+  ObjectType getObjectType() const { return O_Dueca; }
 };
-
 
 /** Helper struct to add an init function from initialization code
 
@@ -292,8 +295,7 @@ struct AddInitFunction
                      parent class is used to initialize classes in the
                      right order.
   */
-  AddInitFunction(const char* name, voidfunc ifunct,
-                  const char* parent = NULL);
+  AddInitFunction(const char *name, voidfunc ifunct, const char *parent = NULL);
 };
 
 /** Helper struct to add script init function from initialization code
@@ -315,8 +317,6 @@ struct SetScriptInitFunction
   /** Constructor that defines the script init function */
   SetScriptInitFunction(voidfunc ifunct);
 };
-
-
 
 } // namespace dueca
 #endif

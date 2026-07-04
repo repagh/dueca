@@ -21,7 +21,7 @@ endforeach()
 # version information, please update accordingly
 set(VERMAJOR 4)
 set(VERMINOR 3)
-set(REVISION 0)
+set(REVISION 1)
 set(GENCODEGEN 111)
 set(SOVERSION "${VERMAJOR}.${VERMINOR}")
 set(VERSION_DATE "17 Jun 2026")

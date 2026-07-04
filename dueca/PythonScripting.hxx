@@ -34,8 +34,9 @@ namespace bpy = boost::python;
 
 namespace dueca {
 
+
 /** Implements the interface to Python */
-struct PythonScripting: public ScriptHelper
+struct PythonScripting : public ScriptHelper
 {
   /** scratch file */
   std::ofstream scratchfile;
@@ -45,6 +46,9 @@ struct PythonScripting: public ScriptHelper
 
   /** main namespace for the script */
   bpy::object main_namespace;
+
+  /** lock state */
+  PyGILState_STATE _state;
 
   /** continue flag */
   bool running;
@@ -56,19 +60,25 @@ struct PythonScripting: public ScriptHelper
   ~PythonScripting();
 
   /** Perform preliminary initialisation */
-  void initiate();
+  void initiate() final;
 
   /** Start the interpreter */
-  void interpreter();
+  void interpreter() final;
 
   /** Read a single line from the module script file */
-  bool readline(std::string& line);
+  bool readline(std::string &line) final;
 
   /** Write a single line to a scratch file */
-  bool writeline(const std::string& line);
+  bool writeline(const std::string &line) final;
 
   /** Run a single string of code directly */
-  void runCode(const char* code);
+  void runCode(const char *code) final;
+
+  /** Lock the scripting access */
+  bool acquireScriptingLock() final;
+
+  /** Release the scripting access */
+  void releaseScriptingLock() final;
 };
 
 } // namespace dueca

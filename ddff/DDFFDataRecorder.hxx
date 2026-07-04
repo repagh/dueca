@@ -494,6 +494,8 @@ public:
 
       @param offset     Location in file where data starts
       @param end_offset Location in file where data ends.
+      @param replay_record_tick Data log time from where replay starts.
+      @param inblock_offset Offset in block of replay data.
    */
   void spoolReplay(ddff::FileHandler::pos_type offset,
                    ddff::FileHandler::pos_type end_offset,

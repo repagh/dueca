@@ -38,10 +38,10 @@ private:
 public:
 
   /// The callback action.
-  void operator() (const TimeSpec &t);
+  void operator() (const TimeSpec &t) final;
 
   /// Print to stream, for debugging.
-  std::ostream& print(std::ostream& os) const override;
+  std::ostream& print(std::ostream& os) const final;
 
 public:
   /// Constructor.
