@@ -26,6 +26,7 @@ set(HEADERS DuecaGLCanvas.hxx DuecaGLWindow.hxx InterpIndex.hxx
   InterpTable4.hxx Interpolator4.hxx randNormal.hxx LinearSystem.hxx
   LimitedLinearSystem.hxx Integrator.hxx SingletonPointer.hxx
   Polynomial.hxx InputCalibrator.hxx InputRatioCalibrator.hxx
+  InputCalibratorRanging.hxx
   OutputCalibrator.hxx PolynomialN.hxx StepsN.hxx Inverse.hxx
   Circular.hxx CircularWithPoly.hxx Steps.hxx SimpleFunction.hxx
   StringUtils.hxx RigidBody.hxx integrate_euler.hxx
