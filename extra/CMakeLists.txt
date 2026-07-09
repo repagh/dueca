@@ -12,6 +12,7 @@ set(SOURCES
   DuecaGLCanvas.cxx DuecaGLWindow.cxx InterpIndex.hxx randNormal.cxx
   LinearSystem.cxx LimitedLinearSystem.cxx Integrator.cxx
   SingletonPointer.hxx Polynomial.hxx InputCalibrator.hxx
+  InputCalibratorRanging.hxx
   InputRatioCalibrator.hxx OutputCalibrator.hxx Steps.hxx Steps.cxx
   PolynomialN.cxx StepsN.cxx Inverse.cxx Circular.cxx
   CircularWithPoly.cxx SimpleFunction.cxx StringUtils.cxx
