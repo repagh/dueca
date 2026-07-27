@@ -323,6 +323,8 @@ class Module:
         if xmlnode is not None:
             # read from the given xml node
             self.xmlnode = xmlnode
+            self.inactive = XML_interpret_bool(xmlnode.get("inactive", "false"))
+            self.pseudo = XML_interpret_bool(xmlnode.get("pseudo", "false"))
         elif xmlroot is not None and name is not None:
             # new module create/define xml node
             self.xmlnode = etree.SubElement(xmlroot, "module")
@@ -331,6 +333,8 @@ class Module:
                 self.xmlnode.set("pseudo", "true")
             if inactive:
                 self.xmlnode.set("inactive", "true")
+            self.inactive = inactive
+            self.pseudo = pseudo
         else:
             raise ValueError("Create Module representation from xml, or name and root")
 
@@ -343,9 +347,7 @@ class Module:
         return self.xmlnode.text.strip()
 
     def needbuild(self):
-        return not XML_interpret_bool(
-            self.xmlnode.get("pseudo", False)
-        ) and not XML_interpret_bool(self.xmlnode.get("inactive", False))
+        return not self.pseudo and not self.inactive
 
 
 class Project:
@@ -687,7 +689,8 @@ class Modules:
             )
 
     def _analyseCommObjectFile(self, p, m, call_for_new_project=None):
-        if os.path.isfile(f"{self.projectdir}/../{p}/{m}/CMakeLists.txt"):
+        if (isinstance(m, str) and m == "comm-objects") or \
+            (not m.inactive and not m.pseudo):
             dprint(f"Refresh dco, analysing {p}/{m}/comm-objects.lst")
             colist = CommObjectsList(f"{self.projectdir}/../{p}/{m}")
             for idco in colist:
@@ -700,7 +703,7 @@ class Modules:
                 else:
                     self.comm_borrows[prj].add(dco)
         else:
-            dprint(f"Refresh dco, no {p}/{m}/CMakeLists.txt, assume pseudo")
+            dprint(f"Module {m} marked inactive={m.inactive}, pseudo={m.pseudo}")
 
     def _resetCommBorrows(self, recurse=True, auto_dco=False):
 
@@ -719,7 +722,7 @@ class Modules:
         # copy into a list, bc the number of projects may changes
         for pname, p in list(self.projects.items()):
             for m in p.modules:
-                self._analyseCommObjectFile(pname, str(m), fcn)
+                self._analyseCommObjectFile(pname, m, fcn)
 
     def _chainCommObjectDeps(self, p: str):
 
