@@ -22,13 +22,10 @@
 #include <arpa/inet.h>
 #include <sys/types.h>
 #include <sys/socket.h>
-#include <errno.h>
 #include <fcntl.h>
-#include <boost/lexical_cast.hpp>
 #include <boost/swap.hpp>
 #include <ifaddrs.h>
 #include <net/if.h>
-#include <exception>
 #include <strings.h>
 #include <dueca/Ticker.hxx>
 #include "CRCcheck.hxx"

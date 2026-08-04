@@ -16,8 +16,7 @@
 
 #include <algorithm>
 
-#include <boost/lexical_cast.hpp>
-#include <boost/swap.hpp>
+#include <fmt/format.h>
 
 #include <netdb.h>
 #include <arpa/inet.h>
@@ -149,8 +148,7 @@ bool NetCommunicatorMaster::startServer()
   if (not data_comm) {
     // correct for old-style network definitions
     if (!url.size()) {
-      url = std::string("udp://") + peer_address + std::string(":") +
-            boost::lexical_cast<std::string>(dataport);
+      url = fmt::format("udp://{}:{}", peer_address, dataport);
     }
 
     std::string key = url.substr(0, url.find(":")) + std::string("-master");

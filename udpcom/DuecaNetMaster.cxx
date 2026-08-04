@@ -12,7 +12,7 @@
 #include "DuecaNetMaster.hxx"
 
 #include <algorithm>
-#include <boost/lexical_cast.hpp>
+#include <fmt/format.h>
 
 #include <dueca/Environment.hxx>
 #include <dueca/ObjectManager.hxx>
@@ -277,7 +277,7 @@ void DuecaNetMaster::whenUp(const TimeSpec &ts)
     for (int ii = 0; ii < ObjectManager::single()->getNoOfNodes(); ii++) {
       w_logcapacity[ii] = new ChannelWriteToken(
         getId(), NameSet("dueca", "NetCommLog", ""), NetCapacityLog::classname,
-        std::string("net use node ") + boost::lexical_cast<std::string>(ii),
+        fmt::format("net use node {}", ii),
         Channel::Events, Channel::OneOrMoreEntries, Channel::MixedPacking,
         Channel::Bulk, cbv2);
       if (ii) {
