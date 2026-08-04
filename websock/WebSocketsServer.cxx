@@ -864,7 +864,7 @@ void WebSocketsServerBase::doTransfer(const TimeSpec &ts)
 #include <dueca/undebug.h>
 #include <undebprint.h>
 
-#include "WebSocketsServer.ixx"
+#include "WebSocketsServerInstantiate.hxx"
 #include "jsonpacker.hxx"
 #include "msgpackpacker.hxx"
 
