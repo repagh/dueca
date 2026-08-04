@@ -293,6 +293,7 @@ void ConnectionList::sendAll(const std::string &data, const char *desc)
   }
 }
 
+#if 0
 void ConnectionList::ping()
 {
   for (auto &cn : connections) {
@@ -306,6 +307,7 @@ void ConnectionList::ping()
     cn->send(msg, nullptr, 9);
   }
 }
+#endif
 
 template <typename C>
 void ConnectionList::sendOne(const std::string &data, const char *desc,
@@ -616,6 +618,7 @@ void WriteEntry::sendOne(const std::string &data, const char *desc)
   }
 }
 
+#if 0
 void WriteEntry::ping()
 {
   if (connection) {
@@ -629,6 +632,7 @@ void WriteEntry::ping()
     sconnection->send(msg, nullptr, 9);
   }
 }
+#endif
 
 PresetWriteEntry::PresetWriteEntry(const std::string &channelname,
                                    const std::string &datatype,
@@ -953,19 +957,21 @@ void WriteReadEntry::sendOne(const std::string &data, const char *desc)
   }
 }
 
+#if 0
 void WriteReadEntry::ping()
 {
   if (connection) {
-    static const std::shared_ptr<WsServer::OutMessage> msg(
+    std::shared_ptr<WsServer::OutMessage> msg(
       new WsServer::OutMessage(0));
     connection->send(msg, nullptr, 9);
   }
   else {
-    static const std::shared_ptr<WssServer::OutMessage> msg(
+    std::shared_ptr<WssServer::OutMessage> msg(
       new WssServer::OutMessage(0));
     sconnection->send(msg, nullptr, 9);
   }
 }
+#endif
 
 void WriteReadEntry::entryRemoved(const ChannelEntryInfo &i)
 {
