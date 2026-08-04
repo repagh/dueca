@@ -41,7 +41,7 @@
 #define NO_TYPE_CREATION
 #include <dueca.h>
 
-#define DEBPRINTLEVEL 0
+#define DEBPRINTLEVEL -1
 #include <debprint.h>
 
 #ifdef BOOST1_65
@@ -61,7 +61,7 @@
     DEB("Pong received on " #A " link");                                      \
   };
 #else
-#define PINGPONG(A)
+#define PINGPONG(A) {}
 #endif
 
 namespace dueca {
@@ -328,7 +328,7 @@ bool WebSocketsServer<Encoder, Decoder>::_complete(S &server)
                                             << " reason: \"" << reason << '"');
   };
 
-  PINGPONG(configinfo)
+  PINGPONG(configinfo);
 
   // access channel data on request; each message (no data needed)
   // is replied to with the current value read from the accessed channel

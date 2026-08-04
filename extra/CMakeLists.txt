@@ -42,8 +42,8 @@ set(INCDIRS
 dueca_add_library(dueca-extra
   SOURCES ${SOURCES}
   LINKLIBS dueca fmt::fmt
-  COMPILEOPTIONS ${EIGEN_CFLAGS}
-  INCLUDEDIRS ${INCDIRS})
+  COMPILEOPTIONS ${Eigen3_CFLAGS}
+  INCLUDEDIRS ${INCDIRS} ${Eigen3_INCLUDE_DIRS})
 
 foreach(S ${SCRIPTLANG})
   dueca_add_library(dueca-extra-${SCRIPT_${S}_SUFFIX}
