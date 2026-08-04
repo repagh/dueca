@@ -23,7 +23,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <fcntl.h>
-#include <boost/swap.hpp>
+#include <utility>
 #include <ifaddrs.h>
 #include <net/if.h>
 #include <strings.h>
@@ -194,7 +194,7 @@ size_t NetCommunicator::codeAndSendUDPMessage(TimeTickType current_tick)
     }
 
     // normal progress, switch buffers
-    boost::swap(current_send_buffer, backup_send_buffer);
+    std::swap(current_send_buffer, backup_send_buffer);
     current_send_buffer->message_cycle = message_cycle.cycle_counter;
     packed_cycle = message_cycle;
 
