@@ -37,13 +37,14 @@ set(HEADERS DuecaGLCanvas.hxx DuecaGLWindow.hxx InterpIndex.hxx
 set(INCDIRS
   ${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR}
   ${CMAKE_BINARY_DIR}/dueca ${CMAKE_SOURCE_DIR}/dueca
-  ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
+  ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}
+  ${Eigen3_INCLUDE_DIRS})
 
 dueca_add_library(dueca-extra
   SOURCES ${SOURCES}
-  LINKLIBS dueca fmt::fmt
+  LINKLIBS dueca fmt::fmt Eigen3::Eigen
   COMPILEOPTIONS ${Eigen3_CFLAGS}
-  INCLUDEDIRS ${INCDIRS} ${Eigen3_INCLUDE_DIRS})
+  INCLUDEDIRS ${INCDIRS})
 
 foreach(S ${SCRIPTLANG})
   dueca_add_library(dueca-extra-${SCRIPT_${S}_SUFFIX}

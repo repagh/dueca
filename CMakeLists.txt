@@ -374,7 +374,7 @@ using namespace std; int main() { ios::openmode t;}"  NAMESPACE_IOS)
 
 # pkg-config checks
 # pkg_check_modules(EIGEN REQUIRED eigen3)
-find_package(Eigen3 REQUIRED COMPONENTS)
+find_package(Eigen3 REQUIRED NO_MODULE)
 # check if matrix functions header is there
 find_file(HAVE_EIGEN3_UNSUPPORTED_EIGEN_MATRIXFUNCTIONS
   NAME eigen3/unsupported/Eigen/MatrixFunctions
