@@ -232,8 +232,8 @@ def read_transform_and_write(f0: str, f1: str, subst: dict, insert = None):
 
 
 def create_and_copy(
-    dirs: list[str],
-    files: list[str],
+    dirs: list,
+    files: list,
     subst: dict,
     keepcurrent: bool = False,
     inform: bool = False,
