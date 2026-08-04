@@ -167,7 +167,8 @@ SingleEntryFollow::SingleEntryFollow(const std::string &channelname,
           Channel::AnyTimeAspect, Channel::OneOrMoreEntries,
           Channel::ReadAllData, 0.0, &do_valid),
   cb(this, &SingleEntryFollow::passData),
-  do_calc(master->getId(), (std::string("follow ") + channelname).c_str(), &cb, ps),
+  do_calc(master->getId(), (std::string("follow ") + channelname).c_str(), &cb,
+          ps),
   datatype(datatype),
   inactive(true),
   firstwrite(true)
@@ -293,6 +294,18 @@ void ConnectionList::sendAll(const std::string &data, const char *desc)
   }
   for (auto &cn : sconnections) {
     sendOne(data, desc, cn);
+  }
+}
+
+void ConnectionList::ping()
+{
+  for (auto &cn : connections) {
+    static const std::shared_ptr<WsServer::OutMessage>msg(new WsServer::OutMessage(0));
+    cn->send(msg, nullptr, 9);
+  }
+  for (auto &cn : sconnections) {
+    static const std::shared_ptr<WssServer::OutMessage>msg(new WssServer::OutMessage(0));
+    cn->send(msg , nullptr, 9);
   }
 }
 
@@ -602,6 +615,18 @@ void WriteEntry::sendOne(const std::string &data, const char *desc)
         }
       },
       master->getMarker());
+  }
+}
+
+void WriteEntry::ping()
+{
+  if (connection) {
+    static const std::shared_ptr<WsServer::OutMessage>msg(new WsServer::OutMessage(0));
+    connection->send(msg, nullptr, 9);
+  }
+  else {
+    static const std::shared_ptr<WssServer::OutMessage>msg(new WssServer::OutMessage(0));
+    sconnection->send(msg, nullptr, 9);
   }
 }
 
@@ -928,6 +953,18 @@ void WriteReadEntry::sendOne(const std::string &data, const char *desc)
   }
 }
 
+void WriteReadEntry::ping()
+{
+  if (connection) {
+    static const std::shared_ptr<WsServer::OutMessage>msg(new WsServer::OutMessage(0));
+    connection->send(msg, nullptr, 9);
+  }
+  else {
+    static const std::shared_ptr<WssServer::OutMessage>msg(new WssServer::OutMessage(0));
+    sconnection->send(msg, nullptr, 9);
+  }
+}
+
 void WriteReadEntry::entryRemoved(const ChannelEntryInfo &i)
 {
   if (i.entry_label == label) {
@@ -947,5 +984,5 @@ void WriteReadEntry::entryRemoved(const ChannelEntryInfo &i)
   }
 }
 
-} // namespace dueca
 } // namespace websock
+} // namespace dueca
