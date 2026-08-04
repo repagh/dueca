@@ -127,9 +127,9 @@ template <typename S> bool WebSocketsServerBase::_complete_http(S &server)
         DEB("http request for " << request->path);
 
         // Check if path is within document_root
-        if (boost::distance(web_root_path.begin(), web_root_path.end()) >
-              distance(path.begin(), path.end()) ||
-            !equal(web_root_path.begin(), web_root_path.end(), path.begin())) {
+        if (std::distance(web_root_path.begin(), web_root_path.end()) >
+              std::distance(path.begin(), path.end()) ||
+            !std::equal(web_root_path.begin(), web_root_path.end(), path.begin())) {
           throw(std::invalid_argument("path outside root requested"));
         }
 
