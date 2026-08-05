@@ -692,16 +692,21 @@ class Modules:
         if (isinstance(m, str) and m == "comm-objects") or \
             (not m.inactive and not m.pseudo):
             dprint(f"Refresh dco, analysing {p}/{m}/comm-objects.lst")
-            colist = CommObjectsList(f"{self.projectdir}/../{p}/{m}")
-            for idco in colist:
-                prj = idco.base_project
-                dco = idco.dco
-                if prj not in self.comm_borrows and call_for_new_project is not None:
-                    dprint(f"Refresh dco, chain to {prj} for {dco}")
-                    self.comm_borrows[prj] = set((dco,))
-                    call_for_new_project(prj)
-                else:
-                    self.comm_borrows[prj].add(dco)
+            try:
+                colist = CommObjectsList(f"{self.projectdir}/../{p}/{m}")
+                for idco in colist:
+                    prj = idco.base_project
+                    dco = idco.dco
+                    if prj not in self.comm_borrows and call_for_new_project is not None:
+                        dprint(f"Refresh dco, chain to {prj} for {dco}")
+                        self.comm_borrows[prj] = set((dco,))
+                        call_for_new_project(prj)
+                    else:
+                        self.comm_borrows[prj].add(dco)
+            except FileNotFoundError:
+                print(f"Missing {p}/{m}/comm-objects.lst, is this a pseudo module?",
+                      file=sys.stderr)
+
         else:
             dprint(f"Module {m} marked inactive={m.inactive}, pseudo={m.pseudo}")
 
