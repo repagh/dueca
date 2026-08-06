@@ -555,7 +555,8 @@ class Modules:
             # create and initialize folder / git
             os.mkdir(f"../{prj.name}")
             rrepo = git.Repo.init(f"../{prj.name}")
-            rrepo.active_branch.rename('main')
+            rrepo.git.checkout('-b', 'main')
+            # rrepo.active_branch.rename('main')
             if self.auto_url:
                 prj.url, changes = checkGitUrl(rrepo, prj.url)
                 if changes:
@@ -630,7 +631,7 @@ class Modules:
             # for all others, listen to the version in the modules.xml file
             mm = MainOrMaster(rrepo.remotes.origin, str(prj.name))
             version = (prj.version != "HEAD" and prj.version) or str(mm)
-            if version != branch:
+            if version != branch and version != "master":
                 print(
                     f"Borrowed code from {prj.name} was on branch:{branch}"
                     f" changing to {version} based on modules.xml",
