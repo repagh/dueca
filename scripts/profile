@@ -12,7 +12,7 @@ if [ -n "$KIOSKPID" ]; then
    XDGSET=$(tr '\0' '\n' </proc/$KIOSKPID/environ | grep -E ^XDG_RUNTIME_DIR)
    DBUSSET=$(tr '\0' '\n' </proc/$KIOSKPID/environ | grep -E ^DBUS_SESSION_BUS_ADDRESS)
    WDSET=$(tr '\0' '\n' </proc/$KIOSKPID/environ | grep -E ^WAYLAND_DISPLAY)
-   DSET=$(tr '\0' '\n' </proc/$WESTONPID/environ | grep -E ^DISPLAY)
+   DSET=$(tr '\0' '\n' </proc/$KIOSKPID/environ | grep -E ^DISPLAY)
 
    export $XDGSET
    export $DBUSSET

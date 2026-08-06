@@ -69,13 +69,18 @@ class MainOrMaster:
                 self.mm = "main"
                 if hasattr(repo.refs, "master"):
                     print(
-                        f"Warning, repository {_prjname} has both main and master branches, choosing master",
+                        f"Warning, repository {_prjname} has both main and master branches, for now choosing master",
                         file=sys.stderr,
                     )
                     self.mm = "master"  # remove this for other default
             elif hasattr(repo.refs, 'master'):
+                # TODO: enable this comment when SRS modernized
+                #print(f"Repository {_prjname} uses master branch, please modernize to main",
+                #      file=sys.stderr)
                 self.mm = 'master'
             else:
+                print(f"Repository {_prjname} cannot find main nor master, defaulting master",
+                      file=sys.stderr)
                 self.mm = 'master'
 
     def __str__(self):
@@ -440,7 +445,7 @@ class Project:
 
     def deleteModule(self, module):
         try:
-            idx = map(str, self.modules).index(module)
+            idx = list(map(str, self.modules)).index(module)
             del self.modules[idx]
             dprint(f"Deleted module {module} from project {self.name}")
         except ValueError:
@@ -449,7 +454,7 @@ class Project:
     def createModule(self, module: str, url: str, pseudo, inactive):
 
         if url and RootMap().urlToAbsolute(self.url) != RootMap().urlToAbsolute(url):
-            raise Exception(
+            raise ValueError(
                 f"URL conflict trying to extend modules from {self.name}\n"
                 f" old url: {self.url} ({RootMap().urlToAbsolute(self.url)})\n"
                 f" new url: {url} ({RootMap().urlToAbsolute(url)})"
@@ -472,6 +477,7 @@ class Modules:
         self.repo = ProjectRepo(calldir).repo
         self.ownproject = ProjectRepo(calldir).project
         self.projectdir = ProjectRepo(calldir).projectdir
+        self.auto_url = False
         # print("Modules for", self.ownproject, "in", self.projectdir)
 
         # find the machine class
