@@ -15,6 +15,7 @@ import sys
 from .verboseprint import dprint
 from .commobjects import CommObjectsList
 import tempfile
+import time
 
 # regex for decoding project URL
 _decodeprj = re.compile(r"^(.+)/(.+)\.git$")
@@ -246,7 +247,7 @@ class ProjectRepo(git.Repo):
         return cls.instance
 
 
-def checkGitUrl(repo: git.Repo = None, url: str = "", print=print):
+def checkGitUrl(repo: git.Repo = None, url: str = "", _print=print):
     """
     Determine existence of a url, if this url is not found, try to
     find it in one of the pre-configured roots.
@@ -287,7 +288,7 @@ def checkGitUrl(repo: git.Repo = None, url: str = "", print=print):
             return f"{root}{project}.git", True
         except git.GitCommandError as e:
             dprint(f"No luck finding '{root}/{project}.git, git error {e}'")
-    print(
+    _print(
         f"Cannot find url {url}, incomplete refresh, check modules.xml", file=sys.stderr
     )
     return "", False
@@ -551,6 +552,21 @@ class Modules:
         None
 
         """
+        if os.path.isdir(f"../{prj.name}"):
+
+            # folder already there, get the repo object
+            rrepo = git.Repo(f"../{prj.name}")
+
+            if prj.name != self.ownproject:
+                # check whether remote url still the same
+                try:
+                    _url = rrepo.remotes.origin.url
+                    if _url != prj.url:
+                        print(f"Project {prj.name}, remote URL changed from {prj.url} to {_url}")
+                        os.rename(f"../{prj.name}", f"../{prj.name}.bak{int(time.time())}" )
+                except:
+                    print(f"Cannot find remote for borrowed project {prj.name}")
+                    os.rename(f"../{prj.name}", f"../{prj.name}.bak{int(time.time())}" )
 
         # when the folder is not present, create it, and clone the upstream
         if not os.path.isdir(f"../{prj.name}"):
@@ -561,8 +577,10 @@ class Modules:
             # create and initialize folder / git
             os.mkdir(f"../{prj.name}")
             rrepo = git.Repo.init(f"../{prj.name}")
-            rrepo.git.checkout('-b', 'main')
-            # rrepo.active_branch.rename('main')
+
+            # assume a "main" branch active branch
+            rrepo.git.symbolic_ref('HEAD', 'refs/heads/main')
+
             if self.auto_url:
                 prj.url, changes = checkGitUrl(rrepo, prj.url)
                 if changes:
@@ -571,12 +589,9 @@ class Modules:
                             e.text = RootMap().urlToRelative(prj.url)
                 self.clean = False
 
+            # set up remote
             rrepo.create_remote("origin", prj.url)
             rrepo.git.config("core.sparseCheckout", "true")
-        else:
-
-            # folder already there, get the repo object
-            rrepo = git.Repo(f"../{prj.name}")
 
         # early exit for own project, unless it is checked out sparse
         cread = rrepo.config_reader()
@@ -585,26 +600,26 @@ class Modules:
         ):
             return
 
-        # copy the lines to a set, so that any double addition can be
-        # avoided
+        # copy the lines to a set, so that any double addition to the sparse
+        # checkout list can be avoided
         to_add = set(lines)
 
         # open the sparse_checkout file, check what is already there
         try:
-            with open(f"../{prj.name}/.git/info/sparse-checkout", "r") as ms:
+            with open(f"../{prj.name}/.git/info/sparse-checkout", "r", encoding='utf-8') as ms:
                 for l in ms:
                     if l.strip() in to_add:
                         to_add.remove(l.strip())
 
             # add any remaining lines
-            if len(to_add):
-                with open(f"../{prj.name}/.git/info/sparse-checkout", "a") as ms:
+            if to_add:
+                with open(f"../{prj.name}/.git/info/sparse-checkout", "a", encoding="utf-8") as ms:
                     for l in to_add:
                         ms.write(l + "\n")
 
         # simply create when it was not yet there
         except FileNotFoundError:
-            with open(f"../{prj.name}/.git/info/sparse-checkout", "w") as ms:
+            with open(f"../{prj.name}/.git/info/sparse-checkout", "w", encoding='utf-8') as ms:
                 ms.write("/README*\n")
                 for l in to_add:
                     ms.write(l + "\n")
