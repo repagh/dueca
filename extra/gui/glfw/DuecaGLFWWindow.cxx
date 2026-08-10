@@ -372,6 +372,38 @@ void DuecaGLFWWindow::openWindow()
   glfwShowWindow(glfw_win);
 }
 
+int DuecaGLFWWindow::getWidth()
+{
+  glfwGetWindowSize(glfw_win, &width, &height);
+  return width;
+}
+
+  /** Information function, retrieve height. */
+int DuecaGLFWWindow::getHeight()
+{
+  glfwGetWindowSize(glfw_win, &width, &height);
+  return height;
+}
+
+  /** Retrieve x position */
+int DuecaGLFWWindow::getXOffset()
+{
+  glfwGetWindowPos(glfw_win, &x, &y);
+  return x;
+}
+
+  /** Retrieve y position */
+int DuecaGLFWWindow::getYOffset()
+{
+  glfwGetWindowPos(glfw_win, &x, &y);
+  return y;
+}
+
+void DuecaGLFWWindow::placeWindow()
+{
+  glfwSetWindowPos(glfw_win, x, y);
+}
+
 // NOOP implementations
 void DuecaGLFWWindow::initGL() {}
 

@@ -389,6 +389,9 @@ pkg_check_modules(GTKMM30 gtkmm-3.0)
 pkg_check_modules(GTKMM40 gtkmm-4.0)
 pkg_check_modules(GTK4 gtk4)
 
+# epoxy
+pkg_check_modules(EPOXY epoxy)
+
 # rapidjson for channel data coding
 pkg_check_modules(RAPIDJSON RapidJSON)
 
