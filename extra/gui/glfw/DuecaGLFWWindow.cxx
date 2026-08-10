@@ -14,6 +14,7 @@
 #include <dueca/Environment.hxx>
 
 #include <dueca-conf.h>
+#include <epoxy/gl.h>
 #if defined(HAVE_GL_FREEGLUT_H)
 #include <GL/freeglut.h>
 #elif defined(HAVE_GL_GLUT_H)
@@ -276,6 +277,7 @@ void DuecaGLFWWindow::openWindow()
 {
   // first time?
   if (opened_windows == 0) {
+    glfwInitHint(GLFW_WAYLAND_LIBDECOR, GLFW_WAYLAND_DISABLE_LIBDECOR);
     if (glfwInit() == GLFW_FALSE) {
       /** DUECA extra.
 
