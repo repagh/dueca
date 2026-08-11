@@ -277,7 +277,9 @@ void DuecaGLFWWindow::openWindow()
 {
   // first time?
   if (opened_windows == 0) {
+#if defined(GLFW_WAYLAND_LIBDECOR)
     glfwInitHint(GLFW_WAYLAND_LIBDECOR, GLFW_WAYLAND_DISABLE_LIBDECOR);
+#endif
     if (glfwInit() == GLFW_FALSE) {
       /** DUECA extra.
 
@@ -401,10 +403,7 @@ int DuecaGLFWWindow::getYOffset()
   return y;
 }
 
-void DuecaGLFWWindow::placeWindow()
-{
-  glfwSetWindowPos(glfw_win, x, y);
-}
+void DuecaGLFWWindow::placeWindow() { glfwSetWindowPos(glfw_win, x, y); }
 
 // NOOP implementations
 void DuecaGLFWWindow::initGL() {}
