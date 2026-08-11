@@ -19,7 +19,7 @@
 
 #if defined(DUECA_CONFIG_GTK4)
 
-#if 0
+#if 1
 #include "gui/gtk4/DuecaGLGtk4Window.hxx"
 
 namespace dueca {

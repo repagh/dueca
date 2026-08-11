@@ -472,13 +472,11 @@ void DuecaNetMaster::clientPackPayload(MessageBuffer::ptr_type buffer)
     buffer->fill += breg;
 
     // any significant room left for fill?
-    if (fill_packer /* &&
-                       buffer->capacity - buffer->fill > fill_minimum*/) {
-      //fill_packer->packWork();
+    if (fill_packer) {
 
       buffer->fill +=
         fill_packer->stuffMessage(&(buffer->buffer[buffer->fill]),
-                                  buffer->capacity - buffer->fill, buffer);
+                                  std::min(size_t(fill_maximum), buffer->capacity - buffer->fill), buffer);
     }
   }
   else {

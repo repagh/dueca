@@ -260,12 +260,11 @@ void DuecaNetPeer::clientPackPayload(MessageBuffer::ptr_type buffer)
   buffer->fill += breg;
 
   // any significant room left for fill?
-  if (fill_packer /* &&
-                     buffer->capacity - buffer->fill > fill_minimum */) {
-    // fill_packer->packWork();
+  if (fill_packer) {
 
     buffer->fill += fill_packer->stuffMessage(
-      &(buffer->buffer[buffer->fill]), buffer->capacity - buffer->fill, buffer);
+      &(buffer->buffer[buffer->fill]),
+      std::min(size_t(fill_maximum), buffer->capacity - buffer->fill), buffer);
   }
   DEB("pack o=" << control_size + 4 << " r=" << breg - 4 << " f="
                 << buffer->fill << " cycle=" << (buffer->message_cycle >> 4));
