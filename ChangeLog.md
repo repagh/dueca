@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 - Use epoxy/gl.h instead of GL/gl.h includes, compatibility with client code
 - Fix the dueca-archivelogfiles script, failed on some cases/platforms
 - Implement a configurable size for the fill packing
+- Truncate the dueca.scratch file when opening it for writing
 
 ### Added
 
