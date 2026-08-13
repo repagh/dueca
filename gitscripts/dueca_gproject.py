@@ -1634,23 +1634,34 @@ class PreparePlatform(OnExistingProject):
                     template = f"{d}/{_tmpl}"
                     break
 
+            if not template:
+                print(f"Could not find template {_tmpl} in {prefix}/share/dueca/data/default nor /etc/dueca", file=sys.stderr)
+                return
+
         nmc = NewMachineClass()
         npc = NewPlatform()
         nnc = NewNode()
 
         with open(template, "r") as f:
             tree = etree.XML(f.read())
+            if not XML_tag(tree, 'configuration'):
+                print(f"File {template}, expected main tag <configuration>", file=sys.stderr)
+                return
 
             # find and add all machine classes
             for elt in tree:
                 if XML_comment(elt):
-                    continue
+                    pass
 
-                if XML_tag(elt, "machineclasses"):
+                elif XML_tag(elt, "machineclasses"):
 
                     for mclass in elt:
 
                         if XML_comment(mclass):
+                            continue
+
+                        elif not XML_tag(mclass, "machineclass"):
+                            print(f"Unexpected xml tag <{mclass.tag}> under <machineclasses>", file=sys.stderr)
                             continue
 
                         # print(mclass)
@@ -1660,33 +1671,46 @@ class PreparePlatform(OnExistingProject):
                         modules = []
                         for c in mclass:
                             if XML_comment(c):
-                                pass
-                            if XML_tag(c, "config"):
+                                continue
+                            elif XML_tag(c, "config"):
                                 config = trim_lines(c.text)
-                            elif XML_tag(c, "modules"):
-                                for m in c:
-                                    url, modname, version = None, None, None
-                                    pseudo = XML_interpret_bool(m.get("pseudo", False))
-                                    inactive = XML_interpret_bool(
-                                        m.get("inactive", False)
-                                    )
-                                    for t in m:
-                                        if XML_comment(t):
-                                            pass
-                                        elif XML_tag(t, "url"):
-                                            url = t.text
-                                        elif XML_tag(t, "name"):
-                                            modname = t.text
-                                        elif XML_tag(t, "version"):
-                                            version = t.text
+                                continue
+                            elif not XML_tag(c, "modules"):
+                                print(f"Unexpected xml tag <{c.tag}> under <machineclass>", file=sys.stderr)
+                                continue
 
-                                    # gather result
-                                    if mname and url:
-                                        modules.append(
-                                            (url, modname, version, pseudo, inactive)
-                                        )
-                            else:
-                                print(f"Unexpected xml tag {c.tag}", file=sys.stderr)
+                            for p in c:
+                                if XML_comment(p):
+                                    continue
+                                # these should now be project, just like in modules.xml
+                                elif not XML_tag(p, "project"):
+                                    print(f"Unexpected xml tag <{p.tag}> under <modules>", file=sys.stderr)
+                                    continue
+
+                                # default action, this is a project
+                                url, version = None, None
+
+                                # contains url, possibly version, and multiple module
+                                for uvm in p:
+
+                                    if XML_comment(uvm):
+                                        pass
+                                    elif XML_tag(uvm, "url"):
+                                        url = uvm.text
+                                    elif XML_tag(uvm, "version"):
+                                        version = uvm.text
+                                    elif XML_tag(uvm, "module"):
+                                        # process the new module
+                                        modname = uvm.text
+                                        pseudo = XML_interpret_bool(uvm.get("pseudo", False))
+                                        inactive = XML_interpret_bool(uvm.get("inactive", False))
+                                        if url:
+                                            modules.append((url, modname, version, pseudo, inactive))
+                                        else:
+                                            print(f"Need to define url before module {modname}", file=sys.stderr)
+                                    else:
+                                        print(f"Unexpected xml tag <{uvm.tag}> under <project>", file=sys.stderr)
+                                        continue
 
                         # add the machine class if applicable
                         try:
@@ -1782,6 +1806,9 @@ class PreparePlatform(OnExistingProject):
                     for n in nodes:
                         # create the node
                         nnc(n, scriptlets)
+                else:
+                    print(f"Unexpected xml tag <{elt.tag}> under <configuration>", file=sys.stderr)
+                    return
 
         print("Created platform, machine classes and nodes, based on" f" {template}")
 
