@@ -562,7 +562,7 @@ class Modules:
                 try:
                     _url = rrepo.remotes.origin.url
                     if _url != prj.url:
-                        print(f"Project {prj.name}, remote URL changed from {prj.url} to {_url}")
+                        print(f"Project {prj.name}, remote URL changed from {_url} to {prj.url}")
                         os.rename(f"../{prj.name}", f"../{prj.name}.bak{int(time.time())}" )
                 except:
                     print(f"Cannot find remote for borrowed project {prj.name}")
