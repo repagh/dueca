@@ -26,42 +26,35 @@
         <project>
           <url>dgrbase:///CSControlLoading.git</url>
           <module>ControlLoading</module>
-          <version>master</version>
         </project>
         <project>
           <url>dgrbase:///CSControlLoading.git</url>
           <module pseudo="true">CLConfigurations</module>
-          <version>master</version>
         </project>
         <project>
           <url>dgrbase:///CSControlLoading.git</url>
-          <module>CLTools</module>
           <version>master</version>
+          <module>CLTools</module>
         </project>
         <project>
           <url>dgrbase:///CSControlLoading.git</url>
           <module>cl-analyser</module>
-          <version>master</version>
         </project>
         <project>
           <url>dgrbase:///CSControlLoading.git</url>
           <module>IOController</module>
-          <version>master</version>
         </project>
         <project>
           <url>dgrbase:///CSControlLoading.git</url>
           <module pseudo="true">scripts</module>
-          <version>master</version>
         </project>
         <project>
           <url>dgrbase:///SRS.git</url>
           <module>control-switches</module>
-          <version>master</version>
         </project>
         <project>
           <url>dgrbase:///SRS.git</url>
           <module>gear-lever</module>
-          <version>master</version>
         </project>
       </modules>
     </machineclass>
@@ -70,22 +63,18 @@
         <project>
           <url>dgrpub:///WorldView.git</url>
           <module>FlightGearVisual</module>
-          <version>master</version>
         </project>
         <project>
           <url>dgrpub:///WorldView.git</url>
           <module>WorldView</module>
-          <version>master</version>
         </project>
         <project>
           <url>dgrpub:///WorldView.git</url>
           <module>SpecificationBase</module>
-          <version>master</version>
         </project>
         <project>
           <url>dgrbase:///SRSVisual.git</url>
           <module>flightgear-data</module>
-          <version>master</version>
         </project>
       </modules>
     </machineclass>
@@ -94,22 +83,18 @@
         <project>
           <url>dgrbase:///SRSMotion.git</url>
           <module>motion-common</module>
-          <version>master</version>
         </project>
         <project>
           <url>dgrbase:///SRSMotion.git</url>
           <module>motion-limiter</module>
-          <version>master</version>
         </project>
         <project>
           <url>dgrbase:///SRSMotion.git</url>
           <module>motion-filter-classical-16</module>
-          <version>master</version>
         </project>
         <project>
           <url>dgrbase:///SRSMotion.git</url>
           <module>motion-filter-tuner</module>
-          <version>master</version>
         </project>
       </modules>
     </machineclass>
@@ -119,17 +104,14 @@
         <project>
           <url>dgrpub:///WorldListener.git</url>
           <module>OpenALListener</module>
-          <version>master</version>
         </project>
         <project>
           <url>dgrpub:///WorldListener.git</url>
           <module>WorldListener</module>
-          <version>master</version>
         </project>
         <project>
           <url>dgrpub:///WorldView.git</url>
           <module>SpecificationBase</module>
-          <version>master</version>
         </project>
       </modules>
     </machineclass>

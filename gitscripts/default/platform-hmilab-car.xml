@@ -41,7 +41,6 @@
 				<project>
 					<url>dgrbase:///HMILabHardware.git</url>
 					<module>PedalsIO</module>
-					<version>master</version>
 				</project>
 			</modules>
 		</machineclass>
@@ -50,22 +49,18 @@
 				<project>
 					<url>dgrpub:///WorldView.git</url>
 					<module>WorldView</module>
-					<version>master</version>
 				</project>
 				<project>
 					<url>dgrpub:///WorldView.git</url>
 					<module>vsg-viewer</module>
-					<version>master</version>
 				</project>
 				<project>
 					<url>dgrpub:///WorldView.git</url>
 					<module>HMILabViewFiles</module>
-					<version>master</version>
 				</project>
 				<project>
 					<url>dgrpub:///WorldView.git</url>
 					<module>SpecificationBase</module>
-					<version>master</version>
 				</project>
 			</modules>
 		</machineclass>
@@ -75,22 +70,18 @@
 				<project>
 					<url>dgrpub:///WorldView.git</url>
 					<module>WorldView</module>
-					<version>master</version>
 				</project>
 				<project>
 					<url>dgrpub:///WorldView.git</url>
 					<module>vsg-viewer</module>
-					<version>master</version>
 				</project>
 				<project>
 					<url>dgrpub:///WorldView.git</url>
 					<module pseudo="true">HMILabViewFiles</module>
-					<version>master</version>
 				</project>
 				<project>
 					<url>dgrpub:///WorldView.git</url>
 					<module>SpecificationBase</module>
-					<version>master</version>
 				</project>
 			</modules>
 		</machineclass>
@@ -100,42 +91,34 @@
 				<project>
 					<url>dgrbase:///ECIToolbox.git</url>
 					<module>DisturbanceGenerator</module>
-					<version>master</version>
 				</project>
 				<project>
 					<url>dgrbase:///ECIToolbox.git</url>
 					<module>DataReader</module>
-					<version>master</version>
 				</project>
 				<project>
 					<url>dgrpub:///ECIToolbox.git</url>
 					<module>Channalyzer</module>
-					<version>master</version>
 				</project>
 				<project>
 					<url>dgrbase:///ECIToolbox.git</url>
 					<module>DataViewer</module>
-					<version>master</version>
 				</project>
 				<project>
 					<url>dgrbase:///HMILabHardware.git</url>
 					<module>SteeringWheelIO</module>
-					<version>master</version>
 				</project>
 				<project>
 					<url>dgrbase:///DrivingSimulator.git</url>
 					<module>IDSS</module>
-					<version>master</version>
 				</project>
 				<project>
 					<url>dgrbase:///DrivingSimulator.git</url>
 					<module>SensorSuite</module>
-					<version>master</version>
 				</project>
 				<project>
 					<url>dgrbase:///DrivingSimulator.git</url>
 					<module>CarDynamics</module>
-					<version>master</version>
 				</project>
 			</modules>
 		</machineclass>

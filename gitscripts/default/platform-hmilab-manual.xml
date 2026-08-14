@@ -13,7 +13,7 @@
   <machineclasses>
     <machineclass name="hmi-ecs" gui="gtk4" />
     <machineclass name="hmi-io" gui="none">
-			<config>
+      <config>
 				# variant, can choose real hardware (hmi) or hmi-sim
 				set(HMI_VARIANT hmi CACHE STRING "Choose a variant for the HMI io")
 
@@ -41,22 +41,18 @@
         <project>
           <url>dgrbase:///CSControlLoading.git</url>
           <module>IOController</module>
-          <version>master</version>
         </project>
         <project>
           <url>dgrbase:///CSControlLoading.git</url>
           <module>ControlLoading</module>
-          <version>master</version>
         </project>
         <project>
           <url>dgrbase:///CSControlLoading.git</url>
           <module pseudo="true">CLConfigurations</module>
-          <version>master</version>
         </project>
         <project>
           <url>dgrbase:///CSControlLoading.git</url>
           <module>cl-analyser</module>
-          <version>master</version>
         </project>
       </modules>
     </machineclass>

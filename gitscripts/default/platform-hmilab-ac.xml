@@ -43,22 +43,18 @@
 				<project>
 					<url>dgrbase:///CSControlLoading.git</url>
 					<module>IOController</module>
-					<version>master</version>
 				</project>
 				<project>
 					<url>dgrbase:///CSControlLoading.git</url>
 					<module>ControlLoading</module>
-					<version>master</version>
 				</project>
 				<project>
 					<url>dgrbase:///CSControlLoading.git</url>
 					<module>CLConfigurations</module>
-					<version>master</version>
 				</project>
 				<project>
 					<url>dgrbase:///CSControlLoading.git</url>
 					<module>cl-analyser</module>
-					<version>master</version>
 				</project>
 			</modules>
 		</machineclass>
@@ -68,22 +64,18 @@
 				<project>
 					<url>dgrpub:///WorldView.git</url>
 					<module>WorldView</module>
-					<version>master</version>
 				</project>
 				<project>
 					<url>dgrpub:///WorldView.git</url>
 					<module>FlightGearViewer</module>
-					<version>master</version>
 				</project>
 				<project>
 					<url>dgrpub:///WorldView.git</url>
 					<module pseudo="true">HMILabViewFiles</module>
-					<version>master</version>
 				</project>
 				<project>
 					<url>dgrpub:///WorldView.git</url>
 					<module>SpecificationBase</module>
-					<version>master</version>
 				</project>
 			</modules>
 		</machineclass>
@@ -93,32 +85,26 @@
 				<project>
 					<url>dgrpub:///WorldView.git</url>
 					<module>WorldView</module>
-					<version>master</version>
 				</project>
 				<project>
 					<url>dgrpub:///WorldView.git</url>
 					<module>OSGViewer</module>
-					<version>master</version>
 				</project>
 				<project>
 					<url>dgrpub:///WorldView.git</url>
 					<module pseudo="true">HMILabViewFiles</module>
-					<version>master</version>
 				</project>
 				<project>
 					<url>dgrpub:///WorldView.git</url>
 					<module>SpecificationBase</module>
-					<version>master</version>
 				</project>
 				<project>
 					<url>dgrpub:///WorldListener.git</url>
 					<module>OpenALListener</module>
-					<version>master</version>
 				</project>
 				<project>
 					<url>dgrpub:///WorldListener.git</url>
 					<module>WorldListener</module>
-					<version>master</version>
 				</project>
 			</modules>
 		</machineclass>
