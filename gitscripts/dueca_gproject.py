@@ -1614,35 +1614,30 @@ class PreparePlatform(OnExistingProject):
         e
             _description_
         """
-
-        if ns.template and ns.template[-4:] == ".xml" and os.path.exists(ns.template):
-            template = ns.template
-
+        if ns.template:
+            _tmpl = ns.template
         else:
+            _tmpl = f"platform-{ns.name}.xml"
 
-            if ns.template:
-                _tmpl = ns.template
-            else:
-                _tmpl = f"platform-{ns.name}.xml"
+        # find the file in one of the dirs
+        prefix = get_dueca_prefix()
 
-            # find the file in one of the dirs
-            prefix = get_dueca_prefix()
+        template = ""
+        for d in ("", f"{os.environ.get('HOME')}/.config/dueca/",
+                  "/etc/dueca/", f"{prefix}/share/dueca/data/default/"):
+            if os.path.exists(f"{d}{_tmpl}"):
+                template = f"{d}{_tmpl}"
+                break
 
-            template = ""
-            for d in (f"{prefix}/share/dueca/data/default", "/etc/dueca"):
-                if os.path.exists(f"{d}/{_tmpl}"):
-                    template = f"{d}/{_tmpl}"
-                    break
-
-            if not template:
-                print(f"Could not find template {_tmpl} in {prefix}/share/dueca/data/default nor /etc/dueca", file=sys.stderr)
-                return
+        if not template:
+            print(f"Could not find template {_tmpl} in .config/dueca, /etc/dueca or {prefix}/share/dueca/data/default", file=sys.stderr)
+            return
 
         nmc = NewMachineClass()
         npc = NewPlatform()
         nnc = NewNode()
 
-        with open(template, "r") as f:
+        with open(template, "r", encoding='utf-8') as f:
             tree = etree.XML(f.read())
             if not XML_tag(tree, 'configuration'):
                 print(f"File {template}, expected main tag <configuration>", file=sys.stderr)
