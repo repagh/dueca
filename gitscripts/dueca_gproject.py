@@ -1290,6 +1290,7 @@ class NewPlatform(OnExistingProject):
                     "lnodes": "|".join(ns.othernodes + [ns.zeronode, ns.masternode]),
                 }
                 create_and_copy([], NewPlatform.startfile, tofill)
+                g.addFiles((f"{self.projectdir}/run/{ns.name}/{self.project}",))
 
         finally:
             self.pop_dir()
