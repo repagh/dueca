@@ -119,6 +119,47 @@
 		</machineclass>
 	</machineclasses>
 	<platform name="hmilab" comm-master="dutmms4">
+    <scriptlet place="## [nodes]">
+      ecs_node = 0      # experiment control station, node 0 with gui
+      cl_node = 1       # dutmms4
+      pfd_node = 2      # dutmms2
+      host_node = 3     # dutmms6
+      ig_node_front = 4 # dutmms14
+      ig_node_left = 5  # dutmms15
+      ig_node_right = 6 # dutmms16
+    </scriptlet>
+    <scriptlet place="## [priority]">
+      # priority set-up table
+      #
+      #             ecs    cl    host   pfd   ig
+      # admin       0      0     0      0     0
+      # logging     1
+      # graphics    0            1      1     1
+      # mcp_rx                   2
+      # unpack+sim  2      2     3      2     2
+      # comm        3      3     4      3     3
+      # cl                 4
+      # cl-io              5
+      # clock       4      5     5      4     4
+
+      admin_priority = dueca.PrioritySpec(0, 0)
+      gl_gtk_priority = admin_priority
+      if this_node_id == host_node:
+          sim_priority = dueca.PrioritySpec(3, 0)
+          mcp_rx_priority = dueca.PrioritySpec(2, 0)
+          mcp_priority = sim_priority
+      else:
+          sim_priority = dueca.PrioritySpec(2, 0)
+      if this_node_id == cl_node:
+          cl_priority = dueca.PrioritySpec(4, 0)
+          io_priority = dueca.PrioritySpec(5, 0)
+          sim_priority = dueca.PrioritySpec(3, 0)
+      if this_node_id == ecs_node:
+          graphics_priority = admin_priority
+          log_priority = dueca.PrioritySpec(1, 0)
+      else:
+          graphics_priority = dueca.PrioritySpec(1, 0)
+		</scriptlet>
 		<node name="dutmms1" machineclass="hmi-ecs" node-number="0" />
 		<node name="dutmms6" machineclass="hmi-host" />
 		<node name="dutmms4" machineclass="hmi-io" />

@@ -14,28 +14,28 @@
 		</machineclass>
 		<machineclass name="hmi-io" gui="none">
 			<config>
-				# variant, can choose real hardware (hmi) or hmi-sim
-				set(HMI_VARIANT hmi CACHE STRING "Choose a variant for the HMI io")
+        # variant, can choose real hardware (hmi) or hmi-sim
+        set(HMI_VARIANT hmi CACHE STRING "Choose a variant for the HMI io")
 
-				# Find the relevant headers
-				find_path(HMIIO_BASE_DIR NAMES
-					hmi/HardwareInterface.hxx hmi/hmiio_calib_volts.h REQUIRED
-					PATHS ${CMAKE_SOURCE_DIR}/../../gen-ecat-io)
+        # Find the relevant headers
+        find_path(HMIIO_BASE_DIR NAMES
+          hmi/HardwareInterface.hxx hmi/hmiio_calib_volts.h REQUIRED
+          PATHS ${CMAKE_SOURCE_DIR}/../../gen-ecat-io)
 
-				list(APPEND HMIIO_INCLUDE_DIRS
-					${HMIIO_BASE_DIR}/hmi
-					${HMIIO_BASE_DIR}
-					${HMIIO_BASE_DIR}/build-${HMI_VARIANT})
+        list(APPEND HMIIO_INCLUDE_DIRS
+          ${HMIIO_BASE_DIR}/hmi
+          ${HMIIO_BASE_DIR}
+          ${HMIIO_BASE_DIR}/build-${HMI_VARIANT})
 
-				find_library(HMIIO_LIBRARY NAMES hmi-ecat-io REQUIRED
-				  PATHS ${HMIIO_BASE_DIR}/build-${HMI_VARIANT})
+        find_library(HMIIO_LIBRARY NAMES hmi-ecat-io REQUIRED
+          PATHS ${HMIIO_BASE_DIR}/build-${HMI_VARIANT})
 
-				# define PROJECT_LIBRARIES with libraries needed on the current platform,
-				set(PROJECT_LIBRARIES ${HMIIO_LIBRARY})
+        # define PROJECT_LIBRARIES with libraries needed on the current platform,
+        set(PROJECT_LIBRARIES ${HMIIO_LIBRARY})
 
-				# define PROJECT_INCLUDE_DIRS with include directories common to all on
-				# the current platform
-				set(PROJECT_INCLUDE_DIRS ${HMIIO_INCLUDE_DIRS})
+        # define PROJECT_INCLUDE_DIRS with include directories common to all on
+        # the current platform
+        set(PROJECT_INCLUDE_DIRS ${HMIIO_INCLUDE_DIRS})
       </config>
 			<modules>
 				<project>
@@ -124,6 +124,43 @@
 		</machineclass>
 	</machineclasses>
 	<platform name="hmilab" comm-master="dutmms4">
+    <scriptlet place="## [nodes]">
+      ecs_node = 0      # experiment control station, node 0 with gui
+      cl_node = 1       # dutmms4
+      dash_node = 2     # dutmms5
+      host_node = 3     # dutmms6
+      ig_node_front = 4 # dutmms14
+      ig_node_left = 5  # dutmms15
+      ig_node_right = 6 # dutmms16
+    </scriptlet>
+		<scriptlet place="## [priority]">
+      # priority set-up table
+      #
+      #             ecs    cl    host   inst  ig
+      # admin       0      0     0      0     0
+      # logging     1
+      # graphics    0            1      1     1
+      # unpack+sim  2      2     2      2     2
+      # comm        3      3     3      3     3
+      # steering                 4
+      # pedal              4
+      # cl-io              5
+      # clock       4      5     5      4     4
+
+      admin_priority = dueca.PrioritySpec(0, 0)
+      gl_gtk_priority = admin_priority
+      sim_priority = dueca.PrioritySpec(2, 0)
+      if this_node_id == host_node:
+          steering_priority = dueca.PrioritySpec(4, 0)
+      if this_node_id == cl_node:
+          pedal_priority = dueca.PrioritySpec(4, 0)
+          io_priority = dueca.PrioritySpec(5, 0)
+      if this_node_id == ecs_node:
+          graphics_priority = admin_priority
+          log_priority = dueca.PrioritySpec(1, 0)
+      else:
+          graphics_priority = dueca.PrioritySpec(1, 0)
+		</scriptlet>
 		<node name="dutmms1" machineclass="hmi-ecs" node-number="0" />
 		<node name="dutmms6" machineclass="hmi-host" />
 		<node name="dutmms4" machineclass="hmi-io" />
