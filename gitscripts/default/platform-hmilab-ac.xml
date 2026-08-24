@@ -160,12 +160,12 @@
       else:
           graphics_priority = dueca.PrioritySpec(1, 0)
 		</scriptlet>
-		<node name="dutmms1" machineclass="hmi-ecs" node-number="0" />
-		<node name="dutmms6" machineclass="hmi-host" />
-		<node name="dutmms4" machineclass="hmi-io" />
-		<node name="dutmms2" machineclass="hmi-efis" />
-		<node name="dutmms14" machineclass="hmi-ig+" />
-		<node name="dutmms15" machineclass="hmi-ig" />
-		<node name="dutmms16" machineclass="hmi-ig" />
+		<node name="dutmms1" machineclass="hmi-ecs" node-number="0" if-address="192.168.2.1"/>
+		<node name="dutmms4" machineclass="hmi-io" node-number="1" comm-master="true" if-address="192.168.2.4" highest-prio="5"/>
+		<node name="dutmms2" machineclass="hmi-efis" node-number="2" if-address="192.168.2.2"/>
+		<node name="dutmms6" machineclass="hmi-host" node-number="3" if-address="192.168.2.6" highest-prio="5"/>
+		<node name="dutmms14" machineclass="hmi-ig+" node-number="4" if-address="192.168.2.14"/>
+		<node name="dutmms15" machineclass="hmi-ig" if-address="192.168.2.15"/>
+		<node name="dutmms16" machineclass="hmi-ig" if-address="192.168.2.16"/>
 	</platform>
 </configuration>

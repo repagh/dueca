@@ -1737,7 +1737,7 @@ class PreparePlatform(OnExistingProject):
                         elif XML_tag(e, "node"):
                             nodes.append(
                                 Namespace(
-                                    highest_priority=e.get("highest-priority", 4),
+                                    highest_priority=e.get("highest-prio", 4),
                                     name=e.get("name"),
                                     script=self.check_scriptlang(),
                                     machine_class=e.get("machineclass"),

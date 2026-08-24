@@ -64,8 +64,8 @@
       cl_node = 1       # dutmms4
       pfd_node = 2      # dutmms2
     </scriptlet>
-    <node name="dutmms1" machineclass="hmi-ecs" node-number="0" />
-    <node name="dutmms4" machineclass="hmi-io" />
-    <node name="dutmms2" machineclass="hmi-efis" />
+    <node name="dutmms1" machineclass="hmi-ecs" node-number="0" if-address="192.168.2.1"/>
+    <node name="dutmms4" machineclass="hmi-io" node-number="1" comm-master="true" if-address="192.168.2.4" highest-prio="5"/>
+    <node name="dutmms2" machineclass="hmi-efis" node-number="2" if-address="192.168.2.2" />
   </platform>
 </configuration>
