@@ -179,7 +179,7 @@ _dueca_cnf_defaults = {
     "bulk-max-size": 128 * 1024,
     "comm-prio-level": 3,
     "unpack-prio-level": 2,
-    "bulk-unpack-prio-level": 1,
+    "bulk-unpack-prio-level": 2,
     "dueca-version": get_dueca_version(),
     "date": date.today().strftime("%d-%b-%Y"),
 }
