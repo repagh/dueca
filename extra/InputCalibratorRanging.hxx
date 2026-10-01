@@ -264,7 +264,13 @@ template <class T, class R> bool InputCalibratorRanging<T, R>::lockOffset()
   double r = out_max - out_min;
   if (std::fabs(found_max - found_min - r) <= r * range_tolerance) {
     double new_offset = 0.5 * (out_max - found_max + out_min - found_min);
+
+    // set the offset in the converter
     converter.adjustOffset(new_offset);
+
+    // update the measured value
+    newConversion(in_coming);
+
     return true;
   }
   return false;
