@@ -16,7 +16,7 @@
 #include <dueca/ScriptInterpret.hxx>
 #include <dueca/Environment.hxx>
 #include <dueca/debug.h>
-#define DEBPRINTLEVEL 1
+#define DEBPRINTLEVEL -1
 #include <debprint.h>
 #include <fstream>
 #include <dueca-conf.h>
