@@ -11,6 +11,25 @@
         license         : EUPL-1.2
 */
 
+/** @todo resizing of windows under gnome
+
+  Requires the Window Calls extension
+
+  https://extensions.gnome.org/extension/4724/window-calls/
+
+  Documentation here:
+
+  https://github.com/ickyicky/window-calls
+
+  Details the various calls to get current window position and size, and
+  modify these.
+
+  Maybe use python module dasbus to get these initial data?
+
+  Put it in the code here (GIO calls), or use a python script to move
+  stuff to a preferred position. Or do both?
+*/
+
 #define GtkGladeWindow_cxx
 
 #include <dueca-conf.h>
